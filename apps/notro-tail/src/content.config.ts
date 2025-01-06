@@ -4,8 +4,19 @@ import { LogLevel } from "@notionhq/client";
 
 const database = defineCollection({
   loader: loader({
-    auth: import.meta.env.NOTION_TOKEN,
-    logLevel: LogLevel.DEBUG,
+    queryParameters: {
+      database_id: import.meta.env.NOTION_ID,
+      sorts: [
+        {
+          timestamp: "last_edited_time",
+          direction: "descending",
+        },
+      ],
+    },
+    clientOptions: {
+      auth: import.meta.env.NOTION_TOKEN,
+      logLevel: LogLevel.DEBUG,
+    },
   }),
 });
 

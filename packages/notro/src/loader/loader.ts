@@ -1,4 +1,4 @@
-import type { Loader } from "astro/loaders";
+import type { DataStore, Loader, ParseDataOptions } from "astro/loaders";
 import {
   Client,
   isFullBlock,
@@ -6,23 +6,28 @@ import {
   iteratePaginatedAPI,
 } from "@notionhq/client";
 import type { ClientOptions } from "@notionhq/client/build/src/Client";
-import type { BlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import type {
+  BlockObjectResponse,
+  PageObjectResponse,
+  QueryDatabaseParameters,
+} from "@notionhq/client/build/src/api-endpoints";
 
-export type PageWithBlocks = {
-  icon: string;
-  cover: string;
-  archived: boolean;
-  in_trash: boolean;
-  url: string;
-  public_url: string;
-  properties: Record<string, unknown>;
-  blocks: BlockWithChildren[];
+export type BlockWithChildren = BlockObjectResponse & {
+  children: BlockWithChildren[];
+};
+
+type LoaderOptions = {
+  queryParameters: QueryDatabaseParameters;
+  clientOptions: ClientOptions;
 };
 
 // Define any options that the loader needs
-export function loader(options: ClientOptions): Loader {
+export function loader({
+  queryParameters,
+  clientOptions,
+}: LoaderOptions): Loader {
   // Configure the loader
-  const client = new Client(options);
+  const client = new Client(clientOptions);
 
   // Return a loader object
   return {
@@ -35,42 +40,21 @@ export function loader(options: ClientOptions): Loader {
       meta,
       generateDigest,
     }): Promise<void> => {
-      const pageId = "9c477872a3574526b281006d9db8a992";
       // Load data and update the store
-      const page = await client.pages.retrieve({
-        page_id: pageId,
-      });
-      store.clear;
+      const pages = await client.databases.query(queryParameters);
 
-      const storedPage = store.get(pageId);
-      if (isFullPage(page) && storedPage?.digest !== page.last_edited_time) {
-        const blockIterator = retrieveBlockChildren(client, pageId);
-        const blocks = Array.fromAsync(blockIterator);
+      //TODO Debug code
+      store.clear();
 
-        // TODO blocksはP-Queueで3個まで同時取得とする
-        Promise.all([blocks]).then(async (blocks) => {
-          const data = await parseData({
-            id: page.id,
-            data: {
-              icon: page.icon,
-              cover: page.cover,
-              archived: page.archived,
-              in_trash: page.in_trash,
-              url: page.url,
-              public_url: page.public_url,
-              properties: page.properties,
-              blocks: blocks,
-            },
-          });
+      const pagePromises = pages.results
+        .filter((page) => isFullPage(page))
+        .filter((page) => isStored(store, page))
+        .map(
+          async (page) => await loadPageBlocks(page, store, client, parseData),
+        );
 
-          //TODO: ストアされたうち削除されたページの取り扱い
-          store.set({
-            id: page.id,
-            digest: page.last_edited_time,
-            data: data,
-          });
-        });
-      }
+      //FIXME use p-queue and Retry for 3rps limit
+      await Promise.all(pagePromises);
     },
     // Optionally, define the schema of an entry.
     // It will be overridden by user-defined schema.
@@ -81,9 +65,38 @@ export function loader(options: ClientOptions): Loader {
   };
 }
 
-export type BlockWithChildren = BlockObjectResponse & {
-  children: BlockWithChildren[];
-};
+async function loadPageBlocks<TData>(
+  page: PageObjectResponse,
+  store: DataStore,
+  client: Client,
+  parseData: <TData extends Record<string, unknown>>(
+    props: ParseDataOptions<TData>,
+  ) => Promise<TData>,
+) {
+  const blockIterator = retrieveBlockChildren(client, page.id);
+  const blocks = await Array.fromAsync(blockIterator);
+
+  const data = await parseData({
+    id: page.id,
+    data: {
+      icon: page.icon,
+      cover: page.cover,
+      archived: page.archived,
+      in_trash: page.in_trash,
+      url: page.url,
+      public_url: page.public_url,
+      properties: page.properties,
+      blocks: blocks,
+    },
+  });
+
+  //TODO ストアされたうち削除されたページは取り除かれるようにする
+  store.set({
+    id: page.id,
+    digest: page.last_edited_time,
+    data: data,
+  });
+}
 
 async function* retrieveBlockChildren(
   client: Client,
@@ -109,4 +122,8 @@ async function* retrieveBlockChildren(
 
     yield blockWithChildren;
   }
+}
+
+function isStored(store: DataStore, page: PageObjectResponse) {
+  return store.get(page.id)?.digest !== page.last_edited_time;
 }

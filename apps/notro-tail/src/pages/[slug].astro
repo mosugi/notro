@@ -1,0 +1,28 @@
+---
+import { getCollection } from "astro:content";
+import NotionBlocks from "notro/src/components/NotionBlocks.astro";
+import Layout from "../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const collection = await getCollection("database");
+  return collection.map((entry) => {
+    return {
+      params: {
+        slug: entry.id,
+      },
+      props: {
+        entry: entry,
+      },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+---
+
+<Layout title={entry.id}>
+  <h1>{entry.id}</h1>
+  <main class="nt-page" id={"page.id"}>
+    <NotionBlocks blocks={entry.data.blocks} />
+  </main>
+</Layout>
