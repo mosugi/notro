@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import NotionBlocks from "notro/src/components/NotionBlocks.astro";
+import NotionCustomBlocks from "notro/src/components/NotionCustomBlocks.astro";
 import Layout from "../layouts/Layout.astro";
 
 export async function getStaticPaths() {
@@ -18,11 +18,17 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+
+const options = {
+  optimizeRemoteImage: true,
+  useRawHTML: true,
+  useCalloutContainer: true,
+};
 ---
 
 <Layout title={entry.id}>
   <h1>{entry.id}</h1>
   <main class="nt-page" id={"page.id"}>
-    <NotionBlocks blocks={entry.data.blocks} />
+    <NotionCustomBlocks blocks={entry.data.blocks} options={options} />
   </main>
 </Layout>

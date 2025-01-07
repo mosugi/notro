@@ -1,22 +1,27 @@
 ---
 import { getCollection } from "astro:content";
-import NotionBlocks from "notro/src/components/NotionBlocks.astro";
+import NotionCustomBlocks from "notro/src/components/NotionCustomBlocks.astro";
 import Layout from "../layouts/Layout.astro";
-import type { BlockWithChildren } from "notro/src/loader/loader";
 
 // FIXME https://docs.astro.build/en/guides/content-collections/
 const collection = await getCollection("database");
 const entry = collection.find(
   (entry) => entry.id === "f3d90809-9c71-4fbf-a6c4-d792d1b6d3f2",
 );
+
+const options = {
+  optimizeRemoteImage: true,
+  useRawHTML: true,
+  useCalloutContainer: true,
+};
 ---
 
 {
   entry && (
     <Layout title={"title"}>
       <h1>{entry.id}</h1>
-      <main class="notrotail-page" id={"page.id"}>
-        <NotionBlocks blocks={entry.data.blocks} />
+      <main class="nt-page" id={"page.id"}>
+        <NotionCustomBlocks blocks={entry.data.blocks} options={options} />
       </main>
     </Layout>
   )

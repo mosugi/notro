@@ -18,7 +18,7 @@ const classes = block.callout.rich_text[0]?.plain_text
 ---
 
 {
-  options.enableCalloutAsWrapper && isCustomContainer ? (
+  isCustomContainer ? (
     classes ? (
       classes.reverse().reduce(
         (childElement, classNames) => {

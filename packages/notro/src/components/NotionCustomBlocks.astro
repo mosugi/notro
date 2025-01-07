@@ -1,15 +1,31 @@
 ---
-import type { BlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import type { BlockWithChildren } from "../loader/loader";
 
 export interface Props {
   blocks: BlockWithChildren[];
+  options?: RenderOptions;
 }
 
-const { blocks } = Astro.props;
+interface RenderOptions {
+  optimizeRemoteImage: boolean;
+  useRawHTML: boolean;
+  useCalloutContainer: boolean;
+}
+
+const {
+  blocks,
+  options = {
+    optimizeRemoteImage: true,
+    useRawHTML: false,
+    useCalloutContainer: false,
+  },
+} = Astro.props;
 
 import Block from "./Block.astro";
 import ListItemContainer from "./ListItemContainer.astro";
+import CodeOrRawHTML from "./CodeOrRawHTML.astro";
+import CalloutOrCustomContainer from "./CalloutOrCustomContainer.astro";
+import OptimizedImage from "./OptimizedImage.astro";
 
 let tempListItems: any = [];
 ---
@@ -17,8 +33,20 @@ let tempListItems: any = [];
 {
   blocks.map((block, i, array) => {
     const children = block.has_children ? (
-      <Astro.self blocks={block.children} />
+      <Astro.self blocks={block.children} options={options} />
     ) : null;
+
+    if (block.type === "code" && options.useRawHTML) {
+      return <CodeOrRawHTML block={block} />;
+    }
+
+    if (block.type === "callout" && options.useCalloutContainer) {
+      return <CalloutOrCustomContainer block={block} />;
+    }
+
+    if (block.type === "image" && options.optimizeRemoteImage) {
+      return <OptimizedImage block={block} />;
+    }
 
     switch (block.type) {
       case "bulleted_list_item":
