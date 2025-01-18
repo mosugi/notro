@@ -3,6 +3,13 @@ import type { BlockWithChildren } from "../loader/loader";
 
 export interface Props {
   blocks: BlockWithChildren[];
+  linkToPages?: Record<
+    string,
+    {
+      url: string;
+      title: string;
+    }
+  >;
   options?: RenderOptions;
 }
 
@@ -14,6 +21,7 @@ interface RenderOptions {
 
 const {
   blocks,
+  linkToPages,
   options = {
     optimizeRemoteImage: true,
     useRawHTML: false,
@@ -26,6 +34,7 @@ import ListItemContainer from "./ListItemContainer.astro";
 import CodeOrRawHTML from "./CodeOrRawHTML.astro";
 import CalloutOrCustomContainer from "./CalloutOrCustomContainer.astro";
 import OptimizedImage from "./OptimizedImage.astro";
+import LinkToPage from "./LinkToPage.astro";
 
 let tempListItems: any = [];
 ---
@@ -46,6 +55,20 @@ let tempListItems: any = [];
 
     if (block.type === "image" && options.optimizeRemoteImage) {
       return <OptimizedImage block={block} />;
+    }
+
+    if (
+      block.type === "link_to_page" &&
+      block.link_to_page.type === "page_id" &&
+      linkToPages
+    ) {
+      return (
+        <LinkToPage
+          block={block}
+          href={linkToPages[block.link_to_page.page_id].url}
+          text={linkToPages[block.link_to_page.page_id].title}
+        />
+      );
     }
 
     switch (block.type) {

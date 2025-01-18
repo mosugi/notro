@@ -34,7 +34,7 @@ const { richText } = Astro.props;
     }
     if (item.href) {
       content = (
-        <a href={item.href} class="notion-link">
+        <a href={item.href} class="notion-link" target="_blank">
           {content}
         </a>
       );

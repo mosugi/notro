@@ -17,6 +17,7 @@ import NumberedListItem from "./NumberedListItem.astro";
 import TodoListItem from "./TodoListItem.astro";
 import Callout from "./Callout.astro";
 import { Debug } from "astro:components";
+import LinkToPage from "./LinkToPage.astro";
 
 interface Props {
   block: BlockObjectResponse;
@@ -145,6 +146,5 @@ const unSupportedBlockTypes: BlockObjectResponse["type"][] = [
     </Callout>
   )
 }
-{
-  // unSupportedBlockTypes.includes(block.type) && <Debug {block} />
-}
+{block.type === "link_to_page" && <LinkToPage block={block} />}
+{unSupportedBlockTypes.includes(block.type) && <Debug {block} />}

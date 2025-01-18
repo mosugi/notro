@@ -1,5 +1,7 @@
 ---
+import { getPagePropertyText } from "notro/src/utils/notion";
 import { getCollection } from "astro:content";
+
 import NotionCustomBlocks from "notro/src/components/NotionCustomBlocks.astro";
 import Layout from "../layouts/Layout.astro";
 
@@ -17,6 +19,17 @@ export async function getStaticPaths() {
   });
 }
 
+const collection = await getCollection("database");
+
+const linkToPages: Record<string, { url: string; title: string }> =
+  Object.fromEntries(
+    collection.map((entry) => [
+      entry.id,
+      getPagePropertyText(entry.data.properties, "Slug"),
+      getPagePropertyText(entry.data.properties, "Page"),
+    ]),
+  );
+
 const { entry } = Astro.props;
 
 const options = {
@@ -27,8 +40,11 @@ const options = {
 ---
 
 <Layout title={entry.id}>
-  <h1>{entry.id}</h1>
   <main class="nt-page" id={"page.id"}>
-    <NotionCustomBlocks blocks={entry.data.blocks} options={options} />
+    <NotionCustomBlocks
+      blocks={entry.data.blocks}
+      linkToPages={linkToPages}
+      options={options}
+    />
   </main>
 </Layout>

@@ -1,4 +1,5 @@
 import type { DataStore, Loader, ParseDataOptions } from "astro/loaders";
+import { z } from "astro/zod";
 import {
   Client,
   isFullBlock,
@@ -60,10 +61,16 @@ export function loader({
     },
     // Optionally, define the schema of an entry.
     // It will be overridden by user-defined schema.
-    // schema: async () =>
-    //   z.object({
-    //     // ...
-    //   }),
+    schema: z.object({
+      icon: z.any(),
+      cover: z.any(),
+      archived: z.boolean(),
+      in_trash: z.boolean(),
+      url: z.string(),
+      public_url: z.string(),
+      properties: z.object({}),
+      blocks: z.any(),
+    }),
   };
 }
 
@@ -121,6 +128,9 @@ async function* retrieveBlockChildren(
         retrieveBlockChildren(client, block.id),
       );
     }
+
+    // TODO 同期ブロックの場合は同期先の取得(synced_block.synced_from.block_id)が必要
+    // リンクブロックの場合はリンク先の取得（リンク先特定のため）が必要だが、プロパティが可変なのでどうすればいいのか
 
     yield blockWithChildren;
   }

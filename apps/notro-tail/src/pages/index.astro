@@ -1,12 +1,12 @@
 ---
-import { getCollection } from "astro:content";
+import { getEntry } from "astro:content";
 import NotionCustomBlocks from "notro/src/components/NotionCustomBlocks.astro";
 import Layout from "../layouts/Layout.astro";
 
 // FIXME https://docs.astro.build/en/guides/content-collections/
-const collection = await getCollection("database");
-const entry = collection.find(
-  (entry) => entry.id === "f3d90809-9c71-4fbf-a6c4-d792d1b6d3f2",
+const entry = await getEntry(
+  "database",
+  "9c477872-a357-4526-b281-006d9db8a992",
 );
 
 const options = {
@@ -19,7 +19,6 @@ const options = {
 {
   entry && (
     <Layout title={"title"}>
-      <h1>{entry.id}</h1>
       <main class="nt-page" id={"page.id"}>
         <NotionCustomBlocks blocks={entry.data.blocks} options={options} />
       </main>
