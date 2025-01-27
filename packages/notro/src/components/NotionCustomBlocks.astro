@@ -31,10 +31,9 @@ const {
 
 import Block from "./Block.astro";
 import ListItemContainer from "./ListItemContainer.astro";
-import CodeOrRawHTML from "./CodeOrRawHTML.astro";
-import CalloutOrCustomContainer from "./CalloutOrCustomContainer.astro";
 import OptimizedImage from "./OptimizedImage.astro";
 import LinkToPage from "./LinkToPage.astro";
+import CalloutOrContainer from "./CalloutOrContainer.astro";
 
 let tempListItems: any = [];
 ---
@@ -46,11 +45,11 @@ let tempListItems: any = [];
     ) : null;
 
     if (block.type === "code" && options.useRawHTML) {
-      return <CodeOrRawHTML block={block} />;
+      return <div set:html={block.code.rich_text[0]?.plain_text} />;
     }
 
     if (block.type === "callout" && options.useCalloutContainer) {
-      return <CalloutOrCustomContainer block={block} />;
+      return <CalloutOrContainer block={block} />;
     }
 
     if (block.type === "image" && options.optimizeRemoteImage) {

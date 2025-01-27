@@ -30,7 +30,6 @@ const unSupportedBlockTypes: BlockObjectResponse["type"][] = [
   "child_database",
   "child_page",
   "template",
-  "toggle",
   "breadcrumb",
   "table_of_contents",
   "table",
@@ -104,6 +103,13 @@ const unSupportedBlockTypes: BlockObjectResponse["type"][] = [
     <Column block={block}>
       <slot />
     </Column>
+  )
+}
+{
+  block.type === "toggle" && (
+    <ToggleContainer block={block}>
+      <slot />
+    </ToggleContainer>
   )
 }
 {block.type === "bookmark" && <Bookmark block={block} />}

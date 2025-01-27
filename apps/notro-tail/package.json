@@ -4,14 +4,11 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "dev:clean": "npm run clean:cache && astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
-    "build:clean": "npm run clean:cache && astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'",
-    "clean:cache": "rm -rf cache"
+    "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

@@ -13,11 +13,4 @@ export default defineConfig({
     ],
   },
   integrations: [tailwind(), sitemap()],
-  vite: {
-    server: {
-      watch: {
-        ignored: ["**/cache/**/*"],
-      },
-    },
-  },
 });

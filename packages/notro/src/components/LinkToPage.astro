@@ -1,12 +1,5 @@
 ---
 import type { LinkToPageBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
-import {
-  getAncestorPagesRecursive,
-  getPathFromAncestorPages,
-} from "../utils/notion/getPageTree";
-import { toPage } from "../utils/notion/utils";
-import { getNotionPage } from "../utils/notion/api/pages";
-import RichText from "./RichText.astro";
 interface Props {
   block: LinkToPageBlockObjectResponse;
   href?: string;

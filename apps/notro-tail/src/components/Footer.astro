@@ -1,7 +1,10 @@
 ---
-import { getPagesByType, PageType } from "../utils/template";
+import { getCollection } from "astro:content";
+import { getPagePropertyText } from "notro/src/utils/notion";
 
-const footerPages = await getPagesByType(PageType.Footer);
+const footerPages = await getCollection("database", ({ data }) => {
+  return getPagePropertyText(data.properties, "Header");
+});
 ---
 
 {
@@ -9,9 +12,11 @@ const footerPages = await getPagesByType(PageType.Footer);
     <footer>
       <div>
         <ul>
-          {footerPages.map((page) => (
+          {footerPages.map(({ data }) => (
             <li>
-              <a href={page.slug}>{page.title}</a>
+              <a href={getPagePropertyText(data.properties, "Slug")}>
+                {getPagePropertyText(data.properties, "Page")}
+              </a>
             </li>
           ))}
         </ul>
