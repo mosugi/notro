@@ -101,6 +101,8 @@ NOTION_SECRET=<NOTION_TOKEN>
 
 ### 6. Launch
 
+NotroTail needs Node.js 22 or later.
+
 Install dependencies
 
 ```bash
@@ -122,10 +124,6 @@ Please create an issue for bug reports or feature requests. Any feedback is welc
 ## Roadmap
 
 [See the Github Projects roadmap](https://github.com/users/mosugi/projects/4)
-
-## License
-
-MIT
 
 ## Special Thanks
 
