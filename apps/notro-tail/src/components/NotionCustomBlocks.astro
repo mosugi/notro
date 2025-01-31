@@ -1,5 +1,9 @@
 ---
-import type { BlockWithChildren } from "../loader/loader";
+import type { BlockWithChildren } from "notro/src/loader/loader";
+import Block from "notro/src/components/Block.astro";
+import ListItemContainer from "notro/src/components/ListItemContainer.astro";
+import LinkToPage from "notro/src/components/LinkToPage.astro";
+import CalloutOrContainer from "./CalloutOrContainer.astro";
 
 export interface Props {
   blocks: BlockWithChildren[];
@@ -29,12 +33,6 @@ const {
   },
 } = Astro.props;
 
-import Block from "./Block.astro";
-import ListItemContainer from "./ListItemContainer.astro";
-import OptimizedImage from "./OptimizedImage.astro";
-import LinkToPage from "./LinkToPage.astro";
-import CalloutOrContainer from "./CalloutOrContainer.astro";
-
 let tempListItems: any = [];
 ---
 
@@ -50,10 +48,6 @@ let tempListItems: any = [];
 
     if (block.type === "callout" && options.useCalloutContainer) {
       return <CalloutOrContainer block={block}>{children}</CalloutOrContainer>;
-    }
-
-    if (block.type === "image" && options.optimizeRemoteImage) {
-      return <OptimizedImage block={block} />;
     }
 
     if (
@@ -86,7 +80,11 @@ let tempListItems: any = [];
         }
         return null;
       default:
-        return <Block block={block}>{children}</Block>;
+        return (
+          <Block block={block} options={options}>
+            {children}
+          </Block>
+        );
     }
   })
 }

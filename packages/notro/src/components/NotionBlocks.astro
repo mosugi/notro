@@ -1,11 +1,21 @@
 ---
 import type { BlockWithChildren } from "../loader/loader";
 
-export interface Props {
-  blocks: BlockWithChildren[];
+interface RenderOptions {
+  optimizeRemoteImage: boolean;
 }
 
-const { blocks } = Astro.props;
+export interface Props {
+  blocks: BlockWithChildren[];
+  options?: RenderOptions;
+}
+
+const {
+  blocks,
+  options = {
+    optimizeRemoteImage: true,
+  },
+} = Astro.props;
 
 import Block from "./Block.astro";
 import ListItemContainer from "./ListItemContainer.astro";
@@ -35,7 +45,11 @@ let tempListItems: any = [];
         }
         return null;
       default:
-        return <Block block={block}>{children}</Block>;
+        return (
+          <Block block={block} options={options}>
+            {children}
+          </Block>
+        );
     }
   })
 }

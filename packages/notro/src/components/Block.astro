@@ -18,12 +18,23 @@ import TodoListItem from "./TodoListItem.astro";
 import Callout from "./Callout.astro";
 import { Debug } from "astro:components";
 import LinkToPage from "./LinkToPage.astro";
+import OptimizedImage from "./OptimizedImage.astro";
 
 interface Props {
   block: BlockObjectResponse;
+  options?: RenderOptions;
 }
 
-const { block } = Astro.props;
+interface RenderOptions {
+  optimizeRemoteImage: boolean;
+}
+
+const {
+  block,
+  options = {
+    optimizeRemoteImage: true,
+  },
+} = Astro.props;
 
 const unSupportedBlockTypes: BlockObjectResponse["type"][] = [
   "synced_block",
@@ -121,7 +132,13 @@ const unSupportedBlockTypes: BlockObjectResponse["type"][] = [
     </Quote>
   )
 }
-{block.type === "image" && <Image block={block} />}
+{
+  block.type === "image" && options.optimizeRemoteImage ? (
+    <OptimizedImage block={block} />
+  ) : (
+    block.type === "image" && <Image block={block} />
+  )
+}
 {block.type === "code" && <Code block={block} />}
 {
   block.type === "bulleted_list_item" && (
