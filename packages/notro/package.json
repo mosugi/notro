@@ -17,6 +17,9 @@
     "src",
     "README.md"
   ],
+  "exports": {
+    ".": "./index.ts"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",

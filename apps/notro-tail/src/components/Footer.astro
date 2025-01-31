@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import { getPagePropertyText } from "notro/src/utils/notion";
+import { getPagePropertyText } from "notro";
 
 const footerPages = await getCollection("database", ({ data }) => {
   const type = getPagePropertyText(data.properties, "Type");

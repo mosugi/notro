@@ -1,5 +1,5 @@
 import { defineCollection } from "astro:content";
-import { loader } from "notro/src/loader/loader.ts";
+import { loader } from "notro";
 import { LogLevel } from "@notionhq/client";
 import { z } from "astro/zod";
 
