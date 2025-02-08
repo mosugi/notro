@@ -12,6 +12,7 @@ import type {
   PageObjectResponse,
   QueryDatabaseParameters,
 } from "@notionhq/client/build/src/api-endpoints";
+import { blockObjectSchema, pageObjectSchema } from "./schema.ts";
 
 export type BlockWithChildren = BlockObjectResponse & {
   children: BlockWithChildren[];
@@ -61,16 +62,7 @@ export function loader({
     },
     // Optionally, define the schema of an entry.
     // It will be overridden by user-defined schema.
-    schema: z.object({
-      icon: z.any(),
-      cover: z.any(),
-      archived: z.boolean(),
-      in_trash: z.boolean(),
-      url: z.string(),
-      public_url: z.string(),
-      properties: z.object({}),
-      blocks: z.any(),
-    }),
+    schema: pageObjectSchema,
   };
 }
 
