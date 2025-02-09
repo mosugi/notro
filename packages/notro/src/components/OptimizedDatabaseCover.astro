@@ -13,6 +13,11 @@ const imageUrl = cover?.type === "file" ? cover?.file.url : cover?.external.url;
 
 {
   imageUrl ? (
-    <AstroImage src={imageUrl} alt={alt ?? ""} inferSize={true} />
+    <AstroImage
+      src={imageUrl}
+      alt={alt ?? ""}
+      inferSize={true}
+      class="notion-collection-cover"
+    />
   ) : null
 }
