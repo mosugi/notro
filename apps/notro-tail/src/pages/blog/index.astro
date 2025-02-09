@@ -1,0 +1,39 @@
+---
+import { getCollection } from "astro:content";
+import { getPagePropertyText, OptimizedDatabaseCover } from "notro";
+import Layout from "../../layouts/Layout.astro";
+
+const posts = await getCollection("posts");
+
+const currentPath = Astro.url.pathname;
+---
+
+<Layout title="Posts">
+  <main class="nt-posts">
+    {
+      posts.length > 0 ? (
+        <ul>
+          {posts.map(({ data }) => (
+            <li>
+              <article>
+                <a
+                  href={`${currentPath}/${getPagePropertyText(data.properties, "Slug")}`}
+                >
+                  <OptimizedDatabaseCover
+                    cover={data.cover}
+                    alt={getPagePropertyText(data.properties, "Name")}
+                  />
+                </a>
+                <a
+                  href={`${currentPath}/${getPagePropertyText(data.properties, "Slug")}`}
+                >
+                  {getPagePropertyText(data.properties, "Name")}
+                </a>
+              </article>
+            </li>
+          ))}
+        </ul>
+      ) : null
+    }
+  </main>
+</Layout>

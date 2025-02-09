@@ -1,5 +1,6 @@
 import type { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
+// TODO zod schemaができたら不要なfunction
 export const getPagePropertyText = (
   properties: PageObjectResponse["properties"],
   propertyName: string,

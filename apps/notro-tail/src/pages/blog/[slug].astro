@@ -1,0 +1,35 @@
+---
+import { getCollection } from "astro:content";
+import { getPagePropertyText } from "notro";
+import Layout from "../../layouts/Layout.astro";
+import NotionCustomBlocks from "../../components/NotionCustomBlocks.astro";
+
+export async function getStaticPaths() {
+  const collection = await getCollection("posts");
+  return collection.map((entry) => {
+    const slug = getPagePropertyText(entry.data.properties, "Slug") || entry.id;
+    return {
+      params: {
+        slug: slug,
+      },
+      props: {
+        entry: entry,
+      },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+
+const options = {
+  optimizeRemoteImage: true,
+  useRawHTML: true,
+  useCalloutContainer: true,
+};
+---
+
+<Layout title={entry.id}>
+  <main class="nt-page" id={entry.id}>
+    <NotionCustomBlocks blocks={entry.data.blocks} options={options} />
+  </main>
+</Layout>

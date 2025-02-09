@@ -6,7 +6,7 @@ import NotionCustomBlocks from "../components/NotionCustomBlocks.astro";
 import Layout from "../layouts/Layout.astro";
 
 export async function getStaticPaths() {
-  const collection = await getCollection("database");
+  const collection = await getCollection("pages");
   return collection.map((entry) => {
     const slug = getPagePropertyText(entry.data.properties, "Slug") || entry.id;
     return {
@@ -20,7 +20,7 @@ export async function getStaticPaths() {
   });
 }
 
-const collection = await getCollection("database");
+const collection = await getCollection("pages");
 
 const linkToPages: Record<string, { url?: string; title?: string }> =
   Object.fromEntries(

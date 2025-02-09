@@ -51,7 +51,8 @@ let tempListItems: any = [];
     if (
       block.type === "link_to_page" &&
       block.link_to_page.type === "page_id" &&
-      linkToPages
+      linkToPages &&
+      linkToPages[block.link_to_page.page_id]
     ) {
       return (
         <LinkToPage
