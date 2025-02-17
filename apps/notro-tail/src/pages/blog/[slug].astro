@@ -1,13 +1,13 @@
 ---
 import { getCollection } from "astro:content";
-import { getPagePropertyText } from "notro";
+import { getPlainText } from "notro";
 import Layout from "../../layouts/Layout.astro";
 import NotionCustomBlocks from "../../components/NotionCustomBlocks.astro";
 
 export async function getStaticPaths() {
   const collection = await getCollection("posts");
   return collection.map((entry) => {
-    const slug = getPagePropertyText(entry.data.properties, "Slug") || entry.id;
+    const slug = getPlainText(entry.data.properties.Slug) || entry.id;
     return {
       params: {
         slug: slug,

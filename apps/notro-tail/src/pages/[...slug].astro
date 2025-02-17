@@ -1,5 +1,5 @@
 ---
-import { getPagePropertyText } from "notro";
+import { getPlainText } from "notro";
 import { getCollection } from "astro:content";
 
 import NotionCustomBlocks from "../components/NotionCustomBlocks.astro";
@@ -8,7 +8,7 @@ import Layout from "../layouts/Layout.astro";
 export async function getStaticPaths() {
   const collection = await getCollection("pages");
   return collection.map((entry) => {
-    const slug = getPagePropertyText(entry.data.properties, "Slug") || entry.id;
+    const slug = getPlainText(entry.data.properties.Slug) || entry.id;
     return {
       params: {
         slug: slug !== "index" ? slug : undefined,
@@ -27,8 +27,8 @@ const linkToPages: Record<string, { url?: string; title?: string }> =
     collection.map((entry) => [
       entry.id,
       {
-        url: getPagePropertyText(entry.data.properties, "Slug"),
-        title: getPagePropertyText(entry.data.properties, "Page"),
+        url: getPlainText(entry.data.properties.Slug),
+        title: getPlainText(entry.data.properties.Name),
       },
     ]),
   );

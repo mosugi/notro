@@ -1,10 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import {
-  DatabaseProperty,
-  getPagePropertyText,
-  OptimizedDatabaseCover,
-} from "notro";
+import { DatabaseProperty, getPlainText, OptimizedDatabaseCover } from "notro";
 import Layout from "../../layouts/Layout.astro";
 
 const posts = await getCollection("posts");
@@ -22,19 +18,19 @@ const currentPath = Astro.url.pathname;
               <li>
                 <article class="notion-collection-item">
                   <a
-                    href={`${currentPath}/${getPagePropertyText(data.properties, "Slug")}`}
+                    href={`${currentPath}/${data.properties}${getPlainText(data.properties.Slug)}`}
                   >
                     <OptimizedDatabaseCover
                       cover={data.cover}
-                      alt={getPagePropertyText(data.properties, "Name")}
+                      alt={getPlainText(data.properties.Name)}
                     />
                   </a>
                   <DatabaseProperty property={data.properties.Date} />
                   <DatabaseProperty property={data.properties.Category} />
                   <a
-                    href={`${currentPath}/${getPagePropertyText(data.properties, "Slug")}`}
+                    href={`${currentPath}/${getPlainText(data.properties.Slug)}`}
                   >
-                    {getPagePropertyText(data.properties, "Name")}
+                    {getPlainText(data.properties.Name)}
                   </a>
                   <DatabaseProperty property={data.properties.Description} />
                   <DatabaseProperty property={data.properties.Tags} />

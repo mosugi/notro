@@ -1,5 +1,15 @@
 import { defineCollection } from "astro:content";
-import { loader, pageObjectSchema } from "notro";
+import {
+  checkboxPropertyPageObjectResponseSchema,
+  datePropertyPageObjectResponseSchema,
+  loader,
+  multiSelectPropertyPageObjectResponseSchema,
+  numberPropertyPageObjectResponseSchema,
+  pageObjectResponseWithBlocksSchema,
+  richTextPropertyPageObjectResponseSchema,
+  selectPropertyPageObjectResponseSchema,
+  titlePropertyPageObjectResponseSchema,
+} from "notro";
 import { LogLevel } from "@notionhq/client";
 import { z } from "zod";
 
@@ -25,13 +35,13 @@ const pagesCollection = defineCollection({
       logLevel: LogLevel.DEBUG,
     },
   }),
-  schema: pageObjectSchema.extend({
+  schema: pageObjectResponseWithBlocksSchema.extend({
     properties: z.object({
-      Name: z.any(),
-      Public: z.any(),
-      Slug: z.any(),
-      Placement: z.any(),
-      Order: z.any(),
+      Name: titlePropertyPageObjectResponseSchema,
+      Public: checkboxPropertyPageObjectResponseSchema,
+      Slug: richTextPropertyPageObjectResponseSchema,
+      Place: selectPropertyPageObjectResponseSchema,
+      Order: numberPropertyPageObjectResponseSchema,
     }),
   }),
 });
@@ -58,15 +68,15 @@ const postsCollection = defineCollection({
       logLevel: LogLevel.DEBUG,
     },
   }),
-  schema: pageObjectSchema.extend({
+  schema: pageObjectResponseWithBlocksSchema.extend({
     properties: z.object({
-      Name: z.any(),
-      Description: z.any(),
-      Public: z.any(),
-      Slug: z.any(),
-      Tags: z.any(),
-      Category: z.any(),
-      Date: z.any(),
+      Name: titlePropertyPageObjectResponseSchema,
+      Description: richTextPropertyPageObjectResponseSchema,
+      Public: checkboxPropertyPageObjectResponseSchema,
+      Slug: richTextPropertyPageObjectResponseSchema,
+      Tags: multiSelectPropertyPageObjectResponseSchema,
+      Category: selectPropertyPageObjectResponseSchema,
+      Date: datePropertyPageObjectResponseSchema,
     }),
   }),
 });

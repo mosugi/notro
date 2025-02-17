@@ -1,12 +1,8 @@
 import type { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
-// TODO zod schemaができたら不要なfunction
-export const getPagePropertyText = (
-  properties: PageObjectResponse["properties"],
-  propertyName: string,
+export const getPlainText = (
+  property: PageObjectResponse["properties"][1],
 ): string | undefined => {
-  const property = properties?.[propertyName];
-
   if (
     property?.type === "rich_text" &&
     property.rich_text[0]?.plain_text !== undefined

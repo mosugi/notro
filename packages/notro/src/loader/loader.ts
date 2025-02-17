@@ -1,5 +1,4 @@
 import type { DataStore, Loader, ParseDataOptions } from "astro/loaders";
-import { z } from "astro/zod";
 import {
   Client,
   isFullBlock,
@@ -12,7 +11,11 @@ import type {
   PageObjectResponse,
   QueryDatabaseParameters,
 } from "@notionhq/client/build/src/api-endpoints";
-import { blockObjectSchema, pageObjectSchema } from "./schema.ts";
+import { pageObjectResponseWithBlocksSchema } from "./schema.ts";
+
+export type PageWithBlocks = PageObjectResponse & {
+  blocks: BlockWithChildren[];
+};
 
 export type BlockWithChildren = BlockObjectResponse & {
   children: BlockWithChildren[];
@@ -59,6 +62,8 @@ export function loader({
         }
       });
 
+      // store.clear();
+
       // Load new or updated pages
       const loadPageBlocksPromises = pages
         .filter((page) => !store.has(page.id))
@@ -69,9 +74,8 @@ export function loader({
       //FIXME use p-queue and Retry for 3rps limit
       await Promise.all(loadPageBlocksPromises);
     },
-    // Optionally, define the schema of an entry.
     // It will be overridden by user-defined schema.
-    schema: pageObjectSchema,
+    schema: pageObjectResponseWithBlocksSchema,
   };
 }
 
@@ -89,23 +93,30 @@ async function loadPageBlocks<TData>(
   const data = await parseData({
     id: page.id,
     data: {
+      parent: page.parent,
+      properties: page.properties,
       icon: page.icon,
       cover: page.cover,
+      created_by: page.created_by,
+      last_edited_by: page.last_edited_by,
+      object: page.object,
+      id: page.id,
+      created_time: page.created_time,
+      last_edited_time: page.last_edited_time,
       archived: page.archived,
       in_trash: page.in_trash,
       url: page.url,
       public_url: page.public_url,
-      properties: page.properties,
       blocks: blocks,
-    },
+    } as PageWithBlocks,
   });
 
   const digest = Date.now();
 
-  //TODO ストアされたうち削除されたページは取り除かれるようにする
   store.set({
     id: page.id,
     digest: digest,
+    // TODO リモートイメージが先に期限切れする問題が解決したら有効化する
     // digest: page.last_edited_time,
     data: data,
   });

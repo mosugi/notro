@@ -1,9 +1,9 @@
 ---
 import { getCollection } from "astro:content";
-import { getPagePropertyText } from "notro";
+import { getPlainText } from "notro";
 
 const footerPages = await getCollection("pages", ({ data }) => {
-  const type = getPagePropertyText(data.properties, "Placement");
+  const type = getPlainText(data.properties.Place);
   return type?.includes("Footer");
 });
 ---
@@ -15,8 +15,8 @@ const footerPages = await getCollection("pages", ({ data }) => {
         <ul>
           {footerPages.map(({ data }) => (
             <li>
-              <a href={"/" + getPagePropertyText(data.properties, "Slug")}>
-                {getPagePropertyText(data.properties, "Name")}
+              <a href={"/" + getPlainText(data.properties.Slug)}>
+                {getPlainText(data.properties.Name)}
               </a>
             </li>
           ))}
