@@ -1,19 +1,12 @@
 ---
 import { getCollection } from "astro:content";
-import Layout from "../../layouts/Layout.astro";
-import BlogList from "../../components/BlogList.astro";
-import type { PageWithBlocks } from "notro";
+import { NotionBlocks } from "notro";
 
-const posts = await getCollection("posts");
-const data = posts.map(({ data }) => data as PageWithBlocks);
-
-const currentPath = Astro.url.pathname;
+const collection = await getCollection("posts");
+const { entry } = Astro.props;
 ---
-
-<Layout title="Posts">
-  <main class="nt-posts">
-    <section class="notion-selectable notion-collection_view-block">
-      <BlogList posts={data} path={currentPath} />
-    </section>
-  </main>
-</Layout>
+<html>
+<body>
+<NotionBlocks blocks={entry[0].data.blocks} />
+</body>
+</html>
