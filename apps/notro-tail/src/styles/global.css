@@ -60,62 +60,62 @@
         }
     }
 
-    .notion-collection-item {
+    .nt-collection-item {
         @apply flex flex-wrap px-2;
 
-        .notion-property-title {
+        .nt-property-title {
             @apply mt-0.5 text-lg text-gray-900;
         }
 
-        .notion-property-multi-select {
+        .nt-property-multi-select {
             @apply space-x-1;
         }
 
-        .notion-property-select {
+        .nt-property-select {
             @apply whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs;
         }
 
-        [data-property-name="Description"] .notion-property-text {
+        [data-property-name="Description"] .nt-property-text {
             @apply mt-2 line-clamp-3 text-sm/relaxed text-gray-500;
         }
 
-        [data-property-name="Date"] .notion-property-date {
+        [data-property-name="Date"] .nt-property-date {
             @apply text-xs text-gray-500;
         }
 
-        [data-property-name="Tags"] .notion-property-select {
+        [data-property-name="Tags"] .nt-property-select {
             @apply bg-yellow-200 text-black;
         }
 
-        [data-property-name="Category"] .notion-property-select {
+        [data-property-name="Category"] .nt-property-select {
             @apply bg-green-200 text-black;
         }
     }
 
-    .notrotail-page .notion-collection-item {
+    .notrotail-page .nt-collection-item {
         @apply mt-10 overflow-hidden rounded-lg border-blue-600 py-2 shadow transition hover:shadow-lg;
 
-        .notion-collection-cover {
+        .nt-collection-cover {
             @apply w-full;
             img {
                 @apply h-56 object-cover;
             }
         }
 
-        .notion-collection-property {
+        .nt-collection-property {
             @apply mt-2 w-full bg-white px-4;
         }
     }
 
-    .notrotail-collection-page .notion-collection-item {
-        .notion-collection-cover {
+    .notrotail-collection-page .nt-collection-item {
+        .nt-collection-cover {
             @apply w-full order-5;
             img {
                 @apply h-56 object-cover rounded-lg;
             }
         }
 
-        .notion-collection-property {
+        .nt-collection-property {
             @apply pr-2;
         }
 
@@ -130,7 +130,7 @@
 
         [data-property-name="Name"] {
             @apply w-full order-3;
-            .notion-property-title {
+            .nt-property-title {
                 @apply mt-0.5 text-3xl text-gray-900;
             }
         }
@@ -144,59 +144,59 @@
 /* Notro block styles*/
 @layer utilities {
     /* Notion block types */
-    .notion-selectable {
+    .nt-selectable {
         @apply px-2 py-1;
     }
 
-    .notion-text-block {
+    .nt-text-block {
         @apply text-base;
     }
 
-    .notion-header-block {
+    .nt-header-block {
         @apply mb-1 mt-8 text-3xl font-bold text-gray-900;
     }
 
-    .notion-sub_header-block {
+    .nt-sub_header-block {
         @apply mb-px mt-6 text-2xl font-bold text-gray-900;
     }
 
-    .notion-sub_sub_header-block {
+    .nt-sub_sub_header-block {
         @apply mb-px mt-4 text-xl font-bold text-gray-900;
     }
 
-    .notion-bookmark-block {
+    .nt-bookmark-block {
         @apply text-blue-500 underline;
     }
 
-    .notion-bulleted_list-block {
+    .nt-bulleted_list-block {
         @apply list-inside list-disc;
     }
 
-    .notion-numbered_list-block {
+    .nt-numbered_list-block {
         @apply list-inside list-decimal;
     }
 
-    .notion-column_list-block {
+    .nt-column_list-block {
         @apply flex flex-row;
     }
 
-    .notion-column_list-block > * {
+    .nt-column_list-block > * {
         @apply flex-1;
     }
 
-    .notion-code-block {
+    .nt-code-block {
         @apply mb-1 mt-1 bg-gray-100;
     }
 
-    .notion-quote-block {
+    .nt-quote-block {
         @apply mb-1 mt-1 bg-gray-100 p-4;
     }
 
-    .notion-callout-block {
+    .nt-callout-block {
         @apply mb-1 mt-1 rounded-md bg-gray-100 p-4 pr-3;
     }
 
-    .notion-toggle-block {
+    .nt-toggle-block {
         h1,
         h2,
         h3 {
@@ -204,113 +204,113 @@
         }
     }
 
-    .notion-column-block {
+    .nt-column-block {
         @apply flex flex-col;
     }
 
-    .notion-page-block {
+    .nt-page-block {
         @apply text-gray-500 underline;
     }
 
-    .notion-collection_view-block a {
+    .nt-collection_view-block a {
         @apply text-gray-500 underline;
     }
 
     /* Notion colors */
-    .notion-color-gray {
+    .nt-color-gray {
         @apply text-gray-200;
     }
 
-    .notion-color-brown {
+    .nt-color-brown {
         @apply text-amber-200;
     }
 
-    .notion-color-orange {
+    .nt-color-orange {
         @apply text-orange-200;
     }
 
-    .notion-color-yellow {
+    .nt-color-yellow {
         @apply text-yellow-200;
     }
 
-    .notion-color-green {
+    .nt-color-green {
         @apply text-green-200;
     }
 
-    .notion-color-blue {
+    .nt-color-blue {
         @apply text-blue-200;
     }
 
-    .notion-color-purple {
+    .nt-color-purple {
         @apply text-purple-200;
     }
 
-    .notion-color-pink {
+    .nt-color-pink {
         @apply text-pink-200;
     }
 
-    .notion-color-red {
+    .nt-color-red {
         @apply text-red-200;
     }
 
-    .notion-color-gray_background {
+    .nt-color-gray_background {
         @apply my-1 bg-gray-200;
     }
 
-    .notion-color-brown_background {
+    .nt-color-brown_background {
         @apply my-1 bg-amber-200;
     }
 
-    .notion-color-orange_background {
+    .nt-color-orange_background {
         @apply my-1 bg-orange-200;
     }
 
-    .notion-color-yellow_background {
+    .nt-color-yellow_background {
         @apply my-1 bg-yellow-200;
     }
 
-    .notion-color-green_background {
+    .nt-color-green_background {
         @apply my-1 bg-green-200;
     }
 
-    .notion-color-blue_background {
+    .nt-color-blue_background {
         @apply my-1 bg-blue-200;
     }
 
-    .notion-color-purple_background {
+    .nt-color-purple_background {
         @apply my-1 bg-purple-200;
     }
 
-    .notion-color-pink_background {
+    .nt-color-pink_background {
         @apply my-1 bg-pink-200;
     }
 
-    .notion-color-red_background {
+    .nt-color-red_background {
         @apply my-1 bg-red-200;
     }
 
     /* Notion annotations */
-    .notion-annotation-bold {
+    .nt-annotation-bold {
         @apply font-bold;
     }
-    .notion-annotation-italic {
+    .nt-annotation-italic {
         @apply italic;
     }
-    .notion-annotation-strikethrough {
+    .nt-annotation-strikethrough {
         @apply line-through;
     }
-    .notion-annotation-underline {
+    .nt-annotation-underline {
         @apply underline;
     }
-    .notion-annotation-code {
+    .nt-annotation-code {
         @apply bg-gray-200 font-mono;
     }
 
-    .notion-link {
+    .nt-link {
         @apply text-gray-500 underline;
     }
 
-    .notion-alias-block {
+    .nt-alias-block {
         @apply text-gray-500 underline;
     }
 }

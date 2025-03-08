@@ -1,10 +1,10 @@
 ---
-import type { BlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import BulletedListItemContainer from "./BulletedListItemContainer.astro";
 import NumberedListItemContainer from "./NumberedListItemContainer.astro";
 import TodoListItemContainer from "./TodoListItemContainer.astro";
+import type {BlockObjectResponseType} from "../loader/schema.ts";
 interface Props {
-  type: BlockObjectResponse["type"];
+  type: BlockObjectResponseType["type"];
 }
 
 const { type } = Astro.props;

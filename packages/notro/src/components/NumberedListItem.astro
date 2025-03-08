@@ -1,8 +1,9 @@
 ---
-import type { NumberedListItemBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import RichText from "./RichText.astro";
+import type {NumberedListItemBlockObjectResponseType} from "../loader/schema.ts";
+
 interface Props {
-  block: NumberedListItemBlockObjectResponse;
+  block: NumberedListItemBlockObjectResponseType;
 }
 
 const { block } = Astro.props;
@@ -10,7 +11,7 @@ const { block } = Astro.props;
 
 <li
   id={block.id}
-  class=`notion-selectable notion-numbered_list-block notion-color-${block.numbered_list_item.color}`
+  class=`nt-selectable nt-numbered_list-block nt-color-${block.numbered_list_item.color}`
 >
   <RichText richText={block.numbered_list_item.rich_text} />
   <slot />

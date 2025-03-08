@@ -1,14 +1,14 @@
 ---
-import type { ToDoBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import RichText from "./RichText.astro";
+import type {ToDoBlockObjectResponseType} from "../loader/schema.ts";
 interface Props {
-  block: ToDoBlockObjectResponse;
+  block: ToDoBlockObjectResponseType;
 }
 
 const { block } = Astro.props;
 ---
 
-<li id={block.id} class=`notion-selectable notion-to_do-block`>
+<li id={block.id} class=`nt-selectable nt-to_do-block`>
   <input
     id={block.id + "-input"}
     type="checkbox"

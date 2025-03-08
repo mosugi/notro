@@ -1,8 +1,8 @@
 ---
-import type { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import { Image as AstroImage } from "astro:assets";
+import type {PageObjectResponseType} from "../loader/schema.ts";
 interface Props {
-  cover: PageObjectResponse["cover"];
+  cover: PageObjectResponseType["cover"];
   alt?: string;
 }
 
@@ -17,7 +17,7 @@ const imageUrl = cover?.type === "file" ? cover?.file.url : cover?.external.url;
       src={imageUrl}
       alt={alt ?? ""}
       inferSize={true}
-      class="notion-collection-cover"
+      class="nt-collection-cover"
     />
   ) : null
 }

@@ -1,8 +1,9 @@
 ---
-import type { CalloutBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import type { CalloutBlockObjectResponseType } from "../loader/schema.ts";
 import RichText from "./RichText.astro";
+
 interface Props {
-  block: CalloutBlockObjectResponse;
+  block: CalloutBlockObjectResponseType;
 }
 
 const { block } = Astro.props;

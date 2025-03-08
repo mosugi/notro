@@ -1,12 +1,12 @@
 ---
-import type { BlockWithChildren } from "../loader/loader";
+import type {BlockObjectResponseWithChildrenType} from "../loader/schema";
 
 interface RenderOptions {
   optimizeRemoteImage: boolean;
 }
 
 export interface Props {
-  blocks: BlockWithChildren[];
+  blocks: BlockObjectResponseWithChildrenType[];
   options?: RenderOptions;
 }
 
@@ -17,7 +17,7 @@ const {
   },
 } = Astro.props;
 
-import Block from "./Block.astro";
+import Block from "./NotionBlockRenderer.astro";
 import ListItemContainer from "./ListItemContainer.astro";
 
 let tempListItems: any = [];

@@ -1,12 +1,12 @@
 ---
-import type { ColumnBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import type {ColumnBlockObjectResponseType} from "../loader/schema.ts";
 interface Props {
-  block: ColumnBlockObjectResponse;
+  block: ColumnBlockObjectResponseType;
 }
 
 const { block } = Astro.props;
 ---
 
-<div id={block.id} class=`notion-selectable notion-column-block`>
+<div id={block.id} class=`nt-selectable nt-column-block`>
   <slot />
 </div>

@@ -1,8 +1,8 @@
 ---
-import type { BookmarkBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import type {BookmarkBlockObjectResponseType} from "../loader/schema.ts";
 import RichText from "./RichText.astro";
 interface Props {
-  block: BookmarkBlockObjectResponse;
+  block: BookmarkBlockObjectResponseType;
 }
 
 const { block } = Astro.props;
@@ -10,7 +10,7 @@ const { block } = Astro.props;
 
 <a
   id={block.id}
-  class=`notion-selectable notion-bookmark-block`
+  class=`nt-selectable nt-bookmark-block`
   href={block.bookmark.url}
 >
   {

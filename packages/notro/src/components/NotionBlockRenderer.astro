@@ -1,5 +1,4 @@
 ---
-import type { BlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import Paragraph from "./Paragraph.astro";
 import Heading1 from "./Heading1.astro";
 import Heading2 from "./Heading2.astro";
@@ -19,9 +18,10 @@ import Callout from "./Callout.astro";
 import { Debug } from "astro:components";
 import LinkToPage from "./LinkToPage.astro";
 import OptimizedImage from "./OptimizedImage.astro";
+import type {BlockObjectResponseType} from "../loader/schema.ts";
 
 interface Props {
-  block: BlockObjectResponse;
+  block: BlockObjectResponseType;
   options?: RenderOptions;
 }
 
@@ -36,7 +36,7 @@ const {
   },
 } = Astro.props;
 
-const unSupportedBlockTypes: BlockObjectResponse["type"][] = [
+const unSupportedBlockTypes: BlockObjectResponseType["type"][] = [
   "synced_block",
   "child_database",
   "child_page",

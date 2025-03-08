@@ -1,9 +1,9 @@
 ---
-import type { RichTextItemResponse } from "@notionhq/client/build/src/api-endpoints";
 import { getNotionColor } from "../utils/notion";
+import type {RichTextItemResponseType} from "../loader/schema.ts";
 
 interface Props {
-  richText: Array<RichTextItemResponse>;
+  richText: Array<RichTextItemResponseType>;
 }
 
 const { richText } = Astro.props;

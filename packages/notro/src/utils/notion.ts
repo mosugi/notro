@@ -1,7 +1,7 @@
-import type { PageObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import type {PropertyPageObjectResponseType} from "../loader/schema.ts";
 
 export const getPlainText = (
-  property: PageObjectResponse["properties"][1],
+  property: PropertyPageObjectResponseType,
 ): string | undefined => {
   if (
     property?.type === "rich_text" &&
@@ -28,25 +28,25 @@ export const getPlainText = (
 };
 
 const notionColors = {
-  default: "notion-color-default",
-  gray: "notion-color-gray",
-  brown: "notion-color-brown",
-  orange: "notion-color-orange",
-  yellow: "notion-color-yellow",
-  green: "notion-color-green",
-  blue: "notion-color-blue",
-  purple: "notion-color-purple",
-  pink: "notion-color-pink",
-  red: "notion-color-red",
-  gray_background: "notion-color-gray_background",
-  brown_background: "notion-color-brown_background",
-  orange_background: "notion-color-orange_background",
-  yellow_background: "notion-color-yellow_background",
-  green_background: "notion-color-green_background",
-  blue_background: "notion-color-blue_background",
-  purple_background: "notion-color-purple_background",
-  pink_background: "notion-color-pink_background",
-  red_background: "notion-color-red_background",
+  default: "nt-color-default",
+  gray: "nt-color-gray",
+  brown: "nt-color-brown",
+  orange: "nt-color-orange",
+  yellow: "nt-color-yellow",
+  green: "nt-color-green",
+  blue: "nt-color-blue",
+  purple: "nt-color-purple",
+  pink: "nt-color-pink",
+  red: "nt-color-red",
+  gray_background: "nt-color-gray_background",
+  brown_background: "nt-color-brown_background",
+  orange_background: "nt-color-orange_background",
+  yellow_background: "nt-color-yellow_background",
+  green_background: "nt-color-green_background",
+  blue_background: "nt-color-blue_background",
+  purple_background: "nt-color-purple_background",
+  pink_background: "nt-color-pink_background",
+  red_background: "nt-color-red_background",
 } as const;
 
 type NotionColor = keyof typeof notionColors;

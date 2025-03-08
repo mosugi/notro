@@ -1,10 +1,10 @@
 ---
-import type { BlockWithChildren } from "notro";
+import type { BlockObjectResponseWithChildrenType } from "notro";
 import { Block, ListItemContainer, LinkToPage } from "notro";
 import CalloutOrContainer from "./CalloutOrContainer.astro";
 
 export interface Props {
-  blocks: BlockWithChildren[];
+  blocks: BlockObjectResponseWithChildrenType[];
   linkToPages?: Record<
     string,
     {

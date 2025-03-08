@@ -1,8 +1,7 @@
 ---
-import type { CalloutBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
-import { Callout } from "notro";
+import {Callout, type CalloutBlockObjectResponseType} from "notro";
 interface Props {
-  block: CalloutBlockObjectResponse;
+  block: CalloutBlockObjectResponseType;
 }
 
 const { block } = Astro.props;
