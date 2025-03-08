@@ -26,19 +26,14 @@ export function loader({
   queryParameters,
   clientOptions,
 }: LoaderOptions): Loader {
-  // Configure the loader
   const client = new Client(clientOptions);
 
   // Return a loader object
   return {
     name: "notro-loader",
-    // Called when updating the collection.
     load: async ({
       store,
-      logger,
       parseData,
-      meta,
-      generateDigest,
     }): Promise<void> => {
       // Load data and update the store
       const pageOrDatabases = await Array.fromAsync(

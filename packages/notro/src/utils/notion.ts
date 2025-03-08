@@ -38,6 +38,7 @@ const notionColors = {
   purple: "nt-color-purple",
   pink: "nt-color-pink",
   red: "nt-color-red",
+  default_background: "nt-color-default_background",
   gray_background: "nt-color-gray_background",
   brown_background: "nt-color-brown_background",
   orange_background: "nt-color-orange_background",

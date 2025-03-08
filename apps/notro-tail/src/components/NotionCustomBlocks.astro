@@ -1,6 +1,6 @@
 ---
 import type { BlockObjectResponseWithChildrenType } from "notro";
-import { Block, ListItemContainer, LinkToPage } from "notro";
+import { NotionBlockRenderer, ListItemContainer, LinkToPage } from "notro";
 import CalloutOrContainer from "./CalloutOrContainer.astro";
 
 export interface Props {
@@ -35,7 +35,7 @@ let tempListItems: any = [];
 ---
 
 {
-  blocks.map((block, i, array) => {
+  blocks?.map((block, i, array) => {
     const children = block.has_children ? (
       <Astro.self blocks={block.children} options={options} />
     ) : null;
@@ -67,7 +67,7 @@ let tempListItems: any = [];
       case "bulleted_list_item":
       case "numbered_list_item":
       case "to_do":
-        tempListItems.push(<Block block={block}>{children}</Block>);
+        tempListItems.push(<NotionBlockRenderer block={block}>{children}</NotionBlockRenderer>);
         if (block.type !== array[i + 1]?.type) {
           const container = (
             <ListItemContainer type={block.type}>
@@ -80,9 +80,9 @@ let tempListItems: any = [];
         return null;
       default:
         return (
-          <Block block={block} options={options}>
+          <NotionBlockRenderer block={block} options={options}>
             {children}
-          </Block>
+          </NotionBlockRenderer>
         );
     }
   })

@@ -1,5 +1,5 @@
 ---
-import { getPlainText } from "notro";
+import {type BlockObjectResponseWithChildrenType, getPlainText} from "notro";
 import { getCollection } from "astro:content";
 
 import NotionCustomBlocks from "../components/NotionCustomBlocks.astro";
@@ -45,7 +45,7 @@ const options = {
 <Layout title={entry.id}>
   <main class="nt-page" id={entry.id}>
     <NotionCustomBlocks
-      blocks={entry.data.blocks}
+      blocks={entry.data.blocks as unknown as BlockObjectResponseWithChildrenType[]}
       linkToPages={linkToPages}
       options={options}
     />

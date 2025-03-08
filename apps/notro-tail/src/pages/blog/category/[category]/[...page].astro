@@ -1,8 +1,7 @@
 ---
-import type { PageWithBlocks } from "notro";
 import type { PaginateFunction } from "astro";
 import { getCollection } from "astro:content";
-import { getPlainText } from "notro";
+import {type BlockObjectResponseWithChildrenType, getPlainText, type PageObjectResponseWithBlocksType} from "notro";
 import BlogList from "../../../../components/BlogList.astro";
 import Layout from "../../../../layouts/Layout.astro";
 
@@ -31,13 +30,13 @@ const { page } = Astro.props;
 const params = Astro.params;
 
 const currentPath = Astro.url.pathname;
-const data = page.data.map(({ data }) => data as PageWithBlocks);
+const data = page.data.map(({ data }) => data);
 ---
 
 <Layout title={params.category}>
   <main class="nt-posts">
-    <section class="notion-selectable notion-collection_view-block">
-      <BlogList posts={data} path={currentPath} />
+    <section class="nt-selectable nt-collection_view-block">
+      <BlogList posts={data as unknown as PageObjectResponseWithBlocksType[]} path={currentPath} />
     </section>
   </main>
 </Layout>

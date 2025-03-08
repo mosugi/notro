@@ -1,9 +1,8 @@
 ---
-import { DatabaseProperty, getPlainText, OptimizedDatabaseCover } from "notro";
-import type { PageWithBlocks } from "notro";
+import {DatabaseProperty, getPlainText, OptimizedDatabaseCover, type PageObjectResponseWithBlocksType} from "notro";
 
 interface Props {
-  posts: PageWithBlocks[];
+  posts: PageObjectResponseWithBlocksType[];
   path: string;
 }
 
@@ -15,7 +14,7 @@ const { posts, path } = Astro.props;
     <ul>
       {posts.map((data) => (
         <li>
-          <article class="notion-collection-item">
+          <article class="nt-collection-item">
             <a
               href={`${path}/${data.properties}${getPlainText(data.properties.Slug)}`}
             >

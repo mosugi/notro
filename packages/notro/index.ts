@@ -1,5 +1,6 @@
 export { default as Callout } from "./src/components/Callout.astro";
-export { default as Block } from "./src/components/NotionBlockRenderer.astro";
+export { default as NotionRenderer } from "./src/components/NotionRenderer.astro";
+export { default as NotionBlockRenderer } from "./src/components/NotionBlockRenderer.astro";
 export { default as ListItemContainer } from "./src/components/ListItemContainer.astro";
 export { default as LinkToPage } from "./src/components/LinkToPage.astro";
 export { default as OptimizedDatabaseCover } from "./src/components/OptimizedDatabaseCover.astro";

@@ -1,12 +1,12 @@
 ---
-import { getCollection } from "astro:content";
-import { NotionBlocks } from "notro";
+// import { getCollection } from "astro:content";
+// import { NotionRenderer } from "notro";
 
-const collection = await getCollection("posts");
+// const collection = await getCollection("posts");
 const { entry } = Astro.props;
 ---
 <html>
 <body>
-<NotionBlocks blocks={entry[0].data.blocks} />
+    <!--<NotionRenderer blocks={entry[0].data.blocks} />-->
 </body>
 </html>
