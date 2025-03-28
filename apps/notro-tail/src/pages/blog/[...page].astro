@@ -1,0 +1,31 @@
+---
+import type { PageObjectResponseType } from "notro";
+import type { PaginateFunction } from "astro";
+import { getCollection } from "astro:content";
+import BlogList from "../../components/BlogList.astro";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths({
+  paginate,
+}: {
+  paginate: PaginateFunction;
+}) {
+  const posts = await getCollection("posts");
+  return paginate(posts, {
+    pageSize: 2,
+  });
+}
+
+const { page } = Astro.props;
+
+const currentPath = Astro.url.pathname;
+const data = page.data.map(({ data }) => data as PageObjectResponseType);
+---
+
+<Layout title="Blog">
+  <main class="nt-posts">
+    <section class="nt-selectable nt-collection_view-block">
+      <BlogList posts={data} path={currentPath} />
+    </section>
+  </main>
+</Layout>

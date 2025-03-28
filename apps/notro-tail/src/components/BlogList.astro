@@ -4,7 +4,7 @@ import { DatabaseProperty, getPlainText, OptimizedDatabaseCover } from "notro";
 
 interface Props {
   posts: PageObjectResponseType[];
-  path: string;
+  path?: string;
 }
 
 const { posts, path } = Astro.props;
