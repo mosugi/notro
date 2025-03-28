@@ -4,13 +4,14 @@ import RichText from "./RichText.astro";
 
 interface Props {
   block: BulletedListItemBlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { block, id } = Astro.props;
 ---
 
 <li
-  id={block.id}
+  {id}
   class=`nt-selectable nt-bulleted_list-block nt-color-${block.bulleted_list_item.color}`
 >
   <RichText richText={block.bulleted_list_item.rich_text} />

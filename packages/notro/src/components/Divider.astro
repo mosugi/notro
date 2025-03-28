@@ -2,9 +2,10 @@
 import type { DividerBlockObjectResponseType } from "../loader/schema.ts";
 interface Props {
   block: DividerBlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { id } = Astro.props;
 ---
 
-<hr id={block.id} class=`nt-selectable nt-divider-block` />
+<hr {id} class=`nt-selectable nt-divider-block` />

@@ -25,11 +25,12 @@ const options = {
   optimizeRemoteImage: true,
   useRawHTML: true,
   useCalloutContainer: true,
+  useNotionId: false,
 };
 ---
 
-<Layout title={entry.id}>
-  <main class="nt-page" id={entry.id}>
+<Layout title={entry.data.properties.Name.title[0]?.plain_text}>
+  <main class="nt-page" id={options.useNotionId ? entry.id : undefined}>
     <NotionCustomBlocks
       blocks={entry.data.blocks as BlockObjectResponseWithChildrenType[]}
       options={options}

@@ -27,14 +27,18 @@ interface Props {
 
 interface RenderOptions {
   optimizeRemoteImage: boolean;
+  useNotionId: boolean;
 }
 
 const {
   block,
   options = {
     optimizeRemoteImage: true,
+    useNotionId: false,
   },
 } = Astro.props;
+
+const blockId = options.useNotionId ? block.id : undefined;
 
 const unSupportedBlockTypes: BlockObjectResponseType["type"][] = [
   "synced_block",
@@ -58,7 +62,7 @@ const unSupportedBlockTypes: BlockObjectResponseType["type"][] = [
 
 {
   block.type === "paragraph" && (
-    <Paragraph block={block}>
+    <Paragraph block={block} id={blockId}>
       <slot />
     </Paragraph>
   )
@@ -67,11 +71,11 @@ const unSupportedBlockTypes: BlockObjectResponseType["type"][] = [
   block.type === "heading_1" &&
     (block.heading_1.is_toggleable ? (
       <ToggleContainer>
-        <Heading1 block={block} slot="summary" />
+        <Heading1 block={block} id={blockId} slot="summary" />
         <slot />
       </ToggleContainer>
     ) : (
-      <Heading1 block={block}>
+      <Heading1 block={block} id={blockId}>
         <slot />
       </Heading1>
     ))
@@ -80,11 +84,11 @@ const unSupportedBlockTypes: BlockObjectResponseType["type"][] = [
   block.type === "heading_2" &&
     (block.heading_2.is_toggleable ? (
       <ToggleContainer>
-        <Heading2 block={block} slot="summary" />
+        <Heading2 block={block} id={blockId} slot="summary" />
         <slot />
       </ToggleContainer>
     ) : (
-      <Heading2 block={block}>
+      <Heading2 block={block} id={blockId}>
         <slot />
       </Heading2>
     ))
@@ -93,80 +97,80 @@ const unSupportedBlockTypes: BlockObjectResponseType["type"][] = [
   block.type === "heading_3" &&
     (block.heading_3.is_toggleable ? (
       <ToggleContainer>
-        <Heading3 block={block} slot="summary" />
+        <Heading3 block={block} id={blockId} slot="summary" />
         <slot />
       </ToggleContainer>
     ) : (
-      <Heading3 block={block}>
+      <Heading3 block={block} id={blockId}>
         <slot />
       </Heading3>
     ))
 }
 {
   block.type === "column_list" && (
-    <ColumnList block={block}>
+    <ColumnList block={block} id={blockId}>
       <slot />
     </ColumnList>
   )
 }
 {
   block.type === "column" && (
-    <Column block={block}>
+    <Column block={block} id={blockId}>
       <slot />
     </Column>
   )
 }
 {
   block.type === "toggle" && (
-    <ToggleContainer block={block}>
+    <ToggleContainer block={block} id={blockId}>
       <slot />
     </ToggleContainer>
   )
 }
-{block.type === "bookmark" && <Bookmark block={block} />}
-{block.type === "divider" && <Divider block={block} />}
+{block.type === "bookmark" && <Bookmark block={block} id={blockId} />}
+{block.type === "divider" && <Divider block={block} id={blockId} />}
 {
   block.type === "quote" && (
-    <Quote block={block}>
+    <Quote block={block} id={blockId}>
       <slot />
     </Quote>
   )
 }
 {
   block.type === "image" && options.optimizeRemoteImage ? (
-    <OptimizedImage block={block} />
+    <OptimizedImage block={block} id={blockId} />
   ) : (
-    block.type === "image" && <Image block={block} />
+    block.type === "image" && <Image block={block} id={blockId} />
   )
 }
-{block.type === "code" && <Code block={block} />}
+{block.type === "code" && <Code block={block} id={blockId} />}
 {
   block.type === "bulleted_list_item" && (
-    <BulletedListItem block={block}>
+    <BulletedListItem block={block} id={blockId}>
       <slot />
     </BulletedListItem>
   )
 }
 {
   block.type === "numbered_list_item" && (
-    <NumberedListItem block={block}>
+    <NumberedListItem block={block} id={blockId}>
       <slot />
     </NumberedListItem>
   )
 }
 {
   block.type === "to_do" && (
-    <TodoListItem block={block}>
+    <TodoListItem block={block} id={blockId}>
       <slot />
     </TodoListItem>
   )
 }
 {
   block.type === "callout" && (
-    <Callout block={block}>
+    <Callout block={block} id={blockId}>
       <slot />
     </Callout>
   )
 }
-{block.type === "link_to_page" && <LinkToPage block={block} />}
+{block.type === "link_to_page" && <LinkToPage block={block} id={blockId} />}
 {unSupportedBlockTypes.includes(block.type) && <Debug {block} />}

@@ -2,11 +2,12 @@
 import type { ColumnBlockObjectResponseType } from "../loader/schema.ts";
 interface Props {
   block: ColumnBlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { id } = Astro.props;
 ---
 
-<div id={block.id} class=`nt-selectable nt-column-block`>
+<div {id} class=`nt-selectable nt-column-block`>
   <slot />
 </div>

@@ -3,19 +3,16 @@ import RichText from "./RichText.astro";
 import type { ToDoBlockObjectResponseType } from "../loader/schema.ts";
 interface Props {
   block: ToDoBlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { block, id } = Astro.props;
+const inputId = `${id ?? block.id}-todo-input`;
 ---
 
-<li id={block.id} class=`nt-selectable nt-to_do-block`>
-  <input
-    id={block.id + "-input"}
-    type="checkbox"
-    checked={block.to_do.checked}
-    disabled
-  />
-  <label for={block.id + "-input"}>
+<li {id} class=`nt-selectable nt-to_do-block`>
+  <input id={inputId} type="checkbox" checked={block.to_do.checked} disabled />
+  <label for={inputId}>
     {
       block.to_do.checked ? (
         <s>

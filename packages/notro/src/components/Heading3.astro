@@ -5,13 +5,14 @@ import type { Heading3BlockObjectResponseType } from "../loader/schema.ts";
 
 interface Props {
   block: Heading3BlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { block, id } = Astro.props;
 ---
 
 <h4
-  id={block.id}
+  {id}
   class=`nt-selectable nt-sub_sub_header-block ${getNotionColor(block.heading_3.color)}`
 >
   <RichText richText={block.heading_3.rich_text} />

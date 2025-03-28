@@ -5,11 +5,12 @@ interface Props {
   block: LinkToPageBlockObjectResponseType;
   href?: string;
   text?: string;
+  id?: string;
 }
 
-const { block, href, text } = Astro.props;
+const { block, href, text, id } = Astro.props;
 ---
 
-<a id={block.id} class=`nt-selectable nt-alias-block` href={href ?? block.id}>
+<a {id} class=`nt-selectable nt-alias-block` href={href ?? block.id}>
   {text ?? block.id}
 </a>

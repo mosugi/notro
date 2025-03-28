@@ -3,14 +3,16 @@ import { Image as AstroImage } from "astro:assets";
 import type { ImageBlockObjectResponseType } from "../loader/schema.ts";
 interface Props {
   block: ImageBlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { block, id } = Astro.props;
 const imageUrl =
   block.image.type === "file" ? block.image.file.url : block.image.external.url;
 ---
 
 <AstroImage
+  {id}
   class={"nt-selectable nt-image-block"}
   src={imageUrl}
   alt={block.image.caption[0]?.plain_text ?? ""}

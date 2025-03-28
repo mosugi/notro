@@ -3,6 +3,7 @@ import type { BlockObjectResponseWithChildrenType } from "../loader/schema";
 
 interface RenderOptions {
   optimizeRemoteImage: boolean;
+  useNotionId: boolean;
 }
 
 export interface Props {
@@ -14,6 +15,7 @@ const {
   blocks,
   options = {
     optimizeRemoteImage: true,
+    useNotionId: false,
   },
 } = Astro.props;
 
