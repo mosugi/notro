@@ -3,8 +3,7 @@ import { getCollection } from "astro:content";
 import { getPlainText } from "notro";
 
 const footerPages = await getCollection("pages", ({ data }) => {
-  const type = getPlainText(data.properties.Place);
-  return type?.includes("Footer");
+  return data.properties.Type.multi_select.some((t) => t.name === "Footer");
 });
 ---
 
@@ -16,7 +15,7 @@ const footerPages = await getCollection("pages", ({ data }) => {
           {footerPages.map(({ data }) => (
             <li>
               <a href={"/" + getPlainText(data.properties.Slug)}>
-                {getPlainText(data.properties.Name)}
+                {getPlainText(data.properties.Page)}
               </a>
             </li>
           ))}

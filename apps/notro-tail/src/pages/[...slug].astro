@@ -1,54 +1,33 @@
 ---
-import { type BlockObjectResponseWithChildrenType, getPlainText } from "notro";
 import { getCollection } from "astro:content";
-
-import NotionCustomBlocks from "../components/NotionCustomBlocks.astro";
+import { getPlainText, NotionMarkdownRenderer } from "notro";
 import Layout from "../layouts/Layout.astro";
 
 export async function getStaticPaths() {
   const collection = await getCollection("pages");
+  const linkToPages = Object.fromEntries(
+    collection.map((e) => [
+      e.id,
+      {
+        url: getPlainText(e.data.properties.Slug) ?? e.id,
+        title: getPlainText(e.data.properties.Page) ?? "",
+      },
+    ])
+  );
   return collection.map((entry) => {
     const slug = getPlainText(entry.data.properties.Slug) || entry.id;
     return {
-      params: {
-        slug: slug !== "index" ? slug : undefined,
-      },
-      props: {
-        entry: entry,
-      },
+      params: { slug: slug !== "index" ? slug : undefined },
+      props: { entry, linkToPages },
     };
   });
 }
 
-const collection = await getCollection("pages");
-
-const linkToPages: Record<string, { url?: string; title?: string }> =
-  Object.fromEntries(
-    collection.map((entry) => [
-      entry.id,
-      {
-        url: getPlainText(entry.data.properties.Slug),
-        title: getPlainText(entry.data.properties.Name),
-      },
-    ]),
-  );
-
-const { entry } = Astro.props;
-
-const options = {
-  optimizeRemoteImage: true,
-  useRawHTML: true,
-  useCalloutContainer: true,
-  useNotionId: false,
-};
+const { entry, linkToPages } = Astro.props;
 ---
 
-<Layout title={entry.id}>
+<Layout title={getPlainText(entry.data.properties.Page) ?? entry.id}>
   <main class="nt-page" id={entry.id}>
-    <NotionCustomBlocks
-      blocks={entry.data.blocks as BlockObjectResponseWithChildrenType[]}
-      linkToPages={linkToPages}
-      options={options}
-    />
+    <NotionMarkdownRenderer markdown={entry.data.markdown} linkToPages={linkToPages} />
   </main>
 </Layout>

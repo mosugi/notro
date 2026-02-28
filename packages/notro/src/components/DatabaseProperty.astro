@@ -1,5 +1,4 @@
 ---
-import RichText from "./RichText.astro";
 import type { PropertyPageObjectResponseType } from "../loader/schema.ts";
 
 interface Props {
@@ -15,9 +14,9 @@ const { property } = Astro.props;
       switch (property.type) {
         case "rich_text":
           return (
-            property.rich_text && (
+            property.rich_text && property.rich_text.length > 0 && (
               <p class="nt-property-text">
-                <RichText richText={property.rich_text} />
+                {property.rich_text.map((rt) => rt.plain_text).join("")}
               </p>
             )
           );

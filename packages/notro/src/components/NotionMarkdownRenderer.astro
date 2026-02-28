@@ -1,0 +1,15 @@
+---
+import { transformNotionMarkdown } from "../markdown/transformer.ts";
+import type { LinkToPages } from "../markdown/transformer.ts";
+
+interface Props {
+  markdown: string;
+  linkToPages?: LinkToPages;
+  class?: string;
+}
+
+const { markdown, linkToPages, class: className } = Astro.props;
+const html = await transformNotionMarkdown(markdown, { linkToPages });
+---
+
+<div class:list={["nt-markdown-content", className]} set:html={html} />
