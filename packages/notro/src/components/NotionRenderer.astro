@@ -1,0 +1,57 @@
+---
+import type { BlockObjectResponseWithChildrenType } from "../loader/schema";
+
+interface RenderOptions {
+  optimizeRemoteImage: boolean;
+  useNotionId: boolean;
+}
+
+export interface Props {
+  blocks: BlockObjectResponseWithChildrenType[];
+  options?: RenderOptions;
+}
+
+const {
+  blocks,
+  options = {
+    optimizeRemoteImage: true,
+    useNotionId: false,
+  },
+} = Astro.props;
+
+import Block from "./NotionBlockRenderer.astro";
+import ListItemContainer from "./ListItemContainer.astro";
+
+let tempListItems: any = [];
+---
+
+{
+  blocks.map((block, i, array) => {
+    const children = block.has_children ? (
+      <Astro.self blocks={block.children} />
+    ) : null;
+
+    switch (block.type) {
+      case "bulleted_list_item":
+      case "numbered_list_item":
+      case "to_do":
+        tempListItems.push(<Block block={block}>{children}</Block>);
+        if (block.type !== array[i + 1]?.type) {
+          const container = (
+            <ListItemContainer type={block.type}>
+              {tempListItems}
+            </ListItemContainer>
+          );
+          tempListItems = [];
+          return container;
+        }
+        return null;
+      default:
+        return (
+          <Block block={block} options={options}>
+            {children}
+          </Block>
+        );
+    }
+  })
+}

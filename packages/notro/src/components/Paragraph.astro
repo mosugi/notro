@@ -1,17 +1,16 @@
 ---
-import type { ParagraphBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import RichText from "./RichText.astro";
+import type { ParagraphBlockObjectResponseType } from "../loader/schema.ts";
+
 interface Props {
-  block: ParagraphBlockObjectResponse;
+  block: ParagraphBlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { block, id } = Astro.props;
 ---
 
-<p
-  id={block.id}
-  class=`notion-selectable notion-text-block notion-color-${block.paragraph.color}`
->
+<p {id} class=`nt-selectable nt-text-block nt-color-${block.paragraph.color}`>
   <RichText richText={block.paragraph.rich_text} />
   <slot />
 </p>

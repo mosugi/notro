@@ -1,17 +1,19 @@
 ---
-import type { Heading3BlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import RichText from "./RichText.astro";
-import { getNotionColor } from "../utils/notion/utils";
+import { getNotionColor } from "../utils/notion";
+import type { Heading3BlockObjectResponseType } from "../loader/schema.ts";
+
 interface Props {
-  block: Heading3BlockObjectResponse;
+  block: Heading3BlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { block, id } = Astro.props;
 ---
 
 <h4
-  id={block.id}
-  class=`notion-selectable notion-sub_sub_header-block ${getNotionColor(block.heading_3.color)}`
+  {id}
+  class=`nt-selectable nt-sub_sub_header-block ${getNotionColor(block.heading_3.color)}`
 >
   <RichText richText={block.heading_3.rich_text} />
   <slot />

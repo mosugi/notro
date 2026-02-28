@@ -1,0 +1,23 @@
+---
+import { Image as AstroImage } from "astro:assets";
+import type { PageObjectResponseType } from "../loader/schema.ts";
+interface Props {
+  cover: PageObjectResponseType["cover"];
+  alt?: string;
+}
+
+const { cover, alt } = Astro.props;
+
+const imageUrl = cover?.type === "file" ? cover?.file.url : cover?.external.url;
+---
+
+{
+  imageUrl ? (
+    <AstroImage
+      src={imageUrl}
+      alt={alt ?? ""}
+      inferSize={true}
+      class="nt-collection-cover"
+    />
+  ) : null
+}

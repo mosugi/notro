@@ -1,40 +1,18 @@
 ---
-import type { ImageBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
-import { Image as AstroImage } from "astro:assets";
-import options from "virtual:notro-options";
+import type { ImageBlockObjectResponseType } from "../loader/schema.ts";
 interface Props {
-  block: ImageBlockObjectResponse;
+  block: ImageBlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { block, id } = Astro.props;
+const imageUrl =
+  block.image.type === "file" ? block.image.file.url : block.image.external.url;
 ---
 
-{
-  block.image.type === "file" ? (
-    <AstroImage
-      class={"notion-selectable notion-image-block"}
-      src={block.image.file.url}
-      alt={block.image.caption[0]?.plain_text ?? ""}
-      inferSize={true}
-    />
-  ) : null
-}
-{
-  block.image.type === "external" ? (
-    options.optimizeRemoteImage ? (
-      <AstroImage
-        id={block.id}
-        class={"notion-selectable notion-image-block"}
-        src={block.image.external.url}
-        alt={block.image.caption[0]?.plain_text ?? ""}
-        inferSize={true}
-      />
-    ) : (
-      <img
-        id={block.id}
-        src={block.image.external.url}
-        alt={block.image.caption[0]?.plain_text ?? ""}
-      />
-    )
-  ) : null
-}
+<img
+  {id}
+  class="nt-selectable nt-image-block"
+  src={imageUrl}
+  alt={block.image.caption[0]?.plain_text ?? ""}
+/>

@@ -1,7 +1,11 @@
 ---
-import { getPagesByType, PageType } from "../utils/template";
+import { getCollection } from "astro:content";
+import { getPlainText } from "notro";
 
-const footerPages = await getPagesByType(PageType.Footer);
+const footerPages = await getCollection("pages", ({ data }) => {
+  const type = getPlainText(data.properties.Place);
+  return type?.includes("Footer");
+});
 ---
 
 {
@@ -9,9 +13,11 @@ const footerPages = await getPagesByType(PageType.Footer);
     <footer>
       <div>
         <ul>
-          {footerPages.map((page) => (
+          {footerPages.map(({ data }) => (
             <li>
-              <a href={page.slug}>{page.title}</a>
+              <a href={"/" + getPlainText(data.properties.Slug)}>
+                {getPlainText(data.properties.Name)}
+              </a>
             </li>
           ))}
         </ul>

@@ -1,0 +1,320 @@
+@import "tailwindcss";
+/* Custom Callout CSS Classes */
+/* @see https://docs.astro.build/en/reference/configuration-reference/#cachedir */
+/* https://github.com/withastro/astro/blob/astro%405.7.9/packages/astro/src/content/content-layer.ts#L416-L423 */
+@source "../../.astro/data-store.json";
+@source "../../node_modules/.astro/data-store.json";
+
+@layer utilities {
+    .hero {
+        @apply mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center;
+        .container {
+            @apply mx-auto max-w-xl text-center;
+        }
+    }
+
+    .button {
+        p {
+            @apply mt-8 flex flex-wrap justify-center gap-4;
+        }
+        a {
+            @apply block w-full rounded border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-transparent hover:text-white focus:outline-none focus:ring sm:w-auto;
+        }
+    }
+
+    .features {
+        @apply grid grid-cols-2 gap-4 sm:grid-cols-3;
+        summary * {
+            @apply text-lg;
+        }
+        details {
+            @apply block rounded-xl border border-gray-100 p-4 shadow-sm hover:border-gray-200 hover:ring-1 hover:ring-gray-200 focus:outline-none focus:ring;
+        }
+    }
+}
+
+/* NotroTail*/
+@layer utilities {
+    main {
+        @apply mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8;
+    }
+
+    header {
+        @apply mx-auto flex h-16 max-w-screen-xl items-center gap-8 bg-white px-4 sm:px-6 lg:px-8;
+        nav {
+            /*@apply hidden md:block;*/
+        }
+        ul {
+            @apply flex items-center gap-6 text-sm;
+            li a {
+                @apply text-gray-500 transition hover:text-gray-500/75;
+            }
+        }
+    }
+
+    footer {
+        div {
+            @apply mx-auto mt-16 max-w-screen-xl border-t border-gray-100 bg-white px-4 pb-8 pt-16 pt-8 sm:flex sm:items-center sm:justify-between sm:px-6 lg:mt-24 lg:px-8 lg:pt-24;
+            ul {
+                @apply flex flex-wrap justify-center gap-4 text-xs lg:justify-end;
+                li a {
+                    @apply text-gray-500 transition hover:opacity-75;
+                }
+            }
+        }
+    }
+
+    .nt-collection-item {
+        @apply flex flex-wrap px-2;
+
+        .nt-property-title {
+            @apply mt-0.5 text-lg text-gray-900;
+        }
+
+        .nt-property-multi-select {
+            @apply space-x-1;
+        }
+
+        .nt-property-select {
+            @apply whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs;
+        }
+
+        [data-property-name="Description"] .nt-property-text {
+            @apply mt-2 line-clamp-3 text-sm/relaxed text-gray-500;
+        }
+
+        [data-property-name="Date"] .nt-property-date {
+            @apply text-xs text-gray-500;
+        }
+
+        [data-property-name="Tags"] .nt-property-select {
+            @apply bg-yellow-200 text-black;
+        }
+
+        [data-property-name="Category"] .nt-property-select {
+            @apply bg-green-200 text-black;
+        }
+    }
+
+    .notrotail-page .nt-collection-item {
+        @apply mt-10 overflow-hidden rounded-lg border-blue-600 py-2 shadow transition hover:shadow-lg;
+
+        .nt-collection-cover {
+            @apply w-full;
+            img {
+                @apply h-56 object-cover;
+            }
+        }
+
+        .nt-collection-property {
+            @apply mt-2 w-full bg-white px-4;
+        }
+    }
+
+    .notrotail-collection-page .nt-collection-item {
+        .nt-collection-cover {
+            @apply w-full order-5;
+            img {
+                @apply h-56 object-cover rounded-lg;
+            }
+        }
+
+        .nt-collection-property {
+            @apply pr-2;
+        }
+
+        [data-property-name="Date"] {
+            @apply order-1;
+        }
+
+        [data-property-name="Category"],
+        [data-property-name="Tags"] {
+            @apply order-2;
+        }
+
+        [data-property-name="Name"] {
+            @apply w-full order-3;
+            .nt-property-title {
+                @apply mt-0.5 text-3xl text-gray-900;
+            }
+        }
+
+        [data-property-name="Description"] {
+            @apply order-4;
+        }
+    }
+}
+
+/* Notro block styles*/
+@layer utilities {
+    /* Notion block types */
+    .nt-selectable {
+        @apply px-2 py-1;
+    }
+
+    .nt-text-block {
+        @apply text-base;
+    }
+
+    .nt-header-block {
+        @apply mb-1 mt-8 text-3xl font-bold text-gray-900;
+    }
+
+    .nt-sub_header-block {
+        @apply mb-px mt-6 text-2xl font-bold text-gray-900;
+    }
+
+    .nt-sub_sub_header-block {
+        @apply mb-px mt-4 text-xl font-bold text-gray-900;
+    }
+
+    .nt-bookmark-block {
+        @apply text-blue-500 underline;
+    }
+
+    .nt-bulleted_list-block {
+        @apply list-inside list-disc;
+    }
+
+    .nt-numbered_list-block {
+        @apply list-inside list-decimal;
+    }
+
+    .nt-column_list-block {
+        @apply flex flex-row;
+    }
+
+    .nt-column_list-block > * {
+        @apply flex-1;
+    }
+
+    .nt-code-block {
+        @apply mb-1 mt-1 bg-gray-100;
+    }
+
+    .nt-quote-block {
+        @apply mb-1 mt-1 bg-gray-100 p-4;
+    }
+
+    .nt-callout-block {
+        @apply mb-1 mt-1 rounded-md bg-gray-100 p-4 pr-3;
+    }
+
+    .nt-toggle-block {
+        h1,
+        h2,
+        h3 {
+            @apply inline-block;
+        }
+    }
+
+    .nt-column-block {
+        @apply flex flex-col;
+    }
+
+    .nt-page-block {
+        @apply text-gray-500 underline;
+    }
+
+    .nt-collection_view-block a {
+        @apply text-gray-500 underline;
+    }
+
+    /* Notion colors */
+    .nt-color-gray {
+        @apply text-gray-200;
+    }
+
+    .nt-color-brown {
+        @apply text-amber-200;
+    }
+
+    .nt-color-orange {
+        @apply text-orange-200;
+    }
+
+    .nt-color-yellow {
+        @apply text-yellow-200;
+    }
+
+    .nt-color-green {
+        @apply text-green-200;
+    }
+
+    .nt-color-blue {
+        @apply text-blue-200;
+    }
+
+    .nt-color-purple {
+        @apply text-purple-200;
+    }
+
+    .nt-color-pink {
+        @apply text-pink-200;
+    }
+
+    .nt-color-red {
+        @apply text-red-200;
+    }
+
+    .nt-color-gray_background {
+        @apply my-1 bg-gray-200;
+    }
+
+    .nt-color-brown_background {
+        @apply my-1 bg-amber-200;
+    }
+
+    .nt-color-orange_background {
+        @apply my-1 bg-orange-200;
+    }
+
+    .nt-color-yellow_background {
+        @apply my-1 bg-yellow-200;
+    }
+
+    .nt-color-green_background {
+        @apply my-1 bg-green-200;
+    }
+
+    .nt-color-blue_background {
+        @apply my-1 bg-blue-200;
+    }
+
+    .nt-color-purple_background {
+        @apply my-1 bg-purple-200;
+    }
+
+    .nt-color-pink_background {
+        @apply my-1 bg-pink-200;
+    }
+
+    .nt-color-red_background {
+        @apply my-1 bg-red-200;
+    }
+
+    /* Notion annotations */
+    .nt-annotation-bold {
+        @apply font-bold;
+    }
+    .nt-annotation-italic {
+        @apply italic;
+    }
+    .nt-annotation-strikethrough {
+        @apply line-through;
+    }
+    .nt-annotation-underline {
+        @apply underline;
+    }
+    .nt-annotation-code {
+        @apply bg-gray-200 font-mono;
+    }
+
+    .nt-link {
+        @apply text-gray-500 underline;
+    }
+
+    .nt-alias-block {
+        @apply text-gray-500 underline;
+    }
+}

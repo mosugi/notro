@@ -1,15 +1,13 @@
 ---
-import type { SyncedBlockBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import type { SyncedBlockBlockObjectResponseType } from "../loader/schema";
 interface Props {
-  block: SyncedBlockBlockObjectResponse;
+  block: SyncedBlockBlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { block, id } = Astro.props;
 ---
 
-<div
-  id={block.id}
-  class=`notion-selectable notion-transclusion_reference-block`
->
+<div {id} class=`nt-selectable nt-transclusion_reference-block`>
   <slot />
 </div>

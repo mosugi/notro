@@ -101,6 +101,10 @@ NOTION_SECRET=<NOTION_TOKEN>
 
 ### 6. Launch
 
+NotroTail needs Astro 5.0 and Node.js 22 or later
+
+```bash
+
 Install dependencies
 
 ```bash
@@ -122,10 +126,6 @@ Please create an issue for bug reports or feature requests. Any feedback is welc
 ## Roadmap
 
 [See the Github Projects roadmap](https://github.com/users/mosugi/projects/4)
-
-## License
-
-MIT
 
 ## Special Thanks
 

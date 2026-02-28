@@ -1,0 +1,39 @@
+---
+import { getCollection } from "astro:content";
+import { type BlockObjectResponseWithChildrenType, getPlainText } from "notro";
+import Layout from "../../layouts/Layout.astro";
+import NotionCustomBlocks from "../../components/NotionCustomBlocks.astro";
+
+export async function getStaticPaths() {
+  const collection = await getCollection("posts");
+  return collection.map((entry) => {
+    const slug = getPlainText(entry.data.properties.Slug) || entry.id;
+    return {
+      params: {
+        slug: slug,
+      },
+      props: {
+        entry: entry,
+      },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+
+const options = {
+  optimizeRemoteImage: true,
+  useRawHTML: true,
+  useCalloutContainer: true,
+  useNotionId: false,
+};
+---
+
+<Layout title={entry.data.properties.Name.title[0]?.plain_text}>
+  <main class="nt-page" id={options.useNotionId ? entry.id : undefined}>
+    <NotionCustomBlocks
+      blocks={entry.data.blocks as BlockObjectResponseWithChildrenType[]}
+      options={options}
+    />
+  </main>
+</Layout>

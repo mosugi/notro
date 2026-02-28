@@ -1,0 +1,31 @@
+---
+import { Callout, type CalloutBlockObjectResponseType } from "notro";
+interface Props {
+  block: CalloutBlockObjectResponseType;
+}
+
+const { block } = Astro.props;
+
+const isCustomContainer = block.callout.icon == null;
+// split by ">" and trim each class name
+const classes = block.callout.rich_text[0]?.plain_text
+  .replace(/\r?\n/g, "")
+  .split(">")
+  .map((className) => className.trim());
+---
+
+{
+  isCustomContainer && classes ? (
+    // reverse the array and wrap the slot with each class
+    classes.reverse().reduce(
+      (childElement, classNames) => {
+        return <div class={classNames}>{childElement}</div>;
+      },
+      <slot />,
+    )
+  ) : (
+    <Callout block={block}>
+      <slot />
+    </Callout>
+  )
+}

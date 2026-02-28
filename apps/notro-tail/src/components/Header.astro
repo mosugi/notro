@@ -1,7 +1,11 @@
 ---
-import { getPagesByType, PageType } from "../utils/template";
+import { getCollection } from "astro:content";
+import { getPlainText } from "notro";
 
-const headerPages = await getPagesByType(PageType.Header);
+const headerPages = await getCollection("pages", ({ data }) => {
+  const type = getPlainText(data.properties.Place);
+  return type?.includes("Header");
+});
 ---
 
 {
@@ -9,11 +13,16 @@ const headerPages = await getPagesByType(PageType.Header);
     <header>
       <nav>
         <ul>
-          {headerPages.map((page) => (
+          {headerPages.map(({ data }) => (
             <li>
-              <a href={page.slug}>{page.title}</a>
+              <a href={"/" + getPlainText(data.properties.Slug)}>
+                {getPlainText(data.properties.Name)}
+              </a>
             </li>
           ))}
+          <li>
+            <a href="/blog">Blog</a>
+          </li>
         </ul>
       </nav>
     </header>

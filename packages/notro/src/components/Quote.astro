@@ -1,13 +1,14 @@
 ---
-import type { QuoteBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 import RichText from "./RichText.astro";
+import type { QuoteBlockObjectResponseType } from "../loader/schema.ts";
 interface Props {
-  block: QuoteBlockObjectResponse;
+  block: QuoteBlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { block, id } = Astro.props;
 ---
 
-<blockquote id={block.id} class="notion-selectable notion-quote-block">
+<blockquote {id} class="nt-selectable nt-quote-block">
   <RichText richText={block.quote.rich_text} />
 </blockquote>

@@ -1,15 +1,17 @@
 ---
-import type { CalloutBlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import type { CalloutBlockObjectResponseType } from "../loader/schema.ts";
 import RichText from "./RichText.astro";
+
 interface Props {
-  block: CalloutBlockObjectResponse;
+  block: CalloutBlockObjectResponseType;
+  id?: string;
 }
 
-const { block } = Astro.props;
+const { block, id } = Astro.props;
 ---
 
 <div
-  id={block.id}
+  {id}
   class={`notion-selectable notion-callout-block notion-color-${block.callout.color}`}
 >
   <RichText richText={block.callout.rich_text} />

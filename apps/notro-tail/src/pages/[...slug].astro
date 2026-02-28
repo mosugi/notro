@@ -1,0 +1,54 @@
+---
+import { type BlockObjectResponseWithChildrenType, getPlainText } from "notro";
+import { getCollection } from "astro:content";
+
+import NotionCustomBlocks from "../components/NotionCustomBlocks.astro";
+import Layout from "../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const collection = await getCollection("pages");
+  return collection.map((entry) => {
+    const slug = getPlainText(entry.data.properties.Slug) || entry.id;
+    return {
+      params: {
+        slug: slug !== "index" ? slug : undefined,
+      },
+      props: {
+        entry: entry,
+      },
+    };
+  });
+}
+
+const collection = await getCollection("pages");
+
+const linkToPages: Record<string, { url?: string; title?: string }> =
+  Object.fromEntries(
+    collection.map((entry) => [
+      entry.id,
+      {
+        url: getPlainText(entry.data.properties.Slug),
+        title: getPlainText(entry.data.properties.Name),
+      },
+    ]),
+  );
+
+const { entry } = Astro.props;
+
+const options = {
+  optimizeRemoteImage: true,
+  useRawHTML: true,
+  useCalloutContainer: true,
+  useNotionId: false,
+};
+---
+
+<Layout title={entry.id}>
+  <main class="nt-page" id={entry.id}>
+    <NotionCustomBlocks
+      blocks={entry.data.blocks as BlockObjectResponseWithChildrenType[]}
+      linkToPages={linkToPages}
+      options={options}
+    />
+  </main>
+</Layout>

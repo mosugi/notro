@@ -1,0 +1,93 @@
+---
+import type { BlockObjectResponseWithChildrenType } from "notro";
+import { NotionBlockRenderer, ListItemContainer, LinkToPage } from "notro";
+import CalloutOrContainer from "./CalloutOrContainer.astro";
+
+export interface Props {
+  blocks: BlockObjectResponseWithChildrenType[];
+  linkToPages?: Record<
+    string,
+    {
+      url?: string;
+      title?: string;
+    }
+  >;
+  options?: RenderOptions;
+}
+
+interface RenderOptions {
+  optimizeRemoteImage: boolean;
+  useRawHTML: boolean;
+  useCalloutContainer: boolean;
+  useNotionId: boolean;
+}
+
+const {
+  blocks,
+  linkToPages,
+  options = {
+    optimizeRemoteImage: true,
+    useRawHTML: false,
+    useCalloutContainer: false,
+    useNotionId: false,
+  },
+} = Astro.props;
+
+let tempListItems: any = [];
+---
+
+{
+  blocks?.map((block, i, array) => {
+    const children = block.has_children ? (
+      <Astro.self blocks={block.children} options={options} />
+    ) : null;
+
+    if (block.type === "code" && options.useRawHTML) {
+      return <div set:html={block.code.rich_text[0]?.plain_text} />;
+    }
+
+    if (block.type === "callout" && options.useCalloutContainer) {
+      return <CalloutOrContainer block={block}>{children}</CalloutOrContainer>;
+    }
+
+    if (
+      block.type === "link_to_page" &&
+      block.link_to_page.type === "page_id" &&
+      linkToPages &&
+      linkToPages[block.link_to_page.page_id]
+    ) {
+      return (
+        <LinkToPage
+          block={block}
+          href={linkToPages[block.link_to_page.page_id].url}
+          text={linkToPages[block.link_to_page.page_id].title}
+        />
+      );
+    }
+
+    switch (block.type) {
+      case "bulleted_list_item":
+      case "numbered_list_item":
+      case "to_do":
+        tempListItems.push(
+          <NotionBlockRenderer block={block}>{children}</NotionBlockRenderer>,
+        );
+        if (block.type !== array[i + 1]?.type) {
+          const container = (
+            <ListItemContainer type={block.type}>
+              {tempListItems}
+            </ListItemContainer>
+          );
+          tempListItems = [];
+          return container;
+        }
+        return null;
+      default:
+        return (
+          <NotionBlockRenderer block={block} options={options}>
+            {children}
+          </NotionBlockRenderer>
+        );
+    }
+  })
+}

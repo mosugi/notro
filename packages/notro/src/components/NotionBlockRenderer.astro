@@ -1,0 +1,176 @@
+---
+import Paragraph from "./Paragraph.astro";
+import Heading1 from "./Heading1.astro";
+import Heading2 from "./Heading2.astro";
+import Heading3 from "./Heading3.astro";
+import ToggleContainer from "./ToggleContainer.astro";
+import ColumnList from "./ColumnList.astro";
+import Column from "./Column.astro";
+import Bookmark from "./Bookmark.astro";
+import Divider from "./Divider.astro";
+import Quote from "./Quote.astro";
+import Image from "./Image.astro";
+import Code from "./Code.astro";
+import BulletedListItem from "./BulletedListItem.astro";
+import NumberedListItem from "./NumberedListItem.astro";
+import TodoListItem from "./TodoListItem.astro";
+import Callout from "./Callout.astro";
+import { Debug } from "astro:components";
+import LinkToPage from "./LinkToPage.astro";
+import OptimizedImage from "./OptimizedImage.astro";
+import type { BlockObjectResponseType } from "../loader/schema.ts";
+
+interface Props {
+  block: BlockObjectResponseType;
+  options?: RenderOptions;
+}
+
+interface RenderOptions {
+  optimizeRemoteImage: boolean;
+  useNotionId: boolean;
+}
+
+const {
+  block,
+  options = {
+    optimizeRemoteImage: true,
+    useNotionId: false,
+  },
+} = Astro.props;
+
+const blockId = options.useNotionId ? block.id : undefined;
+
+const unSupportedBlockTypes: BlockObjectResponseType["type"][] = [
+  "synced_block",
+  "child_database",
+  "child_page",
+  "template",
+  "breadcrumb",
+  "table_of_contents",
+  "table",
+  "table_row",
+  "embed",
+  "video",
+  "audio",
+  "file",
+  "pdf",
+  "equation",
+  "link_preview",
+  "unsupported",
+];
+---
+
+{
+  block.type === "paragraph" && (
+    <Paragraph block={block} id={blockId}>
+      <slot />
+    </Paragraph>
+  )
+}
+{
+  block.type === "heading_1" &&
+    (block.heading_1.is_toggleable ? (
+      <ToggleContainer>
+        <Heading1 block={block} id={blockId} slot="summary" />
+        <slot />
+      </ToggleContainer>
+    ) : (
+      <Heading1 block={block} id={blockId}>
+        <slot />
+      </Heading1>
+    ))
+}
+{
+  block.type === "heading_2" &&
+    (block.heading_2.is_toggleable ? (
+      <ToggleContainer>
+        <Heading2 block={block} id={blockId} slot="summary" />
+        <slot />
+      </ToggleContainer>
+    ) : (
+      <Heading2 block={block} id={blockId}>
+        <slot />
+      </Heading2>
+    ))
+}
+{
+  block.type === "heading_3" &&
+    (block.heading_3.is_toggleable ? (
+      <ToggleContainer>
+        <Heading3 block={block} id={blockId} slot="summary" />
+        <slot />
+      </ToggleContainer>
+    ) : (
+      <Heading3 block={block} id={blockId}>
+        <slot />
+      </Heading3>
+    ))
+}
+{
+  block.type === "column_list" && (
+    <ColumnList block={block} id={blockId}>
+      <slot />
+    </ColumnList>
+  )
+}
+{
+  block.type === "column" && (
+    <Column block={block} id={blockId}>
+      <slot />
+    </Column>
+  )
+}
+{
+  block.type === "toggle" && (
+    <ToggleContainer block={block} id={blockId}>
+      <slot />
+    </ToggleContainer>
+  )
+}
+{block.type === "bookmark" && <Bookmark block={block} id={blockId} />}
+{block.type === "divider" && <Divider block={block} id={blockId} />}
+{
+  block.type === "quote" && (
+    <Quote block={block} id={blockId}>
+      <slot />
+    </Quote>
+  )
+}
+{
+  block.type === "image" && options.optimizeRemoteImage ? (
+    <OptimizedImage block={block} id={blockId} />
+  ) : (
+    block.type === "image" && <Image block={block} id={blockId} />
+  )
+}
+{block.type === "code" && <Code block={block} id={blockId} />}
+{
+  block.type === "bulleted_list_item" && (
+    <BulletedListItem block={block} id={blockId}>
+      <slot />
+    </BulletedListItem>
+  )
+}
+{
+  block.type === "numbered_list_item" && (
+    <NumberedListItem block={block} id={blockId}>
+      <slot />
+    </NumberedListItem>
+  )
+}
+{
+  block.type === "to_do" && (
+    <TodoListItem block={block} id={blockId}>
+      <slot />
+    </TodoListItem>
+  )
+}
+{
+  block.type === "callout" && (
+    <Callout block={block} id={blockId}>
+      <slot />
+    </Callout>
+  )
+}
+{block.type === "link_to_page" && <LinkToPage block={block} id={blockId} />}
+{unSupportedBlockTypes.includes(block.type) && <Debug {block} />}
