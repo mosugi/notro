@@ -5,7 +5,7 @@ import {
   loader,
   multiSelectPropertyPageObjectResponseSchema,
   numberPropertyPageObjectResponseSchema,
-  pageObjectResponseWithBlocksSchema,
+  pageWithMarkdownSchema,
   richTextPropertyPageObjectResponseSchema,
   selectPropertyPageObjectResponseSchema,
   titlePropertyPageObjectResponseSchema,
@@ -15,7 +15,7 @@ import { z } from "zod";
 const pagesCollection = defineCollection({
   loader: loader({
     queryParameters: {
-      database_id: import.meta.env.NOTION_PAGES_ID,
+      data_source_id: import.meta.env.NOTION_PAGES_ID,
       sorts: [
         {
           property: "Order",
@@ -33,13 +33,14 @@ const pagesCollection = defineCollection({
       auth: import.meta.env.NOTION_TOKEN,
     },
   }),
-  schema: pageObjectResponseWithBlocksSchema.extend({
+  schema: pageWithMarkdownSchema.extend({
     properties: z.object({
-      Name: titlePropertyPageObjectResponseSchema,
+      Page: titlePropertyPageObjectResponseSchema,
       Public: checkboxPropertyPageObjectResponseSchema,
       Slug: richTextPropertyPageObjectResponseSchema,
-      Place: selectPropertyPageObjectResponseSchema,
+      Type: multiSelectPropertyPageObjectResponseSchema,
       Order: numberPropertyPageObjectResponseSchema,
+      Description: richTextPropertyPageObjectResponseSchema,
     }),
   }),
 });
@@ -47,7 +48,7 @@ const pagesCollection = defineCollection({
 const postsCollection = defineCollection({
   loader: loader({
     queryParameters: {
-      database_id: import.meta.env.NOTION_POSTS_ID,
+      data_source_id: import.meta.env.NOTION_POSTS_ID,
       sorts: [
         {
           timestamp: "last_edited_time",
@@ -65,7 +66,7 @@ const postsCollection = defineCollection({
       auth: import.meta.env.NOTION_TOKEN,
     },
   }),
-  schema: pageObjectResponseWithBlocksSchema.extend({
+  schema: pageWithMarkdownSchema.extend({
     properties: z.object({
       Name: titlePropertyPageObjectResponseSchema,
       Description: richTextPropertyPageObjectResponseSchema,
