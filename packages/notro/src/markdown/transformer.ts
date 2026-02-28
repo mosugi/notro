@@ -10,6 +10,7 @@ import { colorPlugin } from "./plugins/color.ts";
 import { pageLinkPlugin } from "./plugins/page-link.ts";
 import { togglePlugin } from "./plugins/toggle.ts";
 import { cleanupPlugin } from "./plugins/cleanup.ts";
+import { notroBlocksPlugin } from "./plugins/blocks.ts";
 
 export type LinkToPages = Record<string, { url: string; title: string }>;
 
@@ -94,6 +95,7 @@ export async function transformNotionMarkdown(
     .use(columnsPlugin)
     .use(colorPlugin)
     .use(pageLinkPlugin, { linkToPages: options?.linkToPages ?? {} })
+    .use(notroBlocksPlugin)
     .use(togglePlugin)
     .use(cleanupPlugin)
     .use(rehypeStringify)
