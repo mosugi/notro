@@ -8,7 +8,7 @@
     "url": "git+https://github.com/mosugi/NotroTail.git"
   },
   "scripts": {
-    "build": "npm run build --workspace=notro",
+    "build": "npm run build --workspace=notro-tail",
     "changeset-version": "changeset version",
     "changeset-publish": "npm run build && changeset publish"
   },
