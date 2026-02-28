@@ -2,10 +2,10 @@ import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
-import { ProxyAgent, setGlobalDispatcher } from "undici";
 
 const httpsProxy = process.env.https_proxy || process.env.HTTPS_PROXY;
 if (httpsProxy) {
+  const { ProxyAgent, setGlobalDispatcher } = await import("undici");
   setGlobalDispatcher(new ProxyAgent(httpsProxy));
 }
 
