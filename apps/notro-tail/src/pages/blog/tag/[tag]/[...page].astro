@@ -1,9 +1,9 @@
 ---
-import type { PageObjectResponseType } from "notro";
 import type { PaginateFunction } from "astro";
 import { getCollection } from "astro:content";
-import BlogList from "../components/BlogList.astro";
-import Layout from "../layouts/Layout.astro";
+import BlogList from "../../../../components/BlogList.astro";
+import Layout from "../../../../layouts/Layout.astro";
+import type { PageObjectResponseType } from "notro";
 
 export async function getStaticPaths({
   paginate,
@@ -11,17 +11,31 @@ export async function getStaticPaths({
   paginate: PaginateFunction;
 }) {
   const posts = await getCollection("posts");
-  return paginate(posts, {
-    pageSize: 10,
+  const tags = [
+    ...new Set(
+      posts.flatMap((entry) =>
+        entry.data.properties.Tags.multi_select.map((tag) => tag.name),
+      ),
+    ),
+  ];
+  return tags.flatMap((tag) => {
+    const filteredPosts = posts.filter((post) =>
+      post.data.properties.Tags.multi_select.some((t) => t.name === tag),
+    );
+    return paginate(filteredPosts, {
+      params: { tag },
+      pageSize: 10,
+    });
   });
 }
 
 const { page } = Astro.props;
+const { tag } = Astro.params;
 
 const data = page.data.map(({ data }) => data as PageObjectResponseType);
 ---
 
-<Layout title="Blog">
+<Layout title={`タグ: ${tag}`}>
   <main class="nt-posts">
     <section class="nt-selectable nt-collection_view-block">
       <BlogList posts={data} />
