@@ -13,4 +13,7 @@ export { default as NotionTable } from "./src/components/notion/NotionTable.astr
 export * from "./src/utils/notion";
 export * from "./src/loader/loader";
 export * from "./src/loader/schema";
-export { notroMarkdownConfig } from "./src/markdown/notroMarkdownConfig";
+// notroMarkdownConfig is intentionally NOT exported from here.
+// Import it from "notro/config" in astro.config.mjs to avoid pulling
+// markdown plugins into the main package graph (which would break
+// Vite config evaluation via the .astro re-exports above).
