@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import type { PageObjectResponseType } from "../loader/schema.ts";
 interface Props {
   cover: PageObjectResponseType["cover"];
@@ -12,10 +13,13 @@ const imageUrl = cover?.type === "file" ? cover?.file.url : cover?.external?.url
 
 {
   imageUrl ? (
-    <img
-      src={imageUrl}
-      alt={alt ?? ""}
-      class="nt-collection-cover"
-    />
+    <div class="nt-collection-cover">
+      <Image
+        src={imageUrl}
+        alt={alt ?? ""}
+        width={1200}
+        height={630}
+      />
+    </div>
   ) : null
 }

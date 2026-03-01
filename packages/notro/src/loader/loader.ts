@@ -18,6 +18,13 @@ type LoaderOptions = {
   clientOptions: ClientOptions;
 };
 
+// Notion file-type covers and inline images use pre-signed S3 URLs that expire after ~1 hour.
+// If any are present in a cached entry, it must be re-fetched to get fresh URLs.
+function hasNotionPresignedUrl(data: PageWithMarkdownType): boolean {
+  if (data.cover?.type === "file") return true;
+  return /X-Amz-Algorithm|prod-files-secure\.s3/.test(data.markdown);
+}
+
 // Define any options that the loader needs
 export function loader({
   queryParameters,
@@ -36,12 +43,16 @@ export function loader({
 
       const pages = pageOrDatabases.filter((page) => isFullPage(page));
 
-      // Delete expired or deleted pages
-      store.entries().forEach(([id, { digest }]) => {
-        if (
-          !pages.some((page) => page.id === id) ||
-          pages.some((page) => page.id === id && digest !== page.last_edited_time)
-        ) {
+      // Delete entries that are removed, edited, or contain expired pre-signed URLs
+      store.entries().forEach(([id, { digest, data }]) => {
+        const isDeleted = !pages.some((page) => page.id === id);
+        const isEdited = pages.some(
+          (page) => page.id === id && digest !== page.last_edited_time,
+        );
+        const hasExpiredUrls = hasNotionPresignedUrl(
+          data as PageWithMarkdownType,
+        );
+        if (isDeleted || isEdited || hasExpiredUrls) {
           logger.info(`Deleting page ${id} from store`);
           store.delete(id);
         }
