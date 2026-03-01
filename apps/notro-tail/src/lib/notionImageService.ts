@@ -25,7 +25,7 @@ const notionImageService = {
   getURL(
     options: Parameters<typeof sharpImageService.getURL>[0],
     serviceConfig: Parameters<typeof sharpImageService.getURL>[1],
-  ): string {
+  ): ReturnType<typeof sharpImageService.getURL> {
     return sharpImageService.getURL(
       {
         ...options,
