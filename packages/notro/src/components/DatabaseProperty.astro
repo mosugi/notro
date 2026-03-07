@@ -65,7 +65,6 @@ const { property, name } = Astro.props;
         case "url":
         case "verification":
         default:
-          console.log("Unsupported property type: " + property.type);
           return null;
       }
     })()
