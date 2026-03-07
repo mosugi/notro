@@ -3,7 +3,7 @@ import type { PaginateFunction } from "astro";
 import { getCollection } from "astro:content";
 import BlogList from "../../../../components/BlogList.astro";
 import Layout from "../../../../layouts/Layout.astro";
-import type { PageObjectResponseType } from "notro";
+import Pagination from "../../../../components/Pagination.astro";
 
 export async function getStaticPaths({
   paginate,
@@ -32,7 +32,7 @@ export async function getStaticPaths({
 const { page } = Astro.props;
 const { tag } = Astro.params;
 
-const data = page.data.map(({ data }) => data as PageObjectResponseType);
+const data = page.data.map(({ data }) => data);
 ---
 
 <Layout title={`タグ: ${tag}`}>
@@ -41,34 +41,11 @@ const data = page.data.map(({ data }) => data as PageObjectResponseType);
       <h1 class="text-3xl font-bold text-gray-900">タグ: {tag}</h1>
     </div>
     <BlogList posts={data} />
-    {
-      page.lastPage > 1 && (
-        <nav class="mt-10 flex items-center justify-center gap-4 text-sm">
-          {page.url.prev ? (
-            <a
-              href={page.url.prev}
-              class="rounded-md border border-gray-200 px-4 py-2 text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
-            >
-              ← 前へ
-            </a>
-          ) : (
-            <span class="px-4 py-2 text-gray-300">← 前へ</span>
-          )}
-          <span class="text-gray-500">
-            {page.currentPage} / {page.lastPage}
-          </span>
-          {page.url.next ? (
-            <a
-              href={page.url.next}
-              class="rounded-md border border-gray-200 px-4 py-2 text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
-            >
-              次へ →
-            </a>
-          ) : (
-            <span class="px-4 py-2 text-gray-300">次へ →</span>
-          )}
-        </nav>
-      )
-    }
+    <Pagination
+      currentPage={page.currentPage}
+      lastPage={page.lastPage}
+      prevUrl={page.url.prev}
+      nextUrl={page.url.next}
+    />
   </main>
 </Layout>

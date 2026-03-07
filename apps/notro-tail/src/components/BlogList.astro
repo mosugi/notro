@@ -1,9 +1,9 @@
 ---
-import type { PageObjectResponseType } from "notro";
+import type { CollectionEntry } from "astro:content";
 import { getPlainText, OptimizedDatabaseCover } from "notro";
 
 interface Props {
-  posts: PageObjectResponseType[];
+  posts: CollectionEntry<"posts">["data"][];
 }
 
 const { posts } = Astro.props;
