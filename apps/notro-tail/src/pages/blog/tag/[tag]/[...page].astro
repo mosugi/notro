@@ -3,7 +3,7 @@ import type { PaginateFunction } from "astro";
 import { getCollection } from "astro:content";
 import BlogList from "../../../../components/BlogList.astro";
 import Layout from "../../../../layouts/Layout.astro";
-import type { PageObjectResponseType } from "notro";
+import Pagination from "../../../../components/Pagination.astro";
 
 export async function getStaticPaths({
   paginate,
@@ -32,18 +32,20 @@ export async function getStaticPaths({
 const { page } = Astro.props;
 const { tag } = Astro.params;
 
-const data = page.data.map(({ data }) => data as PageObjectResponseType);
+const data = page.data.map(({ data }) => data);
 ---
 
 <Layout title={`タグ: ${tag}`}>
-  <main class="nt-posts">
-    <section class="nt-selectable nt-collection_view-block">
-      <BlogList posts={data} />
-    </section>
-    <nav class="nt-pagination">
-      {page.url.prev && <a href={page.url.prev}>← 前へ</a>}
-      <span>{page.currentPage} / {page.lastPage}</span>
-      {page.url.next && <a href={page.url.next}>次へ →</a>}
-    </nav>
+  <main class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">タグ: {tag}</h1>
+    </div>
+    <BlogList posts={data} />
+    <Pagination
+      currentPage={page.currentPage}
+      lastPage={page.lastPage}
+      prevUrl={page.url.prev}
+      nextUrl={page.url.next}
+    />
   </main>
 </Layout>

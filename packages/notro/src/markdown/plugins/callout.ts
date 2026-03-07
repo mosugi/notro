@@ -2,12 +2,7 @@ import type { Plugin } from "unified";
 import type { Root } from "mdast";
 import type { ContainerDirective } from "mdast-util-directive";
 import { visit } from "unist-util-visit";
-
-// Notion Enhanced Markdown uses "_bg" suffix for background colors.
-// Normalize to "_background" to match CSS class names.
-function normalizeColor(color: string): string {
-  return color.endsWith("_bg") ? color.slice(0, -3) + "_background" : color;
-}
+import { normalizeColor } from "./color.ts";
 
 // Transforms :::callout{icon="💡" color="gray_bg"} container directives
 // into <div class="nt-callout-block"> elements before remark-rehype runs.

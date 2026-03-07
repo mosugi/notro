@@ -16,7 +16,6 @@ export default defineConfig({
 
   markdown: notroMarkdownConfig(),
 
-
   image: {
     service: notionImageServiceConfig(),
     remotePatterns: [

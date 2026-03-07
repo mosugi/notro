@@ -28,15 +28,14 @@ notro-tail/
 │       │   ├── layouts/     # Layout.astro (base HTML shell)
 │       │   ├── lib/         # notionImageService.ts (custom Astro image service)
 │       │   ├── pages/       # File-based routing
-│       │   │   ├── [...slug].astro          # General pages from Notion "pages" collection
+│       │   │   ├── index.astro              # Top page
 │       │   │   └── blog/
 │       │   │       ├── [...page].astro      # Paginated blog list
 │       │   │       ├── [slug].astro         # Individual blog posts
-│       │   │       ├── category/[category]/[...page].astro
 │       │   │       └── tag/[tag]/[...page].astro
 │       │   ├── styles/
 │       │   │   └── global.css  # TailwindCSS 4 imports + nt-* utility classes
-│       │   ├── content.config.ts  # Astro Content Collections (pages + posts)
+│       │   ├── content.config.ts  # Astro Content Collections (posts)
 │       │   └── env.d.ts
 │       ├── astro.config.mjs
 │       ├── package.json
@@ -45,7 +44,7 @@ notro-tail/
 │   └── notro/               # npm library ("notro" package)
 │       ├── index.ts         # Public API exports
 │       ├── src/
-│       │   ├── components/  # Astro components (NotionImage, NotionH1-3, etc.)
+│       │   ├── components/  # Astro components (NotionMarkdownRenderer, OptimizedDatabaseCover, DatabaseProperty)
 │       │   ├── loader/
 │       │   │   ├── loader.ts    # Astro Content Loader implementation
 │       │   │   └── schema.ts    # Zod schemas for Notion API response types
@@ -78,27 +77,31 @@ notro-tail/
 
 ### Content Loading Flow
 
-1. **Astro Content Collections** (`content.config.ts`) define two collections: `pages` and `posts`.
+1. **Astro Content Collections** (`content.config.ts`) defines the `posts` collection (the template app; extend as needed for additional collections).
 2. Each collection uses the `loader()` from `notro`, which calls the Notion Public API (`dataSources.query` + `pages.retrieveMarkdown`).
 3. The loader caches pages by `last_edited_time` digest, and invalidates cache entries that are deleted, edited, or contain expired Notion pre-signed S3 URLs.
-4. Each page's Markdown body is stored in the Content Collection store; `entry.render()` processes it through the `notroMarkdownConfig()` plugin pipeline.
+4. Each page's preprocessed Markdown is stored in the Content Collection store. Pages render it via `NotionMarkdownRenderer`, which runs the full remark/rehype plugin pipeline through `transformNotionMarkdown()`.
 
 ### Markdown Plugin Pipeline
 
 Configured in `astro.config.mjs` via `notroMarkdownConfig()` from `notro/config`:
 
 **Remark plugins** (parse Markdown → mdast):
+- `remark-gfm` — GitHub Flavored Markdown (tables, strikethrough, etc.)
+- `remark-math` — enables `$...$` inline and `$$...$$` block math syntax
 - `remark-directive` — enables `:::callout` directive syntax
 - `calloutPlugin` — converts Notion callout directives to HTML
 
 **Rehype plugins** (transform hast → HTML):
 - `rehypeRaw` — must be first; parses raw HTML tags from Notion markdown
+- `rehypeKatex` — renders math nodes as KaTeX HTML
 - `imagePlugin` — wraps Notion images
 - `columnsPlugin` — handles Notion column layouts
 - `colorPlugin` — maps Notion color names to `nt-color-*` CSS classes
 - `pageLinkPlugin` — resolves `<page url="...">` tags to internal or external links
 - `mediaPlugin` — embeds videos and other media
-- `tableOfContentsPlugin` — generates TOC
+- `tableOfContentsPlugin` — generates TOC; injects IDs on headings
+- `tablePlugin` — adds header-row/header-column support to Notion tables
 - `togglePlugin` — renders Notion toggles as `<details>`/`<summary>`
 - `cleanupPlugin` — final cleanup pass
 
@@ -106,20 +109,22 @@ Configured in `astro.config.mjs` via `notroMarkdownConfig()` from `notro/config`
 
 `apps/notro-tail/src/lib/notionImageService.ts` wraps Astro's Sharp image service to strip expiring `X-Amz-*` query parameters from Notion pre-signed S3 URLs before computing the cache key, so repeated builds reuse cached output.
 
-### Component Mapping
+### Markdown Rendering
 
-Pages use `entry.render()` with a `components` prop to replace default HTML elements with Notion-styled Astro components:
+Pages render Notion markdown via the `NotionMarkdownRenderer` component from `notro`. It accepts preprocessed markdown stored by the loader and runs it through `transformNotionMarkdown()`:
 
 ```astro
-<Content components={{
-  img: NotionImage,
-  h1: NotionH1,
-  h2: NotionH2,
-  h3: NotionH3,
-  blockquote: NotionBlockquote,
-  table: NotionTable,
-}} />
+---
+import { NotionMarkdownRenderer } from "notro";
+const markdown = entry.data.markdown;
+---
+
+<div class="nt-markdown-content">
+  <NotionMarkdownRenderer markdown={markdown} />
+</div>
 ```
+
+An optional `linkToPages` prop (a `Record<string, { url: string; title: string }>` map) can be passed to `pageLinkPlugin` to resolve internal Notion page links.
 
 ### CSS Conventions
 
@@ -138,8 +143,7 @@ All Notion-specific CSS classes use the `nt-` prefix (defined in `global.css`):
 | Variable | Description |
 |---|---|
 | `NOTION_TOKEN` | Notion Internal Integration Token (API key) |
-| `NOTION_PAGES_ID` | Notion data source ID for the `pages` collection |
-| `NOTION_POSTS_ID` | Notion data source ID for the `posts` collection |
+| `NOTION_DATASOURCE_ID` | Notion data source ID for the `posts` collection |
 
 ### For Vercel Deployment (Claude Code on the Web)
 
@@ -234,19 +238,6 @@ The package's `exports` map:
 
 ## Notion Database Schema Conventions
 
-### `pages` collection
-
-| Property | Type | Purpose |
-|---|---|---|
-| `Page` | title | Page display name |
-| `Public` | checkbox | Whether to include in build |
-| `Slug` | rich_text | URL slug (falls back to Notion ID) |
-| `Type` | multi_select | `"Header"` marks page for nav; other values for categorization |
-| `Order` | number | Sort order in navigation |
-| `Description` | rich_text | Page description |
-
-The index page is the entry with `Slug = "index"` (rendered at `/`).
-
 ### `posts` collection
 
 | Property | Type | Purpose |
@@ -292,6 +283,5 @@ print('Error:', d.get('errorMessage', 'none'))
 
 ## Known Issues / TODOs
 
-- `//FIXME` in `packages/notro/src/loader/loader.ts:108`: Notion API has a 3 requests/second rate limit. Currently all pages are fetched with `Promise.all`. A `p-queue` with retry logic should be implemented to respect this limit.
+- `//FIXME` in `packages/notro/src/loader/loader.ts:113`: Notion API has a 3 requests/second rate limit. Currently all pages are fetched with `Promise.all`. A `p-queue` with retry logic should be implemented to respect this limit.
 - Truncated Notion markdown (`markdownResponse.truncated === true`) is logged as a warning but not handled with paginated retrieval yet.
-- `pageSize: 2` in `blog/[...page].astro` is a development placeholder — adjust for production use.
