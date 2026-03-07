@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import {
   NotionImage,
   NotionH1,
@@ -29,7 +29,7 @@ const description = getPlainText(entry.data.properties.Description);
 const date = entry.data.properties.Date.date?.start;
 const tags = entry.data.properties.Tags.multi_select;
 
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 ---
 
 <Layout title={title}>
