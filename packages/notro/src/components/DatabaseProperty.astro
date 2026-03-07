@@ -46,24 +46,13 @@ const { property, name } = Astro.props;
             )
           );
         case "title":
-        case "button":
-        case "checkbox":
-        case "created_by":
-        case "created_time":
-        case "email":
-        case "files":
-        case "formula":
-        case "last_edited_by":
-        case "last_edited_time":
-        case "number":
-        case "people":
-        case "phone_number":
-        case "relation":
-        case "rollup":
-        case "status":
-        case "unique_id":
-        case "url":
-        case "verification":
+          return (
+            property.title && property.title.length > 0 && (
+              <p class="nt-property-text">
+                {property.title.map((t) => t.plain_text).join("")}
+              </p>
+            )
+          );
         default:
           return null;
       }

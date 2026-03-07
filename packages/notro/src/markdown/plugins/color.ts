@@ -29,14 +29,14 @@ export const colorPlugin: Plugin<[], Root> = () => {
       const color = node.properties?.color as string | undefined;
       if (color) {
         classes.push(`nt-color-${normalizeColor(color)}`);
-        delete node.properties!.color;
+        delete node.properties.color;
       }
 
       // Handle underline attribute: <span underline="true"> → nt-annotation-underline
       const underline = node.properties?.underline as string | undefined;
       if (underline === "true" || underline === "") {
         classes.push("nt-annotation-underline");
-        delete node.properties!.underline;
+        delete node.properties.underline;
       }
 
       if (classes.length > 0) {

@@ -13,12 +13,7 @@ export const mediaPlugin: Plugin<[], Root> = () => {
     visit(tree, "element", (node: Element) => {
       const src = node.properties?.src as string | undefined;
 
-      if (node.tagName === "audio") {
-        node.properties = { ...(src ? { src } : {}), controls: true };
-        return;
-      }
-
-      if (node.tagName === "video") {
+      if (node.tagName === "audio" || node.tagName === "video") {
         node.properties = { ...(src ? { src } : {}), controls: true };
         return;
       }
