@@ -3,12 +3,13 @@ import type { PropertyPageObjectResponseType } from "../loader/schema.ts";
 
 interface Props {
   property: PropertyPageObjectResponseType;
+  name?: string;
 }
 
-const { property } = Astro.props;
+const { property, name } = Astro.props;
 ---
 
-<div class="nt-collection-property" data-property-id={property.id}>
+<div class="nt-collection-property" data-property-id={property.id} data-property-name={name}>
   {
     (() => {
       switch (property.type) {
