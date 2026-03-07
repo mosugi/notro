@@ -3,17 +3,11 @@ import type { PropertyPageObjectResponseType } from "../loader/schema.ts";
 export const getPlainText = (
   property: PropertyPageObjectResponseType,
 ): string | undefined => {
-  if (
-    property?.type === "rich_text" &&
-    property.rich_text[0]?.plain_text !== undefined
-  ) {
-    return property.rich_text[0].plain_text;
+  if (property?.type === "rich_text" && property.rich_text.length > 0) {
+    return property.rich_text.map((t) => t.plain_text).join("");
   }
-  if (
-    property?.type === "title" &&
-    property.title[0]?.plain_text !== undefined
-  ) {
-    return property.title[0].plain_text;
+  if (property?.type === "title" && property.title.length > 0) {
+    return property.title.map((t) => t.plain_text).join("");
   }
   if (property?.type === "select" && property.select?.name !== undefined) {
     return property.select.name;

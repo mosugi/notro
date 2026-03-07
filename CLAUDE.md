@@ -87,17 +87,21 @@ notro-tail/
 Configured in `astro.config.mjs` via `notroMarkdownConfig()` from `notro/config`:
 
 **Remark plugins** (parse Markdown → mdast):
+- `remark-gfm` — GitHub Flavored Markdown (tables, strikethrough, etc.)
+- `remark-math` — enables `$...$` inline and `$$...$$` block math syntax
 - `remark-directive` — enables `:::callout` directive syntax
 - `calloutPlugin` — converts Notion callout directives to HTML
 
 **Rehype plugins** (transform hast → HTML):
 - `rehypeRaw` — must be first; parses raw HTML tags from Notion markdown
+- `rehypeKatex` — renders math nodes as KaTeX HTML
 - `imagePlugin` — wraps Notion images
 - `columnsPlugin` — handles Notion column layouts
 - `colorPlugin` — maps Notion color names to `nt-color-*` CSS classes
 - `pageLinkPlugin` — resolves `<page url="...">` tags to internal or external links
 - `mediaPlugin` — embeds videos and other media
-- `tableOfContentsPlugin` — generates TOC
+- `tableOfContentsPlugin` — generates TOC; injects IDs on headings
+- `tablePlugin` — adds header-row/header-column support to Notion tables
 - `togglePlugin` — renders Notion toggles as `<details>`/`<summary>`
 - `cleanupPlugin` — final cleanup pass
 
