@@ -1,0 +1,55 @@
+---
+import { getCollection } from "astro:content";
+import { NotionMarkdownRenderer, getPlainText } from "notro";
+import Layout from "../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+  return posts.map((entry) => ({
+    params: { slug: getPlainText(entry.data.properties.Slug) || entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+
+const title = getPlainText(entry.data.properties.Name) ?? entry.id;
+const description = getPlainText(entry.data.properties.Description);
+const date = entry.data.properties.Date.date?.start;
+const tags = entry.data.properties.Tags.multi_select;
+const markdown = entry.data.markdown;
+---
+
+<Layout title={title}>
+  <main class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
+    <article class="mx-auto max-w-3xl">
+      <header class="mb-8 border-b border-gray-100 pb-6">
+        <h1 class="mb-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{title}</h1>
+        {description && <p class="mb-4 text-lg text-gray-500">{description}</p>}
+        <div class="flex flex-wrap items-center gap-3">
+          {date && <time datetime={date} class="text-sm text-gray-400">{date}</time>}
+          {
+            tags.length > 0 && (
+              <ul class="flex list-none flex-wrap gap-1.5">
+                {tags.map((tag) => (
+                  <li>
+                    <a
+                      href={`/blog/tag/${tag.name}/`}
+                      class="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 transition hover:bg-gray-200"
+                    >
+                      {tag.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+      </header>
+
+      <div class="nt-markdown-content">
+        <NotionMarkdownRenderer markdown={markdown} />
+      </div>
+    </article>
+  </main>
+</Layout>

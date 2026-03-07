@@ -1,6 +1,6 @@
 ---
 import type { PageObjectResponseType } from "notro";
-import { DatabaseProperty, getPlainText, OptimizedDatabaseCover } from "notro";
+import { getPlainText, OptimizedDatabaseCover } from "notro";
 
 interface Props {
   posts: PageObjectResponseType[];
@@ -11,21 +11,51 @@ const { posts } = Astro.props;
 
 {
   posts.length > 0 ? (
-    <ul>
-      {posts.map((data) => (
-        <li>
-          <article class="nt-collection-item">
-            <OptimizedDatabaseCover
-              cover={data.cover}
-              alt={getPlainText(data.properties.Name)}
-            />
-            <DatabaseProperty property={data.properties.Date} />
-            <span>{getPlainText(data.properties.Name)}</span>
-            <DatabaseProperty property={data.properties.Description} />
-            <DatabaseProperty property={data.properties.Tags} />
-          </article>
-        </li>
-      ))}
+    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((data) => {
+        const slug = getPlainText(data.properties.Slug) || data.id;
+        const title = getPlainText(data.properties.Name);
+        const description = getPlainText(data.properties.Description);
+        const date = data.properties.Date?.type === "date" ? data.properties.Date.date?.start : undefined;
+        const tags = data.properties.Tags?.type === "multi_select" ? data.properties.Tags.multi_select : [];
+        return (
+          <li>
+            <a href={`/blog/${slug}/`} class="group block h-full">
+              <article class="h-full overflow-hidden rounded-lg border border-gray-200 bg-white transition hover:border-gray-300 hover:shadow-md">
+                <OptimizedDatabaseCover
+                  cover={data.cover}
+                  alt={title}
+                  class="[&_img]:h-44 [&_img]:w-full [&_img]:object-cover"
+                />
+                <div class="p-4">
+                  {date && (
+                    <time datetime={date} class="text-xs text-gray-400">
+                      {date}
+                    </time>
+                  )}
+                  <p class="mt-1 line-clamp-2 text-base font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
+                    {title}
+                  </p>
+                  {description && (
+                    <p class="mt-1 line-clamp-2 text-sm text-gray-500">
+                      {description}
+                    </p>
+                  )}
+                  {tags.length > 0 && (
+                    <div class="mt-2 flex flex-wrap gap-1">
+                      {tags.map((tag) => (
+                        <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+                          {tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </article>
+            </a>
+          </li>
+        );
+      })}
     </ul>
   ) : null
 }
