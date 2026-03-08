@@ -48,6 +48,11 @@ const data = page.data.map(({ data }) => data);
         <BlogList posts={pinnedPostsData} />
       </section>
     )}
+    {page.currentPage > 1 && pinnedPostsData.length > 0 && (
+      <p class="mb-6 text-sm text-gray-500">
+        <a href="/blog/" class="text-sky-600 hover:underline">← ピン留め記事</a>は1ページ目にあります
+      </p>
+    )}
     <BlogList posts={data} />
     <Pagination
       currentPage={page.currentPage}

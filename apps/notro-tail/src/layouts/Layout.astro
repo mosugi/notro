@@ -5,21 +5,28 @@ import Footer from "../components/Footer.astro";
 
 interface Props {
   title: string;
+  description?: string;
   bodyClass?: string;
 }
 
-const { title, bodyClass } = Astro.props;
+const { title, description, bodyClass } = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 ---
 
 <!doctype html>
 <html>
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
+    <meta name="description" content={description ?? ""} />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="canonical" href={canonicalUrl.toString()} />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={canonicalUrl.toString()} />
     <title>{title}</title>
   </head>
   <body class={bodyClass}>

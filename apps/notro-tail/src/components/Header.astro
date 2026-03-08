@@ -16,6 +16,22 @@ const fixedPages = navPages.flatMap((cfg) => {
     title: cfg.label ?? getPlainText(entry.data.properties.Name) ?? cfg.slug,
   }];
 });
+
+const pathname = Astro.url.pathname;
+const fixedSlugs = new Set(fixedPages.map((p) => `/blog/${p.slug}/`));
+
+// A link is "active" when the current pathname matches or starts with its href.
+// Blog is excluded when a fixed page (e.g. /blog/about/) is the current page.
+const isActive = (href: string) => {
+  if (href === "/") return pathname === "/";
+  if (href === "/blog/") return pathname.startsWith("/blog/") && !fixedSlugs.has(pathname);
+  return pathname === href || pathname.startsWith(href);
+};
+
+const linkClass = (href: string) =>
+  isActive(href)
+    ? "font-medium text-gray-900 transition"
+    : "text-gray-500 transition hover:text-gray-900";
 ---
 
 <header class="sticky top-0 z-10 border-b border-gray-100 bg-white">
@@ -25,18 +41,23 @@ const fixedPages = navPages.flatMap((cfg) => {
     </a>
     <nav>
       <ul class="flex items-center gap-6 text-sm">
-        <li><a href="/" class="text-gray-500 transition hover:text-gray-900">Home</a></li>
-        <li><a href="/blog/" class="text-gray-500 transition hover:text-gray-900">Blog</a></li>
+        <li><a href="/" class={linkClass("/")}>Home</a></li>
+        <li><a href="/blog/" class={linkClass("/blog/")}>Blog</a></li>
         {fixedPages.map((p) => (
           <li>
-            <a href={`/blog/${p.slug}/`} class="text-gray-500 transition hover:text-gray-900">
+            <a href={`/blog/${p.slug}/`} class={linkClass(`/blog/${p.slug}/`)}>
               {p.title}
             </a>
           </li>
         ))}
         {/* Static Astro page: links to the "How this site is built" documentation page */}
         <li>
-          <a href="/contact/" class="rounded-md bg-blue-600 px-3 py-1.5 text-white transition hover:bg-blue-500">
+          <a
+            href="/contact/"
+            class={isActive("/contact/")
+              ? "rounded-md bg-blue-700 px-3 py-1.5 text-white transition"
+              : "rounded-md bg-blue-600 px-3 py-1.5 text-white transition hover:bg-blue-500"}
+          >
             Docs
           </a>
         </li>
