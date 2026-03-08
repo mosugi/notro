@@ -114,9 +114,9 @@ const markdown = `# Sample 21: Inter-Page Links
 
 Notionの「ページメンション」は、ビルド時に同サイト内のURLへ解決されます。
 
-- サイト概要: <page url="${aboutUrl}">About</page>
-- 見出しサンプル: <page url="${s01Url}">Sample 01: Headings & Paragraphs</page>
-- 書式サンプル: <page url="${s02Url}">Sample 02: Inline Formatting</page>
+- サイト概要: [About](${aboutUrl})
+- 見出しサンプル: [Sample 01: Headings & Paragraphs](${s01Url})
+- 書式サンプル: [Sample 02: Inline Formatting](${s02Url})
 
 ## まとめ
 
