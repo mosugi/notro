@@ -12,8 +12,12 @@ function resolveNotionUrl(
   url: string,
   linkToPages: LinkToPages,
 ): { href: string; title?: string; isExternal: boolean } {
+  // Notion URLs can appear with or without dashes in the page ID portion
+  // (e.g. "https://www.notion.so/abc123" or "https://www.notion.so/abc-123").
+  // Strip dashes from the URL before matching so both formats are handled.
+  const urlNoDash = url.replace(/-/g, "");
   for (const [pageId, info] of Object.entries(linkToPages)) {
-    if (url.includes(pageId.replace(/-/g, ""))) {
+    if (urlNoDash.includes(pageId.replace(/-/g, ""))) {
       return { href: `/${info.url}`, title: info.title, isExternal: false };
     }
   }
