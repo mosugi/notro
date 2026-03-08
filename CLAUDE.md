@@ -252,6 +252,113 @@ The package's `exports` map:
 
 ---
 
+## Notion API Usage
+
+`@notionhq/client` がルートの `node_modules` にインストール済み。`NOTION_TOKEN` と `NOTION_DATASOURCE_ID` で認証する。
+
+### クライアント初期化
+
+```js
+import { Client } from "@notionhq/client";
+
+const notion = new Client({ auth: process.env.NOTION_TOKEN });
+const DB_ID = process.env.NOTION_DATASOURCE_ID;
+```
+
+### データソース（データベース）のクエリ
+
+```js
+// 全ページ一覧（ページネーション自動）
+import { iteratePaginatedAPI } from "@notionhq/client";
+
+for await (const page of iteratePaginatedAPI(notion.dataSources.query, {
+  data_source_id: DB_ID,
+})) {
+  console.log(page.id, page.properties.Name);
+}
+```
+
+### ページの作成
+
+```js
+const page = await notion.pages.create({
+  parent: { data_source_id: DB_ID, type: "data_source_id" },
+  properties: {
+    Name:        { title: [{ text: { content: "タイトル" } }] },
+    Slug:        { rich_text: [{ text: { content: "my-slug" } }] },
+    Description: { rich_text: [{ text: { content: "説明文" } }] },
+    Public:      { checkbox: true },
+    Tags:        { multi_select: [{ name: "TypeScript" }, { name: "Astro" }] },
+    Category:    { select: { name: "Tutorial" } },
+    Date:        { date: { start: "2026-01-15" } },
+  },
+  // markdown フィールドで本文を直接 Markdown で指定できる
+  markdown: "# 見出し\n\n本文テキスト",
+});
+console.log(page.id);
+```
+
+### ページ内容の取得（Markdown）
+
+```js
+const md = await notion.pages.retrieveMarkdown({ page_id: PAGE_ID });
+console.log(md.markdown);
+console.log(md.truncated); // true なら内容が切り詰められている
+```
+
+### ページ内容の更新（Markdown）
+
+```js
+// 全置換
+await notion.pages.updateMarkdown({
+  page_id: PAGE_ID,
+  type: "replace_content_range",
+  replace_content_range: {
+    markdown: "# 新しい内容\n\n更新されたテキスト",
+  },
+});
+
+// 末尾追記
+await notion.pages.updateMarkdown({
+  page_id: PAGE_ID,
+  type: "insert_content",
+  insert_content: { markdown: "\n追記したテキスト" },
+});
+```
+
+### ページプロパティの更新
+
+```js
+await notion.pages.update({
+  page_id: PAGE_ID,
+  properties: {
+    Public: { checkbox: false },
+    Tags: { multi_select: [{ name: "Updated" }] },
+  },
+});
+```
+
+### よく使うスクリプト例
+
+```bash
+# データソースのページ一覧を確認
+node -e "
+import('@notionhq/client').then(async ({ Client, iteratePaginatedAPI }) => {
+  const notion = new Client({ auth: process.env.NOTION_TOKEN });
+  for await (const p of iteratePaginatedAPI(notion.dataSources.query, { data_source_id: process.env.NOTION_DATASOURCE_ID })) {
+    const name = p.properties.Name?.title?.[0]?.plain_text ?? '(no title)';
+    const slug = p.properties.Slug?.rich_text?.[0]?.plain_text ?? '-';
+    console.log(p.id, slug, name);
+  }
+});
+"
+
+# サンプルページを seed する
+node scripts/seed-notion-pages.mjs
+```
+
+---
+
 ## Vercel API Usage
 
 With environment variables configured:
