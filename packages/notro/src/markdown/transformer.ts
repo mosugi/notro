@@ -57,6 +57,19 @@ export type LinkToPages = Record<string, { url: string; title: string }>;
  *    <empty-block/> inline within a paragraph becomes a block-level <div> after
  *    mediaPlugin runs, producing invalid HTML (<div> inside <p>). Adding blank
  *    lines around it ensures remark treats it as a standalone HTML block.
+ *
+ * 8. Trailing blank line after block-level HTML closing tags:
+ *    CommonMark HTML blocks (type 6: block-level elements like <table>, <details>,
+ *    <columns>) end only when followed by a blank line. Notion's markdown output
+ *    sometimes omits this blank line, causing subsequent markdown (headings, lists,
+ *    code fences, etc.) to be consumed as raw HTML text and rendered literally.
+ *    We insert a blank line after closing tags when one is absent.
+ *
+ * 9. Markdown links inside raw HTML table cells:
+ *    Notion exports table cell rich-text links as markdown link syntax
+ *    [text](url) inside raw HTML <td> blocks. remark does not process inline
+ *    markdown inside raw HTML, so these appear as literal text. We convert
+ *    them to <a href="url">text</a> before the pipeline runs.
  */
 export function preprocessNotionMarkdown(markdown: string): string {
   // Fix 1: Ensure --- dividers have a blank line before them.
@@ -103,6 +116,28 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // which mediaPlugin then converts to a <div> — producing invalid HTML.
   result = result.replace(/([^\n])\n(<empty-block\/>)/g, "$1\n\n$2");
   result = result.replace(/(<empty-block\/>)\n([^\n])/g, "$1\n\n$2");
+
+  // Fix 8: Ensure block-level HTML closing tags have a trailing blank line.
+  // CommonMark HTML blocks (type 6) end only at a blank line. Notion omits
+  // this blank line after </table>, </details>, </columns>, </column>, etc.,
+  // causing any following markdown to be consumed as raw HTML text and rendered
+  // as a literal string instead of proper HTML elements.
+  result = result.replace(
+    /(<\/(?:table|details|columns|column|summary)>)\n([^\n])/g,
+    "$1\n\n$2"
+  );
+
+  // Fix 9: Convert markdown link syntax inside raw HTML <td> cells to <a> tags.
+  // Notion exports table cell links as [text](url) inside <td>...</td>, but remark
+  // does not process inline markdown inside raw HTML blocks. Replace them with
+  // proper anchor elements so they render as clickable links.
+  result = result.replace(/<td>([\s\S]*?)<\/td>/g, (_, content: string) => {
+    const linked = content.replace(
+      /\[([^\]\n]+)\]\(([^)\n]+)\)/g,
+      '<a href="$2">$1</a>'
+    );
+    return `<td>${linked}</td>`;
+  });
 
   return result;
 }

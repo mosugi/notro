@@ -1,4 +1,5 @@
 ---
+import type { CollectionEntry } from "astro:content";
 import type { PaginateFunction } from "astro";
 import { getCollection } from "astro:content";
 import BlogList from "../../components/BlogList.astro";
@@ -10,13 +11,28 @@ export async function getStaticPaths({
 }: {
   paginate: PaginateFunction;
 }) {
-  const posts = await getCollection("posts");
-  return paginate(posts, {
+  // Check if an entry has a specific tag value
+  function hasTag(entry: CollectionEntry<"posts">, tagName: string): boolean {
+    if (entry.data.properties.Tags?.type !== "multi_select") return false;
+    return entry.data.properties.Tags.multi_select.some((t) => t.name === tagName);
+  }
+
+  const allPosts = await getCollection("posts");
+
+  // Posts tagged "page" are fixed pages, excluded from blog listing
+  const blogPosts = allPosts.filter((entry) => !hasTag(entry, "page"));
+
+  // Posts tagged "pinned" are shown at the top of page 1 only
+  const pinnedPosts = blogPosts.filter((entry) => hasTag(entry, "pinned"));
+  const regularPosts = blogPosts.filter((entry) => !hasTag(entry, "pinned"));
+
+  return paginate(regularPosts, {
     pageSize: 10,
+    props: { pinnedPostsData: pinnedPosts.map(({ data }) => data) },
   });
 }
 
-const { page } = Astro.props;
+const { page, pinnedPostsData } = Astro.props;
 
 const data = page.data.map(({ data }) => data);
 ---
@@ -26,6 +42,17 @@ const data = page.data.map(({ data }) => data);
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900">Blog</h1>
     </div>
+    {page.currentPage === 1 && pinnedPostsData.length > 0 && (
+      <section class="mb-10">
+        <h2 class="mb-4 text-lg font-semibold text-gray-700">ピン留め</h2>
+        <BlogList posts={pinnedPostsData} />
+      </section>
+    )}
+    {page.currentPage > 1 && pinnedPostsData.length > 0 && (
+      <p class="mb-6 text-sm text-gray-500">
+        <a href="/blog/" class="text-sky-600 hover:underline">← ピン留め記事</a>は1ページ目にあります
+      </p>
+    )}
     <BlogList posts={data} />
     <Pagination
       currentPage={page.currentPage}

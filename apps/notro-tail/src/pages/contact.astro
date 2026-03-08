@@ -1,0 +1,90 @@
+---
+// Static Astro page example.
+// bodyClass="page-contact" is passed directly to <Layout> — no config.ts entry needed.
+// CSS for .page-contact is defined in src/styles/global.css.
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="How this site is built — NotroTail" bodyClass="page-contact">
+  <main class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 lg:px-8">
+    <article class="mx-auto max-w-3xl">
+
+      <h1 class="mb-4 text-3xl font-bold tracking-tight text-gray-900">How this site is built</h1>
+      <p class="mb-10 text-lg text-gray-500">
+        This page is a <strong>static Astro page</strong> — not a Notion page.
+        It lives at <code>src/pages/contact.astro</code> and demonstrates one of
+        two ways to add pages to a notro-tail site.
+      </p>
+
+      <section class="mb-10">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">Two types of pages</h2>
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-left text-gray-600">
+              <tr>
+                <th class="px-4 py-3 font-semibold">Type</th>
+                <th class="px-4 py-3 font-semibold">Where the content lives</th>
+                <th class="px-4 py-3 font-semibold">bodyClass set by</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-gray-700">
+              <tr>
+                <td class="px-4 py-3 font-medium">Notion fixed page</td>
+                <td class="px-4 py-3">Notion database (rendered via <code>NotionMarkdownRenderer</code>)</td>
+                <td class="px-4 py-3"><code>navPages[].bodyClass</code> in <code>config.ts</code></td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-medium">Static Astro page</td>
+                <td class="px-4 py-3">This <code>.astro</code> file</td>
+                <td class="px-4 py-3"><code>&lt;Layout bodyClass="..."&gt;</code> prop directly</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">Per-page scoped styles</h2>
+        <p class="mb-4 text-gray-600">
+          Both page types share the same styling mechanism: a CSS class on
+          <code>&lt;body&gt;</code> lets you scope styles in
+          <code>global.css</code> without affecting other pages.
+        </p>
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div class="rounded-lg border border-indigo-200 bg-indigo-50 p-4">
+            <p class="mb-1 font-mono text-xs text-indigo-700">.page-contact</p>
+            <p class="text-sm text-gray-700">This page — indigo gradient background, <code>h2</code> in indigo, links underlined indigo</p>
+          </div>
+          <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <p class="mb-1 font-mono text-xs text-blue-700">.page-about</p>
+            <p class="text-sm text-gray-700">The About Notion page — blue top border on the page, <code>h2</code> gets a blue left border + tinted background</p>
+          </div>
+          <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <p class="mb-1 font-mono text-xs text-gray-600">.page-privacy</p>
+            <p class="text-sm text-gray-700">The Privacy Notion page — body text is smaller and subdued</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-10">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">Content loading pipeline</h2>
+        <ol class="ml-4 list-decimal space-y-2 text-gray-600">
+          <li>The <code>loader()</code> from <code>notro</code> calls the <strong>Notion Public API</strong> and fetches pages as Markdown.</li>
+          <li>Pages are cached by <code>last_edited_time</code>; only changed pages are re-fetched on rebuild.</li>
+          <li>Preprocessed Markdown is stored in the Astro Content Collection store.</li>
+          <li>At render time, <code>NotionMarkdownRenderer</code> runs the full <strong>remark/rehype plugin pipeline</strong>: callouts, toggles, columns, KaTeX math, table of contents, and more.</li>
+          <li>Notion pre-signed S3 image URLs are cached correctly via a custom Astro image service that strips expiring <code>X-Amz-*</code> query parameters.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">Links</h2>
+        <ul class="ml-4 list-disc space-y-1">
+          <li><a href="https://github.com/mosugi/notro-tail">GitHub — mosugi/notro-tail</a></li>
+          <li><a href="/blog/">Blog (Notion-backed posts)</a></li>
+        </ul>
+      </section>
+
+    </article>
+  </main>
+</Layout>

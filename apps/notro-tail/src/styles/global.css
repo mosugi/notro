@@ -169,3 +169,74 @@
   .nt-markdown-content em     { @apply italic; }
   .nt-markdown-content del    { @apply line-through; }
 }
+
+/*
+ * Per-page styles
+ *
+ * Scope styles under the bodyClass defined in src/config.ts (for Notion pages)
+ * or passed directly to <Layout bodyClass="..."> (for static Astro pages).
+ *
+ * These selectors reach inside set:html content rendered by NotionMarkdownRenderer.
+ * Each page has a distinct visual identity to show the bodyClass mechanism in action.
+ */
+
+/* ── About page ─────────────────────────────────────────────────────────────
+   Blue accent theme: headings have a left border + background tint,
+   and the page gets a faint blue top strip so it's immediately recognisable. */
+.page-about body,
+.page-about {
+  border-top: 3px solid #3b82f6; /* blue-500 */
+}
+
+.page-about .nt-markdown-content h2 {
+  @apply mt-8 border-l-4 border-blue-500 bg-blue-50 pl-3 py-1 rounded-r-md;
+}
+
+.page-about .nt-markdown-content h3 {
+  @apply text-blue-800;
+}
+
+.page-about .nt-markdown-content a {
+  @apply text-blue-700 font-medium;
+}
+
+/* ── Privacy page ────────────────────────────────────────────────────────────
+   Legal/document theme: compact serif-like feel, muted palette, ruled headings. */
+.page-privacy .nt-markdown-content {
+  @apply text-sm leading-relaxed text-gray-600;
+}
+
+.page-privacy .nt-markdown-content h1 {
+  @apply text-2xl font-bold text-gray-800;
+}
+
+.page-privacy .nt-markdown-content h2 {
+  @apply mt-6 border-b border-gray-200 pb-1 text-sm font-semibold uppercase tracking-widest text-gray-500;
+}
+
+.page-privacy .nt-markdown-content table {
+  @apply text-xs;
+}
+
+/* ── Docs / Contact page (static Astro page) ────────────────────────────────
+   Documentation theme: indigo accent, visible section dividers.
+   Selectors are scoped under <main> so the shared header/footer are unaffected. */
+.page-contact main {
+  background: linear-gradient(180deg, #eef2ff 0px, transparent 240px); /* indigo-50 fade */
+}
+
+.page-contact main h2 {
+  @apply text-indigo-900;
+}
+
+.page-contact main a {
+  @apply text-indigo-600 hover:text-indigo-800 underline underline-offset-2;
+}
+
+.page-contact article > section {
+  @apply border-b border-gray-100 pb-10;
+}
+
+.page-contact article > section:last-child {
+  @apply border-b-0 pb-0;
+}
