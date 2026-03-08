@@ -219,23 +219,24 @@
 }
 
 /* ── Docs / Contact page (static Astro page) ────────────────────────────────
-   Documentation theme: indigo accent, visible section dividers. */
-.page-contact {
+   Documentation theme: indigo accent, visible section dividers.
+   Selectors are scoped under <main> so the shared header/footer are unaffected. */
+.page-contact main {
   background: linear-gradient(180deg, #eef2ff 0px, transparent 240px); /* indigo-50 fade */
 }
 
-.page-contact h2 {
+.page-contact main h2 {
   @apply text-indigo-900;
 }
 
-.page-contact a {
+.page-contact main a {
   @apply text-indigo-600 hover:text-indigo-800 underline underline-offset-2;
 }
 
-.page-contact section {
+.page-contact article > section {
   @apply border-b border-gray-100 pb-10;
 }
 
-.page-contact section:last-child {
-  @apply border-none;
+.page-contact article > section:last-child {
+  @apply border-b-0 pb-0;
 }
