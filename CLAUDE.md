@@ -309,20 +309,25 @@ console.log(md.truncated); // true なら内容が切り詰められている
 ### ページ内容の更新（Markdown）
 
 ```js
-// 全置換
+// 特定範囲を置換（content_range はブロックIDの範囲を指定）
 await notion.pages.updateMarkdown({
   page_id: PAGE_ID,
   type: "replace_content_range",
   replace_content_range: {
-    markdown: "# 新しい内容\n\n更新されたテキスト",
+    content: "# 新しい内容\n\n更新されたテキスト",
+    content_range: "BLOCK_ID_START...BLOCK_ID_END",
+    allow_deleting_content: true,
   },
 });
 
-// 末尾追記
+// 指定ブロックの後に追記（after を省略すると先頭に挿入）
 await notion.pages.updateMarkdown({
   page_id: PAGE_ID,
   type: "insert_content",
-  insert_content: { markdown: "\n追記したテキスト" },
+  insert_content: {
+    content: "\n追記したテキスト",
+    after: "BLOCK_ID", // 省略可
+  },
 });
 ```
 

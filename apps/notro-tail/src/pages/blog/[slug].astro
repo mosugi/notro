@@ -5,13 +5,23 @@ import Layout from "../../layouts/Layout.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
+  // Build linkToPages map so NotionMarkdownRenderer can resolve inter-page links
+  const linkToPages = Object.fromEntries(
+    posts.map((entry) => [
+      entry.id,
+      {
+        url: `blog/${getPlainText(entry.data.properties.Slug) || entry.id}/`,
+        title: getPlainText(entry.data.properties.Name) ?? entry.id,
+      },
+    ]),
+  );
   return posts.map((entry) => ({
     params: { slug: getPlainText(entry.data.properties.Slug) || entry.id },
-    props: { entry },
+    props: { entry, linkToPages },
   }));
 }
 
-const { entry } = Astro.props;
+const { entry, linkToPages } = Astro.props;
 
 const title = getPlainText(entry.data.properties.Name) ?? entry.id;
 const description = getPlainText(entry.data.properties.Description);
@@ -48,7 +58,7 @@ const markdown = entry.data.markdown;
       </header>
 
       <div class="nt-markdown-content">
-        <NotionMarkdownRenderer markdown={markdown} />
+        <NotionMarkdownRenderer markdown={markdown} linkToPages={linkToPages} />
       </div>
     </article>
   </main>
