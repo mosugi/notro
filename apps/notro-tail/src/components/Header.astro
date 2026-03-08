@@ -1,4 +1,19 @@
 ---
+import { getCollection } from "astro:content";
+import { getPlainText } from "notro";
+
+// Fetch pages tagged "page" to show as fixed nav links
+const allPosts = await getCollection("posts");
+const fixedPages = allPosts
+  .filter((entry) => {
+    if (entry.data.properties.Tags?.type !== "multi_select") return false;
+    return entry.data.properties.Tags.multi_select.some((t) => t.name === "page");
+  })
+  .map((entry) => ({
+    title: getPlainText(entry.data.properties.Name) ?? entry.id,
+    slug: getPlainText(entry.data.properties.Slug) || entry.id,
+  }))
+  .sort((a, b) => a.title.localeCompare(b.title));
 ---
 
 <header class="sticky top-0 z-10 border-b border-gray-100 bg-white">
@@ -10,6 +25,13 @@
       <ul class="flex items-center gap-6 text-sm">
         <li><a href="/" class="text-gray-500 transition hover:text-gray-900">Home</a></li>
         <li><a href="/blog/" class="text-gray-500 transition hover:text-gray-900">Blog</a></li>
+        {fixedPages.map((p) => (
+          <li>
+            <a href={`/blog/${p.slug}/`} class="text-gray-500 transition hover:text-gray-900">
+              {p.title}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
   </div>
