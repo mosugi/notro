@@ -10,6 +10,12 @@ export type NavPageConfig = {
   slug: string;
   /** Optional display label; falls back to the page's Name property */
   label?: string;
+  /**
+   * Optional CSS class applied to <body> when this page is rendered.
+   * Use this to scope per-page styles in global.css (e.g. .page-about { ... }).
+   * Also works for static Astro pages by passing bodyClass directly to Layout.
+   */
+  bodyClass?: string;
 };
 
 export const navPages: NavPageConfig[] = [

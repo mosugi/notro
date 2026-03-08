@@ -169,3 +169,14 @@
   .nt-markdown-content em     { @apply italic; }
   .nt-markdown-content del    { @apply line-through; }
 }
+
+/*
+ * Per-page styles
+ *
+ * Scope styles under the bodyClass defined in src/config.ts (for Notion pages)
+ * or passed directly to <Layout bodyClass="..."> (for static Astro pages).
+ *
+ * Example:
+ *   .page-about .nt-markdown-content h2 { @apply border-l-4 border-blue-500 pl-3; }
+ *   .page-privacy .nt-markdown-content  { @apply text-sm text-gray-600; }
+ */
