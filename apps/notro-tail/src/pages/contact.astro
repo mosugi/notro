@@ -1,0 +1,24 @@
+---
+// Static Astro page example: pass bodyClass directly to Layout
+// CSS for .page-contact is defined in src/styles/global.css
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Contact — NotroTail" bodyClass="page-contact">
+  <main class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 lg:px-8">
+    <article class="mx-auto max-w-2xl">
+      <h1 class="mb-6 text-3xl font-bold tracking-tight text-gray-900">Contact</h1>
+      <p class="mb-8 text-gray-600">
+        This is a static Astro page. The <code>bodyClass="page-contact"</code> prop
+        on <code>&lt;Layout&gt;</code> adds the class directly to <code>&lt;body&gt;</code>,
+        enabling scoped styles in <code>global.css</code> without any config entry.
+      </p>
+      <dl class="space-y-3 text-sm">
+        <div class="flex gap-2">
+          <dt class="font-semibold text-gray-700">GitHub</dt>
+          <dd><a href="https://github.com/mosugi/notro-tail">mosugi/notro-tail</a></dd>
+        </div>
+      </dl>
+    </article>
+  </main>
+</Layout>

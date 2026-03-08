@@ -176,7 +176,23 @@
  * Scope styles under the bodyClass defined in src/config.ts (for Notion pages)
  * or passed directly to <Layout bodyClass="..."> (for static Astro pages).
  *
- * Example:
- *   .page-about .nt-markdown-content h2 { @apply border-l-4 border-blue-500 pl-3; }
- *   .page-privacy .nt-markdown-content  { @apply text-sm text-gray-600; }
+ * These selectors reach inside set:html content rendered by NotionMarkdownRenderer.
  */
+
+/* About page: accent headings with a left blue border */
+.page-about .nt-markdown-content h2 {
+  @apply border-l-4 border-blue-500 pl-3;
+}
+
+/* Privacy page: compact, subdued typography for legal text */
+.page-privacy .nt-markdown-content {
+  @apply text-sm text-gray-600;
+}
+.page-privacy .nt-markdown-content h2 {
+  @apply text-base font-semibold text-gray-800;
+}
+
+/* Contact page (static Astro page): green accent for form elements */
+.page-contact a {
+  @apply text-green-600 hover:text-green-700;
+}

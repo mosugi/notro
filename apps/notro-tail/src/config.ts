@@ -19,6 +19,6 @@ export type NavPageConfig = {
 };
 
 export const navPages: NavPageConfig[] = [
-  { slug: "about" },
-  { slug: "privacy" },
+  { slug: "about", bodyClass: "page-about" },
+  { slug: "privacy", bodyClass: "page-privacy" },
 ];
