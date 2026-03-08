@@ -126,6 +126,58 @@ const markdown = entry.data.markdown;
 
 An optional `linkToPages` prop (a `Record<string, { url: string; title: string }>` map) can be passed to `pageLinkPlugin` to resolve internal Notion page links.
 
+### Markdown Preprocessing (`preprocessNotionMarkdown`)
+
+`transformer.ts` exports `preprocessNotionMarkdown()`, which runs **before** the remark/rehype pipeline to fix structural issues in Notion's markdown output. The fixes are numbered and documented in the source:
+
+| Fix | Problem fixed |
+|-----|---------------|
+| 1 | `---` dividers without a preceding blank line are misread as setext H2 headings |
+| 2 | Callout directive syntax `"::: callout {…}"` → `":::callout{…}"` |
+| 3 | Block-level color annotations `{color="…"}` → raw `<p color="…">` HTML |
+| 4 | `<table_of_contents/>` tag (underscore) wrapped in `<div>` for CommonMark HTML detection |
+| 5 | Inline equation `$\`…\`$` → `$…$` for remark-math |
+| 6 | `<synced_block>` wrapper stripped and content dedented |
+| 7 | `<empty-block/>` isolated with blank lines so it becomes a block-level element |
+| 8 | Closing tags `</table>`, `</details>`, `</columns>`, `</column>`, `</summary>` get a trailing blank line — without it, CommonMark HTML blocks swallow all following markdown as raw text |
+| 9 | Markdown link syntax `[text](url)` inside raw HTML `<td>` cells converted to `<a href>` tags, because remark does not process inline markdown inside raw HTML blocks |
+
+### Layout Props (`Layout.astro`)
+
+`Layout.astro` accepts:
+
+| Prop | Type | Purpose |
+|------|------|---------|
+| `title` | `string` | `<title>` and `og:title` |
+| `description` | `string` (optional) | `<meta name="description">` and `og:description` |
+| `bodyClass` | `string` (optional) | CSS class on `<body>` for per-page scoped styles |
+
+Canonical URL and `og:url` are set automatically from `Astro.url`.
+
+### Per-Page Scoped Styles (`bodyClass`)
+
+Pages can request a unique visual theme by passing `bodyClass` to `<Layout>`:
+
+- **Notion fixed pages** — set `bodyClass` in `src/config.ts` under `navPages[].bodyClass`; the `[slug].astro` route reads this map and injects it.
+- **Static Astro pages** — pass `bodyClass` directly as a `<Layout>` prop.
+
+Current themes defined in `global.css`:
+
+| `bodyClass` | Theme |
+|-------------|-------|
+| `page-about` | Blue top border on `<body>`; `h2` has left border + blue tint; links are bold blue |
+| `page-privacy` | Compact legal document feel — small `tracking-widest` uppercase `h2`s, `text-sm` body |
+| `page-contact` | Indigo gradient on `<main>`; `h2` / links in indigo; section dividers |
+
+All per-page rules are scoped under `main` or `.nt-markdown-content` so the shared `<header>` and `<footer>` are never affected.
+
+### Navigation Features (`apps/notro-tail`)
+
+- **Active nav link** — `Header.astro` reads `Astro.url.pathname` and applies `font-medium text-gray-900` to the current page's link. Blog is active for all `/blog/*` paths except fixed-page slugs. The Docs button darkens to `bg-blue-700` when on `/contact/`.
+- **Prev/next article nav** — `blog/[slug].astro` builds a date-sorted list of blog posts (excluding `"page"`-tagged fixed pages) and passes `prevNav`/`nextNav` (slug + title) as props. A two-column card nav appears below each article body: "← 新しい記事" (newer) on the left, "古い記事 →" (older) on the right.
+- **Tag page back link** — `blog/tag/[tag]/[...page].astro` shows "← ブログ一覧" above the heading.
+- **Pinned posts hint** — `blog/[...page].astro` shows a "← ピン留め記事は1ページ目にあります" notice on pages 2+.
+
 ### CSS Conventions
 
 All Notion-specific CSS classes use the `nt-` prefix (defined in `global.css`):
