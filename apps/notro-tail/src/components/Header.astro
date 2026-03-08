@@ -1,19 +1,21 @@
 ---
 import { getCollection } from "astro:content";
 import { getPlainText } from "notro";
+import { navPages } from "../config";
 
-// Fetch pages tagged "page" to show as fixed nav links
+// Resolve navPages config against the content collection to get titles and slugs
 const allPosts = await getCollection("posts");
-const fixedPages = allPosts
-  .filter((entry) => {
-    if (entry.data.properties.Tags?.type !== "multi_select") return false;
-    return entry.data.properties.Tags.multi_select.some((t) => t.name === "page");
-  })
-  .map((entry) => ({
-    title: getPlainText(entry.data.properties.Name) ?? entry.id,
-    slug: getPlainText(entry.data.properties.Slug) || entry.id,
-  }))
-  .sort((a, b) => a.title.localeCompare(b.title));
+const slugToEntry = new Map(
+  allPosts.map((entry) => [getPlainText(entry.data.properties.Slug) || entry.id, entry]),
+);
+const fixedPages = navPages.flatMap((cfg) => {
+  const entry = slugToEntry.get(cfg.slug);
+  if (!entry) return [];
+  return [{
+    slug: cfg.slug,
+    title: cfg.label ?? getPlainText(entry.data.properties.Name) ?? cfg.slug,
+  }];
+});
 ---
 
 <header class="sticky top-0 z-10 border-b border-gray-100 bg-white">
