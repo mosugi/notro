@@ -6,17 +6,17 @@ import BlogList from "../../components/BlogList.astro";
 import Layout from "../../layouts/Layout.astro";
 import Pagination from "../../components/Pagination.astro";
 
-// Check if an entry has a specific tag value
-function hasTag(entry: CollectionEntry<"posts">, tagName: string): boolean {
-  if (entry.data.properties.Tags?.type !== "multi_select") return false;
-  return entry.data.properties.Tags.multi_select.some((t) => t.name === tagName);
-}
-
 export async function getStaticPaths({
   paginate,
 }: {
   paginate: PaginateFunction;
 }) {
+  // Check if an entry has a specific tag value
+  function hasTag(entry: CollectionEntry<"posts">, tagName: string): boolean {
+    if (entry.data.properties.Tags?.type !== "multi_select") return false;
+    return entry.data.properties.Tags.multi_select.some((t) => t.name === tagName);
+  }
+
   const allPosts = await getCollection("posts");
 
   // Posts tagged "page" are fixed pages, excluded from blog listing
