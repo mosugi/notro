@@ -97,8 +97,8 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // by CommonMark. The hyphenated form <table-of-contents/> (seed/user input) is valid but
   // we normalize both to <table_of_contents/> inside a <div> for consistent plugin handling.
   result = result.replace(
-    /^<table[_-]of[_-]contents\s*\/?>$/gm,
-    "<div><table_of_contents/></div>"
+    /^<table[_-]of[_-]contents(?:\s[^>]*)?\s*\/?>$/gm,
+    "<div><table_of_contents/></div>\n"
   );
 
   // Fix 5: Convert Notion inline equation format $`...`$ → $...$ for remark-math.
