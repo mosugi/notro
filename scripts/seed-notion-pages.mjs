@@ -729,6 +729,135 @@ In \`[...page].astro\`, pinned posts are sorted to the top using the \`pinned\` 
 `,
   },
 
+  // Fixed page: About
+  // Demonstrates .page-about bodyClass — h2 headings get a blue left border
+  // (defined in global.css as: .page-about .nt-markdown-content h2 { border-l-4 border-blue-500 })
+  {
+    properties: props({
+      title: "About",
+      slug: "about",
+      description: "What notro-tail is and how it works.",
+      tags: [],
+      date: "2026-01-01",
+    }),
+    markdown: `# About NotroTail
+
+**NotroTail** is a Notion-to-Astro static site generator template.
+It fetches content from Notion via the Public API, renders it through a custom
+remark/rehype plugin pipeline, and outputs a fast, SEO-optimized static site
+styled with TailwindCSS 4.
+
+## How content flows
+
+1. The \`loader()\` from the \`notro\` package queries the Notion database and fetches each page as Markdown.
+2. Pages are cached by \`last_edited_time\`. Only changed pages are re-fetched on the next build — incremental builds stay fast even with hundreds of posts.
+3. Preprocessed Markdown is stored in Astro's Content Collection store.
+4. At render time, \`NotionMarkdownRenderer\` runs the full remark/rehype plugin pipeline.
+
+## Notion block support
+
+| Block type | Plugin |
+|---|---|
+| Callouts | \`calloutPlugin\` (remark) |
+| Toggles | \`togglePlugin\` (rehype) |
+| Column layouts | \`columnsPlugin\` (rehype) |
+| Table of contents | \`tableOfContentsPlugin\` (rehype) |
+| Math (KaTeX) | \`remark-math\` + \`rehype-katex\` |
+| Page links | \`pageLinkPlugin\` (rehype) |
+| Media embeds | \`mediaPlugin\` (rehype) |
+
+## Per-page custom styles
+
+Each Notion page that appears in navigation can be assigned a \`bodyClass\` in
+\`src/config.ts\`. That class is applied to \`<body>\`, enabling scoped CSS in
+\`global.css\` without affecting other pages.
+
+This page has \`bodyClass: "page-about"\`. The \`h2\` headings you see above —
+like "How content flows" and "Notion block support" — have a blue left border
+applied by:
+
+\`\`\`css
+.page-about .nt-markdown-content h2 {
+  border-left: 4px solid #3b82f6;
+  padding-left: 0.75rem;
+}
+\`\`\`
+
+## Workspace structure
+
+The repo is an npm workspace monorepo:
+
+- **\`apps/notro-tail/\`** — the deployable Astro 5 website (this site)
+- **\`packages/notro/\`** — the publishable npm library (loader, components, plugins)
+
+## Links
+
+- [GitHub: mosugi/notro-tail](https://github.com/mosugi/notro-tail)
+- [notro on npm](https://www.npmjs.com/package/notro)
+`,
+  },
+
+  // Fixed page: Privacy
+  // Demonstrates .page-privacy bodyClass — body text is smaller and subdued
+  // (defined in global.css as: .page-privacy .nt-markdown-content { text-sm text-gray-600 })
+  {
+    properties: props({
+      title: "Privacy",
+      slug: "privacy",
+      description: "Privacy policy for the NotroTail demo site.",
+      tags: [],
+      date: "2026-01-01",
+    }),
+    markdown: `# Privacy Policy
+
+This is a demonstration site built with **NotroTail** (Notion → Astro static site generator).
+The following policy applies to this demo deployment.
+
+## Data we collect
+
+This site is statically generated and does not run a backend server.
+No user data is collected, stored, or transmitted by this site itself.
+
+If you are self-hosting notro-tail and add analytics, contact forms, or other
+third-party services, those services are subject to their own privacy policies.
+
+## Notion data
+
+Page content is fetched from Notion at build time via the Notion Public API.
+No Notion credentials are exposed to visitors; the API token is used only during
+the static build process on the server.
+
+## Cookies
+
+This site sets no cookies and uses no local storage.
+
+## Third-party services
+
+| Service | Purpose | Privacy policy |
+|---|---|---|
+| Netlify / Vercel | Static hosting | See provider's policy |
+| KaTeX CDN | Math rendering stylesheet | No tracking |
+
+## Changes to this policy
+
+Because this is a demo site, this policy may be updated at any time without notice.
+
+## Per-page styling note
+
+This page has \`bodyClass: "page-privacy"\` in \`config.ts\`.
+The smaller, subdued text you are reading is applied by:
+
+\`\`\`css
+.page-privacy .nt-markdown-content {
+  font-size: 0.875rem; /* text-sm */
+  color: #4b5563;      /* text-gray-600 */
+}
+\`\`\`
+
+This is the per-page \`bodyClass\` feature of notro-tail in action.
+`,
+  },
+
   // 20 - Private / unlisted (Public = false)
   {
     properties: props({
