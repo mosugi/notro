@@ -41,8 +41,10 @@ export type LinkToPages = Record<string, { url: string; title: string }>;
  *
  * 4. Table of contents:
  *    CommonMark HTML block detection requires tag names matching [A-Za-z][A-Za-z0-9-]*.
- *    Tags with underscores (like "table_of_contents") are escaped as text instead of
- *    being treated as HTML. Wrapping in <div> forces remark to treat them as HTML.
+ *    The underscore form <table_of_contents/> (Notion API output) is not recognized as HTML
+ *    by CommonMark, so it gets escaped as text. The hyphenated form <table-of-contents/>
+ *    (seed/user input) is valid but we normalize both variants by wrapping in <div>
+ *    so remark treats them as HTML and the tableOfContentsPlugin can find them.
  *
  * 5. Inline equation format:
  *    Notion outputs inline math as $`E = mc^2`$ (backtick-delimited inside $...$).
@@ -89,9 +91,13 @@ export function preprocessNotionMarkdown(markdown: string): string {
     '<p color="$2">$1</p>'
   );
 
-  // Fix 4: Wrap <table_of_contents/> in <div> so remark treats it as HTML.
+  // Fix 4: Wrap table-of-contents tags in <div> so remark treats them as HTML.
+  // CommonMark HTML block detection requires tag names matching [A-Za-z][A-Za-z0-9-]*.
+  // The underscore form <table_of_contents/> (Notion API output) is not recognized as HTML
+  // by CommonMark. The hyphenated form <table-of-contents/> (seed/user input) is valid but
+  // we normalize both to <table_of_contents/> inside a <div> for consistent plugin handling.
   result = result.replace(
-    /^<table_of_contents\/>$/gm,
+    /^<table[_-]of[_-]contents\s*\/?>$/gm,
     "<div><table_of_contents/></div>"
   );
 

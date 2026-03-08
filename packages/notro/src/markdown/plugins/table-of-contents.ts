@@ -45,9 +45,13 @@ export const tableOfContentsPlugin: Plugin<[], Root> = () => {
       headings.push({ id: node.properties!.id as string, level, text });
     });
 
-    // Pass 2: replace <table_of_contents/> with the generated nav
+    // Pass 2: replace <table_of_contents/> or <table-of-contents/> with the generated nav
     visit(tree, "element", (node: Element, index, parent) => {
-      if (node.tagName !== "table_of_contents" || !parent || index == null) return;
+      if (
+        node.tagName !== "table_of_contents" &&
+        node.tagName !== "table-of-contents"
+      ) return;
+      if (!parent || index == null) return;
 
       if (headings.length === 0) {
         const emptyNav: Element = {
