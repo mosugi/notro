@@ -8,9 +8,6 @@ import type { ClientOptions } from "@notionhq/client/build/src/Client";
 import type {
   QueryDataSourceParameters,
 } from "@notionhq/client/build/src/api-endpoints";
-import { writeFileSync, mkdirSync, existsSync } from "node:fs";
-import { join, relative } from "node:path";
-import { fileURLToPath } from "node:url";
 import {
   type PageWithMarkdownType,
   pageWithMarkdownSchema,
@@ -39,7 +36,7 @@ export function loader({
   // Return a loader object
   return {
     name: "notro-loader",
-    load: async ({ store, parseData, logger, config }): Promise<void> => {
+    load: async ({ store, parseData, renderMarkdown, logger }): Promise<void> => {
       // Load data and update the store
       const pageOrDatabases = await Array.fromAsync(
         iteratePaginatedAPI(client.dataSources.query, queryParameters),
@@ -62,29 +59,9 @@ export function loader({
         }
       });
 
-      // Prepare the cache directory for MDX files
-      const rootDir = fileURLToPath(config.root);
-      const cacheDir = join(rootDir, ".astro/cache/notro-mdx");
-      mkdirSync(cacheDir, { recursive: true });
-
-      // The in-memory moduleImports map is rebuilt from scratch on each build.
-      // Re-register module imports for all cached entries so that Astro can
-      // resolve deferred renders even when store.set() is skipped (digest match).
-      store.entries().forEach(([, entry]) => {
-        if (entry.deferredRender && entry.filePath) {
-          store.addModuleImport(entry.filePath);
-        }
-      });
-
-      // Load new or updated pages (also re-fetch if the MDX file is missing on disk)
+      // Load new or updated pages (cached entries with matching digest are skipped)
       const loadPageMarkdownPromises = pages
-        .filter((page) => {
-          if (!store.has(page.id)) return true;
-          // MDX file may be missing if the cache dir was cleared without clearing
-          // the data store. Re-fetch so the file exists for deferred rendering.
-          const mdxPath = join(cacheDir, `${page.id}.mdx`);
-          return !existsSync(mdxPath);
-        })
+        .filter((page) => !store.has(page.id))
         .map(async (page) => {
           logger.info(`Loading page ${page.id} into store`);
 
@@ -98,23 +75,15 @@ export function loader({
           }
 
           // Preprocess the markdown to fix Notion-specific syntax issues before
-          // storing. This ensures both entry.render() (via notroMarkdownConfig)
-          // and NotionMarkdownRenderer see corrected markdown.
-          // Note: transformNotionMarkdown() also calls preprocessNotionMarkdown()
-          // internally, but each transformation is idempotent so double-processing
-          // is safe. The markdown stored here is already preprocessed.
+          // rendering. This ensures the remark/rehype pipeline sees corrected markdown.
           const preprocessedMarkdown = preprocessNotionMarkdown(
             markdownResponse.markdown
           );
 
-          // Write the preprocessed markdown as an MDX file so Astro can use
-          // deferredRender: true (enabling Vercel build cache for MDX output).
-          const mdxPath = join(cacheDir, `${page.id}.mdx`);
-          writeFileSync(mdxPath, preprocessedMarkdown, "utf-8");
-
-          // Store the file path relative to the site root (posix separators)
-          // as required by Astro's content store API.
-          const relativeMdxPath = relative(rootDir, mdxPath).replace(/\\/g, "/");
+          // Pre-render via Astro's configured markdown pipeline (notroMarkdownConfig).
+          // This avoids deferredRender: true which requires a live Vite module runner
+          // during the Rollup SSR build phase and fails in Astro 5 + Vite 7.
+          const rendered = await renderMarkdown(preprocessedMarkdown);
 
           const data = await parseData<PageWithMarkdownType>({
             id: page.id,
@@ -142,8 +111,7 @@ export function loader({
             digest: page.last_edited_time,
             data: data,
             body: preprocessedMarkdown,
-            filePath: relativeMdxPath,
-            deferredRender: true,
+            rendered,
           });
         });
 

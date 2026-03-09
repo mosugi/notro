@@ -10,7 +10,15 @@ import { visit } from "unist-util-visit";
 // in astro.config.mjs (where the virtual module isn't available at parse time).
 export const imagePlugin: Plugin<[], Root> = () => {
   return async (tree) => {
-    const { getImage } = await import("astro:assets");
+    // astro:assets is a Vite virtual module unavailable outside the Vite runtime
+    // (e.g., when renderMarkdown() is called from a content loader during sync).
+    // Fall back gracefully so that image src attributes are kept as-is.
+    let getImage: (typeof import("astro:assets"))["getImage"];
+    try {
+      ({ getImage } = await import("astro:assets"));
+    } catch {
+      return;
+    }
     const promises: Promise<void>[] = [];
 
     visit(tree, "element", (node: Element) => {
