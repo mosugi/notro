@@ -44,8 +44,10 @@ export function loader({
 
       const pages = pageOrDatabases.filter((page) => isFullPage(page));
 
-      // Delete entries that are removed, edited, or contain expired pre-signed URLs
-      store.entries().forEach(([id, { digest, data }]) => {
+      // Delete entries that are removed, edited, contain expired pre-signed URLs,
+      // or are legacy deferredRender entries (migration from old MDX approach).
+      store.entries().forEach(([id, entry]) => {
+        const { digest, data } = entry;
         const isDeleted = !pages.some((page) => page.id === id);
         const isEdited = pages.some(
           (page) => page.id === id && digest !== page.last_edited_time,
@@ -53,7 +55,10 @@ export function loader({
         const hasExpiredUrls = hasNotionPresignedUrl(
           data as PageWithMarkdownType,
         );
-        if (isDeleted || isEdited || hasExpiredUrls) {
+        // Stale entries from the old deferredRender: true approach have no
+        // rendered HTML. Evict them so they are re-fetched and pre-rendered.
+        const isLegacyDeferred = !!(entry as { deferredRender?: boolean }).deferredRender;
+        if (isDeleted || isEdited || hasExpiredUrls || isLegacyDeferred) {
           logger.info(`Deleting page ${id} from store`);
           store.delete(id);
         }
