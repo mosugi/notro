@@ -49,4 +49,11 @@ export function notroMarkdownConfig(options: NotroMarkdownConfigOptions = {}) {
   };
 }
 
+// Returns the MDX integration options for @astrojs/mdx.
+// Accepts the same options as notroMarkdownConfig so remark/rehype plugins
+// are shared between the markdown and MDX pipelines.
+export function notroMdxConfig(options: NotroMarkdownConfigOptions = {}) {
+  return notroMarkdownConfig(options);
+}
+
 export { preprocessNotionMarkdown };

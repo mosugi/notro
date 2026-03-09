@@ -1,9 +1,10 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { getCollection } from "astro:content";
-import { NotionMarkdownRenderer, getPlainText } from "notro";
+import { getCollection, render } from "astro:content";
+import { getPlainText } from "notro";
 import Layout from "../../layouts/Layout.astro";
 import { navPages } from "../../config";
+import { mdComponents } from "../../components/md/index";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -61,13 +62,14 @@ export async function getStaticPaths() {
   });
 }
 
-const { entry, linkToPages, bodyClass, prevNav, nextNav } = Astro.props;
+const { entry, bodyClass, prevNav, nextNav } = Astro.props;
 
 const title = getPlainText(entry.data.properties.Name) ?? entry.id;
 const description = getPlainText(entry.data.properties.Description);
 const date = entry.data.properties.Date.date?.start;
 const tags = entry.data.properties.Tags.multi_select;
-const markdown = entry.data.markdown;
+
+const { Content } = await render(entry);
 ---
 
 <Layout title={title} description={description} bodyClass={bodyClass}>
@@ -98,7 +100,7 @@ const markdown = entry.data.markdown;
       </header>
 
       <div class="nt-markdown-content">
-        <NotionMarkdownRenderer markdown={markdown} linkToPages={linkToPages} />
+        <Content components={mdComponents} />
       </div>
 
       {(prevNav || nextNav) && (

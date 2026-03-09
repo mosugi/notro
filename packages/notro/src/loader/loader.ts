@@ -8,6 +8,9 @@ import type { ClientOptions } from "@notionhq/client/build/src/Client";
 import type {
   QueryDataSourceParameters,
 } from "@notionhq/client/build/src/api-endpoints";
+import { writeFileSync, mkdirSync } from "node:fs";
+import { join, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   type PageWithMarkdownType,
   pageWithMarkdownSchema,
@@ -36,7 +39,7 @@ export function loader({
   // Return a loader object
   return {
     name: "notro-loader",
-    load: async ({ store, parseData, logger }): Promise<void> => {
+    load: async ({ store, parseData, logger, config }): Promise<void> => {
       // Load data and update the store
       const pageOrDatabases = await Array.fromAsync(
         iteratePaginatedAPI(client.dataSources.query, queryParameters),
@@ -58,6 +61,11 @@ export function loader({
           store.delete(id);
         }
       });
+
+      // Prepare the cache directory for MDX files
+      const rootDir = fileURLToPath(config.root);
+      const cacheDir = join(rootDir, ".astro/cache/notro-mdx");
+      mkdirSync(cacheDir, { recursive: true });
 
       // Load new or updated pages
       const loadPageMarkdownPromises = pages
@@ -83,6 +91,15 @@ export function loader({
           const preprocessedMarkdown = preprocessNotionMarkdown(
             markdownResponse.markdown
           );
+
+          // Write the preprocessed markdown as an MDX file so Astro can use
+          // deferredRender: true (enabling Vercel build cache for MDX output).
+          const mdxPath = join(cacheDir, `${page.id}.mdx`);
+          writeFileSync(mdxPath, preprocessedMarkdown, "utf-8");
+
+          // Store the file path relative to the site root (posix separators)
+          // as required by Astro's content store API.
+          const relativeMdxPath = relative(rootDir, mdxPath).replace(/\\/g, "/");
 
           const data = await parseData<PageWithMarkdownType>({
             id: page.id,
@@ -110,6 +127,8 @@ export function loader({
             digest: page.last_edited_time,
             data: data,
             body: preprocessedMarkdown,
+            filePath: relativeMdxPath,
+            deferredRender: true,
           });
         });
 
