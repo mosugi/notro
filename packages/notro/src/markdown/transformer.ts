@@ -78,7 +78,17 @@ export function preprocessNotionMarkdown(markdown: string): string {
   let result = markdown.replace(/([^\n])\n(---+)(\n|$)/g, "$1\n\n$2$3");
 
   // Fix 2: Normalize callout directive syntax.
-  result = result.replace(/^::: callout (\{[^}]*\})$/gm, ":::callout$1");
+  // Notion outputs "::: callout {icon="..." color="..."}" (with spaces)
+  // or "::: callout" (no attrs) in newer API responses.
+  // remark-directive requires ":::callout{...}" (no spaces, attrs optional).
+  // Also dedent tab-indented content inside callout blocks — CommonMark
+  // treats tab-indented lines as indented code blocks otherwise.
+  result = result.replace(/^::: callout( \{[^}]*\})?$/gm, (_, attrs) => `:::callout${attrs?.trim() ?? ""}`);
+  result = result.replace(
+    /^(:::callout[^\n]*)\n([\s\S]*?)^:::$/gm,
+    (_, opening: string, content: string) =>
+      `${opening}\n${content.replace(/^\t/gm, "")}:::`
+  );
 
   // Fix 3: Convert block-level color annotations to raw HTML.
   result = result.replace(
