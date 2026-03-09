@@ -1,3 +1,6 @@
+import { writeFileSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { Loader, ParseDataOptions } from "astro/loaders";
 import {
   Client,
@@ -36,7 +39,7 @@ export function loader({
   // Return a loader object
   return {
     name: "notro-loader",
-    load: async ({ store, parseData, logger }): Promise<void> => {
+    load: async ({ store, parseData, logger, config }): Promise<void> => {
       // Load data and update the store
       const pageOrDatabases = await Array.fromAsync(
         iteratePaginatedAPI(client.dataSources.query, queryParameters),
@@ -59,10 +62,21 @@ export function loader({
         }
       });
 
+      // Prepare cache directory for MDX files
+      const cacheDir = join(
+        fileURLToPath(new URL(".astro/cache/notro-mdx", config.root)),
+      );
+      mkdirSync(cacheDir, { recursive: true });
+
       // Load new or updated pages
       const loadPageMarkdownPromises = pages
         .filter((page) => !store.has(page.id))
         .map(async (page) => {
+          // Skip if digest is unchanged (should not happen due to the delete step above,
+          // but kept as a safety net in case of concurrent builds or race conditions)
+          const existing = store.get(page.id);
+          if (existing?.digest === page.last_edited_time) return;
+
           logger.info(`Loading page ${page.id} into store`);
 
           const markdownResponse = await client.pages.retrieveMarkdown({
@@ -83,6 +97,12 @@ export function loader({
           const preprocessedMarkdown = preprocessNotionMarkdown(
             markdownResponse.markdown
           );
+
+          // Write preprocessed markdown to a .mdx file in the build cache directory.
+          // This enables deferredRender so Astro processes it through the MDX pipeline,
+          // which allows Vercel to cache the output across builds.
+          const mdxPath = join(cacheDir, `${page.id}.mdx`);
+          writeFileSync(mdxPath, preprocessedMarkdown, "utf-8");
 
           const data = await parseData<PageWithMarkdownType>({
             id: page.id,
@@ -110,6 +130,8 @@ export function loader({
             digest: page.last_edited_time,
             data: data,
             body: preprocessedMarkdown,
+            filePath: `.astro/cache/notro-mdx/${page.id}.mdx`,
+            deferredRender: true,
           });
         });
 

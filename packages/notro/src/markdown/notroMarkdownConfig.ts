@@ -49,4 +49,10 @@ export function notroMarkdownConfig(options: NotroMarkdownConfigOptions = {}) {
   };
 }
 
+// Returns the MDX integration options for use with @astrojs/mdx in astro.config.mjs.
+// Accepts the same options as notroMarkdownConfig.
+export function notroMdxConfig(options: NotroMarkdownConfigOptions = {}) {
+  return notroMarkdownConfig(options);
+}
+
 export { preprocessNotionMarkdown };
