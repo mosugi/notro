@@ -41,8 +41,10 @@ export type LinkToPages = Record<string, { url: string; title: string }>;
  *
  * 4. Table of contents:
  *    CommonMark HTML block detection requires tag names matching [A-Za-z][A-Za-z0-9-]*.
- *    Tags with underscores (like "table_of_contents") are escaped as text instead of
- *    being treated as HTML. Wrapping in <div> forces remark to treat them as HTML.
+ *    The underscore form <table_of_contents/> (Notion API output) is not recognized as HTML
+ *    by CommonMark, so it gets escaped as text. The hyphenated form <table-of-contents/>
+ *    (seed/user input) is valid but we normalize both variants by wrapping in <div>
+ *    so remark treats them as HTML and the tableOfContentsPlugin can find them.
  *
  * 5. Inline equation format:
  *    Notion outputs inline math as $`E = mc^2`$ (backtick-delimited inside $...$).
@@ -76,7 +78,17 @@ export function preprocessNotionMarkdown(markdown: string): string {
   let result = markdown.replace(/([^\n])\n(---+)(\n|$)/g, "$1\n\n$2$3");
 
   // Fix 2: Normalize callout directive syntax.
-  result = result.replace(/^::: callout (\{[^}]*\})$/gm, ":::callout$1");
+  // Notion outputs "::: callout {icon="..." color="..."}" (with spaces)
+  // or "::: callout" (no attrs) in newer API responses.
+  // remark-directive requires ":::callout{...}" (no spaces, attrs optional).
+  // Also dedent tab-indented content inside callout blocks — CommonMark
+  // treats tab-indented lines as indented code blocks otherwise.
+  result = result.replace(/^::: callout( \{[^}]*\})?$/gm, (_, attrs) => `:::callout${attrs?.trim() ?? ""}`);
+  result = result.replace(
+    /^(:::callout[^\n]*)\n([\s\S]*?)^:::$/gm,
+    (_, opening: string, content: string) =>
+      `${opening}\n${content.replace(/^\t/gm, "")}:::`
+  );
 
   // Fix 3: Convert block-level color annotations to raw HTML.
   result = result.replace(
@@ -89,10 +101,14 @@ export function preprocessNotionMarkdown(markdown: string): string {
     '<p color="$2">$1</p>'
   );
 
-  // Fix 4: Wrap <table_of_contents/> in <div> so remark treats it as HTML.
+  // Fix 4: Wrap table-of-contents tags in <div> so remark treats them as HTML.
+  // CommonMark HTML block detection requires tag names matching [A-Za-z][A-Za-z0-9-]*.
+  // The underscore form <table_of_contents/> (Notion API output) is not recognized as HTML
+  // by CommonMark. The hyphenated form <table-of-contents/> (seed/user input) is valid but
+  // we normalize both to <table_of_contents/> inside a <div> for consistent plugin handling.
   result = result.replace(
-    /^<table_of_contents\/>$/gm,
-    "<div><table_of_contents/></div>"
+    /^<table[_-]of[_-]contents(?:\s[^>]*)?\s*\/?>$/gm,
+    "<div><table_of_contents/></div>\n"
   );
 
   // Fix 5: Convert Notion inline equation format $`...`$ → $...$ for remark-math.
