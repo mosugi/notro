@@ -8,7 +8,7 @@ import type { ClientOptions } from "@notionhq/client/build/src/Client";
 import type {
   QueryDataSourceParameters,
 } from "@notionhq/client/build/src/api-endpoints";
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -67,9 +67,24 @@ export function loader({
       const cacheDir = join(rootDir, ".astro/cache/notro-mdx");
       mkdirSync(cacheDir, { recursive: true });
 
-      // Load new or updated pages
+      // The in-memory moduleImports map is rebuilt from scratch on each build.
+      // Re-register module imports for all cached entries so that Astro can
+      // resolve deferred renders even when store.set() is skipped (digest match).
+      store.entries().forEach(([, entry]) => {
+        if (entry.deferredRender && entry.filePath) {
+          store.addModuleImport(entry.filePath);
+        }
+      });
+
+      // Load new or updated pages (also re-fetch if the MDX file is missing on disk)
       const loadPageMarkdownPromises = pages
-        .filter((page) => !store.has(page.id))
+        .filter((page) => {
+          if (!store.has(page.id)) return true;
+          // MDX file may be missing if the cache dir was cleared without clearing
+          // the data store. Re-fetch so the file exists for deferred rendering.
+          const mdxPath = join(cacheDir, `${page.id}.mdx`);
+          return !existsSync(mdxPath);
+        })
         .map(async (page) => {
           logger.info(`Loading page ${page.id} into store`);
 
