@@ -50,10 +50,30 @@ export function notroMarkdownConfig(options: NotroMarkdownConfigOptions = {}) {
 }
 
 // Returns the MDX integration options for @astrojs/mdx.
-// Accepts the same options as notroMarkdownConfig so remark/rehype plugins
-// are shared between the markdown and MDX pipelines.
+// @astrojs/mdx already prepends [rehypeRaw, { passThrough: nodeTypes }] to the
+// rehype pipeline internally. Adding rehypeRaw a second time (without
+// passThrough) would destroy MDX-specific AST nodes (mdxJsxFlowElement, etc.)
+// and produce empty output. So we omit rehypeRaw here.
 export function notroMdxConfig(options: NotroMarkdownConfigOptions = {}) {
-  return notroMarkdownConfig(options);
+  const { linkToPages = {} } = options;
+
+  return {
+    remarkPlugins: [remarkGfm, remarkMath, remarkDirective, calloutPlugin],
+    rehypePlugins: [
+      // rehypeRaw is intentionally omitted here: @astrojs/mdx adds it with
+      // { passThrough: nodeTypes } before user plugins, which is sufficient.
+      rehypeKatex,
+      imagePlugin,
+      columnsPlugin,
+      colorPlugin,
+      [pageLinkPlugin, { linkToPages }] as const,
+      mediaPlugin,
+      tableOfContentsPlugin,
+      tablePlugin,
+      togglePlugin,
+      cleanupPlugin,
+    ],
+  };
 }
 
 export { preprocessNotionMarkdown };
