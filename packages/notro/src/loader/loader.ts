@@ -1,4 +1,4 @@
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Loader, ParseDataOptions } from "astro/loaders";
@@ -47,8 +47,12 @@ export function loader({
 
       const pages = pageOrDatabases.filter((page) => isFullPage(page));
 
-      // Delete entries that are removed, edited, or contain expired pre-signed URLs
-      store.entries().forEach(([id, { digest, data }]) => {
+      // Delete entries that are removed, edited, contain expired pre-signed URLs,
+      // or are missing filePath (migration from the old body-only format that
+      // did not use deferredRender — these must be re-fetched so that filePath
+      // and deferredRender: true are stored in the new entry).
+      store.entries().forEach(([id, entry]) => {
+        const { digest, data } = entry;
         const isDeleted = !pages.some((page) => page.id === id);
         const isEdited = pages.some(
           (page) => page.id === id && digest !== page.last_edited_time,
@@ -56,7 +60,8 @@ export function loader({
         const hasExpiredUrls = hasNotionPresignedUrl(
           data as PageWithMarkdownType,
         );
-        if (isDeleted || isEdited || hasExpiredUrls) {
+        const needsMigration = !entry.filePath;
+        if (isDeleted || isEdited || hasExpiredUrls || needsMigration) {
           logger.info(`Deleting page ${id} from store`);
           store.delete(id);
         }
@@ -72,15 +77,34 @@ export function loader({
       );
       mkdirSync(cacheDir, { recursive: true });
 
+      // Re-register module imports for unchanged cached entries.
+      //
+      // When store.set() is skipped due to a matching digest, addModuleImport()
+      // is never called for that entry. This means .astro/modules.mjs — which
+      // powers the deferredRender virtual module lookup in runtime.ts — would
+      // be empty on a fresh build where the content store is restored from
+      // Vercel cache but .astro/modules.mjs is not.
+      //
+      // By explicitly calling store.addModuleImport() for every cached entry,
+      // we ensure the module map is always fully populated before the Vite
+      // build starts. We also write the .md file if it is missing from disk
+      // (e.g. cache directory was cleared while the data store was not).
+      store.entries().forEach(([, entry]) => {
+        if (entry.filePath) {
+          store.addModuleImport(entry.filePath);
+          const mdPath = join(
+            fileURLToPath(new URL(entry.filePath, config.root)),
+          );
+          if (!existsSync(mdPath) && entry.body) {
+            writeFileSync(mdPath, entry.body, "utf-8");
+          }
+        }
+      });
+
       // Load new or updated pages
       const loadPageMarkdownPromises = pages
         .filter((page) => !store.has(page.id))
         .map(async (page) => {
-          // Skip if digest is unchanged (should not happen due to the delete step above,
-          // but kept as a safety net in case of concurrent builds or race conditions)
-          const existing = store.get(page.id);
-          if (existing?.digest === page.last_edited_time) return;
-
           logger.info(`Loading page ${page.id} into store`);
 
           const markdownResponse = await client.pages.retrieveMarkdown({
@@ -130,6 +154,9 @@ export function loader({
             } as PageWithMarkdownType,
           });
 
+          // store.set() internally calls addModuleImport(filePath) when
+          // deferredRender: true is set, so no separate addModuleImport call
+          // is needed here.
           store.set({
             id: page.id,
             digest: page.last_edited_time,
