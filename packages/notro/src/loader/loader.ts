@@ -62,9 +62,13 @@ export function loader({
         }
       });
 
-      // Prepare cache directory for MDX files
+      // Prepare cache directory for preprocessed markdown files.
+      // Using .md extension so Astro routes them through the standard markdown
+      // pipeline (notroMarkdownConfig) rather than MDX, which would parse
+      // Notion's raw HTML output (columns, toggles, page links, etc.) as JSX
+      // and break the custom rehype plugins that rely on hast element nodes.
       const cacheDir = join(
-        fileURLToPath(new URL(".astro/cache/notro-mdx", config.root)),
+        fileURLToPath(new URL(".astro/cache/notro-md", config.root)),
       );
       mkdirSync(cacheDir, { recursive: true });
 
@@ -98,11 +102,12 @@ export function loader({
             markdownResponse.markdown
           );
 
-          // Write preprocessed markdown to a .mdx file in the build cache directory.
-          // This enables deferredRender so Astro processes it through the MDX pipeline,
-          // which allows Vercel to cache the output across builds.
-          const mdxPath = join(cacheDir, `${page.id}.mdx`);
-          writeFileSync(mdxPath, preprocessedMarkdown, "utf-8");
+          // Write preprocessed markdown to a .md file in the build cache directory.
+          // This enables deferredRender so Astro processes it through the standard
+          // markdown pipeline (notroMarkdownConfig), which allows Vercel to cache
+          // the rendered output across builds.
+          const mdPath = join(cacheDir, `${page.id}.md`);
+          writeFileSync(mdPath, preprocessedMarkdown, "utf-8");
 
           const data = await parseData<PageWithMarkdownType>({
             id: page.id,
@@ -130,7 +135,7 @@ export function loader({
             digest: page.last_edited_time,
             data: data,
             body: preprocessedMarkdown,
-            filePath: `.astro/cache/notro-mdx/${page.id}.mdx`,
+            filePath: `.astro/cache/notro-md/${page.id}.md`,
             deferredRender: true,
           });
         });
