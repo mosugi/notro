@@ -1,27 +1,7 @@
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remarkGfm from "remark-gfm";
-import remarkMath from "remark-math";
-import remarkDirective from "remark-directive";
-import remarkRehype from "remark-rehype";
-import rehypeRaw from "rehype-raw";
-import rehypeKatex from "rehype-katex";
-import rehypeStringify from "rehype-stringify";
-import { calloutPlugin } from "./plugins/callout.ts";
-import { columnsPlugin } from "./plugins/columns.ts";
-import { colorPlugin } from "./plugins/color.ts";
-import { imagePlugin } from "./plugins/image.ts";
-import { mediaPlugin } from "./plugins/media.ts";
-import { pageLinkPlugin } from "./plugins/page-link.ts";
-import { tableOfContentsPlugin } from "./plugins/table-of-contents.ts";
-import { tablePlugin } from "./plugins/table.ts";
-import { togglePlugin } from "./plugins/toggle.ts";
-import { cleanupPlugin } from "./plugins/cleanup.ts";
-
 export type LinkToPages = Record<string, { url: string; title: string }>;
 
 /**
- * Preprocesses Notion Enhanced Markdown before remark parsing.
+ * Preprocesses Notion Enhanced Markdown before remark/MDX parsing.
  *
  * Fixes structural issues in Notion's markdown output that prevent correct
  * parsing by standard CommonMark/GFM parsers:
@@ -37,14 +17,13 @@ export type LinkToPages = Record<string, { url: string; title: string }>;
  *
  * 3. Block-level color annotations:
  *    Lines ending with {color="..."} are converted to raw HTML elements so the
- *    colorPlugin can apply the appropriate CSS class.
+ *    heading components (H1–H4) can receive the color as a prop.
  *
  * 4. Table of contents:
  *    CommonMark HTML block detection requires tag names matching [A-Za-z][A-Za-z0-9-]*.
  *    The underscore form <table_of_contents/> (Notion API output) is not recognized as HTML
- *    by CommonMark, so it gets escaped as text. The hyphenated form <table-of-contents/>
- *    (seed/user input) is valid but we normalize both variants by wrapping in <div>
- *    so remark treats them as HTML and the tableOfContentsPlugin can find them.
+ *    by CommonMark, so it gets escaped as text. Wrap it in <div> so remark treats it
+ *    as HTML and the component mapping can render TableOfContents.astro.
  *
  * 5. Inline equation format:
  *    Notion outputs inline math as $`E = mc^2`$ (backtick-delimited inside $...$).
@@ -56,9 +35,9 @@ export type LinkToPages = Record<string, { url: string; title: string }>;
  *    so remark can parse it as normal markdown.
  *
  * 7. Empty block isolation:
- *    <empty-block/> inline within a paragraph becomes a block-level <div> after
- *    mediaPlugin runs, producing invalid HTML (<div> inside <p>). Adding blank
- *    lines around it ensures remark treats it as a standalone HTML block.
+ *    <empty-block/> inline within a paragraph becomes a block-level element after
+ *    the component mapping runs, producing invalid HTML (<div> inside <p>). Adding
+ *    blank lines around it ensures remark treats it as a standalone HTML block.
  *
  * 8. Trailing blank line after block-level HTML closing tags:
  *    CommonMark HTML blocks (type 6: block-level elements like <table>, <details>,
@@ -129,7 +108,7 @@ export function preprocessNotionMarkdown(markdown: string): string {
 
   // Fix 7: Ensure <empty-block/> is treated as a standalone block element.
   // Without blank lines around it, remark places it inline inside a <p>,
-  // which mediaPlugin then converts to a <div> — producing invalid HTML.
+  // which the component mapping then renders as a block inside inline content.
   result = result.replace(/([^\n])\n(<empty-block\/>)/g, "$1\n\n$2");
   result = result.replace(/(<empty-block\/>)\n([^\n])/g, "$1\n\n$2");
 
@@ -156,34 +135,4 @@ export function preprocessNotionMarkdown(markdown: string): string {
   });
 
   return result;
-}
-
-export async function transformNotionMarkdown(
-  markdown: string,
-  options?: { linkToPages?: LinkToPages }
-): Promise<string> {
-  const preprocessed = preprocessNotionMarkdown(markdown);
-
-  const result = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkMath)
-    .use(remarkDirective)
-    .use(calloutPlugin)
-    .use(remarkRehype, { allowDangerousHtml: true })
-    .use(rehypeRaw)
-    .use(rehypeKatex)
-    .use(imagePlugin)
-    .use(columnsPlugin)
-    .use(colorPlugin)
-    .use(pageLinkPlugin, { linkToPages: options?.linkToPages ?? {} })
-    .use(mediaPlugin)
-    .use(tableOfContentsPlugin)
-    .use(tablePlugin)
-    .use(togglePlugin)
-    .use(cleanupPlugin)
-    .use(rehypeStringify)
-    .process(preprocessed);
-
-  return String(result);
 }
