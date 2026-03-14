@@ -13,7 +13,7 @@ import Layout from "../layouts/Layout.astro";
 
         <p class="mt-6 text-lg leading-8 text-gray-600">
           NotroTail fetches content from Notion via the Public API, renders it
-          through a custom remark/rehype pipeline, and outputs a fast,
+          through MDX with a component mapping, and outputs a fast,
           SEO-optimized static site styled with TailwindCSS 4.
         </p>
 
@@ -46,18 +46,18 @@ import Layout from "../layouts/Layout.astro";
         </details>
 
         <details open class="rounded-xl border border-gray-100 p-5 shadow-sm transition hover:border-gray-200 hover:shadow">
-          <summary class="cursor-pointer text-base"><strong>Markdown Pipeline</strong></summary>
+          <summary class="cursor-pointer text-base"><strong>Component Mapping</strong></summary>
           <p class="mt-2 text-sm text-gray-600">
-            Custom remark/rehype plugins for callouts, columns, toggles, table of
-            contents, page links, and media embeds.
+            Notion blocks rendered as Astro components via MDX evaluate() and a
+            component mapping — callouts, columns, toggles, KaTeX math, and more.
           </p>
         </details>
 
         <details open class="rounded-xl border border-gray-100 p-5 shadow-sm transition hover:border-gray-200 hover:shadow">
           <summary class="cursor-pointer text-base"><strong>TailwindCSS 4</strong></summary>
           <p class="mt-2 text-sm text-gray-600">
-            All Notion block types and colors map to <code>nt-*</code> utility
-            classes. Fast, tree-shaken output.
+            Scoped styles per Notion component. Fast, tree-shaken output with
+            per-page theme support via <code>bodyClass</code>.
           </p>
         </details>
 

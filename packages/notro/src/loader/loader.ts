@@ -75,11 +75,8 @@ export function loader({
           }
 
           // Preprocess the markdown to fix Notion-specific syntax issues before
-          // storing. This ensures both entry.render() (via notroMarkdownConfig)
-          // and NotionMarkdownRenderer see corrected markdown.
-          // Note: transformNotionMarkdown() also calls preprocessNotionMarkdown()
-          // internally, but each transformation is idempotent so double-processing
-          // is safe. The markdown stored here is already preprocessed.
+          // storing. NotionMarkdownRenderer calls compileMdxCached() which runs
+          // evaluate() on this already-preprocessed markdown.
           const preprocessedMarkdown = preprocessNotionMarkdown(
             markdownResponse.markdown
           );

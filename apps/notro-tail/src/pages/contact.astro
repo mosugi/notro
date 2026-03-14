@@ -72,7 +72,7 @@ import Layout from "../layouts/Layout.astro";
           <li>The <code>loader()</code> from <code>notro</code> calls the <strong>Notion Public API</strong> and fetches pages as Markdown.</li>
           <li>Pages are cached by <code>last_edited_time</code>; only changed pages are re-fetched on rebuild.</li>
           <li>Preprocessed Markdown is stored in the Astro Content Collection store.</li>
-          <li>At render time, <code>NotionMarkdownRenderer</code> runs the full <strong>remark/rehype plugin pipeline</strong>: callouts, toggles, columns, KaTeX math, table of contents, and more.</li>
+          <li>At render time, <code>NotionMarkdownRenderer</code> compiles Markdown to MDX via <code>evaluate()</code> and renders with <strong>Astro component mapping</strong>: callouts, toggles, columns, KaTeX math, table of contents, and more.</li>
           <li>Notion pre-signed S3 image URLs are cached correctly via a custom Astro image service that strips expiring <code>X-Amz-*</code> query parameters.</li>
         </ol>
       </section>
