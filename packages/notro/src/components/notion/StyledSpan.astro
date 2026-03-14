@@ -1,0 +1,22 @@
+---
+/**
+ * <span color="Color">text</span>
+ * <span underline="true">text</span>
+ *
+ * Mapped to MDX `components.span`.
+ * Supports inline text color and underline.
+ */
+import { colorToCSS } from './colors';
+
+interface Props {
+	color?: string;
+	underline?: string;
+}
+
+const { color, underline } = Astro.props;
+const style = [colorToCSS(color), underline === 'true' ? 'text-decoration:underline' : '']
+	.filter(Boolean)
+	.join(';');
+---
+
+<span style={style || undefined}><slot /></span>

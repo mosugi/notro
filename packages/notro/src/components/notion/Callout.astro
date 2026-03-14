@@ -1,0 +1,47 @@
+---
+/**
+ * <callout icon="🎯" color="blue_bg">
+ *   Content here
+ * </callout>
+ */
+import { colorToCSS } from './colors';
+
+interface Props {
+	icon?: string;
+	color?: string;
+}
+
+const { icon, color } = Astro.props;
+---
+
+<div class="notion-callout" style={colorToCSS(color) || 'background-color:#F1F1EF'}>
+	{icon && <span class="notion-callout__icon">{icon}</span>}
+	<div class="notion-callout__body">
+		<slot />
+	</div>
+</div>
+
+<style>
+	.notion-callout {
+		display: flex;
+		gap: 0.75rem;
+		padding: 1rem 1.25rem;
+		border-radius: 0.375rem;
+		margin: 0.75rem 0;
+	}
+	.notion-callout__icon {
+		font-size: 1.25rem;
+		line-height: 1.5;
+		flex-shrink: 0;
+	}
+	.notion-callout__body {
+		flex: 1;
+		min-width: 0;
+	}
+	.notion-callout__body :global(> :first-child) {
+		margin-top: 0;
+	}
+	.notion-callout__body :global(> :last-child) {
+		margin-bottom: 0;
+	}
+</style>

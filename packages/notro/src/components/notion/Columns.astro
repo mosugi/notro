@@ -1,0 +1,25 @@
+---
+/**
+ * <columns>
+ *   <column>...</column>
+ *   <column>...</column>
+ * </columns>
+ */
+---
+
+<div class="notion-columns">
+	<slot />
+</div>
+
+<style>
+	.notion-columns {
+		display: flex;
+		gap: 1rem;
+		margin: 0.75rem 0;
+	}
+	@media (max-width: 640px) {
+		.notion-columns {
+			flex-direction: column;
+		}
+	}
+</style>

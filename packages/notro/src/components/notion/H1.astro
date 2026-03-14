@@ -1,0 +1,9 @@
+---
+import { colorToCSS } from './colors';
+interface Props { color?: string; id?: string; }
+const { color, id } = Astro.props;
+---
+<h1 {id} class="notion-h1" style={colorToCSS(color)}><slot /></h1>
+<style>
+	.notion-h1 { font-size: 1.875rem; font-weight: 700; margin: 1.5rem 0 0.5rem; line-height: 1.25; }
+</style>

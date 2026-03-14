@@ -1,0 +1,26 @@
+---
+/**
+ * <column>
+ *   Children
+ * </column>
+ *
+ * Placed directly inside Columns.astro.
+ */
+---
+
+<div class="notion-column">
+	<slot />
+</div>
+
+<style>
+	.notion-column {
+		flex: 1;
+		min-width: 0;
+	}
+	.notion-column :global(> :first-child) {
+		margin-top: 0;
+	}
+	.notion-column :global(> :last-child) {
+		margin-bottom: 0;
+	}
+</style>

@@ -1,0 +1,26 @@
+---
+/**
+ * <synced_block url="URL">Children</synced_block>
+ * <synced_block_reference url="URL">Children</synced_block_reference>
+ *
+ * Synced block — renders child content as-is.
+ * Mapped to MDX `components.synced_block` / `components.synced_block_reference`.
+ */
+interface Props {
+	url?: string;
+}
+
+const { url } = Astro.props;
+---
+
+<div class="notion-synced-block" data-url={url}>
+	<slot />
+</div>
+
+<style>
+	.notion-synced-block {
+		border-left: 2px solid #e5e7eb;
+		padding-left: 0.75rem;
+		margin: 0.25rem 0;
+	}
+</style>

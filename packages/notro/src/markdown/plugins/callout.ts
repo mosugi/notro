@@ -5,7 +5,7 @@ import { visit } from "unist-util-visit";
 import { normalizeColor } from "./color.ts";
 
 // Transforms :::callout{icon="💡" color="gray_bg"} container directives
-// into <div class="nt-callout-block"> elements before remark-rehype runs.
+// into <callout icon="..." color="..."> elements for the component mapping.
 //
 // Note: Notion's API outputs "::: callout {icon=...}" with spaces.
 // The preprocessNotionMarkdown() function in transformer.ts normalizes
@@ -21,16 +21,14 @@ export const calloutPlugin: Plugin<[], Root> = () => {
 
       const normalizedColor = color ? normalizeColor(color) : "";
 
-      // Use "data-color" so colorPlugin doesn't touch it (avoids inline
-      // nt-color-* px-0.5 clobbering the callout's px-4).
-      // Use "data-icon" so the icon is exposed as a data attribute for CSS ::before.
+      // Output as <callout> custom element so the component mapping
+      // (notionComponents.callout = Callout.astro) can handle rendering.
       node.data = {
         ...node.data,
-        hName: "div",
+        hName: "callout",
         hProperties: {
-          class: "nt-callout-block",
-          "data-color": normalizedColor || undefined,
-          "data-icon": icon || undefined,
+          color: normalizedColor || undefined,
+          icon: icon || undefined,
         },
       };
     });

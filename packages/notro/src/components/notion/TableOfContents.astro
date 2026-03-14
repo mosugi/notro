@@ -1,0 +1,43 @@
+---
+/**
+ * <table_of_contents color="Color"/>
+ *
+ * Table of contents block. Renders a placeholder nav element.
+ * In production, use rehype-slug + rehype-autolink-headings with
+ * client-side JS for dynamic generation.
+ */
+import { colorToCSS } from './colors';
+interface Props { color?: string; }
+const { color } = Astro.props;
+---
+
+<nav class="notion-toc" style={colorToCSS(color)} aria-label="目次">
+	<p class="notion-toc__label">📋 目次</p>
+	<slot />
+</nav>
+
+<style>
+	.notion-toc {
+		border: 1px solid #e5e7eb;
+		border-radius: 0.375rem;
+		padding: 0.75rem 1rem;
+		margin: 0.75rem 0;
+		font-size: 0.9375rem;
+	}
+	.notion-toc__label {
+		font-weight: 600;
+		margin: 0 0 0.5rem;
+		color: #374151;
+	}
+	.notion-toc :global(ul) {
+		margin: 0;
+		padding-left: 1.25rem;
+	}
+	.notion-toc :global(a) {
+		color: #6b7280;
+		text-decoration: none;
+	}
+	.notion-toc :global(a:hover) {
+		color: #111827;
+	}
+</style>

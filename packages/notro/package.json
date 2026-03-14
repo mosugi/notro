@@ -43,6 +43,7 @@
     "provenance": true
   },
   "dependencies": {
+    "@mdx-js/mdx": "^3.1.0",
     "@notionhq/client": "5.11.1",
     "unified": "^11.0.0",
     "remark-parse": "^11.0.0",

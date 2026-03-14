@@ -1,6 +1,7 @@
 ---
-import { transformNotionMarkdown } from "../markdown/transformer.ts";
-import type { LinkToPages } from "../markdown/transformer.ts";
+import { compileMdxCached } from '../utils/compile-mdx.ts';
+import { notionComponents } from './notion/index.ts';
+import type { LinkToPages } from '../markdown/transformer.ts';
 
 interface Props {
   markdown: string;
@@ -9,7 +10,9 @@ interface Props {
 }
 
 const { markdown, linkToPages, class: className } = Astro.props;
-const html = await transformNotionMarkdown(markdown, { linkToPages });
+const Content = await compileMdxCached(markdown, { linkToPages });
 ---
 
-<div class:list={["nt-markdown-content", className]} set:html={html} />
+<div class:list={["nt-markdown-content", className]}>
+  <Content components={notionComponents} />
+</div>

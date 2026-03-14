@@ -2,6 +2,8 @@ export { default as NotionMarkdownRenderer } from "./src/components/NotionMarkdo
 export { default as OptimizedDatabaseCover } from "./src/components/OptimizedDatabaseCover.astro";
 export { default as DatabaseProperty } from "./src/components/DatabaseProperty.astro";
 
+export { notionComponents } from "./src/components/notion/index.ts";
+export type { NotionComponents } from "./src/components/notion/index.ts";
 
 export * from "./src/utils/notion";
 export * from "./src/loader/loader";

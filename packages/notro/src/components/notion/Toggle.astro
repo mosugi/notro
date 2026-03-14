@@ -1,0 +1,33 @@
+---
+/**
+ * <details color="gray_bg">
+ *   <summary>Toggle title</summary>
+ *   Children
+ * </details>
+ *
+ * Mapped to MDX `components.details`.
+ * Used together with ToggleTitle.astro (components.summary).
+ */
+import { colorToCSS } from './colors';
+
+interface Props {
+	color?: string;
+}
+
+const { color } = Astro.props;
+---
+
+<details class="notion-toggle" style={colorToCSS(color)}>
+	<slot />
+</details>
+
+<style>
+	.notion-toggle {
+		border-radius: 0.375rem;
+		margin: 0.25rem 0;
+	}
+	/* Add padding to children except summary */
+	.notion-toggle :global(> *:not(summary)) {
+		padding: 0 1rem 0.5rem;
+	}
+</style>

@@ -1,0 +1,14 @@
+---
+/** <audio src="URL" color="Color">Caption</audio> */
+interface Props { src: string; color?: string; }
+const { src } = Astro.props;
+---
+<figure class="notion-media notion-media--audio">
+	<audio controls src={src} class="notion-media__player"></audio>
+	{Astro.slots.has('default') && <figcaption class="notion-media__caption"><slot /></figcaption>}
+</figure>
+<style>
+	.notion-media { margin: 0.75rem 0; }
+	.notion-media--audio .notion-media__player { width: 100%; }
+	.notion-media__caption { font-size: 0.875rem; color: #6b7280; margin-top: 0.375rem; text-align: center; }
+</style>

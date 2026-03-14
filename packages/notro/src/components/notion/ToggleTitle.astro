@@ -1,0 +1,38 @@
+---
+/**
+ * <summary>Toggle title</summary>
+ *
+ * Mapped to MDX `components.summary`.
+ * Placed directly inside Toggle.astro (<details>).
+ */
+---
+
+<summary class="notion-toggle__title">
+	<slot />
+</summary>
+
+<style>
+	.notion-toggle__title {
+		padding: 0.5rem 0.75rem;
+		cursor: pointer;
+		font-weight: 500;
+		list-style: none;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		user-select: none;
+	}
+	.notion-toggle__title::-webkit-details-marker {
+		display: none;
+	}
+	.notion-toggle__title::before {
+		content: '▶';
+		font-size: 0.6rem;
+		color: #9ca3af;
+		transition: transform 0.15s ease;
+		flex-shrink: 0;
+	}
+	details[open] > .notion-toggle__title::before {
+		transform: rotate(90deg);
+	}
+</style>
