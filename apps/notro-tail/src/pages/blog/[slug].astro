@@ -4,6 +4,7 @@ import { getCollection } from "astro:content";
 import { NotionMarkdownRenderer, getPlainText } from "notro";
 import Layout from "../../layouts/Layout.astro";
 import { navPages } from "../../config";
+import Callout from "../../components/notion/Callout.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -97,9 +98,28 @@ const markdown = entry.data.markdown;
         </div>
       </header>
 
-      <div class="nt-markdown-content">
-        <NotionMarkdownRenderer markdown={markdown} linkToPages={linkToPages} />
-      </div>
+      <NotionMarkdownRenderer
+        markdown={markdown}
+        linkToPages={linkToPages}
+        classMap={{
+          callout:     "flex items-start gap-3 my-4 rounded-lg border border-gray-200 p-4",
+          toggle:      "my-1 rounded-md",
+          toggleTitle: "cursor-pointer select-none py-1 font-medium",
+          columns:     "grid grid-cols-1 gap-6 my-4 md:grid-cols-2",
+          column:      "min-w-0",
+          quote:       "my-4 border-l-4 border-gray-200 pl-4 italic text-gray-600",
+          h1:          "mb-3 mt-10 text-3xl font-bold text-gray-900",
+          h2:          "mb-2 mt-8 text-2xl font-semibold text-gray-900",
+          h3:          "mb-2 mt-6 text-xl font-semibold text-gray-900",
+          h4:          "mb-1 mt-4 text-lg font-semibold text-gray-900",
+          image:       "my-4",
+          tableWrapper:"my-4 w-full overflow-x-auto",
+          table:       "w-full border-collapse text-sm",
+          tableCell:   "border border-gray-200 px-3 py-2 text-gray-700",
+          toc:         "my-4 rounded-md bg-gray-50 p-4",
+        }}
+        components={{ callout: Callout }}
+      />
 
       {(prevNav || nextNav) && (
         <nav class="mt-12 flex items-stretch gap-4 border-t border-gray-100 pt-8 text-sm">

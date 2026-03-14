@@ -6,6 +6,7 @@ export { notionComponents } from "./src/components/notion/index.ts";
 export type { NotionComponents } from "./src/components/notion/index.ts";
 
 export * from "./src/utils/notion";
+export { colorToCSS } from "./src/components/notion/colors";
 export * from "./src/loader/loader";
 export * from "./src/loader/schema";
 // notroMarkdownConfig is intentionally NOT exported from here.

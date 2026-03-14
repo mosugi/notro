@@ -9,27 +9,13 @@
  * Mapped to MDX `components['mention-user']` etc.
  * All mention types render as inline links.
  */
+import { getClass } from '../../utils/classRegistry';
 interface Props {
 	url: string;
+	class?: string;
 }
 
-const { url } = Astro.props;
+const { url, class: className } = Astro.props;
 ---
 
-<a href={url} class="notion-mention">@<slot /></a>
-
-<style>
-	.notion-mention {
-		display: inline;
-		padding: 0 0.2em;
-		border-radius: 0.25em;
-		background-color: #eff6ff;
-		color: #1d4ed8;
-		font-size: 0.9em;
-		text-decoration: none;
-		font-weight: 500;
-	}
-	.notion-mention:hover {
-		background-color: #dbeafe;
-	}
-</style>
+<a href={url} class:list={["notion-mention", getClass('mention'), className]}>@<slot /></a>

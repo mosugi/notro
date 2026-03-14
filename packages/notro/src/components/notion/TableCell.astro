@@ -1,14 +1,7 @@
 ---
 import { colorToCSS } from './colors';
-interface Props { color?: string; }
-const { color } = Astro.props;
+import { getClass } from '../../utils/classRegistry';
+interface Props { color?: string; class?: string; }
+const { color, class: className } = Astro.props;
 ---
-<td class="notion-td" style={colorToCSS(color)}><slot /></td>
-<style>
-	.notion-td {
-		padding: 0.5rem 0.75rem;
-		border: 1px solid #e5e7eb;
-		vertical-align: top;
-		min-width: 6rem;
-	}
-</style>
+<td class:list={["notion-td", getClass('tableCell'), className]} style={colorToCSS(color)}><slot /></td>

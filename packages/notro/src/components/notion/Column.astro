@@ -6,21 +6,15 @@
  *
  * Placed directly inside Columns.astro.
  */
+import { getClass } from '../../utils/classRegistry';
+
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
 ---
 
-<div class="notion-column">
+<div class:list={["notion-column", getClass('column'), className]}>
 	<slot />
 </div>
-
-<style>
-	.notion-column {
-		flex: 1;
-		min-width: 0;
-	}
-	.notion-column :global(> :first-child) {
-		margin-top: 0;
-	}
-	.notion-column :global(> :last-child) {
-		margin-bottom: 0;
-	}
-</style>

@@ -6,29 +6,16 @@
  * Mapped to MDX `components.blockquote`.
  */
 import { colorToCSS } from './colors';
+import { getClass } from '../../utils/classRegistry';
 
 interface Props {
 	color?: string;
+	class?: string;
 }
 
-const { color } = Astro.props;
+const { color, class: className } = Astro.props;
 ---
 
-<blockquote class="notion-quote" style={colorToCSS(color)}>
+<blockquote class:list={["notion-quote", getClass('quote'), className]} style={colorToCSS(color)}>
 	<slot />
 </blockquote>
-
-<style>
-	.notion-quote {
-		border-left: 3px solid currentColor;
-		padding: 0.25rem 0 0.25rem 1rem;
-		margin: 0.75rem 0;
-		color: #374151;
-	}
-	.notion-quote :global(> :first-child) {
-		margin-top: 0;
-	}
-	.notion-quote :global(> :last-child) {
-		margin-bottom: 0;
-	}
-</style>

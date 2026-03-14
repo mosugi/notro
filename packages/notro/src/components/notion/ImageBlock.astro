@@ -4,15 +4,11 @@
  *
  * Notion image block. Mapped to MDX `components.img`.
  */
-interface Props { src: string; alt?: string; color?: string; }
-const { src, alt } = Astro.props;
+import { getClass } from '../../utils/classRegistry';
+interface Props { src: string; alt?: string; color?: string; class?: string; }
+const { src, alt, class: className } = Astro.props;
 ---
-<figure class="notion-image">
+<figure class:list={["notion-image", getClass('image'), className]}>
 	<img src={src} alt={alt ?? ''} loading="lazy" class="notion-image__img" />
 	{alt && <figcaption class="notion-image__caption">{alt}</figcaption>}
 </figure>
-<style>
-	.notion-image { margin: 0.75rem 0; }
-	.notion-image__img { max-width: 100%; border-radius: 0.375rem; display: block; }
-	.notion-image__caption { font-size: 0.875rem; color: #6b7280; margin-top: 0.375rem; text-align: center; }
-</style>

@@ -1,18 +1,29 @@
 ---
 import { compileMdxCached } from '../utils/compile-mdx.ts';
 import { notionComponents } from './notion/index.ts';
+import type { NotionComponents } from './notion/index.ts';
 import type { LinkToPages } from '../markdown/transformer.ts';
+import { setClassMap } from '../utils/classRegistry.ts';
 
 interface Props {
   markdown: string;
   linkToPages?: LinkToPages;
   class?: string;
+  /** CSS class strings keyed by component name (e.g. { callout: "flex gap-3 p-4 rounded" }) */
+  classMap?: Record<string, string>;
+  /** Full component overrides (e.g. { callout: MyCallout }) */
+  components?: Partial<NotionComponents & Record<string, unknown>>;
 }
 
-const { markdown, linkToPages, class: className } = Astro.props;
+const { markdown, linkToPages, class: className, classMap, components: customComponents } = Astro.props;
+
+// Register classMap so child components can read their assigned classes
+setClassMap(classMap ?? {});
+
 const Content = await compileMdxCached(markdown, { linkToPages });
+const mergedComponents = { ...notionComponents, ...customComponents };
 ---
 
 <div class:list={["nt-markdown-content", className]}>
-  <Content components={notionComponents} />
+  <Content components={mergedComponents} />
 </div>

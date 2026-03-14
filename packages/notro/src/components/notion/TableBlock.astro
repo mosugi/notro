@@ -7,28 +7,34 @@
  * Mapped to MDX `components.table`.
  * Color priority (high → low): cell > row > column
  */
+import { getClass } from '../../utils/classRegistry';
 interface Props {
 	'fit-page-width'?: string;
 	'header-row'?: string;
 	'header-column'?: string;
+	class?: string;
 }
 
 const {
 	'fit-page-width': fitPageWidth = 'false',
 	'header-row': headerRow = 'false',
 	'header-column': headerColumn = 'false',
+	class: className,
 } = Astro.props;
 ---
 
 <div
 	class:list={[
 		'notion-table-wrapper',
+		getClass('tableWrapper'),
 		{ 'notion-table-wrapper--full': fitPageWidth === 'true' },
 	]}
 >
 	<table
 		class:list={[
 			'notion-table',
+			getClass('table'),
+			className,
 			{ 'notion-table--header-row': headerRow === 'true' },
 			{ 'notion-table--header-col': headerColumn === 'true' },
 		]}
@@ -36,28 +42,3 @@ const {
 		<slot />
 	</table>
 </div>
-
-<style>
-	.notion-table-wrapper {
-		overflow-x: auto;
-		margin: 0.75rem 0;
-	}
-	.notion-table-wrapper--full {
-		width: 100%;
-	}
-	.notion-table {
-		border-collapse: collapse;
-		font-size: 0.9375rem;
-		min-width: 100%;
-	}
-	/* header-row: bold first row */
-	.notion-table--header-row :global(tr:first-child td) {
-		font-weight: 600;
-		background-color: #f9fafb;
-	}
-	/* header-column: bold first column */
-	.notion-table--header-col :global(tr td:first-child) {
-		font-weight: 600;
-		background-color: #f9fafb;
-	}
-</style>

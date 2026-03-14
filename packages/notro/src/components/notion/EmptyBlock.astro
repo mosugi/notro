@@ -7,8 +7,12 @@
  *
  * Mapped to MDX `components['empty-block']`.
  */
+import { getClass } from '../../utils/classRegistry';
+
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
 ---
-<div class="notion-empty-block" aria-hidden="true"></div>
-<style>
-	.notion-empty-block { height: 1.5em; }
-</style>
+<div class:list={["notion-empty-block", getClass('emptyBlock'), className]} aria-hidden="true"></div>

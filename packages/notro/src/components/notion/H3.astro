@@ -1,9 +1,7 @@
 ---
 import { colorToCSS } from './colors';
-interface Props { color?: string; id?: string; }
-const { color, id } = Astro.props;
+import { getClass } from '../../utils/classRegistry';
+interface Props { color?: string; id?: string; class?: string; }
+const { color, id, class: className } = Astro.props;
 ---
-<h3 {id} class="notion-h3" style={colorToCSS(color)}><slot /></h3>
-<style>
-	.notion-h3 { font-size: 1.25rem; font-weight: 600; margin: 1rem 0 0.375rem; line-height: 1.4; }
-</style>
+<h3 {id} class:list={["notion-h3", getClass('h3'), className]} style={colorToCSS(color)}><slot /></h3>

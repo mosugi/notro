@@ -5,21 +5,15 @@
  *   <column>...</column>
  * </columns>
  */
+import { getClass } from '../../utils/classRegistry';
+
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
 ---
 
-<div class="notion-columns">
+<div class:list={["notion-columns", getClass('columns'), className]}>
 	<slot />
 </div>
-
-<style>
-	.notion-columns {
-		display: flex;
-		gap: 1rem;
-		margin: 0.75rem 0;
-	}
-	@media (max-width: 640px) {
-		.notion-columns {
-			flex-direction: column;
-		}
-	}
-</style>

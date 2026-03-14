@@ -6,21 +6,15 @@
  * Synced block — renders child content as-is.
  * Mapped to MDX `components.synced_block` / `components.synced_block_reference`.
  */
+import { getClass } from '../../utils/classRegistry';
 interface Props {
 	url?: string;
+	class?: string;
 }
 
-const { url } = Astro.props;
+const { url, class: className } = Astro.props;
 ---
 
-<div class="notion-synced-block" data-url={url}>
+<div class:list={["notion-synced-block", getClass('syncedBlock'), className]} data-url={url}>
 	<slot />
 </div>
-
-<style>
-	.notion-synced-block {
-		border-left: 2px solid #e5e7eb;
-		padding-left: 0.75rem;
-		margin: 0.25rem 0;
-	}
-</style>
