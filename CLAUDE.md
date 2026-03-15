@@ -6,14 +6,14 @@
 
 ## Project Overview
 
-**NotroTail** is a Notion-to-Astro static site generator. It fetches content from Notion via the Notion Public API (Markdown Content API), renders it through a custom remark/rehype pipeline, and outputs a fast, SEO-optimized static site styled with TailwindCSS 4.
+**NotroTail** is a Notion-to-Astro static site generator. It fetches content from Notion via the Notion Public API (Markdown Content API), compiles it as MDX using `@mdx-js/mdx`'s `evaluate()`, and maps Notion block types to Astro components. Outputs a fast, SEO-optimized static site styled with TailwindCSS 4.
 
 The repo is an **npm workspace monorepo** with two workspaces:
 
 | Workspace | Path | Purpose |
 |---|---|---|
-| `notro-tail` | `apps/notro-tail/` | The deployable Astro 5 website (template / reference app) |
-| `notro` | `packages/notro/` | The publishable npm library (Astro Content Loader + components + plugins) |
+| `notro-tail` | `apps/notro-tail/` | The deployable Astro 6 website (template / reference app) |
+| `notro` | `packages/notro/` | The publishable npm library (Astro Content Loader + components) |
 
 ---
 
@@ -45,24 +45,17 @@ notro-tail/
 │       ├── index.ts         # Public API exports
 │       ├── src/
 │       │   ├── components/  # Astro components (NotionMarkdownRenderer, OptimizedDatabaseCover, DatabaseProperty)
+│       │   │   └── notion/  # Per-block-type Astro components (Callout, Toggle, H1–H4, TableBlock, etc.)
 │       │   ├── loader/
 │       │   │   ├── loader.ts    # Astro Content Loader implementation
 │       │   │   └── schema.ts    # Zod schemas for Notion API response types
 │       │   ├── markdown/
-│       │   │   ├── notroMarkdownConfig.ts  # Astro markdown config factory
-│       │   │   ├── transformer.ts
-│       │   │   └── plugins/     # remark/rehype plugins
-│       │   │       ├── callout.ts
-│       │   │       ├── cleanup.ts
-│       │   │       ├── color.ts
-│       │   │       ├── columns.ts
-│       │   │       ├── image.ts
-│       │   │       ├── media.ts
-│       │   │       ├── page-link.ts
-│       │   │       ├── table-of-contents.ts
-│       │   │       └── toggle.ts
+│       │   │   ├── transformer.ts         # preprocessNotionMarkdown() — fixes Notion markdown quirks
+│       │   │   └── plugins/
+│       │   │       └── callout.ts         # remark-directive plugin for :::callout blocks
 │       │   └── utils/
-│       │       └── notion.ts    # getPlainText(), getNotionColor() helpers
+│       │       ├── compile-mdx.ts         # compileMdxCached() — MDX evaluate + Astro component wiring
+│       │       └── notion.ts              # getPlainText(), getNotionColor() helpers
 │       └── package.json
 ├── docs/public/             # Documentation images
 ├── .changeset/              # Changesets config for versioning & publishing
@@ -80,30 +73,26 @@ notro-tail/
 1. **Astro Content Collections** (`content.config.ts`) defines the `posts` collection (the template app; extend as needed for additional collections).
 2. Each collection uses the `loader()` from `notro`, which calls the Notion Public API (`dataSources.query` + `pages.retrieveMarkdown`).
 3. The loader caches pages by `last_edited_time` digest, and invalidates cache entries that are deleted, edited, or contain expired Notion pre-signed S3 URLs.
-4. Each page's preprocessed Markdown is stored in the Content Collection store. Pages render it via `NotionMarkdownRenderer`, which runs the full remark/rehype plugin pipeline through `transformNotionMarkdown()`.
+4. Each page's preprocessed Markdown is stored in the Content Collection store. Pages render it via `NotionMarkdownRenderer`, which calls `compileMdxCached()` to compile the markdown into an Astro component via `@mdx-js/mdx`'s `evaluate()`, then renders it with `<Content components={notionComponents} />`.
 
-### Markdown Plugin Pipeline
+### MDX Compile Pipeline
 
-Configured in `astro.config.mjs` via `notroMarkdownConfig()` from `notro/config`:
+Defined in `packages/notro/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evaluate()`. No `astro.config.mjs` configuration is required — the pipeline runs entirely at render time inside `NotionMarkdownRenderer`.
 
 **Remark plugins** (parse Markdown → mdast):
 - `remark-gfm` — GitHub Flavored Markdown (tables, strikethrough, etc.)
 - `remark-math` — enables `$...$` inline and `$$...$$` block math syntax
 - `remark-directive` — enables `:::callout` directive syntax
-- `calloutPlugin` — converts Notion callout directives to HTML
+- `calloutPlugin` — converts `:::callout{...}` directives to `<callout icon="..." color="...">` HTML elements
 
 **Rehype plugins** (transform hast → HTML):
-- `rehypeRaw` — must be first; parses raw HTML tags from Notion markdown
 - `rehypeKatex` — renders math nodes as KaTeX HTML
-- `imagePlugin` — wraps Notion images
-- `columnsPlugin` — handles Notion column layouts
-- `colorPlugin` — maps Notion color names to `nt-color-*` CSS classes
-- `pageLinkPlugin` — resolves `<page url="...">` tags to internal or external links
-- `mediaPlugin` — embeds videos and other media
-- `tableOfContentsPlugin` — generates TOC; injects IDs on headings
-- `tablePlugin` — adds header-row/header-column support to Notion tables
-- `togglePlugin` — renders Notion toggles as `<details>`/`<summary>`
-- `cleanupPlugin` — final cleanup pass
+- `resolvePageLinksPlugin` — resolves Notion `notion.so` URLs in `<page>`, `<database>`, and `<a href>` elements using the `linkToPages` map
+
+**Component mapping** (HTML elements → Astro components):
+- After `evaluate()`, `<Content components={notionComponents} />` maps every Notion block type (callout, toggle, columns, images, table, TOC, etc.) and standard HTML element to an Astro component from `src/components/notion/`
+- Custom overrides can be passed via the `components` prop on `NotionMarkdownRenderer`
+- CSS class overrides can be passed via the `classMap` prop without replacing the component
 
 ### Image Handling
 
@@ -111,7 +100,7 @@ Configured in `astro.config.mjs` via `notroMarkdownConfig()` from `notro/config`
 
 ### Markdown Rendering
 
-Pages render Notion markdown via the `NotionMarkdownRenderer` component from `notro`. It accepts preprocessed markdown stored by the loader and runs it through `transformNotionMarkdown()`:
+Pages render Notion markdown via the `NotionMarkdownRenderer` component from `notro`. It accepts preprocessed markdown stored by the loader, compiles it via `compileMdxCached()`, and renders it with component mapping:
 
 ```astro
 ---
@@ -124,11 +113,14 @@ const markdown = entry.data.markdown;
 </div>
 ```
 
-An optional `linkToPages` prop (a `Record<string, { url: string; title: string }>` map) can be passed to `pageLinkPlugin` to resolve internal Notion page links.
+Optional props:
+- `linkToPages` — `Record<string, { url: string; title: string }>` map for resolving internal Notion page links
+- `classMap` — `Partial<Record<ClassMapKeys, string>>` for injecting Tailwind classes into default components without replacing them
+- `components` — `Partial<NotionComponents>` for full component overrides (e.g. `{ callout: MyCallout }`)
 
 ### Markdown Preprocessing (`preprocessNotionMarkdown`)
 
-`transformer.ts` exports `preprocessNotionMarkdown()`, which runs **before** the remark/rehype pipeline to fix structural issues in Notion's markdown output. The fixes are numbered and documented in the source:
+`transformer.ts` exports `preprocessNotionMarkdown()`, which runs **before** MDX compilation (in the loader) to fix structural issues in Notion's markdown output. The fixes are numbered and documented in the source:
 
 | Fix | Problem fixed |
 |-----|---------------|
@@ -216,7 +208,7 @@ Set these in Claude Code on the Web → Settings → Environment Variables:
 ### Prerequisites
 
 - Node.js 22+
-- Astro 5 (installed via npm)
+- Astro 6 (installed via npm)
 
 ### Install & Run
 
@@ -284,7 +276,6 @@ Config: `.changeset/config.json` — base branch is `main`, access is `public`.
 
 The package's `exports` map:
 - `"notro"` → `index.ts` (components, loader, schemas, utils)
-- `"notro/config"` → `src/markdown/notroMarkdownConfig.ts` (must be imported separately in `astro.config.mjs` to avoid Vite config evaluation issues)
 
 ---
 
@@ -447,5 +438,4 @@ print('Error:', d.get('errorMessage', 'none'))
 
 ## Known Issues / TODOs
 
-- `//FIXME` in `packages/notro/src/loader/loader.ts:113`: Notion API has a 3 requests/second rate limit. Currently all pages are fetched with `Promise.all`. A `p-queue` with retry logic should be implemented to respect this limit.
 - Truncated Notion markdown (`markdownResponse.truncated === true`) is logged as a warning but not handled with paginated retrieval yet.
