@@ -10,6 +10,7 @@ import {
   pageWithMarkdownSchema,
 } from "./schema.ts";
 import { preprocessNotionMarkdown } from "../markdown/transformer.ts";
+import { markdownHasPresignedUrls } from "../utils/notion-url.ts";
 
 type LoaderOptions = {
   queryParameters: QueryDataSourceParameters;
@@ -21,7 +22,7 @@ type LoaderOptions = {
 // If any are present in a cached entry, it must be re-fetched to get fresh URLs.
 function hasNotionPresignedUrl(data: PageWithMarkdownType): boolean {
   if (data.cover?.type === "file") return true;
-  return /X-Amz-Algorithm|prod-files-secure\.s3/.test(data.markdown);
+  return markdownHasPresignedUrls(data.markdown);
 }
 
 // Define any options that the loader needs

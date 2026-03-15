@@ -1,5 +1,3 @@
-export type LinkToPages = Record<string, { url: string; title: string }>;
-
 /**
  * Preprocesses Notion Enhanced Markdown before remark/MDX parsing.
  *
