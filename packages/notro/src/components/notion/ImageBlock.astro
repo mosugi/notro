@@ -1,0 +1,13 @@
+---
+/**
+ * ![Caption](URL) {color="Color"}
+ *
+ * Notion image block. Mapped to MDX `components.img`.
+ */
+interface Props { src: string; alt?: string; color?: string; class?: string; }
+const { src, alt, class: className } = Astro.props;
+---
+<figure class:list={["notion-image", className]}>
+	<img src={src} alt={alt ?? ''} loading="lazy" class="notion-image__img h-auto max-w-full" />
+	{alt && <figcaption class="notion-image__caption">{alt}</figcaption>}
+</figure>

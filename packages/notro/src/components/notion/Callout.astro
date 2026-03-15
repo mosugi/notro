@@ -1,0 +1,23 @@
+---
+/**
+ * <callout icon="🎯" color="blue_bg">
+ *   Content here
+ * </callout>
+ */
+import { colorToCSS } from './colors';
+
+interface Props {
+	icon?: string;
+	color?: string;
+	class?: string;
+}
+
+const { icon, color, class: className } = Astro.props;
+---
+
+<div class:list={["notion-callout", className]} style={colorToCSS(color) || 'background-color:#F1F1EF'}>
+	{icon && <span class="notion-callout__icon">{icon}</span>}
+	<div class="notion-callout__body">
+		<slot />
+	</div>
+</div>

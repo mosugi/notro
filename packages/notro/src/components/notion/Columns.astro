@@ -1,0 +1,17 @@
+---
+/**
+ * <columns>
+ *   <column>...</column>
+ *   <column>...</column>
+ * </columns>
+ */
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={["notion-columns", className]}>
+	<slot />
+</div>

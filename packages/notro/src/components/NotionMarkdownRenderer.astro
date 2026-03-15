@@ -1,15 +1,106 @@
 ---
-import { transformNotionMarkdown } from "../markdown/transformer.ts";
-import type { LinkToPages } from "../markdown/transformer.ts";
+import { compileMdxCached } from '../utils/compile-mdx.ts';
+import { notionComponents } from './notion/index.ts';
+import type { NotionComponents } from './notion/index.ts';
+import type { LinkToPages } from '../markdown/transformer.ts';
+import { jsx } from 'astro/jsx-runtime';
+import { __astro_tag_component__ } from 'astro/runtime/server/index.js';
+import { makeHtmlElement } from './notion/HtmlElements.ts';
 
 interface Props {
   markdown: string;
   linkToPages?: LinkToPages;
   class?: string;
+  /** CSS class strings keyed by component name (e.g. { callout: "flex gap-3 p-4 rounded" }) */
+  classMap?: Record<string, string>;
+  /** Full component overrides (e.g. { callout: MyCallout }) */
+  components?: Partial<NotionComponents & Record<string, unknown>>;
 }
 
-const { markdown, linkToPages, class: className } = Astro.props;
-const html = await transformNotionMarkdown(markdown, { linkToPages });
+const { markdown, linkToPages, class: className, classMap, components: customComponents } = Astro.props;
+
+/**
+ * Wraps a component to inject a class string via the `class` prop.
+ * The injected class is prepended; any existing `class` prop from MDX is appended.
+ */
+function withClass(Component: unknown, cls: string) {
+  const Wrapped = ({ class: extraClass, ...rest }: Record<string, unknown>) => {
+    const combined = [cls, extraClass].filter(Boolean).join(' ') || undefined;
+    return jsx(
+      Component as Parameters<typeof jsx>[0],
+      combined !== undefined ? { ...rest, class: combined } : rest,
+    );
+  };
+  __astro_tag_component__(Wrapped, 'astro:jsx');
+  return Wrapped;
+}
+
+const cm = classMap ?? {};
+const classOverrides: Record<string, unknown> = {};
+
+// Notion-specific block and inline components
+// Format: [notionComponents key, classMap key]
+const COMPONENT_CLASS_MAP = [
+  ['callout',                'callout'],
+  ['details',                'toggle'],
+  ['summary',                'toggleTitle'],
+  ['h1', 'h1'], ['h2', 'h2'], ['h3', 'h3'], ['h4', 'h4'],
+  ['blockquote',             'quote'],
+  ['img',                    'image'],
+  ['tr',                     'tableRow'],
+  ['td',                     'tableCell'],
+  ['audio',                  'audio'],
+  ['video',                  'video'],
+  ['file',                   'file'],
+  ['pdf',                    'pdf'],
+  ['page',                   'pageRef'],
+  ['database',               'databaseRef'],
+  ['table_of_contents',      'toc'],
+  ['synced_block',           'syncedBlock'],
+  ['synced_block_reference', 'syncedBlock'],
+  ['column',                 'column'],
+  ['columns',                'columns'],
+  ['empty-block',            'emptyBlock'],
+  ['mention-user',           'mention'],
+  ['mention-page',           'mention'],
+  ['mention-database',       'mention'],
+  ['mention-data-source',    'mention'],
+  ['mention-agent',          'mention'],
+] as const;
+
+for (const [compKey, cmKey] of COMPONENT_CLASS_MAP) {
+  const cls = cm[cmKey];
+  if (cls) classOverrides[compKey] = withClass(notionComponents[compKey], cls);
+}
+
+// TableBlock special case: outer wrapper div (tableWrapper) and inner table (table) are separate elements
+if (cm.tableWrapper || cm.table) {
+  const Base = notionComponents.table as unknown;
+  const wrapperCls = cm.tableWrapper;
+  const tableCls = cm.table;
+  const Wrapped = ({ class: extraClass, ...rest }: Record<string, unknown>) => {
+    const combined = [tableCls, extraClass].filter(Boolean).join(' ') || undefined;
+    return jsx(Base as Parameters<typeof jsx>[0], {
+      ...rest,
+      ...(combined !== undefined ? { class: combined } : {}),
+      ...(wrapperCls ? { tableWrapperClass: wrapperCls } : {}),
+    });
+  };
+  __astro_tag_component__(Wrapped, 'astro:jsx');
+  classOverrides.table = Wrapped;
+}
+
+// Standard HTML elements
+const HTML_TAGS = ['p', 'ul', 'ol', 'li', 'pre', 'hr', 'a', 'strong', 'em', 'del', 'th'] as const;
+for (const tag of HTML_TAGS) {
+  const cls = cm[tag];
+  if (cls) classOverrides[tag] = makeHtmlElement(tag, cls);
+}
+
+const Content = await compileMdxCached(markdown, { linkToPages });
+const mergedComponents = { ...notionComponents, ...classOverrides, ...customComponents };
 ---
 
-<div class:list={["nt-markdown-content", className]} set:html={html} />
+<div class:list={["nt-markdown-content", className]}>
+  <Content components={mergedComponents} />
+</div>

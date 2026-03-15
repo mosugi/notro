@@ -1,0 +1,16 @@
+---
+/**
+ * <empty-block/>
+ *
+ * Represents an explicit empty line. Plain empty lines are stripped in Notion
+ * Enhanced Markdown, so a dedicated tag is used.
+ *
+ * Mapped to MDX `components['empty-block']`.
+ */
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+<div class:list={["notion-empty-block", className]} aria-hidden="true"></div>

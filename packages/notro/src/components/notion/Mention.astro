@@ -1,0 +1,20 @@
+---
+/**
+ * <mention-user url="URL">User name</mention-user>
+ * <mention-page url="URL">Page title</mention-page>
+ * <mention-database url="URL">Database name</mention-database>
+ * <mention-data-source url="URL">Data source name</mention-data-source>
+ * <mention-agent url="URL">Agent name</mention-agent>
+ *
+ * Mapped to MDX `components['mention-user']` etc.
+ * All mention types render as inline links.
+ */
+interface Props {
+	url: string;
+	class?: string;
+}
+
+const { url, class: className } = Astro.props;
+---
+
+<a href={url} class:list={["notion-mention", className]}>@<slot /></a>

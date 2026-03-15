@@ -1,8 +1,8 @@
 import { defineConfig } from "astro/config";
+import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
-import { notroMarkdownConfig } from "notro/config";
 
 const httpsProxy = process.env.https_proxy || process.env.HTTPS_PROXY;
 if (httpsProxy) {
@@ -14,8 +14,6 @@ if (httpsProxy) {
 export default defineConfig({
   site: "https://notrotail.mosugi.com",
 
-  markdown: notroMarkdownConfig(),
-
   image: {
     service: notionImageServiceConfig(),
     remotePatterns: [
@@ -25,7 +23,7 @@ export default defineConfig({
     ],
   },
 
-  integrations: [sitemap()],
+  integrations: [mdx(), sitemap()],
 
   vite: {
     plugins: [tailwindcss()],

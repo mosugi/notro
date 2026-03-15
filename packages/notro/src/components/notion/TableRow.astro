@@ -1,0 +1,6 @@
+---
+import { colorToCSS } from './colors';
+interface Props { color?: string; class?: string; }
+const { color, class: className } = Astro.props;
+---
+<tr class:list={["notion-tr", className]} style={colorToCSS(color)}><slot /></tr>

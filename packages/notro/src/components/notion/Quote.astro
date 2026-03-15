@@ -1,0 +1,20 @@
+---
+/**
+ * > Rich text {color="Color"}
+ *   Children
+ *
+ * Mapped to MDX `components.blockquote`.
+ */
+import { colorToCSS } from './colors';
+
+interface Props {
+	color?: string;
+	class?: string;
+}
+
+const { color, class: className } = Astro.props;
+---
+
+<blockquote class:list={["notion-quote", className]} style={colorToCSS(color)}>
+	<slot />
+</blockquote>

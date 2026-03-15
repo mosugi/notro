@@ -1,0 +1,18 @@
+---
+/**
+ * <column>
+ *   Children
+ * </column>
+ *
+ * Placed directly inside Columns.astro.
+ */
+interface Props {
+	class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={["notion-column", className]}>
+	<slot />
+</div>

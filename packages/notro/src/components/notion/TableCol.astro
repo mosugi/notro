@@ -1,0 +1,13 @@
+---
+/**
+ * <col color="Color">
+ *
+ * Applies background color to a column.
+ * Color priority: cell > row > column.
+ * Mapped to MDX `components.col`.
+ */
+import { colorToCSS } from './colors';
+interface Props { color?: string; }
+const { color } = Astro.props;
+---
+<col style={colorToCSS(color)} />

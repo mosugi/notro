@@ -1,0 +1,23 @@
+---
+/**
+ * <details color="gray_bg">
+ *   <summary>Toggle title</summary>
+ *   Children
+ * </details>
+ *
+ * Mapped to MDX `components.details`.
+ * Used together with ToggleTitle.astro (components.summary).
+ */
+import { colorToCSS } from './colors';
+
+interface Props {
+	color?: string;
+	class?: string;
+}
+
+const { color, class: className } = Astro.props;
+---
+
+<details class:list={["notion-toggle", className]} style={colorToCSS(color)}>
+	<slot />
+</details>

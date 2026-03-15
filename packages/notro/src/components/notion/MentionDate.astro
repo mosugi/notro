@@ -1,0 +1,24 @@
+---
+/**
+ * <mention-date start="YYYY-MM-DD" end="YYYY-MM-DD"/>
+ * <mention-date start="YYYY-MM-DD" startTime="HH:mm" timeZone="IANA_TIMEZONE"/>
+ *
+ * Mapped to MDX `components['mention-date']`.
+ */
+interface Props {
+	start: string;
+	end?: string;
+	startTime?: string;
+	timeZone?: string;
+}
+
+const { start, end, startTime, timeZone } = Astro.props;
+
+const parts: string[] = [start];
+if (startTime) parts.push(startTime);
+if (end) parts.push(`→ ${end}`);
+if (timeZone) parts.push(`(${timeZone})`);
+const display = parts.join(' ');
+---
+
+<time class="notion-date" datetime={start}>{display}</time>
