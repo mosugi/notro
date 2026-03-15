@@ -240,6 +240,112 @@ import MyCallout from "./MyCallout.astro";
 />
 ```
 
+## ロードマップ
+
+現時点の実装に対するセルフレビューをもとに、今後の課題を優先度別に整理しています。
+
+---
+
+### 🔴 高優先度（ビルド安定性に影響）
+
+#### 1. Notion API レート制限への対応（`loader.ts:113`）
+
+現状では `Promise.all()` で全ページを並行フェッチしており、Notion API の **3 req/s** 制限を超えると 429 エラーが発生する。大規模データベース（50 ページ超）では再現しやすい既知の問題。
+
+**対応方針**: `p-queue` を使ったキュー管理 + 指数バックオフのリトライロジックを実装する。
+
+```
+// FIXME: packages/notro/src/loader/loader.ts:113
+// Currently all pages are fetched with Promise.all.
+// A p-queue with retry logic should be implemented.
+```
+
+#### 2. 切り詰められた Markdown の未処理（`loader.ts`）
+
+Notion API がページ内容を切り詰めて返す場合（`markdownResponse.truncated === true`）、現状は警告ログのみで内容が不完全なまま保存される。コンテンツの一部が欠落するデータ損失バグ。
+
+**対応方針**: `truncated === true` のとき `retrieveMarkdown` をオフセット付きでページネーションし、すべてのチャンクを結合する。
+
+---
+
+### 🟡 中優先度（品質・信頼性の改善）
+
+#### 3. `classRegistry` の SSR 安全性
+
+現実装はモジュールレベルの可変状態（`let _classMap`）を使っており、SSG（静的ビルド）では安全だが、SSR（サーバーサイドレンダリング）環境でリクエストが並行した場合にクラスマップが混在するリスクがある。
+
+**対応方針**: Astro の `context.locals`（リクエストスコープ）への移行、または `AsyncLocalStorage` を使ったリクエスト分離。ただし `NotionMarkdownRenderer` の実行タイミングとの統合が必要。
+
+#### 4. `<code>` 要素のインライン/ブロック区別
+
+現状の `classMap` は全 `<code>` 要素に同じクラスを適用するため、インラインコードとコードブロック内の `<code>` を区別できない。グローバル CSS（`:not(pre) > code`）への依存が残り、方式 A 完全完結の妨げになっている。
+
+**対応方針**: `pre` レンダリング時に React Context 相当の仕組み（Astro では困難）か、ビルド時の AST 解析で `pre > code` を専用コンポーネントへ差し替えるプラグインを追加する。
+
+#### 5. Notion ページ URL 解析の堅牢化（`compile-mdx.ts`）
+
+```ts
+urlNoDash.includes(pageId.replace(/-/g, ''))
+```
+
+ダッシュ削除後の文字列包含チェックは、ID が別の ID の部分文字列になる場合に誤マッチする。Notion URL のフォーマット（`notion.so/Title-pageId`, `notion.so/pageId` など）に対して未検証のパターンが存在する可能性がある。
+
+**対応方針**: URL をパースして末尾の 32 文字を UUID として抽出し、完全一致で比較する。
+
+#### 6. `linkToPages` JSON シリアライズのキー順序依存（`compile-mdx.ts`）
+
+```ts
+.update(JSON.stringify(linkToPages))
+```
+
+`JSON.stringify` はオブジェクトのプロパティ順序に依存するため、プロパティ挿入順が異なる同一オブジェクトが別のキャッシュエントリを生成する。
+
+**対応方針**: `JSON.stringify` 前にキーをソートする、または `fast-stable-stringify` のようなライブラリを使用する。
+
+---
+
+### 🟢 低優先度（パフォーマンス・DX の向上）
+
+#### 7. MDX コンパイルキャッシュのビルド間永続化
+
+現状のキャッシュはメモリのみで、ビルドを再起動するたびに全ページ再コンパイルが走る。コンテンツが変わっていないページでも毎回 MDX → Astro VNode の変換が発生する。
+
+**対応方針**: ビルドキャッシュディレクトリ（`.astro/` など）に SHA256 キーで JSON シリアライズして永続化する。
+
+#### 8. ページ単位のビルド失敗分離
+
+現状では任意の 1 ページの MDX コンパイルエラーや API エラーがビルド全体を停止させる。
+
+**対応方針**: ページごとに `try/catch` でエラーを捕捉し、警告を表示しつつそのページをスキップしてビルドを継続するフォールバックモードを追加する。
+
+#### 9. 大規模データベースのメモリ効率
+
+```ts
+const pages = await Array.fromAsync(iteratePaginatedAPI(...))
+```
+
+全ページをメモリに展開してから処理するため、数千ページ規模のデータベースではメモリ不足になる可能性がある。
+
+**対応方針**: `iteratePaginatedAPI` をストリーミングで処理し、ページを一定数ずつバッチ処理する。
+
+#### 10. `classMap` 定数の共有ユーティリティ
+
+`classMap` を複数ページで使い回す場合、現状はユーザーが手動で定数ファイルに切り出す必要がある。
+
+**対応方針**: `defineClassMap(map)` のようなヘルパー関数（型補完付き）を公式 API として提供し、`notionComponents` のキー一覧を型から自動導出する。
+
+---
+
+### 🔵 設計上のトレードオフ（方針検討が必要）
+
+#### 11. `classRegistry` グローバル状態 vs. コンポーネント Props 伝播
+
+現在の `classRegistry` はシンプルだが、Astro で動的にコンポーネントをラップする手段がないために採用したアーキテクチャ的な制約。Astro のコンパイラや JSX ランタイムが進化した場合、`classMap` を `jsx(Component, { ...props, class: registryClass })` パターンで各コンポーネントに直接注入できるようになる可能性がある。
+
+#### 12. `compile-mdx.ts` のキャッシュと SSR の整合性
+
+`compileMdxCached` のキャッシュは静的ビルドに最適化されており、SSR では古いキャッシュが残り続ける可能性がある（ページ更新が反映されない）。SSR サポートを公式化するなら、キャッシュ無効化戦略の再設計が必要。
+
 ## 環境変数
 
 | 変数 | 説明 |
