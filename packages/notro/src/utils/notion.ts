@@ -19,7 +19,66 @@ export const getPlainText = (
   ) {
     return property.multi_select.map((option) => option.name).join();
   }
+  if (property?.type === "number" && property.number !== null) {
+    return String(property.number);
+  }
+  if (property?.type === "url") {
+    return property.url ?? undefined;
+  }
+  if (property?.type === "email") {
+    return property.email ?? undefined;
+  }
+  if (property?.type === "phone_number") {
+    return property.phone_number ?? undefined;
+  }
+  if (property?.type === "date" && property.date !== null) {
+    return property.date.start;
+  }
+  if (property?.type === "unique_id" && property.unique_id.number !== null) {
+    return property.unique_id.prefix
+      ? `${property.unique_id.prefix}-${property.unique_id.number}`
+      : String(property.unique_id.number);
+  }
   return undefined;
+};
+
+/**
+ * Returns the multi-select options array from a multi_select property,
+ * or an empty array if the property is not a multi_select or is undefined.
+ *
+ * @example
+ * ```ts
+ * const tags = getMultiSelect(entry.data.properties.Tags);
+ * // Array<{ id: string; name: string; color: string }>
+ * tags.forEach(t => console.log(t.name));
+ * ```
+ */
+export const getMultiSelect = (
+  property: PropertyPageObjectResponseType | undefined,
+): { id: string; name: string; color: string }[] => {
+  if (property?.type === "multi_select") {
+    return property.multi_select;
+  }
+  return [];
+};
+
+/**
+ * Returns true if a multi_select property contains a tag with the given name.
+ * Returns false if the property is not a multi_select or is undefined.
+ *
+ * @example
+ * ```ts
+ * if (hasTag(entry.data.properties.Tags, "pinned")) {
+ *   // show pinned badge
+ * }
+ * ```
+ */
+export const hasTag = (
+  property: PropertyPageObjectResponseType | undefined,
+  tagName: string,
+): boolean => {
+  if (property?.type !== "multi_select") return false;
+  return property.multi_select.some((t) => t.name === tagName);
 };
 
 /**

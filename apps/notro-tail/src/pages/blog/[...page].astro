@@ -1,7 +1,7 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import type { PaginateFunction } from "astro";
 import { getCollection } from "astro:content";
+import { hasTag } from "notro";
 import BlogList from "../../components/BlogList.astro";
 import Layout from "../../layouts/Layout.astro";
 import Pagination from "../../components/Pagination.astro";
@@ -11,20 +11,14 @@ export async function getStaticPaths({
 }: {
   paginate: PaginateFunction;
 }) {
-  // Check if an entry has a specific tag value
-  function hasTag(entry: CollectionEntry<"posts">, tagName: string): boolean {
-    if (entry.data.properties.Tags?.type !== "multi_select") return false;
-    return entry.data.properties.Tags.multi_select.some((t) => t.name === tagName);
-  }
-
   const allPosts = await getCollection("posts");
 
   // Posts tagged "page" are fixed pages, excluded from blog listing
-  const blogPosts = allPosts.filter((entry) => !hasTag(entry, "page"));
+  const blogPosts = allPosts.filter((entry) => !hasTag(entry.data.properties.Tags, "page"));
 
   // Posts tagged "pinned" are shown at the top of page 1 only
-  const pinnedPosts = blogPosts.filter((entry) => hasTag(entry, "pinned"));
-  const regularPosts = blogPosts.filter((entry) => !hasTag(entry, "pinned"));
+  const pinnedPosts = blogPosts.filter((entry) => hasTag(entry.data.properties.Tags, "pinned"));
+  const regularPosts = blogPosts.filter((entry) => !hasTag(entry.data.properties.Tags, "pinned"));
 
   return paginate(regularPosts, {
     pageSize: 10,

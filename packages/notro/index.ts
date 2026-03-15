@@ -1,4 +1,5 @@
 export { default as NotionMarkdownRenderer } from "./src/components/NotionMarkdownRenderer.astro";
+export type { ClassMapKeys } from "./src/components/NotionMarkdownRenderer.astro";
 export { default as OptimizedDatabaseCover } from "./src/components/OptimizedDatabaseCover.astro";
 export { default as DatabaseProperty } from "./src/components/DatabaseProperty.astro";
 
