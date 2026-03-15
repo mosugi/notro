@@ -11,4 +11,3 @@ export { normalizeNotionPresignedUrl } from "./src/utils/notion-url.ts";
 export { colorToCSS } from "./src/components/notion/colors.ts";
 export * from "./src/loader/loader";
 export * from "./src/loader/schema";
-export { remarkNfm } from "./src/markdown/plugins/nfm.ts";

@@ -1,5 +1,5 @@
 import type { PropertyPageObjectResponseType } from "../loader/schema.ts";
-import type { LinkToPages } from "../markdown/transformer.ts";
+import type { LinkToPages } from "../types.ts";
 
 export const getPlainText = (
   property: PropertyPageObjectResponseType,

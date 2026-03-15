@@ -216,6 +216,22 @@ import MyCallout from "./MyCallout.astro";
 />
 ```
 
+## Markdown 処理（remark-nfm）
+
+`notro` は Notion Markdown の前処理とディレクティブ構文のサポートを [`remark-nfm`](https://www.npmjs.com/package/remark-nfm) パッケージに委譲しています。
+
+`remark-nfm` は `notro` の内部の MDX コンパイルパイプラインで使用されており、`NotionMarkdownRenderer` を使う場合は自動的に適用されます。
+
+`remark-nfm` を直接使いたい場合（カスタム unified パイプラインや `@mdx-js/mdx` の `evaluate()` など）は、`notro` から取得するのではなく、`remark-nfm` パッケージから直接インポートしてください。
+
+```ts
+// ✅ remark-nfm から直接インポート
+import { remarkNfm, preprocessNotionMarkdown } from "remark-nfm";
+
+// ❌ notro からのインポートは不要（notro は内部利用のみ）
+// import { remarkNfm } from "notro";
+```
+
 ## ロードマップ
 
 現時点の実装に対するセルフレビューをもとに、今後の課題を優先度別に整理しています。

@@ -19,7 +19,7 @@ import mdx from '@astrojs/mdx';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import { remarkNfm } from './markdown/plugins/nfm.ts';
+import { remarkNfm } from 'remark-nfm';
 
 export function notro(): AstroIntegration {
 	return {

@@ -119,6 +119,21 @@ npm run dev
 
 Open [http://localhost:4321](http://localhost:4321/) in your browser.
 
+## Repository Structure
+
+This repository is an **npm workspace monorepo** containing three packages:
+
+| Package | Path | Role |
+|---|---|---|
+| [`remark-nfm`](./packages/remark-nfm/) | `packages/remark-nfm/` | Pure remark plugin for Notion-flavored Markdown. Handles pre-parse normalization (10 fixes), `:::callout` directive syntax, and callout conversion. No Astro or Notion API dependencies — independently publishable to npm. |
+| [`notro`](./packages/notro/) | `packages/notro/` | Astro + Notion API integration library. Provides the Content Loader, MDX compile pipeline (uses `remark-nfm` internally), and Astro components for all Notion block types. |
+| `notro-tail` | `apps/notro-tail/` | Deployable Astro template app. A reference implementation that uses `notro` to build a blog/static site from Notion content. |
+
+**Dependency graph:**
+```
+remark-nfm  ←  notro  ←  notro-tail
+```
+
 ## Contributing
 
 Please create an issue for bug reports or feature requests. Any feedback is welcome in any language. Pull requests are also appreciated.
