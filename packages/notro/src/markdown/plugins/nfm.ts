@@ -25,6 +25,11 @@
  * ```
  */
 
+/**
+ * @import {} from 'remark-parse'
+ * @import {} from 'remark-stringify'
+ */
+
 import type { Plugin, Processor, Transformer } from 'unified';
 import type { Root } from 'mdast';
 import { directive } from 'micromark-extension-directive';
@@ -32,10 +37,21 @@ import { directiveFromMarkdown, directiveToMarkdown } from 'mdast-util-directive
 import { preprocessNotionMarkdown } from '../transformer.ts';
 import { calloutPlugin } from './callout.ts';
 
-export const remarkNfm: Plugin<[], Root, Root> = function (): Transformer<Root, Root> | undefined {
-	// Cast this to the concrete Processor type, same pattern as remarkGfm.
-	// TypeScript cannot infer `this` correctly inside a plugin attacher.
+/**
+ * Configuration for remarkNfm (reserved for future options).
+ */
+export type Options = Record<string, never>;
+
+/** @type {Options} */
+const emptyOptions: Options = {};
+
+export const remarkNfm: Plugin<[Options?], Root, Root> = function (options): Transformer<Root, Root> | undefined {
+	// Follows the same pattern as remarkGfm: cast this to the concrete
+	// Processor type since TypeScript cannot infer `this` inside a plugin.
+	// @ts-expect-error: TS is wrong about `this`.
 	const self = this as Processor<Root>;
+	const _settings = options || emptyOptions;
+	const data = self.data();
 
 	// ── Pre-parse normalization ─────────────────────────────────────────────
 	// Wrap self.parser (unified v11 lowercase API; self.Parser uppercase is
@@ -55,14 +71,16 @@ export const remarkNfm: Plugin<[], Root, Root> = function (): Transformer<Root, 
 	// Adds the same extensions that remark-directive would register, but
 	// directly via self.data() following the remarkGfm pattern, keeping
 	// remarkNfm self-contained without an internal this.use() call.
-	const data = self.data() as {
-		micromarkExtensions?: unknown[];
-		fromMarkdownExtensions?: unknown[];
-		toMarkdownExtensions?: unknown[];
-	};
-	(data.micromarkExtensions ??= []).push(directive());
-	(data.fromMarkdownExtensions ??= []).push(directiveFromMarkdown());
-	(data.toMarkdownExtensions ??= []).push(directiveToMarkdown());
+	const micromarkExtensions =
+		data.micromarkExtensions || (data.micromarkExtensions = []);
+	const fromMarkdownExtensions =
+		data.fromMarkdownExtensions || (data.fromMarkdownExtensions = []);
+	const toMarkdownExtensions =
+		data.toMarkdownExtensions || (data.toMarkdownExtensions = []);
+
+	micromarkExtensions.push(directive());
+	fromMarkdownExtensions.push(directiveFromMarkdown());
+	toMarkdownExtensions.push(directiveToMarkdown());
 
 	// ── Callout conversion ──────────────────────────────────────────────────
 	// Return the callout transform so unified registers it as a post-parse
