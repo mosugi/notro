@@ -4,10 +4,7 @@ import {
   isFullPage,
   iteratePaginatedAPI,
 } from "@notionhq/client";
-import type { ClientOptions } from "@notionhq/client/build/src/Client";
-import type {
-  QueryDataSourceParameters,
-} from "@notionhq/client/build/src/api-endpoints";
+import type { QueryDataSourceParameters } from "@notionhq/client";
 import {
   type PageWithMarkdownType,
   pageWithMarkdownSchema,
@@ -16,7 +13,8 @@ import { preprocessNotionMarkdown } from "../markdown/transformer.ts";
 
 type LoaderOptions = {
   queryParameters: QueryDataSourceParameters;
-  clientOptions: ClientOptions;
+  // Derive from Client constructor to avoid importing from internal paths
+  clientOptions: ConstructorParameters<typeof Client>[0];
 };
 
 // Notion file-type covers and inline images use pre-signed S3 URLs that expire after ~1 hour.
@@ -44,12 +42,14 @@ export function loader({
 
       const pages = pageOrDatabases.filter((page) => isFullPage(page));
 
+      // Build a lookup map for O(1) access when checking store entries
+      const pageById = new Map(pages.map((page) => [page.id, page]));
+
       // Delete entries that are removed, edited, or contain expired pre-signed URLs
       store.entries().forEach(([id, { digest, data }]) => {
-        const isDeleted = !pages.some((page) => page.id === id);
-        const isEdited = pages.some(
-          (page) => page.id === id && digest !== page.last_edited_time,
-        );
+        const page = pageById.get(id);
+        const isDeleted = page === undefined;
+        const isEdited = page !== undefined && digest !== page.last_edited_time;
         const hasExpiredUrls = hasNotionPresignedUrl(
           data as PageWithMarkdownType,
         );
