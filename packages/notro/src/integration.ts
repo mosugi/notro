@@ -9,8 +9,8 @@
  *
  * Usage in astro.config.mjs:
  * ```js
- * import { notroIntegration } from 'notro/integration';
- * export default defineConfig({ integrations: [notroIntegration()] });
+ * import { notro } from 'notro/integration';
+ * export default defineConfig({ integrations: [notro()] });
  * ```
  */
 
@@ -21,7 +21,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { remarkNfm } from './markdown/plugins/nfm.ts';
 
-export function notroIntegration(): AstroIntegration {
+export function notro(): AstroIntegration {
 	return {
 		name: 'notro',
 		hooks: {

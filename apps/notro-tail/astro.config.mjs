@@ -2,7 +2,7 @@ import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
-import { notroIntegration } from "notro/integration";
+import { notro } from "notro/integration";
 
 const httpsProxy = process.env.https_proxy || process.env.HTTPS_PROXY;
 if (httpsProxy) {
@@ -23,7 +23,7 @@ export default defineConfig({
     ],
   },
 
-  integrations: [notroIntegration(), sitemap()],
+  integrations: [notro(), sitemap()],
 
   vite: {
     plugins: [tailwindcss()],

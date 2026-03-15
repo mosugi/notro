@@ -2,59 +2,71 @@
  * remarkNfm — Notion-flavored Markdown plugin for remark.
  *
  * Analogous to remarkGfm, this single plugin enables the full Notion markdown
- * syntax by bundling three concerns:
+ * syntax. It follows the same pattern as remarkGfm (data()-based micromark
+ * extensions) and bundles three concerns:
  *
- * 1. Pre-parse normalization — patches the remark Parser to run
- *    preprocessNotionMarkdown() on the raw source before tokenization.
- *    Fixes structural issues in Notion's API output (escaped inline math,
- *    callout directive spacing, HTML closing-tag blank lines, etc.)
- *    that would otherwise prevent correct AST construction.
+ * 1. Pre-parse normalization — patches self.parser (unified v11 lowercase API)
+ *    to run preprocessNotionMarkdown() on the raw source before tokenization.
+ *    Fixes structural issues in Notion's API output that would otherwise
+ *    prevent correct AST construction.
  *
- * 2. Directive parser support — registers the remark-directive micromark
- *    extension so :::callout{...} container directives are recognized at
- *    parse time.
+ * 2. Directive parser support — adds the micromark-extension-directive and
+ *    mdast-util-directive extensions directly via self.data(), same as how
+ *    remarkGfm adds GFM support, so :::callout{...} blocks are recognized.
  *
- * 3. Callout conversion — post-parse transform that converts
+ * 3. Callout conversion — returns a post-parse transform that converts
  *    containerDirective nodes named "callout" into <callout icon color>
- *    HTML elements consumed by the Notion component mapping.
+ *    elements for the Notion component mapping.
  *
  * Usage:
  * ```ts
  * import { remarkNfm } from 'notro';
- * // in evaluate() options or @astrojs/mdx remarkPlugins:
  * remarkPlugins: [remarkNfm, remarkGfm, remarkMath]
  * ```
  */
 
-import type { Plugin } from 'unified';
+import type { Plugin, Processor, Transformer } from 'unified';
 import type { Root } from 'mdast';
-import remarkDirective from 'remark-directive';
+import { directive } from 'micromark-extension-directive';
+import { directiveFromMarkdown, directiveToMarkdown } from 'mdast-util-directive';
 import { preprocessNotionMarkdown } from '../transformer.ts';
 import { calloutPlugin } from './callout.ts';
 
-export const remarkNfm: Plugin<[], Root> = function () {
-	// Pre-parse: wrap the parser so preprocessNotionMarkdown() runs on the raw
-	// source before remark tokenizes it. remark-parse sets this.parser
-	// (lowercase, unified v11 API) before user remarkPlugins run. Micromark
-	// extensions from remarkGfm, remarkMath, and remarkDirective are read from
-	// this.data() at parse call time, so patching the parser here does not
-	// exclude them.
-	//
-	// Note: unified v11 uses this.parser (lowercase); this.Parser (uppercase)
-	// is the deprecated v10 alias and is always undefined in current remark.
-	if (this.parser) {
-		const originalParser = this.parser;
-		this.parser = function (doc, file) {
+export const remarkNfm: Plugin<[], Root, Root> = function (): Transformer<Root, Root> | undefined {
+	// Cast this to the concrete Processor type, same pattern as remarkGfm.
+	// TypeScript cannot infer `this` correctly inside a plugin attacher.
+	const self = this as Processor<Root>;
+
+	// ── Pre-parse normalization ─────────────────────────────────────────────
+	// Wrap self.parser (unified v11 lowercase API; self.Parser uppercase is
+	// deprecated and always undefined) so preprocessNotionMarkdown() runs
+	// on the raw source string before the micromark tokenizer sees it.
+	// All micromark extensions (from remarkGfm, remarkMath, etc.) are read
+	// from self.data() at parse call time — not at attacher registration time —
+	// so patching the parser here never excludes them.
+	if (self.parser) {
+		const originalParser = self.parser;
+		self.parser = function (doc, file) {
 			return originalParser(preprocessNotionMarkdown(doc), file);
 		};
 	}
 
-	// Directive parser support: adds micromark + mdast-util extensions so
-	// :::callout{...} blocks are tokenized and converted to containerDirective
-	// nodes during parsing (not as a post-parse transform).
-	this.use(remarkDirective);
+	// ── Directive syntax support ────────────────────────────────────────────
+	// Adds the same extensions that remark-directive would register, but
+	// directly via self.data() following the remarkGfm pattern, keeping
+	// remarkNfm self-contained without an internal this.use() call.
+	const data = self.data() as {
+		micromarkExtensions?: unknown[];
+		fromMarkdownExtensions?: unknown[];
+		toMarkdownExtensions?: unknown[];
+	};
+	(data.micromarkExtensions ??= []).push(directive());
+	(data.fromMarkdownExtensions ??= []).push(directiveFromMarkdown());
+	(data.toMarkdownExtensions ??= []).push(directiveToMarkdown());
 
-	// Callout conversion: visits containerDirective nodes named "callout" and
-	// sets hName/hProperties so rehype emits <callout icon color> elements.
-	this.use(calloutPlugin);
+	// ── Callout conversion ──────────────────────────────────────────────────
+	// Return the callout transform so unified registers it as a post-parse
+	// transformer. Directive nodes are created at parse time (via the
+	// micromark extensions above), so no ordering dependency exists here.
+	return calloutPlugin.call(self) as Transformer<Root, Root> | undefined;
 };

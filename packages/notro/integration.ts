@@ -6,8 +6,8 @@
  * @example
  * ```js
  * // astro.config.mjs
- * import { notroIntegration } from 'notro/integration';
- * export default defineConfig({ integrations: [notroIntegration()] });
+ * import { notro } from 'notro/integration';
+ * export default defineConfig({ integrations: [notro()] });
  * ```
  */
-export { notroIntegration } from './src/integration.ts';
+export { notro } from './src/integration.ts';
