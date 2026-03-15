@@ -12,16 +12,16 @@
     "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.6",
-    "@astrojs/mdx": "^4.3.14",
-    "@astrojs/sitemap": "^3.7.0",
+    "@astrojs/check": "^0.9.7",
+    "@astrojs/mdx": "^5.0.0",
+    "@astrojs/sitemap": "^3.7.1",
     "@tailwindcss/vite": "^4.2.1",
-    "astro": "^5.18.0",
+    "astro": "^6.0.4",
     "notro": "^0.0.1",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
-    "vite": "^6.4.1"
+    "vite": "^7.3.1"
   }
 }

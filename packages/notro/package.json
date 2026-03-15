@@ -35,10 +35,10 @@
     "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'"
   },
   "peerDependencies": {
-    "astro": ">=5.0.0"
+    "astro": ">=6.0.0"
   },
   "devDependencies": {
-    "astro": "^5.18.0",
+    "astro": "^6.0.4",
     "typescript": "^5.9.3"
   },
   "publishConfig": {
