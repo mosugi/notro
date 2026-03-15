@@ -102,6 +102,7 @@ const markdown = entry.data.markdown;
         markdown={markdown}
         linkToPages={linkToPages}
         classMap={{
+          // ── Notion-specific blocks ───────────────────────────
           callout:     "flex items-start gap-3 my-4 rounded-lg border border-gray-200 p-4",
           toggle:      "my-1 rounded-md",
           toggleTitle: "cursor-pointer select-none py-1 font-medium",
@@ -117,6 +118,20 @@ const markdown = entry.data.markdown;
           table:       "w-full border-collapse text-sm",
           tableCell:   "border border-gray-200 px-3 py-2 text-gray-700",
           toc:         "my-4 rounded-md bg-gray-50 p-4",
+          // ── Standard HTML block elements ─────────────────────
+          p:           "mb-3 leading-7",
+          ul:          "mb-3 list-disc pl-6",
+          ol:          "mb-3 list-decimal pl-6",
+          li:          "mb-1 leading-7",
+          pre:         "my-4 overflow-x-auto rounded-md bg-gray-50 p-4 font-mono text-sm",
+          hr:          "my-8 border-gray-200",
+          // ── Standard HTML inline elements ────────────────────
+          a:           "text-sky-600 underline underline-offset-2 hover:text-sky-700",
+          strong:      "font-bold",
+          em:          "italic",
+          del:         "line-through",
+          // ── Table header cell ─────────────────────────────────
+          th:          "border border-gray-200 bg-gray-50 px-3 py-2 text-left font-semibold text-gray-700",
         }}
         components={{ callout: Callout }}
       />

@@ -44,6 +44,19 @@ import TableColgroup from './TableColgroup.astro';
 import TableRow from './TableRow.astro';
 import Toggle from './Toggle.astro';
 import ToggleTitle from './ToggleTitle.astro';
+import {
+	ParagraphEl,
+	UnorderedListEl,
+	OrderedListEl,
+	ListItemEl,
+	AnchorEl,
+	StrongEl,
+	EmEl,
+	DelEl,
+	PreEl,
+	HrEl,
+	ThEl,
+} from './HtmlElements.ts';
 
 export const notionComponents = {
 	// ── Notion-specific blocks ─────────────────────────────────
@@ -114,6 +127,21 @@ export const notionComponents = {
 	/** Rows and cells with color attribute for background color */
 	tr: TableRow,
 	td: TableCell,
+	th: ThEl,
+
+	// ── Standard HTML block elements ───────────────────────────
+	p: ParagraphEl,
+	ul: UnorderedListEl,
+	ol: OrderedListEl,
+	li: ListItemEl,
+	pre: PreEl,
+	hr: HrEl,
+
+	// ── Standard HTML inline elements ──────────────────────────
+	a: AnchorEl,
+	strong: StrongEl,
+	em: EmEl,
+	del: DelEl,
 } as const;
 
 export type NotionComponents = typeof notionComponents;

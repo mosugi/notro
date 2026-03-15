@@ -1,35 +1,18 @@
 @import "tailwindcss";
 
 @layer utilities {
-  /* ============================================================
-     Prose typography for .nt-markdown-content
-     Styles standard HTML elements (p, ul, li, code, etc.) that are
-     not managed by NotionMarkdownRenderer's classMap.
-     Notion-specific blocks (h1-h4, blockquote, table, etc.) receive
-     their Tailwind classes via classMap in [slug].astro.
-     ============================================================ */
+  /* Base wrapper style */
   .nt-markdown-content { @apply text-base leading-relaxed text-gray-800; }
 
-  .nt-markdown-content p  { @apply mb-3 leading-7; }
-
-  .nt-markdown-content ul { @apply mb-3 list-disc pl-6; }
-  .nt-markdown-content ol { @apply mb-3 list-decimal pl-6; }
-  .nt-markdown-content li { @apply mb-1 leading-7; }
-
-  .nt-markdown-content pre { @apply my-4 overflow-x-auto rounded-md bg-gray-50 p-4 font-mono text-sm; }
-  .nt-markdown-content :not(pre) > code { @apply rounded bg-gray-100 px-1 py-0.5 font-mono text-sm text-gray-800; }
-
-  .nt-markdown-content hr { @apply my-8 border-gray-200; }
-
-  .nt-markdown-content a { @apply text-sky-600 underline underline-offset-2 hover:text-sky-700; }
-
-  .nt-markdown-content th { @apply border border-gray-200 bg-gray-50 px-3 py-2 text-left font-semibold text-gray-700; }
-
-  .nt-markdown-content img { @apply h-auto max-w-full rounded-md; }
-
-  .nt-markdown-content strong { @apply font-bold; }
-  .nt-markdown-content em     { @apply italic; }
-  .nt-markdown-content del    { @apply line-through; }
+  /*
+   * Inline code — the only remaining global CSS rule.
+   * The `:not(pre) > code` selector distinguishes inline `code` from
+   * code inside a `<pre>` block. classMap cannot express this distinction,
+   * so global CSS is the most precise tool for this specific case.
+   */
+  .nt-markdown-content :not(pre) > code {
+    @apply rounded bg-gray-100 px-1 py-0.5 font-mono text-sm text-gray-800;
+  }
 }
 
 /*

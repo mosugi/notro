@@ -125,17 +125,53 @@ import MyCallout from "./MyCallout.astro";
 ### 方式 A: `classMap` prop（推奨）
 
 `classMap` でブロックごとに Tailwind クラスを直接指定する方式です。
+`p`, `ul`, `li`, `a` 等の**標準 HTML 要素も含む**ほぼすべての要素を対象にできます。
 
 ```astro
 <NotionMarkdownRenderer
   markdown={markdown}
   classMap={{
+    // Notion 固有ブロック
     h1:      "mb-3 mt-10 text-3xl font-bold text-gray-900",
     callout: "flex items-start gap-3 my-4 rounded-lg border p-4",
     toggle:  "my-1 rounded-md",
+    // 標準 HTML 要素
+    p:       "mb-3 leading-7",
+    ul:      "mb-3 list-disc pl-6",
+    li:      "mb-1 leading-7",
+    a:       "text-sky-600 underline underline-offset-2 hover:text-sky-700",
+    strong:  "font-bold",
+    pre:     "my-4 overflow-x-auto rounded-md bg-gray-50 p-4 font-mono text-sm",
   }}
 />
 ```
+
+**classMap が対応する要素**
+
+| キー | 要素 | 備考 |
+|---|---|---|
+| `h1`〜`h4` | `<h1>`〜`<h4>` | Notion 固有の color 属性も保持 |
+| `callout` | Callout ブロック | icon 属性付き |
+| `toggle` / `toggleTitle` | `<details>` / `<summary>` | |
+| `columns` / `column` | カラムレイアウト | |
+| `quote` | `<blockquote>` | |
+| `image` | `<figure>` (画像ブロック) | |
+| `tableWrapper` / `table` | テーブル外側 `<div>` / `<table>` | |
+| `tableCell` / `tableRow` | `<td>` / `<tr>` | |
+| `toc` | 目次ブロック | |
+| `p` | `<p>` | |
+| `ul` / `ol` / `li` | リスト | |
+| `pre` | コードブロック外枠 | |
+| `hr` | 水平線 | |
+| `a` | リンク | |
+| `strong` / `em` / `del` | 太字 / 斜体 / 取り消し線 | |
+| `th` | テーブルヘッダーセル | |
+
+> **`code`（インラインコード）について**
+>
+> `<code>` は `pre > code`（コードブロック内）とインラインコードで同じ要素を共有します。
+> `classMap.code` は両方に同じクラスを適用するため、インライン/ブロックの外観を分けたい場合は
+> グローバル CSS の `:not(pre) > code` セレクタが適しています（方式 B）。
 
 **メリット**
 - スタイルの定義がレンダリング箇所と同じファイルに集約され、見通しがよい
@@ -145,7 +181,7 @@ import MyCallout from "./MyCallout.astro";
 
 **デメリット**
 - 同じ `classMap` を複数ページで使う場合、定義を定数として切り出して共有する必要がある
-- `p`, `ul`, `li` 等の**標準 HTML 要素**はコンポーネント管轄外のため `classMap` では指定できない（→ グローバル CSS で補う）
+- インラインコード（`code`）のインライン/ブロック区別は classMap のみでは表現できない（→ グローバル CSS で補う）
 
 ---
 
@@ -156,14 +192,16 @@ import MyCallout from "./MyCallout.astro";
 ```css
 /* global.css */
 .nt-markdown-content h1 { @apply mb-3 mt-10 text-3xl font-bold text-gray-900; }
+.nt-markdown-content p  { @apply mb-3 leading-7; }
 
-.notion-callout {
-  @apply flex items-start gap-3 my-4 rounded-lg border p-4;
+/* インラインコードのみ区別する場合 */
+.nt-markdown-content :not(pre) > code {
+  @apply rounded bg-gray-100 px-1 py-0.5 font-mono text-sm;
 }
 ```
 
 **メリット**
-- `p`, `ul`, `li`, `strong`, `code` 等の**標準 HTML 要素もまとめて**一箇所でスタイリングできる
+- `:not(pre) > code` のような**子孫セレクタが必要なケース**に対応できる
 - Tailwind を使わず生の CSS で書く場合や、既存の CSS スタイルシートに組み込む場合に馴染みやすい
 - サイト全体に一律のスタイルを適用したい場合はシンプル
 
@@ -174,29 +212,30 @@ import MyCallout from "./MyCallout.astro";
 
 ---
 
-### 併用パターン（NotroTail での実装例）
+### NotroTail での実装例
 
-実際には**両方を組み合わせる**のが現実的です。
-
-| 対象 | 方式 |
-|---|---|
-| `h1`〜`h4`, `callout`, `toggle`, `columns` 等の Notion 固有ブロック | `classMap` |
-| `p`, `ul`, `li`, `code`, `a`, `strong` 等の標準 HTML 要素 | グローバル CSS (`@apply`) |
+`classMap` のみでほぼすべてを管理し、インラインコードの区別のみグローバル CSS で補うパターンです。
 
 ```css
-/* global.css — 標準 HTML 要素のみ担当 */
-.nt-markdown-content p  { @apply mb-3 leading-7; }
-.nt-markdown-content ul { @apply mb-3 list-disc pl-6; }
-.nt-markdown-content li { @apply mb-1 leading-7; }
+/* global.css — インラインコードの区別のみ（オプション） */
+.nt-markdown-content :not(pre) > code {
+  @apply rounded bg-gray-100 px-1 py-0.5 font-mono text-sm text-gray-800;
+}
 ```
 
 ```astro
-<!-- [slug].astro — Notion 固有ブロックは classMap で指定 -->
+<!-- [slug].astro — すべての要素を classMap で管理 -->
 <NotionMarkdownRenderer
   markdown={markdown}
   classMap={{
-    h1:      "mb-3 mt-10 text-3xl font-bold text-gray-900",
+    h1: "mb-3 mt-10 text-3xl font-bold text-gray-900",
+    p:  "mb-3 leading-7",
+    ul: "mb-3 list-disc pl-6",
+    li: "mb-1 leading-7",
+    a:  "text-sky-600 underline underline-offset-2 hover:text-sky-700",
+    pre:"my-4 overflow-x-auto rounded-md bg-gray-50 p-4 font-mono text-sm",
     callout: "flex items-start gap-3 my-4 rounded-lg border p-4",
+    // ... その他のブロック
   }}
 />
 ```
