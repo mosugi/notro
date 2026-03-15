@@ -1,29 +1,27 @@
-import type { Loader, ParseDataOptions } from "astro/loaders";
+import type { Loader } from "astro/loaders";
 import {
   Client,
   isFullPage,
   iteratePaginatedAPI,
 } from "@notionhq/client";
-import type { ClientOptions } from "@notionhq/client/build/src/Client";
-import type {
-  QueryDataSourceParameters,
-} from "@notionhq/client/build/src/api-endpoints";
+import type { QueryDataSourceParameters } from "@notionhq/client";
 import {
   type PageWithMarkdownType,
   pageWithMarkdownSchema,
 } from "./schema.ts";
-import { preprocessNotionMarkdown } from "../markdown/transformer.ts";
+import { markdownHasPresignedUrls } from "../utils/notion-url.ts";
 
 type LoaderOptions = {
   queryParameters: QueryDataSourceParameters;
-  clientOptions: ClientOptions;
+  // Derive from Client constructor to avoid importing from internal paths
+  clientOptions: ConstructorParameters<typeof Client>[0];
 };
 
 // Notion file-type covers and inline images use pre-signed S3 URLs that expire after ~1 hour.
 // If any are present in a cached entry, it must be re-fetched to get fresh URLs.
 function hasNotionPresignedUrl(data: PageWithMarkdownType): boolean {
   if (data.cover?.type === "file") return true;
-  return /X-Amz-Algorithm|prod-files-secure\.s3/.test(data.markdown);
+  return markdownHasPresignedUrls(data.markdown);
 }
 
 // Define any options that the loader needs
@@ -44,12 +42,14 @@ export function loader({
 
       const pages = pageOrDatabases.filter((page) => isFullPage(page));
 
+      // Build a lookup map for O(1) access when checking store entries
+      const pageById = new Map(pages.map((page) => [page.id, page]));
+
       // Delete entries that are removed, edited, or contain expired pre-signed URLs
       store.entries().forEach(([id, { digest, data }]) => {
-        const isDeleted = !pages.some((page) => page.id === id);
-        const isEdited = pages.some(
-          (page) => page.id === id && digest !== page.last_edited_time,
-        );
+        const page = pageById.get(id);
+        const isDeleted = page === undefined;
+        const isEdited = page !== undefined && digest !== page.last_edited_time;
         const hasExpiredUrls = hasNotionPresignedUrl(
           data as PageWithMarkdownType,
         );
@@ -80,12 +80,11 @@ export function loader({
               logger.warn(`Page ${page.id} markdown was truncated`);
             }
 
-            // Preprocess the markdown to fix Notion-specific syntax issues before
-            // storing. NotionMarkdownRenderer calls compileMdxCached() which runs
-            // evaluate() on this already-preprocessed markdown.
-            const preprocessedMarkdown = preprocessNotionMarkdown(
-              markdownResponse.markdown
-            );
+            // Store raw markdown from the Notion API.
+            // remarkNfm in the MDX compile pipeline (compile-mdx.ts) runs
+            // preprocessNotionMarkdown() at parse time, so preprocessing
+            // does not need to happen here.
+            const rawMarkdown = markdownResponse.markdown;
 
             const data = await parseData<PageWithMarkdownType>({
               id: page.id,
@@ -104,7 +103,7 @@ export function loader({
                 in_trash: page.in_trash,
                 url: page.url,
                 public_url: page.public_url,
-                markdown: preprocessedMarkdown,
+                markdown: rawMarkdown,
               } as PageWithMarkdownType,
             });
 
@@ -112,7 +111,7 @@ export function loader({
               id: page.id,
               digest: page.last_edited_time,
               data: data,
-              body: preprocessedMarkdown,
+              body: rawMarkdown,
             });
           })
         );

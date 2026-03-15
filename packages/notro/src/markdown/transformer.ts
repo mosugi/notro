@@ -1,10 +1,12 @@
-export type LinkToPages = Record<string, { url: string; title: string }>;
-
 /**
  * Preprocesses Notion Enhanced Markdown before remark/MDX parsing.
  *
  * Fixes structural issues in Notion's markdown output that prevent correct
  * parsing by standard CommonMark/GFM parsers:
+ *
+ * 0. (Migration) Escaped inline math:
+ *    Old versions of this function incorrectly escaped inline math as \$...\$.
+ *    This fix converts \$...\$ back to $...$ so remark-math can parse it.
  *
  * 1. Setext heading prevention:
  *    A "---" line immediately after non-blank text is interpreted as a setext
@@ -53,8 +55,14 @@ export type LinkToPages = Record<string, { url: string; title: string }>;
  *    them to <a href="url">text</a> before the pipeline runs.
  */
 export function preprocessNotionMarkdown(markdown: string): string {
+  // Fix 0: Migration — convert \$...\$ (escaped dollars from old preprocessing bug)
+  // back to $...$ so remark-math can parse inline math correctly.
+  // Pattern: backslash-dollar, non-newline/non-dollar content, backslash-dollar.
+  // This is idempotent: $...$ (already correct) won't match since it has no backslash.
+  let result = markdown.replace(/\\\$([^$\n]+)\\\$/g, (_, content: string) => `$${content}$`);
+
   // Fix 1: Ensure --- dividers have a blank line before them.
-  let result = markdown.replace(/([^\n])\n(---+)(\n|$)/g, "$1\n\n$2$3");
+  result = result.replace(/([^\n])\n(---+)(\n|$)/g, "$1\n\n$2$3");
 
   // Fix 2: Normalize callout directive syntax.
   // Notion outputs "::: callout {icon="..." color="..."}" (with spaces)
@@ -91,7 +99,9 @@ export function preprocessNotionMarkdown(markdown: string): string {
   );
 
   // Fix 5: Convert Notion inline equation format $`...`$ → $...$ for remark-math.
-  result = result.replace(/\$`([^`]+)`\$/g, "\\$$1\\$");
+  // Uses function-form replacement to avoid $ metacharacter confusion in the
+  // replacement string.
+  result = result.replace(/\$`([^`]+)`\$/g, (_, content: string) => `$${content}$`);
 
   // Fix 6: Strip <synced_block> wrapper tags and dedent content.
   // These tags contain underscores, preventing CommonMark HTML block detection.

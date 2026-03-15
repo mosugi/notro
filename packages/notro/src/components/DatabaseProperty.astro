@@ -7,55 +7,41 @@ interface Props {
 }
 
 const { property, name } = Astro.props;
+
+function renderProperty(p: PropertyPageObjectResponseType) {
+  switch (p.type) {
+    case "rich_text":
+      return p.rich_text?.length > 0 ? p.rich_text.map((rt) => rt.plain_text).join("") : null;
+    case "select":
+      return p.select?.name ?? null;
+    case "date":
+      return p.date?.start ?? null;
+    case "title":
+      return p.title?.length > 0 ? p.title.map((t) => t.plain_text).join("") : null;
+    default:
+      return null;
+  }
+}
 ---
 
 <div class="nt-collection-property" data-property-id={property.id} data-property-name={name}>
-  {
-    (() => {
-      switch (property.type) {
-        case "rich_text":
-          return (
-            property.rich_text && property.rich_text.length > 0 && (
-              <p class="nt-property-text">
-                {property.rich_text.map((rt) => rt.plain_text).join("")}
-              </p>
-            )
-          );
-        case "select":
-          return (
-            property.select && (
-              <span class="nt-property-select">{property.select?.name}</span>
-            )
-          );
-        case "multi_select":
-          return (
-            property.multi_select.length > 0 && (
-              <div class="nt-property-multi-select">
-                {property.multi_select.map((item) => {
-                  return <span class="nt-property-select">{item.name}</span>;
-                })}
-              </div>
-            )
-          );
-        case "date":
-          return (
-            property.date && (
-              <time class="nt-property-date" datetime={property.date?.start}>
-                {property.date?.start}
-              </time>
-            )
-          );
-        case "title":
-          return (
-            property.title && property.title.length > 0 && (
-              <p class="nt-property-text">
-                {property.title.map((t) => t.plain_text).join("")}
-              </p>
-            )
-          );
-        default:
-          return null;
-      }
-    })()
-  }
+  {property.type === "rich_text" && property.rich_text?.length > 0 && (
+    <p class="nt-property-text">{renderProperty(property)}</p>
+  )}
+  {property.type === "select" && property.select && (
+    <span class="nt-property-select">{property.select.name}</span>
+  )}
+  {property.type === "multi_select" && property.multi_select.length > 0 && (
+    <div class="nt-property-multi-select">
+      {property.multi_select.map((item) => (
+        <span class="nt-property-select">{item.name}</span>
+      ))}
+    </div>
+  )}
+  {property.type === "date" && property.date && (
+    <time class="nt-property-date" datetime={property.date.start}>{property.date.start}</time>
+  )}
+  {property.type === "title" && property.title?.length > 0 && (
+    <p class="nt-property-text">{renderProperty(property)}</p>
+  )}
 </div>

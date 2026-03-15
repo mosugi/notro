@@ -1,24 +1,10 @@
 import sharpImageService from "astro/assets/services/sharp";
+import { normalizeNotionPresignedUrl } from "notro/utils";
 
 export const notionImageServiceConfig = () => ({
   entrypoint: "./src/lib/notionImageService.ts",
   config: {},
 });
-
-// Notion pre-signed S3 URLs contain expiring query parameters (X-Amz-*).
-// Stripping them yields a stable cache key so the same image reuses the cached
-// build output even when a fresh pre-signed URL is fetched on every build.
-function normalizeNotionPresignedUrl(src: string): string {
-  try {
-    const url = new URL(src);
-    if (url.searchParams.has("X-Amz-Algorithm")) {
-      return `${url.protocol}//${url.hostname}${url.pathname}`;
-    }
-  } catch {
-    // Not a valid URL, return as-is
-  }
-  return src;
-}
 
 const notionImageService = {
   ...sharpImageService,
