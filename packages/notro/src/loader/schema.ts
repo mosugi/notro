@@ -785,3 +785,52 @@ export const pageWithMarkdownSchema = pageObjectResponseSchema.extend({
   markdown: z.string(),
 });
 export type PageWithMarkdownType = z.infer<typeof pageWithMarkdownSchema>;
+
+/**
+ * Shorthand aliases for Notion property schemas.
+ *
+ * Instead of importing each schema by its full name, you can use this object
+ * to define your content collection schema more concisely.
+ *
+ * @example
+ * ```ts
+ * // Before
+ * import { titlePropertyPageObjectResponseSchema, richTextPropertyPageObjectResponseSchema } from "notro";
+ * properties: z.object({
+ *   Name: titlePropertyPageObjectResponseSchema,
+ *   Description: richTextPropertyPageObjectResponseSchema,
+ * })
+ *
+ * // After
+ * import { notroProperties } from "notro";
+ * properties: z.object({
+ *   Name: notroProperties.title,
+ *   Description: notroProperties.richText,
+ * })
+ * ```
+ */
+export const notroProperties = {
+  title: titlePropertyPageObjectResponseSchema,
+  richText: richTextPropertyPageObjectResponseSchema,
+  number: numberPropertyPageObjectResponseSchema,
+  select: selectPropertyPageObjectResponseSchema,
+  multiSelect: multiSelectPropertyPageObjectResponseSchema,
+  status: statusPropertyPageObjectResponseSchema,
+  date: datePropertyPageObjectResponseSchema,
+  checkbox: checkboxPropertyPageObjectResponseSchema,
+  url: urlPropertyPageObjectResponseSchema,
+  email: emailPropertyPageObjectResponseSchema,
+  phoneNumber: phoneNumberPropertyPageObjectResponseSchema,
+  files: filesPropertyPageObjectResponseSchema,
+  people: peoplePropertyPageObjectResponseSchema,
+  relation: relationPropertyPageObjectResponseSchema,
+  rollup: rollupPropertyPageObjectResponseSchema,
+  formula: formulaPropertyPageObjectResponseSchema,
+  button: buttonPropertyPageObjectResponseSchema,
+  uniqueId: uniqueIdPropertyPageObjectResponseSchema,
+  verification: verificationPropertyPageObjectResponseSchema,
+  createdBy: createdByPropertyPageObjectResponseSchema,
+  createdTime: createdTimePropertyPageObjectResponseSchema,
+  lastEditedBy: lastEditedByPropertyPageObjectResponseSchema,
+  lastEditedTime: lastEditedTimePropertyPageObjectResponseSchema,
+} as const;

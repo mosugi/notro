@@ -59,59 +59,69 @@ export function loader({
         }
       });
 
-      // Load new or updated pages
-      const loadPageMarkdownPromises = pages
-        .filter((page) => !store.has(page.id))
-        .map(async (page) => {
-          logger.info(`Loading page ${page.id} into store`);
+      // Load new or updated pages, respecting Notion's 3 requests/second rate limit.
+      // Pages are processed in batches of 3 with a 1-second pause between batches.
+      const pagesToLoad = pages.filter((page) => !store.has(page.id));
+      const BATCH_SIZE = 3;
 
-          const markdownResponse = await client.pages.retrieveMarkdown({
-            page_id: page.id,
-          });
+      for (let i = 0; i < pagesToLoad.length; i += BATCH_SIZE) {
+        const batch = pagesToLoad.slice(i, i + BATCH_SIZE);
 
-          if (markdownResponse.truncated) {
-            // TODO: handle truncated markdown (paginated retrieval)
-            logger.warn(`Page ${page.id} markdown was truncated`);
-          }
+        await Promise.all(
+          batch.map(async (page) => {
+            logger.info(`Loading page ${page.id} into store`);
 
-          // Preprocess the markdown to fix Notion-specific syntax issues before
-          // storing. NotionMarkdownRenderer calls compileMdxCached() which runs
-          // evaluate() on this already-preprocessed markdown.
-          const preprocessedMarkdown = preprocessNotionMarkdown(
-            markdownResponse.markdown
-          );
+            const markdownResponse = await client.pages.retrieveMarkdown({
+              page_id: page.id,
+            });
 
-          const data = await parseData<PageWithMarkdownType>({
-            id: page.id,
-            data: {
-              parent: page.parent,
-              properties: page.properties,
-              icon: page.icon,
-              cover: page.cover,
-              created_by: page.created_by,
-              last_edited_by: page.last_edited_by,
-              object: page.object,
+            if (markdownResponse.truncated) {
+              // TODO: handle truncated markdown (paginated retrieval)
+              logger.warn(`Page ${page.id} markdown was truncated`);
+            }
+
+            // Preprocess the markdown to fix Notion-specific syntax issues before
+            // storing. NotionMarkdownRenderer calls compileMdxCached() which runs
+            // evaluate() on this already-preprocessed markdown.
+            const preprocessedMarkdown = preprocessNotionMarkdown(
+              markdownResponse.markdown
+            );
+
+            const data = await parseData<PageWithMarkdownType>({
               id: page.id,
-              created_time: page.created_time,
-              last_edited_time: page.last_edited_time,
-              archived: page.archived,
-              in_trash: page.in_trash,
-              url: page.url,
-              public_url: page.public_url,
-              markdown: preprocessedMarkdown,
-            } as PageWithMarkdownType,
-          });
+              data: {
+                parent: page.parent,
+                properties: page.properties,
+                icon: page.icon,
+                cover: page.cover,
+                created_by: page.created_by,
+                last_edited_by: page.last_edited_by,
+                object: page.object,
+                id: page.id,
+                created_time: page.created_time,
+                last_edited_time: page.last_edited_time,
+                archived: page.archived,
+                in_trash: page.in_trash,
+                url: page.url,
+                public_url: page.public_url,
+                markdown: preprocessedMarkdown,
+              } as PageWithMarkdownType,
+            });
 
-          store.set({
-            id: page.id,
-            digest: page.last_edited_time,
-            data: data,
-            body: preprocessedMarkdown,
-          });
-        });
+            store.set({
+              id: page.id,
+              digest: page.last_edited_time,
+              data: data,
+              body: preprocessedMarkdown,
+            });
+          })
+        );
 
-      //FIXME use p-queue and Retry for 3rps limit
-      await Promise.all(loadPageMarkdownPromises);
+        // Wait 1 second between batches to stay within the 3 req/s rate limit
+        if (i + BATCH_SIZE < pagesToLoad.length) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
     },
     // It will be overridden by user-defined schema.
     schema: pageWithMarkdownSchema,

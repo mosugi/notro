@@ -10,6 +10,12 @@ export { colorToCSS } from "./src/components/notion/colors";
 export * from "./src/loader/loader";
 export * from "./src/loader/schema";
 // notroMarkdownConfig is intentionally NOT exported from here.
-// Import it from "notro/config" in astro.config.mjs to avoid pulling
-// markdown plugins into the main package graph (which would break
-// Vite config evaluation via the .astro re-exports above).
+//
+// Why two entry points?
+//   "notro"        → used in src/ files (content.config.ts, .astro pages)
+//   "notro/config" → used ONLY in astro.config.mjs
+//
+// Astro components (.astro) re-exported above use the Astro JSX runtime,
+// which Vite cannot evaluate during config loading. Keeping markdown plugins
+// in a separate entry point ("notro/config") prevents this import from
+// being bundled into the config evaluation path and breaking the build.

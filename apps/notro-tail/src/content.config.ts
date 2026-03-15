@@ -1,13 +1,5 @@
 import { defineCollection } from "astro:content";
-import {
-  checkboxPropertyPageObjectResponseSchema,
-  datePropertyPageObjectResponseSchema,
-  loader,
-  multiSelectPropertyPageObjectResponseSchema,
-  pageWithMarkdownSchema,
-  richTextPropertyPageObjectResponseSchema,
-  titlePropertyPageObjectResponseSchema,
-} from "notro";
+import { loader, notroProperties, pageWithMarkdownSchema } from "notro";
 import { z } from "zod";
 
 const postsCollection = defineCollection({
@@ -33,12 +25,12 @@ const postsCollection = defineCollection({
   }),
   schema: pageWithMarkdownSchema.extend({
     properties: z.object({
-      Name: titlePropertyPageObjectResponseSchema,
-      Description: richTextPropertyPageObjectResponseSchema,
-      Public: checkboxPropertyPageObjectResponseSchema,
-      Slug: richTextPropertyPageObjectResponseSchema,
-      Tags: multiSelectPropertyPageObjectResponseSchema,
-      Date: datePropertyPageObjectResponseSchema,
+      Name: notroProperties.title,
+      Description: notroProperties.richText,
+      Public: notroProperties.checkbox,
+      Slug: notroProperties.richText,
+      Tags: notroProperties.multiSelect,
+      Date: notroProperties.date,
     }),
   }),
 });
