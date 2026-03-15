@@ -83,8 +83,18 @@ export async function compileMdxForAstro(
 
 // ── Cached variant ─────────────────────────────────────────────────────────
 
-// Cache compilation results by content hash + linkToPages hash.
-// Prevents redundant recompilation of the same content during a build.
+// In-memory promise cache: keyed by SHA-256(mdxSource + linkToPages JSON).
+// Stores the Promise itself (not the resolved value) so that concurrent calls
+// with the same key share the in-flight compilation instead of launching
+// duplicate evaluate() calls. The cache is intentionally module-scoped and
+// lives for the duration of the build process.
+//
+// Known limitation: JSON.stringify(linkToPages) is insertion-order dependent.
+// Two objects with the same key/value pairs but different insertion order
+// produce different cache keys. In practice this is not a problem because
+// `buildLinkToPages()` always produces a consistent insertion order, but
+// custom linkToPages objects constructed in different orders would create
+// redundant cache entries rather than sharing results.
 const compilationCache = new Map<string, ReturnType<typeof compileMdxForAstro>>();
 
 export async function compileMdxCached(

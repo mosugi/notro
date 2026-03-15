@@ -109,8 +109,14 @@ export function loader({
 
             store.set({
               id: page.id,
+              // digest is used by the loader to detect edits between builds.
+              // We use last_edited_time as a stable, string-comparable digest.
               digest: page.last_edited_time,
               data: data,
+              // body is the raw text exposed by Astro's Content Layer API for
+              // full-text search integrations. It is separate from data.markdown
+              // (which is also the raw markdown) because Astro's store.set()
+              // requires body to be a top-level field distinct from the schema data.
               body: rawMarkdown,
             });
           })

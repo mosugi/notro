@@ -26,20 +26,26 @@ export function notro(): AstroIntegration {
 		name: 'notro',
 		hooks: {
 			'astro:config:setup'({ updateConfig }) {
-				// Append @astrojs/mdx into the integrations list via updateConfig.
-				// Astro's runHookConfigSetup loop re-checks .length each iteration,
-				// so this integration is processed immediately after notro's own hook.
+				// Inject @astrojs/mdx by appending to the integrations array via
+				// updateConfig(). Astro's config setup loop re-checks the array length
+				// each iteration, so the injected MDX integration is picked up and its
+				// own astro:config:setup hook runs immediately after notro's hook.
 				updateConfig({
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					integrations: [mdx({
-						// Mirror buildMdxPlugins() from mdx-pipeline.ts so static .mdx files
-						// and runtime evaluate() share the same plugin pipeline.
+						// Mirror buildMdxPlugins() from mdx-pipeline.ts so static .mdx
+						// files and the runtime evaluate() path share the same plugin
+						// pipeline (same remark and rehype plugins in the same order).
 						remarkPlugins: [remarkNfm, remarkGfm, remarkMath],
 						rehypePlugins: [rehypeKatex],
-						// Do not inherit Astro's default markdown config to prevent
-						// duplicate plugin registration.
+						// Do not inherit Astro's default markdown config.
+						// Astro adds remarkGfm and other plugins by default; allowing
+						// inheritance would register them twice alongside our explicit list.
 						extendMarkdownConfig: false,
-					})] as any,
+					// `as any` is needed because Astro's TypeScript types for updateConfig
+					// only accept AstroIntegration[], but @astrojs/mdx returns its own
+					// subtype that is structurally compatible but not assignable. This is
+					// a limitation in Astro's type definitions, not a runtime issue.
+					})] as any, // eslint-disable-line @typescript-eslint/no-explicit-any
 				});
 			},
 		},

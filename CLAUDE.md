@@ -72,6 +72,29 @@ notro-tail/
 
 ## Key Architecture
 
+### `notro` Package Entry Points
+
+The `notro` package exposes three entry points, each designed for a specific import context:
+
+| Entry point | Import | Use case |
+|---|---|---|
+| `notro` | `import { NotionMarkdownRenderer, loader, ... } from "notro"` | Astro components and the Content Loader. **Cannot** be used in `astro.config.mjs` because Astro config is evaluated before the JSX renderer is registered. |
+| `notro/utils` | `import { getPlainText, normalizeNotionPresignedUrl, ... } from "notro/utils"` | Pure TypeScript helpers with no Astro component imports. Safe to use anywhere: config files, Node scripts, image services. |
+| `notro/integration` | `import { notro } from "notro/integration"` | The `notro()` Astro integration. Used in `astro.config.mjs` to inject `@astrojs/mdx` with the correct plugin pipeline. |
+
+### `notro()` Astro Integration
+
+`notro()` is an Astro integration that registers `@astrojs/mdx` with notro's plugin suite (remarkNfm, remarkGfm, remarkMath, rehypeKatex). It is required for two reasons:
+
+1. **`astro:jsx` renderer** — `@astrojs/mdx` registers the `astro:jsx` renderer that `@mdx-js/mdx`'s `evaluate()` depends on to produce Astro VNodes. Without it, `NotionMarkdownRenderer` fails at runtime.
+2. **Static `.mdx` files** — if the project uses `.mdx` files alongside Notion content, `notro()` ensures they are processed with the same plugin pipeline as dynamically compiled Notion markdown.
+
+Usage in `astro.config.mjs`:
+```js
+import { notro } from "notro/integration";
+export default defineConfig({ integrations: [notro(), sitemap()] });
+```
+
 ### Content Loading Flow
 
 1. **Astro Content Collections** (`content.config.ts`) defines the `posts` collection (the template app; extend as needed for additional collections).
