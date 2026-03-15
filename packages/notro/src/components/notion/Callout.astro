@@ -5,7 +5,6 @@
  * </callout>
  */
 import { colorToCSS } from './colors';
-import { getClass } from '../../utils/classRegistry';
 
 interface Props {
 	icon?: string;
@@ -16,7 +15,7 @@ interface Props {
 const { icon, color, class: className } = Astro.props;
 ---
 
-<div class:list={["notion-callout", getClass('callout'), className]} style={colorToCSS(color) || 'background-color:#F1F1EF'}>
+<div class:list={["notion-callout", className]} style={colorToCSS(color) || 'background-color:#F1F1EF'}>
 	{icon && <span class="notion-callout__icon">{icon}</span>}
 	<div class="notion-callout__body">
 		<slot />

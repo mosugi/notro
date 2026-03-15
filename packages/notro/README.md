@@ -270,17 +270,13 @@ Notion API がページ内容を切り詰めて返す場合（`markdownResponse.
 
 ### 🟡 中優先度（品質・信頼性の改善）
 
-#### 3. `classRegistry` の SSR 安全性
+#### ~~3. `classRegistry` の SSR 安全性~~ ✅ 解決済み
 
-現実装はモジュールレベルの可変状態（`let _classMap`）を使っており、SSG（静的ビルド）では安全だが、SSR（サーバーサイドレンダリング）環境でリクエストが並行した場合にクラスマップが混在するリスクがある。
+`classRegistry`（モジュールレベルの可変状態）を廃止し、`NotionMarkdownRenderer` が `classMap` を受け取って `withClass()` クロージャで各コンポーネントに直接クラスを注入する方式に変更した。グローバル状態ゼロ、リクエスト間の干渉なし。
 
-**対応方針**: Astro の `context.locals`（リクエストスコープ）への移行、または `AsyncLocalStorage` を使ったリクエスト分離。ただし `NotionMarkdownRenderer` の実行タイミングとの統合が必要。
+#### ~~4. `<code>` 要素のインライン/ブロック区別~~ ✅ 対応不要（設計方針）
 
-#### 4. `<code>` 要素のインライン/ブロック区別
-
-現状の `classMap` は全 `<code>` 要素に同じクラスを適用するため、インラインコードとコードブロック内の `<code>` を区別できない。グローバル CSS（`:not(pre) > code`）への依存が残り、方式 A 完全完結の妨げになっている。
-
-**対応方針**: `pre` レンダリング時に React Context 相当の仕組み（Astro では困難）か、ビルド時の AST 解析で `pre > code` を専用コンポーネントへ差し替えるプラグインを追加する。
+コードハイライトは別ライブラリ（Shiki など）で対応するため、`classMap` での `code` キー対応は不要と判断。グローバル CSS の `:not(pre) > code` セレクタによるインラインコードへのスタイル適用を正式な設計とする。
 
 #### 5. Notion ページ URL 解析の堅牢化（`compile-mdx.ts`）
 

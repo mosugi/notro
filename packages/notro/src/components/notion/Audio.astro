@@ -1,10 +1,9 @@
 ---
 /** <audio src="URL" color="Color">Caption</audio> */
-import { getClass } from '../../utils/classRegistry';
 interface Props { src: string; color?: string; class?: string; }
 const { src, class: className } = Astro.props;
 ---
-<figure class:list={["notion-media notion-media--audio", getClass('audio'), className]}>
+<figure class:list={["notion-media notion-media--audio", className]}>
 	<audio controls src={src} class="notion-media__player"></audio>
 	{Astro.slots.has('default') && <figcaption class="notion-media__caption"><slot /></figcaption>}
 </figure>

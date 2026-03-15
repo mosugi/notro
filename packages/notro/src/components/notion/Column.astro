@@ -6,8 +6,6 @@
  *
  * Placed directly inside Columns.astro.
  */
-import { getClass } from '../../utils/classRegistry';
-
 interface Props {
 	class?: string;
 }
@@ -15,6 +13,6 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<div class:list={["notion-column", getClass('column'), className]}>
+<div class:list={["notion-column", className]}>
 	<slot />
 </div>

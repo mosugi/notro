@@ -5,8 +5,6 @@
  *   <column>...</column>
  * </columns>
  */
-import { getClass } from '../../utils/classRegistry';
-
 interface Props {
 	class?: string;
 }
@@ -14,6 +12,6 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<div class:list={["notion-columns", getClass('columns'), className]}>
+<div class:list={["notion-columns", className]}>
 	<slot />
 </div>

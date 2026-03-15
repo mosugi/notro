@@ -2,12 +2,11 @@
  * Passthrough components for standard HTML elements.
  *
  * Uses astro/jsx-runtime to create lightweight wrappers that inject
- * classMap-assigned classes without requiring individual .astro files.
+ * an optional class string without requiring individual .astro files.
  *
- * Each component:
- *   1. Reads its class string from classRegistry via the element's key
- *   2. Merges it with any class already on the element
- *   3. Passes all other props through unchanged
+ * makeHtmlElement(tag, cls?) bakes the class in at creation time.
+ * NotionMarkdownRenderer calls this per-render when classMap has an entry
+ * for the element, so each render gets its own fresh component instance.
  *
  * Note on <code>:
  *   The `code` key is intentionally omitted here. Both inline `code` and
@@ -17,12 +16,10 @@
  */
 import { jsx } from 'astro/jsx-runtime';
 import { __astro_tag_component__ } from 'astro/runtime/server/index.js';
-import { getClass } from '../../utils/classRegistry';
 
-function makeHtmlElement(tag: string, registryKey: string) {
+export function makeHtmlElement(tag: string, cls?: string) {
 	function HtmlElement({ class: className, ...rest }: Record<string, unknown>) {
-		const registryClass = getClass(registryKey);
-		const combined = [registryClass, className].filter(Boolean).join(' ') || undefined;
+		const combined = [cls, className].filter(Boolean).join(' ') || undefined;
 		return jsx(tag, combined !== undefined ? { ...rest, class: combined } : rest);
 	}
 	__astro_tag_component__(HtmlElement, 'astro:jsx');
@@ -30,18 +27,18 @@ function makeHtmlElement(tag: string, registryKey: string) {
 }
 
 // ── Block elements ─────────────────────────────────────────────
-export const ParagraphEl     = makeHtmlElement('p',      'p');
-export const UnorderedListEl = makeHtmlElement('ul',     'ul');
-export const OrderedListEl   = makeHtmlElement('ol',     'ol');
-export const ListItemEl      = makeHtmlElement('li',     'li');
-export const PreEl           = makeHtmlElement('pre',    'pre');
-export const HrEl            = makeHtmlElement('hr',     'hr');
+export const ParagraphEl     = makeHtmlElement('p');
+export const UnorderedListEl = makeHtmlElement('ul');
+export const OrderedListEl   = makeHtmlElement('ol');
+export const ListItemEl      = makeHtmlElement('li');
+export const PreEl           = makeHtmlElement('pre');
+export const HrEl            = makeHtmlElement('hr');
 
 // ── Inline elements ────────────────────────────────────────────
-export const AnchorEl        = makeHtmlElement('a',      'a');
-export const StrongEl        = makeHtmlElement('strong', 'strong');
-export const EmEl            = makeHtmlElement('em',     'em');
-export const DelEl           = makeHtmlElement('del',    'del');
+export const AnchorEl        = makeHtmlElement('a');
+export const StrongEl        = makeHtmlElement('strong');
+export const EmEl            = makeHtmlElement('em');
+export const DelEl           = makeHtmlElement('del');
 
 // ── Table header cell ──────────────────────────────────────────
-export const ThEl            = makeHtmlElement('th',     'th');
+export const ThEl            = makeHtmlElement('th');

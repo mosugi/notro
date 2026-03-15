@@ -5,8 +5,6 @@
  * Mapped to MDX `components.summary`.
  * Placed directly inside Toggle.astro (<details>).
  */
-import { getClass } from '../../utils/classRegistry';
-
 interface Props {
 	class?: string;
 }
@@ -14,6 +12,6 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<summary class:list={["notion-toggle__title", getClass('toggleTitle'), className]}>
+<summary class:list={["notion-toggle__title", className]}>
 	<slot />
 </summary>

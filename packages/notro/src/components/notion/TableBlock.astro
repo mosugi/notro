@@ -7,12 +7,12 @@
  * Mapped to MDX `components.table`.
  * Color priority (high → low): cell > row > column
  */
-import { getClass } from '../../utils/classRegistry';
 interface Props {
 	'fit-page-width'?: string;
 	'header-row'?: string;
 	'header-column'?: string;
 	class?: string;
+	tableWrapperClass?: string;
 }
 
 const {
@@ -20,20 +20,20 @@ const {
 	'header-row': headerRow = 'false',
 	'header-column': headerColumn = 'false',
 	class: className,
+	tableWrapperClass,
 } = Astro.props;
 ---
 
 <div
 	class:list={[
 		'notion-table-wrapper',
-		getClass('tableWrapper'),
+		tableWrapperClass,
 		{ 'notion-table-wrapper--full': fitPageWidth === 'true' },
 	]}
 >
 	<table
 		class:list={[
 			'notion-table',
-			getClass('table'),
 			className,
 			{ 'notion-table--header-row': headerRow === 'true' },
 			{ 'notion-table--header-col': headerColumn === 'true' },

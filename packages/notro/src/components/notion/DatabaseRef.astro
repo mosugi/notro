@@ -5,13 +5,12 @@
  * Link to a Notion database.
  */
 import { colorToCSS } from './colors';
-import { getClass } from '../../utils/classRegistry';
 interface Props { url: string; inline?: string; icon?: string; color?: string; class?: string; }
 const { url, inline = 'false', icon = '🗄️', color, class: className } = Astro.props;
 ---
 <a
 	href={url}
-	class:list={['notion-database-ref', getClass('databaseRef'), className, { 'notion-database-ref--inline': inline === 'true' }]}
+	class:list={['notion-database-ref', className, { 'notion-database-ref--inline': inline === 'true' }]}
 	style={colorToCSS(color)}
 >
 	<span class="notion-database-ref__icon" aria-hidden="true">{icon}</span>
