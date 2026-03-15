@@ -1,4 +1,4 @@
-import type { Loader, ParseDataOptions } from "astro/loaders";
+import type { Loader } from "astro/loaders";
 import {
   Client,
   isFullPage,

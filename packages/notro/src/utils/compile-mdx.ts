@@ -3,11 +3,6 @@
  *
  * Uses @mdx-js/mdx's evaluate() to compile a preprocessed Notion markdown
  * string into an Astro component that accepts <Content components={...} />.
- *
- * Reference implementation:
- *   - packages/integrations/mdx/src/vite-plugin-mdx-postprocess.ts
- *   - packages/integrations/mdx/src/plugins.ts (createMdxProcessor)
- *   - packages/astro/src/jsx-runtime/index.ts (createVNode = jsx/jsxs)
  */
 
 import { evaluate, type EvaluateOptions } from '@mdx-js/mdx';
@@ -147,7 +142,6 @@ export async function compileMdxForAstro(
 	//   1. Caller's <Content components={{...}} />
 	//   2. MDX-internal `export const components`
 	//   3. Fragment (required)
-	// Equivalent to transformContentExport() in vite-plugin-mdx-postprocess.ts.
 	const Content = (props: Record<string, unknown> = {}) =>
 		MDXContent({
 			...props,
@@ -159,8 +153,9 @@ export async function compileMdxForAstro(
 		});
 
 	// Tag the component so Astro's rendering pipeline handles it correctly.
-	// Equivalent to annotateContentExport() in vite-plugin-mdx-postprocess.ts.
-	Content[Symbol.for('mdx-component')] = true;
+	// Symbol.for("astro.needsHeadRendering") is checked by Astro's component renderer.
+	// __astro_tag_component__ sets Symbol.for("astro:renderer") = 'astro:jsx',
+	// which routes rendering through Astro's built-in JSX renderer.
 	Content[Symbol.for('astro.needsHeadRendering')] = true;
 	__astro_tag_component__(Content, 'astro:jsx');
 
