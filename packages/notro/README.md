@@ -304,11 +304,7 @@ const pages = await Array.fromAsync(iteratePaginatedAPI(...))
 
 ### 🔵 設計上のトレードオフ（方針検討が必要）
 
-#### 11. `classRegistry` グローバル状態 vs. コンポーネント Props 伝播
-
-現在の `classRegistry` はシンプルだが、Astro で動的にコンポーネントをラップする手段がないために採用したアーキテクチャ的な制約。Astro のコンパイラや JSX ランタイムが進化した場合、`classMap` を `jsx(Component, { ...props, class: registryClass })` パターンで各コンポーネントに直接注入できるようになる可能性がある。
-
-#### 12. `compile-mdx.ts` のキャッシュと SSR の整合性
+#### 11. `compile-mdx.ts` のキャッシュと SSR の整合性
 
 `compileMdxCached` のキャッシュは静的ビルドに最適化されており、SSR では古いキャッシュが残り続ける可能性がある（ページ更新が反映されない）。SSR サポートを公式化するなら、キャッシュ無効化戦略の再設計が必要。
 
@@ -331,33 +327,9 @@ Astro Content Loader。`queryParameters` には Notion API の `dataSources.quer
 
 ### プロパティスキーマ
 
-`content.config.ts` でデータベースプロパティの型を定義するための Zod スキーマ群:
+`content.config.ts` でデータベースプロパティの型を定義する Zod スキーマは `notroProperties` ショートハンドで参照するのが推奨です（[`notroProperties` の節を参照](#notroproperties)）。
 
-| スキーマ | Notion プロパティ型 |
-|---|---|
-| `titlePropertyPageObjectResponseSchema` | Title |
-| `richTextPropertyPageObjectResponseSchema` | Rich Text |
-| `checkboxPropertyPageObjectResponseSchema` | Checkbox |
-| `multiSelectPropertyPageObjectResponseSchema` | Multi-select |
-| `selectPropertyPageObjectResponseSchema` | Select |
-| `statusPropertyPageObjectResponseSchema` | Status |
-| `datePropertyPageObjectResponseSchema` | Date |
-| `numberPropertyPageObjectResponseSchema` | Number |
-| `urlPropertyPageObjectResponseSchema` | URL |
-| `emailPropertyPageObjectResponseSchema` | Email |
-| `phoneNumberPropertyPageObjectResponseSchema` | Phone number |
-| `filesPropertyPageObjectResponseSchema` | Files & media |
-| `peoplePropertyPageObjectResponseSchema` | Person |
-| `relationPropertyPageObjectResponseSchema` | Relation |
-| `rollupPropertyPageObjectResponseSchema` | Rollup |
-| `formulaPropertyPageObjectResponseSchema` | Formula |
-| `uniqueIdPropertyPageObjectResponseSchema` | Unique ID |
-| `createdTimePropertyPageObjectResponseSchema` | Created time |
-| `createdByPropertyPageObjectResponseSchema` | Created by |
-| `lastEditedTimePropertyPageObjectResponseSchema` | Last edited time |
-| `lastEditedByPropertyPageObjectResponseSchema` | Last edited by |
-| `buttonPropertyPageObjectResponseSchema` | Button |
-| `verificationPropertyPageObjectResponseSchema` | Verification |
+個別のスキーマ（例: `titlePropertyPageObjectResponseSchema`）は後方互換のため引き続きエクスポートされています。
 
 ### コンポーネント
 
@@ -422,5 +394,4 @@ const sharedClassMap: Partial<Record<ClassMapKeys, string>> = {
 | `getMultiSelect(property)` | Multi-select プロパティのオプション配列を返す。対象外の型や `undefined` には空配列を返すため型ガード不要 |
 | `hasTag(property, tagName)` | Multi-select プロパティに指定名のタグが含まれるか判定する。型ガード不要で安全に使用可能 |
 | `buildLinkToPages(entries, options)` | コレクションエントリから `linkToPages` マップを構築する。`NotionMarkdownRenderer` に渡す Notion ページ間リンク解決用 |
-| `getNotionColor(color)` | Notion カラー名を CSS クラス名に変換 |
 | `colorToCSS(color)` | Notion カラー名をインライン CSS スタイル文字列に変換（カスタムコンポーネント内で利用） |
