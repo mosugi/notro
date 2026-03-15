@@ -1,0 +1,48 @@
+{
+  "name": "remark-nfm",
+  "description": "Remark plugin for Notion-flavored Markdown (NFM)",
+  "version": "0.0.1",
+  "type": "module",
+  "author": "mosugi <mosugeek@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mosugi/NotroTail.git",
+    "directory": "packages/remark-nfm"
+  },
+  "keywords": [
+    "remark",
+    "remark-plugin",
+    "notion",
+    "markdown",
+    "unified"
+  ],
+  "bugs": {
+    "url": "https://github.com/mosugi/NotroTail/issues"
+  },
+  "homepage": "https://notrotail.mosugi.com",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "files": [
+    "index.ts",
+    "src"
+  ],
+  "scripts": {
+    "format": "prettier --write 'src/**/*.ts'"
+  },
+  "publishConfig": {
+    "provenance": true
+  },
+  "dependencies": {
+    "micromark-extension-directive": "^4.0.0",
+    "mdast-util-directive": "^3.0.0",
+    "unist-util-visit": "^5.0.0"
+  },
+  "peerDependencies": {
+    "unified": ">=11.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
