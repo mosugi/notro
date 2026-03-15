@@ -7,9 +7,8 @@
 
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
-import remarkDirective from 'remark-directive';
 import rehypeKatex from 'rehype-katex';
-import { calloutPlugin } from '../markdown/plugins/callout.ts';
+import { remarkNfm } from '../markdown/plugins/nfm.ts';
 import type { Plugin, PluggableList } from 'unified';
 import type { Root, Element } from 'hast';
 import { visit } from 'unist-util-visit';
@@ -86,11 +85,11 @@ export type MdxPlugins = {
 export function buildMdxPlugins(linkToPages: LinkToPages): MdxPlugins {
 	return {
 		remarkPlugins: [
+			// remarkNfm bundles: preprocessNotionMarkdown (pre-parse), remarkDirective,
+			// and calloutPlugin — everything specific to Notion-flavored Markdown.
+			remarkNfm,
 			remarkGfm,
 			remarkMath,
-			remarkDirective,
-			// Converts :::callout{...} directives to <callout icon="..." color="...">
-			calloutPlugin,
 		],
 		rehypePlugins: [
 			rehypeKatex,

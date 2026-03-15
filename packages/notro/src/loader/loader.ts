@@ -9,7 +9,6 @@ import {
   type PageWithMarkdownType,
   pageWithMarkdownSchema,
 } from "./schema.ts";
-import { preprocessNotionMarkdown } from "../markdown/transformer.ts";
 import { markdownHasPresignedUrls } from "../utils/notion-url.ts";
 
 type LoaderOptions = {
@@ -81,12 +80,11 @@ export function loader({
               logger.warn(`Page ${page.id} markdown was truncated`);
             }
 
-            // Preprocess the markdown to fix Notion-specific syntax issues before
-            // storing. NotionMarkdownRenderer calls compileMdxCached() which runs
-            // evaluate() on this already-preprocessed markdown.
-            const preprocessedMarkdown = preprocessNotionMarkdown(
-              markdownResponse.markdown
-            );
+            // Store raw markdown from the Notion API.
+            // remarkNfm in the MDX compile pipeline (compile-mdx.ts) runs
+            // preprocessNotionMarkdown() at parse time, so preprocessing
+            // does not need to happen here.
+            const rawMarkdown = markdownResponse.markdown;
 
             const data = await parseData<PageWithMarkdownType>({
               id: page.id,
@@ -105,7 +103,7 @@ export function loader({
                 in_trash: page.in_trash,
                 url: page.url,
                 public_url: page.public_url,
-                markdown: preprocessedMarkdown,
+                markdown: rawMarkdown,
               } as PageWithMarkdownType,
             });
 
@@ -113,7 +111,7 @@ export function loader({
               id: page.id,
               digest: page.last_edited_time,
               data: data,
-              body: preprocessedMarkdown,
+              body: rawMarkdown,
             });
           })
         );

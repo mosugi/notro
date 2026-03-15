@@ -18,9 +18,8 @@ import type { AstroIntegration } from 'astro';
 import mdx from '@astrojs/mdx';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
-import remarkDirective from 'remark-directive';
 import rehypeKatex from 'rehype-katex';
-import { calloutPlugin } from './markdown/plugins/callout.ts';
+import { remarkNfm } from './markdown/plugins/nfm.ts';
 
 export function notroIntegration(): AstroIntegration {
 	return {
@@ -35,7 +34,7 @@ export function notroIntegration(): AstroIntegration {
 					integrations: [mdx({
 						// Mirror buildMdxPlugins() from mdx-pipeline.ts so static .mdx files
 						// and runtime evaluate() share the same plugin pipeline.
-						remarkPlugins: [remarkGfm, remarkMath, remarkDirective, calloutPlugin],
+						remarkPlugins: [remarkNfm, remarkGfm, remarkMath],
 						rehypePlugins: [rehypeKatex],
 						// Do not inherit Astro's default markdown config to prevent
 						// duplicate plugin registration.
