@@ -22,7 +22,8 @@
   },
   "homepage": "https://notrotail.mosugi.com",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./utils": "./utils.ts"
   },
   "files": [
     "index.ts",

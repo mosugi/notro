@@ -1,5 +1,5 @@
 import sharpImageService from "astro/assets/services/sharp";
-import { normalizeNotionPresignedUrl } from "notro";
+import { normalizeNotionPresignedUrl } from "notro/utils";
 
 export const notionImageServiceConfig = () => ({
   entrypoint: "./src/lib/notionImageService.ts",
