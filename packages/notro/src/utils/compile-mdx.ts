@@ -52,7 +52,8 @@ const resolvePageLinksPlugin: Plugin<[ResolveOptions], Root> = (options) => {
 		visit(tree, 'element', (node: Element) => {
 			// <page url="..."> and <database url="..."> — resolve url prop only
 			if (node.tagName === 'page' || node.tagName === 'database') {
-				const url = node.properties?.url as string | undefined;
+				const raw = node.properties?.url;
+				const url = typeof raw === 'string' ? raw : undefined;
 				if (url) {
 					const { href } = resolveNotionUrl(url, linkToPages);
 					node.properties = { ...node.properties, url: href };
@@ -62,7 +63,8 @@ const resolvePageLinksPlugin: Plugin<[ResolveOptions], Root> = (options) => {
 
 			// <mention-page url="..."> and <mention-database url="...">
 			if (node.tagName === 'mention-page' || node.tagName === 'mention-database') {
-				const url = node.properties?.url as string | undefined;
+				const raw = node.properties?.url;
+				const url = typeof raw === 'string' ? raw : undefined;
 				if (url) {
 					const { href } = resolveNotionUrl(url, linkToPages);
 					node.properties = { ...node.properties, url: href };
@@ -72,7 +74,8 @@ const resolvePageLinksPlugin: Plugin<[ResolveOptions], Root> = (options) => {
 
 			// Plain <a href="https://notion.so/..."> links
 			if (node.tagName === 'a') {
-				const href = node.properties?.href as string | undefined;
+				const rawHref = node.properties?.href;
+				const href = typeof rawHref === 'string' ? rawHref : undefined;
 				if (href?.includes('notion.so')) {
 					const { href: resolved, isExternal } = resolveNotionUrl(href, linkToPages);
 					if (!isExternal) {
@@ -178,9 +181,10 @@ export async function compileMdxCached(
 		.update(JSON.stringify(linkToPages))
 		.digest('hex');
 
-	if (!compilationCache.has(key)) {
-		compilationCache.set(key, compileMdxForAstro(mdxSource, options));
+	let entry = compilationCache.get(key);
+	if (!entry) {
+		entry = compileMdxForAstro(mdxSource, options);
+		compilationCache.set(key, entry);
 	}
-
-	return compilationCache.get(key)!;
+	return entry;
 }
