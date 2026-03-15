@@ -16,37 +16,13 @@ npm install notro
 
 ## セットアップ
 
-### 1. `astro.config.mjs`
+### 1. `src/content.config.ts`
 
-`notro/config` から `notroMarkdownConfig` をインポートして Markdown 設定に適用します。
-
-```js
-import { defineConfig } from "astro/config";
-import { notroMarkdownConfig } from "notro/config";
-
-export default defineConfig({
-  markdown: notroMarkdownConfig(),
-});
-```
-
-> `notroMarkdownConfig` は `"notro"` ではなく `"notro/config"` からインポートする必要があります。
-> Vite の設定評価タイミングの制約により、メインエントリから分離されています。
-
-### 2. `src/content.config.ts`
-
-`loader` 関数でコレクションを定義します。スキーマは `pageWithMarkdownSchema` を `.extend()` してデータベースのプロパティを追加します。
+`loader` 関数でコレクションを定義します。スキーマは `pageWithMarkdownSchema` を `.extend()` してデータベースのプロパティを追加します。`notroProperties` ショートハンドを使うとプロパティスキーマを簡潔に書けます。
 
 ```typescript
 import { defineCollection } from "astro:content";
-import {
-  loader,
-  pageWithMarkdownSchema,
-  titlePropertyPageObjectResponseSchema,
-  richTextPropertyPageObjectResponseSchema,
-  checkboxPropertyPageObjectResponseSchema,
-  multiSelectPropertyPageObjectResponseSchema,
-  datePropertyPageObjectResponseSchema,
-} from "notro";
+import { loader, pageWithMarkdownSchema, notroProperties } from "notro";
 import { z } from "zod";
 
 const posts = defineCollection({
@@ -64,11 +40,11 @@ const posts = defineCollection({
   }),
   schema: pageWithMarkdownSchema.extend({
     properties: z.object({
-      Name: titlePropertyPageObjectResponseSchema,
-      Description: richTextPropertyPageObjectResponseSchema,
-      Public: checkboxPropertyPageObjectResponseSchema,
-      Tags: multiSelectPropertyPageObjectResponseSchema,
-      Date: datePropertyPageObjectResponseSchema,
+      Name: notroProperties.title,
+      Description: notroProperties.richText,
+      Public: notroProperties.checkbox,
+      Tags: notroProperties.multiSelect,
+      Date: notroProperties.date,
     }),
   }),
 });
@@ -76,7 +52,7 @@ const posts = defineCollection({
 export const collections = { posts };
 ```
 
-### 3. ページコンポーネント
+### 2. ページコンポーネント
 
 `NotionMarkdownRenderer` でマークダウンをレンダリングし、`getPlainText` でプロパティからテキストを取得します。
 
@@ -248,17 +224,11 @@ import MyCallout from "./MyCallout.astro";
 
 ### 🔴 高優先度（ビルド安定性に影響）
 
-#### 1. Notion API レート制限への対応（`loader.ts:113`）
+#### ~~1. Notion API レート制限への対応~~ ✅ 解決済み
 
-現状では `Promise.all()` で全ページを並行フェッチしており、Notion API の **3 req/s** 制限を超えると 429 エラーが発生する。大規模データベース（50 ページ超）では再現しやすい既知の問題。
+~~現状では `Promise.all()` で全ページを並行フェッチしており、Notion API の **3 req/s** 制限を超えると 429 エラーが発生する。~~
 
-**対応方針**: `p-queue` を使ったキュー管理 + 指数バックオフのリトライロジックを実装する。
-
-```
-// FIXME: packages/notro/src/loader/loader.ts:113
-// Currently all pages are fetched with Promise.all.
-// A p-queue with retry logic should be implemented.
-```
+バッチサイズ 3・バッチ間 1 秒待機に変更し、3 req/s 制限を遵守するよう修正済み。
 
 #### 2. 切り詰められた Markdown の未処理（`loader.ts`）
 
@@ -334,11 +304,7 @@ const pages = await Array.fromAsync(iteratePaginatedAPI(...))
 
 ### 🔵 設計上のトレードオフ（方針検討が必要）
 
-#### 11. `classRegistry` グローバル状態 vs. コンポーネント Props 伝播
-
-現在の `classRegistry` はシンプルだが、Astro で動的にコンポーネントをラップする手段がないために採用したアーキテクチャ的な制約。Astro のコンパイラや JSX ランタイムが進化した場合、`classMap` を `jsx(Component, { ...props, class: registryClass })` パターンで各コンポーネントに直接注入できるようになる可能性がある。
-
-#### 12. `compile-mdx.ts` のキャッシュと SSR の整合性
+#### 11. `compile-mdx.ts` のキャッシュと SSR の整合性
 
 `compileMdxCached` のキャッシュは静的ビルドに最適化されており、SSR では古いキャッシュが残り続ける可能性がある（ページ更新が反映されない）。SSR サポートを公式化するなら、キャッシュ無効化戦略の再設計が必要。
 
@@ -361,33 +327,9 @@ Astro Content Loader。`queryParameters` には Notion API の `dataSources.quer
 
 ### プロパティスキーマ
 
-`content.config.ts` でデータベースプロパティの型を定義するための Zod スキーマ群:
+`content.config.ts` でデータベースプロパティの型を定義する Zod スキーマは `notroProperties` ショートハンドで参照するのが推奨です（[`notroProperties` の節を参照](#notroproperties)）。
 
-| スキーマ | Notion プロパティ型 |
-|---|---|
-| `titlePropertyPageObjectResponseSchema` | Title |
-| `richTextPropertyPageObjectResponseSchema` | Rich Text |
-| `checkboxPropertyPageObjectResponseSchema` | Checkbox |
-| `multiSelectPropertyPageObjectResponseSchema` | Multi-select |
-| `selectPropertyPageObjectResponseSchema` | Select |
-| `statusPropertyPageObjectResponseSchema` | Status |
-| `datePropertyPageObjectResponseSchema` | Date |
-| `numberPropertyPageObjectResponseSchema` | Number |
-| `urlPropertyPageObjectResponseSchema` | URL |
-| `emailPropertyPageObjectResponseSchema` | Email |
-| `phoneNumberPropertyPageObjectResponseSchema` | Phone number |
-| `filesPropertyPageObjectResponseSchema` | Files & media |
-| `peoplePropertyPageObjectResponseSchema` | Person |
-| `relationPropertyPageObjectResponseSchema` | Relation |
-| `rollupPropertyPageObjectResponseSchema` | Rollup |
-| `formulaPropertyPageObjectResponseSchema` | Formula |
-| `uniqueIdPropertyPageObjectResponseSchema` | Unique ID |
-| `createdTimePropertyPageObjectResponseSchema` | Created time |
-| `createdByPropertyPageObjectResponseSchema` | Created by |
-| `lastEditedTimePropertyPageObjectResponseSchema` | Last edited time |
-| `lastEditedByPropertyPageObjectResponseSchema` | Last edited by |
-| `buttonPropertyPageObjectResponseSchema` | Button |
-| `verificationPropertyPageObjectResponseSchema` | Verification |
+個別のスキーマ（例: `titlePropertyPageObjectResponseSchema`）は後方互換のため引き続きエクスポートされています。
 
 ### コンポーネント
 
@@ -397,10 +339,59 @@ Astro Content Loader。`queryParameters` には Notion API の `dataSources.quer
 | `OptimizedDatabaseCover` | Notion カバー画像を最適化表示 |
 | `DatabaseProperty` | Notion プロパティを型に応じてレンダリング |
 
+### `notroProperties`
+
+`content.config.ts` でプロパティスキーマを定義するための Zod スキーマショートハンド。各キーは Notion プロパティ型に対応します。
+
+```typescript
+import { notroProperties } from "notro";
+
+// notroProperties.title       → titlePropertyPageObjectResponseSchema
+// notroProperties.richText    → richTextPropertyPageObjectResponseSchema
+// notroProperties.checkbox    → checkboxPropertyPageObjectResponseSchema
+// notroProperties.multiSelect → multiSelectPropertyPageObjectResponseSchema
+// notroProperties.select      → selectPropertyPageObjectResponseSchema
+// notroProperties.date        → datePropertyPageObjectResponseSchema
+// notroProperties.number      → numberPropertyPageObjectResponseSchema
+// notroProperties.url         → urlPropertyPageObjectResponseSchema
+// notroProperties.email       → emailPropertyPageObjectResponseSchema
+// notroProperties.phoneNumber → phoneNumberPropertyPageObjectResponseSchema
+// notroProperties.files       → filesPropertyPageObjectResponseSchema
+// notroProperties.people      → peoplePropertyPageObjectResponseSchema
+// notroProperties.relation    → relationPropertyPageObjectResponseSchema
+// notroProperties.rollup      → rollupPropertyPageObjectResponseSchema
+// notroProperties.formula     → formulaPropertyPageObjectResponseSchema
+// notroProperties.uniqueId    → uniqueIdPropertyPageObjectResponseSchema
+// notroProperties.status      → statusPropertyPageObjectResponseSchema
+// notroProperties.createdTime → createdTimePropertyPageObjectResponseSchema
+// notroProperties.createdBy   → createdByPropertyPageObjectResponseSchema
+// notroProperties.lastEditedTime → lastEditedTimePropertyPageObjectResponseSchema
+// notroProperties.lastEditedBy   → lastEditedByPropertyPageObjectResponseSchema
+// notroProperties.button      → buttonPropertyPageObjectResponseSchema
+// notroProperties.verification → verificationPropertyPageObjectResponseSchema
+```
+
+### `ClassMapKeys` 型
+
+`classMap` prop に渡せる有効なキーの型定義。`"notro"` からインポートして `classMap` の型を明示的に指定できます。
+
+```typescript
+import type { ClassMapKeys } from "notro";
+
+// 複数ページで共有する classMap を型安全に定義する
+const sharedClassMap: Partial<Record<ClassMapKeys, string>> = {
+  callout: "flex items-start gap-3 my-4 rounded-lg border p-4",
+  h2: "mb-2 mt-8 text-2xl font-semibold text-gray-900",
+  p: "mb-3 leading-7",
+};
+```
+
 ### ユーティリティ
 
 | 関数 | 説明 |
 |---|---|
-| `getPlainText(property)` | Title / Rich Text プロパティからプレーンテキストを取得 |
-| `getNotionColor(color)` | Notion カラー名を CSS クラス名に変換 |
+| `getPlainText(property)` | Title, Rich Text, Select, Multi-select, Number, URL, Email, Phone, Date, Unique ID プロパティからプレーンテキストを取得 |
+| `getMultiSelect(property)` | Multi-select プロパティのオプション配列を返す。対象外の型や `undefined` には空配列を返すため型ガード不要 |
+| `hasTag(property, tagName)` | Multi-select プロパティに指定名のタグが含まれるか判定する。型ガード不要で安全に使用可能 |
+| `buildLinkToPages(entries, options)` | コレクションエントリから `linkToPages` マップを構築する。`NotionMarkdownRenderer` に渡す Notion ページ間リンク解決用 |
 | `colorToCSS(color)` | Notion カラー名をインライン CSS スタイル文字列に変換（カスタムコンポーネント内で利用） |

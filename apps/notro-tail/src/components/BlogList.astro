@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { getPlainText, OptimizedDatabaseCover } from "notro";
+import { getPlainText, getMultiSelect, OptimizedDatabaseCover } from "notro";
 
 interface Props {
   posts: CollectionEntry<"posts">["data"][];
@@ -17,7 +17,7 @@ const { posts } = Astro.props;
         const title = getPlainText(data.properties.Name);
         const description = getPlainText(data.properties.Description);
         const date = data.properties.Date?.type === "date" ? data.properties.Date.date?.start : undefined;
-        const tags = data.properties.Tags?.type === "multi_select" ? data.properties.Tags.multi_select : [];
+        const tags = getMultiSelect(data.properties.Tags);
         return (
           <li>
             <a href={`/blog/${slug}/`} class="group block h-full">

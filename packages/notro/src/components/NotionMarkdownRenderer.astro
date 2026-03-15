@@ -6,13 +6,29 @@ import type { LinkToPages } from '../markdown/transformer.ts';
 import { jsx } from 'astro/jsx-runtime';
 import { __astro_tag_component__ } from 'astro/runtime/server/index.js';
 import { makeHtmlElement } from './notion/HtmlElements.ts';
+import type { ClassMapKeys } from '../types.ts';
 
 interface Props {
   markdown: string;
   linkToPages?: LinkToPages;
   class?: string;
-  /** CSS class strings keyed by component name (e.g. { callout: "flex gap-3 p-4 rounded" }) */
-  classMap?: Record<string, string>;
+  /**
+   * CSS class strings keyed by Notion component name.
+   * See `ClassMapKeys` for all valid keys.
+   *
+   * @example
+   * ```astro
+   * <NotionMarkdownRenderer
+   *   markdown={markdown}
+   *   classMap={{
+   *     callout: "flex gap-3 p-4 rounded border",
+   *     toggle: "my-2",
+   *     h2: "text-2xl font-bold mt-8 mb-4",
+   *   }}
+   * />
+   * ```
+   */
+  classMap?: Partial<Record<ClassMapKeys, string>>;
   /** Full component overrides (e.g. { callout: MyCallout }) */
   components?: Partial<NotionComponents & Record<string, unknown>>;
 }

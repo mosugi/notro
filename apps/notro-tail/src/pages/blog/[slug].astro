@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-import { NotionMarkdownRenderer, getPlainText } from "notro";
+import { NotionMarkdownRenderer, buildLinkToPages, getPlainText, getMultiSelect, hasTag } from "notro";
 import Layout from "../../layouts/Layout.astro";
 import { navPages } from "../../config";
 import Callout from "../../components/notion/Callout.astro";
@@ -10,26 +10,17 @@ export async function getStaticPaths() {
   const posts = await getCollection("posts");
 
   // Build linkToPages map so NotionMarkdownRenderer can resolve inter-page links
-  const linkToPages = Object.fromEntries(
-    posts.map((entry) => [
-      entry.id,
-      {
-        url: `blog/${getPlainText(entry.data.properties.Slug) || entry.id}/`,
-        title: getPlainText(entry.data.properties.Name) ?? entry.id,
-      },
-    ]),
-  );
+  const linkToPages = buildLinkToPages(posts, {
+    url: (e) => `blog/${getPlainText(e.data.properties.Slug) || e.id}/`,
+    title: (e) => getPlainText(e.data.properties.Name) ?? e.id,
+  });
 
   // Build a slug → bodyClass map from navPages config for per-page styling
   const navPageMap = new Map(navPages.map((p) => [p.slug, p]));
 
   // Sorted blog posts (excluding "page"-tagged fixed pages) for prev/next nav
-  const isPageTag = (entry: CollectionEntry<"posts">) =>
-    entry.data.properties.Tags?.type === "multi_select" &&
-    entry.data.properties.Tags.multi_select.some((t) => t.name === "page");
-
   const blogPosts = posts
-    .filter((entry) => !isPageTag(entry))
+    .filter((entry) => !hasTag(entry.data.properties.Tags, "page"))
     .sort((a, b) => {
       const dateA = a.data.properties.Date.date?.start ?? "";
       const dateB = b.data.properties.Date.date?.start ?? "";
@@ -67,7 +58,7 @@ const { entry, linkToPages, bodyClass, prevNav, nextNav } = Astro.props;
 const title = getPlainText(entry.data.properties.Name) ?? entry.id;
 const description = getPlainText(entry.data.properties.Description);
 const date = entry.data.properties.Date.date?.start;
-const tags = entry.data.properties.Tags.multi_select;
+const tags = getMultiSelect(entry.data.properties.Tags);
 const markdown = entry.data.markdown;
 ---
 
