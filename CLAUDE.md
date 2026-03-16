@@ -324,6 +324,8 @@ The package's `exports` map:
 
 ## Notion API Usage
 
+> **重要:** この環境では `@notionhq/client` を Node.js スクリプトとして実行すると `Error: fetch failed` が発生する（undici の fetch が動作しない）。Notion API を操作する際は **必ず `curl` を使うこと**。
+
 `@notionhq/client` がルートの `node_modules` にインストール済み。`NOTION_TOKEN` と `NOTION_DATASOURCE_ID` で認証する。
 
 ### クライアント初期化
@@ -415,21 +417,37 @@ await notion.pages.update({
 
 ### よく使うスクリプト例
 
+> **注意:** `node -e` / `node scripts/...` による Notion API 呼び出しは fetch 失敗のため動作しない。代わりに以下の `curl` コマンドを使うこと。
+
 ```bash
-# データソースのページ一覧を確認
-node -e "
-import('@notionhq/client').then(async ({ Client, iteratePaginatedAPI }) => {
-  const notion = new Client({ auth: process.env.NOTION_TOKEN });
-  for await (const p of iteratePaginatedAPI(notion.dataSources.query, { data_source_id: process.env.NOTION_DATASOURCE_ID })) {
-    const name = p.properties.Name?.title?.[0]?.plain_text ?? '(no title)';
-    const slug = p.properties.Slug?.rich_text?.[0]?.plain_text ?? '-';
-    console.log(p.id, slug, name);
-  }
-});
+# データソースのページ一覧を確認（curl版）
+curl -s "https://api.notion.com/v1/databases/$NOTION_DATASOURCE_ID/query" \
+  -H "Authorization: Bearer $NOTION_TOKEN" \
+  -H "Notion-Version: 2022-06-28" \
+  -H "Content-Type: application/json" \
+  -d '{}' | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+for p in d.get('results', []):
+    pid = p['id']
+    name = p['properties'].get('Name', {}).get('title', [{}])[0].get('plain_text', '(no title)')
+    slug = (p['properties'].get('Slug', {}).get('rich_text', [{}]) or [{}])[0].get('plain_text', '-')
+    print(pid, slug, name)
 "
 
-# サンプルページを seed する
-node scripts/seed-notion-pages.mjs
+# ページを作成する（curl版）
+curl -s "https://api.notion.com/v1/pages" \
+  -H "Authorization: Bearer $NOTION_TOKEN" \
+  -H "Notion-Version: 2022-06-28" \
+  -H "Content-Type: application/json" \
+  -d "{
+    \"parent\": { \"database_id\": \"$NOTION_DATASOURCE_ID\" },
+    \"properties\": {
+      \"Name\": { \"title\": [{ \"text\": { \"content\": \"タイトル\" } }] },
+      \"Slug\": { \"rich_text\": [{ \"text\": { \"content\": \"my-slug\" } }] },
+      \"Public\": { \"checkbox\": true }
+    }
+  }"
 ```
 
 ---
