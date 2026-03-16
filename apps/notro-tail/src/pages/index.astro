@@ -2,89 +2,415 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="NotroTail — Notion to Astro static site generator">
+<style>
+  .hero {
+    padding: 5rem 0 4rem;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #2383e2;
+    background: rgba(35, 131, 226, 0.08);
+    border: 1px solid rgba(35, 131, 226, 0.2);
+    border-radius: 100px;
+    padding: 0.25rem 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .hero-title {
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: #37352f;
+    margin-bottom: 1.25rem;
+  }
+  .hero-title .accent {
+    color: #2383e2;
+  }
+  .hero-description {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: rgba(55, 53, 47, 0.65);
+    max-width: 560px;
+    margin: 0 auto 2rem;
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    background: #2383e2;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.625rem 1.25rem;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: #37352f;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.625rem 1.25rem;
+    border-radius: 5px;
+    border: 1px solid rgba(55, 53, 47, 0.18);
+    background: #fff;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn-secondary:hover {
+    background: rgba(55, 53, 47, 0.03);
+    border-color: rgba(55, 53, 47, 0.3);
+  }
+
+  /* Architecture diagram */
+  .arch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 2.5rem 0 4rem;
+    font-size: 0.8125rem;
+  }
+  .arch-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    background: #fff;
+    border: 1px solid rgba(55, 53, 47, 0.12);
+    border-radius: 8px;
+    padding: 0.875rem 1.25rem;
+    min-width: 110px;
+  }
+  .arch-node .icon { font-size: 1.5rem; }
+  .arch-node .label { font-weight: 600; font-size: 0.8125rem; color: #37352f; }
+  .arch-node .sublabel { font-size: 0.6875rem; color: rgba(55,53,47,0.5); }
+  .arch-arrow {
+    color: rgba(55,53,47,0.3);
+    font-size: 1.25rem;
+    font-weight: 300;
+  }
+
+  /* Features grid */
+  .section-title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: #37352f;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.375rem;
+  }
+  .section-subtitle {
+    font-size: 0.875rem;
+    color: rgba(55, 53, 47, 0.55);
+    margin-bottom: 2rem;
+  }
+  .features {
+    display: grid;
+    gap: 1px;
+    background: rgba(55, 53, 47, 0.09);
+    border: 1px solid rgba(55, 53, 47, 0.09);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 4rem;
+  }
+  @media (min-width: 640px) {
+    .features { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    .features { grid-template-columns: repeat(3, 1fr); }
+  }
+  .feature {
+    background: #fff;
+    padding: 1.5rem;
+  }
+  .feature-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    background: rgba(55, 53, 47, 0.04);
+  }
+  .feature-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #37352f;
+    margin-bottom: 0.375rem;
+  }
+  .feature-desc {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: rgba(55, 53, 47, 0.6);
+  }
+  .feature-desc code {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 0.75rem;
+    background: rgba(135, 131, 120, 0.15);
+    color: #eb5757;
+    border-radius: 3px;
+    padding: 0.1em 0.3em;
+  }
+
+  /* Packages section */
+  .packages {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 4rem;
+  }
+  @media (min-width: 768px) {
+    .packages { grid-template-columns: repeat(3, 1fr); }
+  }
+  .package-card {
+    border: 1px solid rgba(55, 53, 47, 0.09);
+    border-radius: 8px;
+    padding: 1.25rem;
+    background: #fff;
+  }
+  .package-name {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #37352f;
+    margin-bottom: 0.5rem;
+  }
+  .package-path {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 0.6875rem;
+    color: rgba(55,53,47,0.4);
+    margin-bottom: 0.5rem;
+  }
+  .package-desc {
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: rgba(55, 53, 47, 0.6);
+  }
+  .package-badge {
+    display: inline-block;
+    font-size: 0.6875rem;
+    background: rgba(35, 131, 226, 0.1);
+    color: #2383e2;
+    border-radius: 3px;
+    padding: 0.1rem 0.4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* CTA */
+  .cta {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: rgba(35, 131, 226, 0.04);
+    border: 1px solid rgba(35, 131, 226, 0.12);
+    border-radius: 10px;
+    margin-bottom: 2rem;
+  }
+  .cta-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #37352f;
+    margin-bottom: 0.5rem;
+  }
+  .cta-desc {
+    font-size: 0.875rem;
+    color: rgba(55, 53, 47, 0.6);
+    margin-bottom: 1.5rem;
+  }
+  .cta-code {
+    display: inline-block;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 0.875rem;
+    background: #fff;
+    border: 1px solid rgba(55, 53, 47, 0.12);
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    color: #37352f;
+    margin-bottom: 1.5rem;
+  }
+</style>
+
+<Layout title="NotroTail — Notion を CMS として使う Astro 静的サイトジェネレーター">
   <main class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
-    <section class="flex min-h-[50vh] items-center justify-center py-20">
-      <div class="mx-auto max-w-2xl text-center">
-        <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-          Notion as your CMS.
-          <span class="text-blue-600">Astro as your site.</span>
-        </h1>
 
-        <p class="mt-6 text-lg leading-8 text-gray-600">
-          NotroTail fetches content from Notion via the Public API, renders it
-          through MDX with a component mapping, and outputs a fast,
-          SEO-optimized static site styled with TailwindCSS 4.
-        </p>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span>⚡</span>
+        <span>Notion × Astro × TailwindCSS 4</span>
+      </div>
+      <h1 class="hero-title">
+        Notion をそのまま CMS に。<br />
+        <span class="accent">Astro で高速静的サイトへ。</span>
+      </h1>
+      <p class="hero-description">
+        NotroTail は Notion Public API からコンテンツを取得し、MDX としてコンパイル。
+        Notion のブロックタイプを Astro コンポーネントにマッピングして、
+        高速・SEO 最適化された静的サイトを生成します。
+      </p>
+      <div class="hero-actions">
+        <a href="/blog/" class="btn-primary">
+          ブログを見る →
+        </a>
+        <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+          GitHub で見る
+        </a>
+      </div>
+    </section>
 
-        <div class="mt-8 flex flex-wrap justify-center gap-4">
-          <a
-            href="/blog/"
-            class="rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
-          >
-            View Blog
+    <!-- Architecture flow -->
+    <div class="arch">
+      <div class="arch-node">
+        <span class="icon">📝</span>
+        <span class="label">Notion</span>
+        <span class="sublabel">コンテンツ編集</span>
+      </div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-node">
+        <span class="icon">⚙️</span>
+        <span class="label">notro</span>
+        <span class="sublabel">Content Loader</span>
+      </div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-node">
+        <span class="icon">🔧</span>
+        <span class="label">MDX</span>
+        <span class="sublabel">evaluate()</span>
+      </div>
+      <span class="arch-arrow">→</span>
+      <div class="arch-node">
+        <span class="icon">🚀</span>
+        <span class="label">Astro</span>
+        <span class="sublabel">静的サイト出力</span>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <section class="pb-4">
+      <h2 class="section-title">主な機能</h2>
+      <p class="section-subtitle">Notion をヘッドレス CMS として使うためのフルスタック構成</p>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">📦</div>
+          <p class="feature-title">Notion Content Loader</p>
+          <p class="feature-desc">
+            Astro Content Collections を Notion Public API で動かす。
+            <code>last_edited_time</code> による差分ビルドで高速なインクリメンタルビルドを実現。
+          </p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🧩</div>
+          <p class="feature-title">コンポーネントマッピング</p>
+          <p class="feature-desc">
+            コールアウト・カラム・トグル・KaTeX 数式など、Notion ブロックを
+            MDX <code>evaluate()</code> + コンポーネントマッピングで Astro コンポーネントに変換。
+          </p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🎨</div>
+          <p class="feature-title">TailwindCSS 4</p>
+          <p class="feature-desc">
+            Notion コンポーネントごとにスコープされたスタイル。
+            <code>classMap</code> prop でクラス上書き、<code>bodyClass</code> でページ別テーマに対応。
+          </p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">🖼️</div>
+          <p class="feature-title">画像の最適化</p>
+          <p class="feature-desc">
+            Notion の期限付き S3 プリサインド URL から <code>X-Amz-*</code> パラメーターを除去し、
+            ビルド間でキャッシュを再利用するカスタム Astro 画像サービス。
+          </p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📄</div>
+          <p class="feature-title">ページネーション付きブログ</p>
+          <p class="feature-desc">
+            タグ・カテゴリフィルタリング対応の多ページブログ。
+            ピン留め投稿・前後記事ナビゲーションもすぐに使えます。
+          </p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">📚</div>
+          <p class="feature-title">npm ライブラリとして公開</p>
+          <p class="feature-desc">
+            <code>notro</code> パッケージを任意の Astro プロジェクトに追加するだけ。
+            ローダーとコンポーネントをドロップインで利用できます。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Packages -->
+    <section class="pb-4">
+      <h2 class="section-title">モノレポ構成</h2>
+      <p class="section-subtitle">3 パッケージで責務を明確に分割</p>
+      <div class="packages">
+        <div class="package-card">
+          <span class="package-badge">npm</span>
+          <p class="package-name">remark-nfm</p>
+          <p class="package-path">packages/remark-nfm/</p>
+          <p class="package-desc">
+            Notion Flavored Markdown 用の純粋な remark プラグイン。
+            前処理・<code>:::callout</code> ディレクティブ・コールアウト変換をまとめて担当。
+            Astro や Notion API に依存せず単独で npm 公開可能。
+          </p>
+        </div>
+        <div class="package-card">
+          <span class="package-badge">npm</span>
+          <p class="package-name">notro</p>
+          <p class="package-path">packages/notro/</p>
+          <p class="package-desc">
+            公開 npm ライブラリ本体。Astro Content Loader + MDX コンパイルパイプライン +
+            Notion ブロックコンポーネントを提供。<code>remark-nfm</code> を内部で利用。
+          </p>
+        </div>
+        <div class="package-card">
+          <span class="package-badge">template</span>
+          <p class="package-name">notro-tail</p>
+          <p class="package-path">apps/notro-tail/</p>
+          <p class="package-desc">
+            デプロイ可能な Astro 6 ウェブサイト。
+            <code>notro</code> の実装例として、ブログ・固定ページ・タグフィルタを含むテンプレート。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section>
+      <div class="cta">
+        <p class="cta-title">今すぐ始める</p>
+        <p class="cta-desc">このリポジトリをテンプレートにして、Notion で書き、Astro でデプロイ。</p>
+        <div>
+          <code class="cta-code">npm install notro</code>
+        </div>
+        <div class="hero-actions" style="justify-content: center;">
+          <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="btn-primary">
+            GitHub で使い方を見る →
           </a>
-          <a
-            href="https://github.com/mosugi/notro-tail"
-            class="rounded-md border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow-sm transition hover:bg-gray-50"
-          >
-            GitHub
+          <a href="/blog/" class="btn-secondary">
+            デモブログを見る
           </a>
         </div>
       </div>
     </section>
 
-    <section class="pb-20">
-      <h2 class="mb-8 text-2xl font-bold text-gray-900">Features</h2>
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <details open class="rounded-xl border border-gray-100 p-5 shadow-sm transition hover:border-gray-200 hover:shadow">
-          <summary class="cursor-pointer text-base"><strong>Notion Content Loader</strong></summary>
-          <p class="mt-2 text-sm text-gray-600">
-            Astro Content Collections backed by the Notion Public API. Incremental
-            builds via <code>last_edited_time</code> cache invalidation.
-          </p>
-        </details>
-
-        <details open class="rounded-xl border border-gray-100 p-5 shadow-sm transition hover:border-gray-200 hover:shadow">
-          <summary class="cursor-pointer text-base"><strong>Component Mapping</strong></summary>
-          <p class="mt-2 text-sm text-gray-600">
-            Notion blocks rendered as Astro components via MDX evaluate() and a
-            component mapping — callouts, columns, toggles, KaTeX math, and more.
-          </p>
-        </details>
-
-        <details open class="rounded-xl border border-gray-100 p-5 shadow-sm transition hover:border-gray-200 hover:shadow">
-          <summary class="cursor-pointer text-base"><strong>TailwindCSS 4</strong></summary>
-          <p class="mt-2 text-sm text-gray-600">
-            Scoped styles per Notion component. Fast, tree-shaken output with
-            per-page theme support via <code>bodyClass</code>.
-          </p>
-        </details>
-
-        <details open class="rounded-xl border border-gray-100 p-5 shadow-sm transition hover:border-gray-200 hover:shadow">
-          <summary class="cursor-pointer text-base"><strong>Optimized Images</strong></summary>
-          <p class="mt-2 text-sm text-gray-600">
-            Custom Astro image service strips expiring Notion pre-signed S3 query
-            parameters so cached images survive across builds.
-          </p>
-        </details>
-
-        <details open class="rounded-xl border border-gray-100 p-5 shadow-sm transition hover:border-gray-200 hover:shadow">
-          <summary class="cursor-pointer text-base"><strong>Paginated Blog</strong></summary>
-          <p class="mt-2 text-sm text-gray-600">
-            Built-in paginated blog with tag and category filtering, all driven
-            from your Notion database.
-          </p>
-        </details>
-
-        <details open class="rounded-xl border border-gray-100 p-5 shadow-sm transition hover:border-gray-200 hover:shadow">
-          <summary class="cursor-pointer text-base"><strong>npm Library</strong></summary>
-          <p class="mt-2 text-sm text-gray-600">
-            The <code>notro</code> package is published to npm. Drop the loader
-            and components into any Astro project.
-          </p>
-        </details>
-      </div>
-    </section>
   </main>
 </Layout>

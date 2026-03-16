@@ -1,85 +1,131 @@
 @import "tailwindcss";
 
+/*
+ * Notion-inspired design system
+ * Text color: #37352f (warm near-black)
+ * Border: rgba(55, 53, 47, 0.09)
+ * Background: #ffffff
+ * Accent: #2383e2 (Notion blue)
+ */
+
+@layer base {
+  body {
+    font-family:
+      ui-sans-serif,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Helvetica,
+      Arial,
+      sans-serif;
+    color: #37352f;
+    background-color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
 @layer utilities {
-  /* Base wrapper style */
-  .nt-markdown-content { @apply text-base leading-relaxed text-gray-800; }
+  /* Base wrapper style for Notion markdown content */
+  .nt-markdown-content {
+    @apply text-base leading-relaxed;
+    color: #37352f;
+  }
 
   /*
-   * Inline code — the only remaining global CSS rule.
-   * The `:not(pre) > code` selector distinguishes inline `code` from
-   * code inside a `<pre>` block. classMap cannot express this distinction,
-   * so global CSS is the most precise tool for this specific case.
+   * Inline code — global CSS for :not(pre) > code selector
+   * (classMap cannot express this nesting distinction)
    */
   .nt-markdown-content :not(pre) > code {
-    @apply rounded bg-gray-100 px-1 py-0.5 font-mono text-sm text-gray-800;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    background-color: rgba(135, 131, 120, 0.15);
+    color: #eb5757;
+    border-radius: 3px;
+    padding: 0.2em 0.4em;
+    font-size: 85%;
   }
 }
 
 /*
  * Per-page styles
  *
- * Scope styles under the bodyClass defined in src/config.ts (for Notion pages)
- * or passed directly to <Layout bodyClass="..."> (for static Astro pages).
- *
- * These selectors reach inside set:html content rendered by NotionMarkdownRenderer.
- * Each page has a distinct visual identity to show the bodyClass mechanism in action.
+ * Scope under bodyClass from config.ts (Notion pages) or passed to <Layout bodyClass="...">.
  */
 
-/* ── About page ─────────────────────────────────────────────────────────────
-   Blue accent theme: headings have a left border + background tint,
-   and the page gets a faint blue top strip so it's immediately recognisable. */
+/* ── About page ──────────────────────────────────────────────────────────── */
 .page-about body,
 .page-about {
-  border-top: 3px solid #3b82f6; /* blue-500 */
+  border-top: 3px solid #2383e2;
 }
 
 .page-about .nt-markdown-content h2 {
-  @apply mt-8 border-l-4 border-blue-500 bg-blue-50 pl-3 py-1 rounded-r-md;
+  @apply mt-8 border-l-4 pl-3 py-1 rounded-r-md;
+  border-color: #2383e2;
+  background-color: rgba(35, 131, 226, 0.07);
 }
 
 .page-about .nt-markdown-content h3 {
-  @apply text-blue-800;
+  color: #1a5fb4;
 }
 
 .page-about .nt-markdown-content a {
-  @apply text-blue-700 font-medium;
+  color: #2383e2;
+  @apply font-medium;
 }
 
-/* ── Privacy page ────────────────────────────────────────────────────────────
-   Legal/document theme: compact serif-like feel, muted palette, ruled headings. */
+/* ── Privacy page ────────────────────────────────────────────────────────── */
 .page-privacy .nt-markdown-content {
-  @apply text-sm leading-relaxed text-gray-600;
+  @apply text-sm leading-relaxed;
+  color: #6b6b6b;
 }
 
 .page-privacy .nt-markdown-content h1 {
-  @apply text-2xl font-bold text-gray-800;
+  @apply text-2xl font-bold;
+  color: #37352f;
 }
 
 .page-privacy .nt-markdown-content h2 {
-  @apply mt-6 border-b border-gray-200 pb-1 text-sm font-semibold uppercase tracking-widest text-gray-500;
+  @apply mt-6 border-b pb-1 text-sm font-semibold uppercase tracking-widest;
+  border-color: rgba(55, 53, 47, 0.09);
+  color: #9b9b9b;
 }
 
 .page-privacy .nt-markdown-content table {
   @apply text-xs;
 }
 
-/* ── Docs / Contact page (static Astro page) ────────────────────────────────
-   Documentation theme: indigo accent, visible section dividers.
-   Selectors are scoped under <main> so the shared header/footer are unaffected. */
+/* ── Blocks / Docs page ──────────────────────────────────────────────────── */
+.page-blocks body,
+.page-blocks {
+  border-top: 3px solid #2383e2;
+}
+
+.page-blocks .nt-markdown-content h2 {
+  @apply mt-8 font-semibold;
+  border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+  padding-bottom: 0.25rem;
+}
+
+/* ── Contact page (static Astro page) ───────────────────────────────────── */
 .page-contact main {
-  background: linear-gradient(180deg, #eef2ff 0px, transparent 240px); /* indigo-50 fade */
+  background: linear-gradient(180deg, rgba(35, 131, 226, 0.05) 0px, transparent 240px);
 }
 
 .page-contact main h2 {
-  @apply text-indigo-900;
+  color: #1a3a5c;
 }
 
 .page-contact main a {
-  @apply text-indigo-600 hover:text-indigo-800 underline underline-offset-2;
+  color: #2383e2;
+  @apply underline underline-offset-2;
+}
+.page-contact main a:hover {
+  color: #1a5fb4;
 }
 
 .page-contact article > section {
-  @apply border-b border-gray-100 pb-10;
+  border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+  @apply pb-10;
 }
 
 .page-contact article > section:last-child {

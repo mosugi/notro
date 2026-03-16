@@ -1,8 +1,45 @@
 ---
 ---
 
-<footer class="mt-16 border-t border-gray-100 bg-white">
-  <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
-    <p class="text-center text-sm text-gray-400">&copy; {new Date().getFullYear()} NotroTail</p>
+<style>
+  footer {
+    border-top: 1px solid rgba(55, 53, 47, 0.09);
+    margin-top: 4rem;
+  }
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .footer-copy {
+    font-size: 0.8125rem;
+    color: rgba(55, 53, 47, 0.45);
+  }
+  .footer-links {
+    display: flex;
+    gap: 1.25rem;
+  }
+  .footer-links a {
+    font-size: 0.8125rem;
+    color: rgba(55, 53, 47, 0.45);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .footer-links a:hover {
+    color: #37352f;
+  }
+</style>
+
+<footer>
+  <div class="mx-auto max-w-screen-xl px-4 py-6 sm:px-6 lg:px-8">
+    <div class="footer-inner">
+      <p class="footer-copy">&copy; {new Date().getFullYear()} NotroTail</p>
+      <div class="footer-links">
+        <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://www.npmjs.com/package/notro" target="_blank" rel="noopener noreferrer">npm</a>
+      </div>
+    </div>
   </div>
 </footer>
