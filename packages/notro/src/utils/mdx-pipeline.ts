@@ -8,7 +8,7 @@
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import { remarkNfm } from '../markdown/plugins/nfm.ts';
+import { remarkNfm } from 'remark-nfm';
 import type { Plugin, PluggableList } from 'unified';
 import type { Root, Element } from 'hast';
 import { visit } from 'unist-util-visit';

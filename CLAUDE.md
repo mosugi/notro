@@ -8,12 +8,13 @@
 
 **NotroTail** is a Notion-to-Astro static site generator. It fetches content from Notion via the Notion Public API (Markdown Content API), compiles it as MDX using `@mdx-js/mdx`'s `evaluate()`, and maps Notion block types to Astro components. Outputs a fast, SEO-optimized static site styled with TailwindCSS 4.
 
-The repo is an **npm workspace monorepo** with two workspaces:
+The repo is an **npm workspace monorepo** with three packages:
 
-| Workspace | Path | Purpose |
+| Package | Path | Purpose |
 |---|---|---|
+| `remark-nfm` | `packages/remark-nfm/` | Pure remark plugin for Notion-flavored Markdown — pre-parse normalization, `:::callout` directive syntax, and callout conversion. No Astro or Notion API dependencies; independently publishable to npm. |
+| `notro` | `packages/notro/` | The publishable npm library (Astro Content Loader + MDX compile pipeline + Notion block components). Uses `remark-nfm` internally. |
 | `notro-tail` | `apps/notro-tail/` | The deployable Astro 6 website (template / reference app) |
-| `notro` | `packages/notro/` | The publishable npm library (Astro Content Loader + components) |
 
 ---
 
@@ -41,6 +42,12 @@ notro-tail/
 │       ├── package.json
 │       └── tsconfig.json
 ├── packages/
+│   ├── remark-nfm/          # npm library ("remark-nfm" package)
+│   │   ├── index.ts         # Public API exports
+│   │   └── src/
+│   │       ├── nfm.ts           # remarkNfm plugin (pre-parse + directive + callout)
+│   │       ├── transformer.ts   # preprocessNotionMarkdown() — 10 fixes for Notion markdown quirks
+│   │       └── callout.ts       # calloutPlugin — converts :::callout directives to <callout> elements
 │   └── notro/               # npm library ("notro" package)
 │       ├── index.ts         # Public API exports
 │       ├── src/
@@ -49,13 +56,10 @@ notro-tail/
 │       │   ├── loader/
 │       │   │   ├── loader.ts    # Astro Content Loader implementation
 │       │   │   └── schema.ts    # Zod schemas for Notion API response types
-│       │   ├── markdown/
-│       │   │   ├── transformer.ts         # preprocessNotionMarkdown() — fixes Notion markdown quirks
-│       │   │   └── plugins/
-│       │   │       └── callout.ts         # remark-directive plugin for :::callout blocks
 │       │   └── utils/
-│       │       ├── compile-mdx.ts         # compileMdxCached() — MDX evaluate + Astro component wiring
-│       │       └── notion.ts              # getPlainText(), getNotionColor() helpers
+│       │       ├── compile-mdx.ts         # compileMdxForAstro() — MDX evaluate + Astro component wiring
+│       │       ├── mdx-pipeline.ts        # buildMdxPlugins() — remark/rehype plugin configuration
+│       │       └── notion.ts              # getPlainText(), buildLinkToPages() helpers
 │       └── package.json
 ├── docs/public/             # Documentation images
 ├── .changeset/              # Changesets config for versioning & publishing
@@ -67,6 +71,29 @@ notro-tail/
 ---
 
 ## Key Architecture
+
+### `notro` Package Entry Points
+
+The `notro` package exposes three entry points, each designed for a specific import context:
+
+| Entry point | Import | Use case |
+|---|---|---|
+| `notro` | `import { NotionMarkdownRenderer, loader, ... } from "notro"` | Astro components and the Content Loader. **Cannot** be used in `astro.config.mjs` because Astro config is evaluated before the JSX renderer is registered. |
+| `notro/utils` | `import { getPlainText, normalizeNotionPresignedUrl, ... } from "notro/utils"` | Pure TypeScript helpers with no Astro component imports. Safe to use anywhere: config files, Node scripts, image services. |
+| `notro/integration` | `import { notro } from "notro/integration"` | The `notro()` Astro integration. Used in `astro.config.mjs` to inject `@astrojs/mdx` with the correct plugin pipeline. |
+
+### `notro()` Astro Integration
+
+`notro()` is an Astro integration that registers `@astrojs/mdx` with notro's plugin suite (remarkNfm, remarkGfm, remarkMath, rehypeKatex). It is required for two reasons:
+
+1. **`astro:jsx` renderer** — `@astrojs/mdx` registers the `astro:jsx` renderer that `@mdx-js/mdx`'s `evaluate()` depends on to produce Astro VNodes. Without it, `NotionMarkdownRenderer` fails at runtime.
+2. **Static `.mdx` files** — if the project uses `.mdx` files alongside Notion content, `notro()` ensures they are processed with the same plugin pipeline as dynamically compiled Notion markdown.
+
+Usage in `astro.config.mjs`:
+```js
+import { notro } from "notro/integration";
+export default defineConfig({ integrations: [notro(), sitemap()] });
+```
 
 ### Content Loading Flow
 
@@ -80,10 +107,9 @@ notro-tail/
 Defined in `packages/notro/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evaluate()`. No `astro.config.mjs` configuration is required — the pipeline runs entirely at render time inside `NotionMarkdownRenderer`.
 
 **Remark plugins** (parse Markdown → mdast):
+- `remarkNfm` (from `remark-nfm`) — bundles pre-parse normalization (`preprocessNotionMarkdown`), directive syntax support, and callout conversion in one plugin
 - `remark-gfm` — GitHub Flavored Markdown (tables, strikethrough, etc.)
 - `remark-math` — enables `$...$` inline and `$$...$$` block math syntax
-- `remark-directive` — enables `:::callout` directive syntax
-- `calloutPlugin` — converts `:::callout{...}` directives to `<callout icon="..." color="...">` HTML elements
 
 **Rehype plugins** (transform hast → HTML):
 - `rehypeKatex` — renders math nodes as KaTeX HTML
@@ -120,12 +146,13 @@ Optional props:
 
 ### Markdown Preprocessing (`preprocessNotionMarkdown`)
 
-`transformer.ts` exports `preprocessNotionMarkdown()`, which runs **before** MDX compilation (in the loader) to fix structural issues in Notion's markdown output. The fixes are numbered and documented in the source:
+`packages/remark-nfm/src/transformer.ts` exports `preprocessNotionMarkdown()`, which is called automatically by `remarkNfm` before each parse. It fixes structural issues in Notion's markdown output. The fixes are numbered and documented in the source:
 
 | Fix | Problem fixed |
 |-----|---------------|
+| 0 | (Migration) Escaped inline math `\$…\$` from old preprocessing bugs converted back to `$…$` |
 | 1 | `---` dividers without a preceding blank line are misread as setext H2 headings |
-| 2 | Callout directive syntax `"::: callout {…}"` → `":::callout{…}"` |
+| 2 | Callout directive syntax `"::: callout {…}"` → `":::callout{…}"`; tab-indented content inside callout blocks is dedented |
 | 3 | Block-level color annotations `{color="…"}` → raw `<p color="…">` HTML |
 | 4 | `<table_of_contents/>` tag (underscore) wrapped in `<div>` for CommonMark HTML detection |
 | 5 | Inline equation `$\`…\`$` → `$…$` for remark-math |

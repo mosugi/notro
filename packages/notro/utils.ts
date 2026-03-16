@@ -9,6 +9,4 @@
 export { normalizeNotionPresignedUrl, markdownHasPresignedUrls } from './src/utils/notion-url.ts';
 export { getPlainText, getMultiSelect, hasTag, buildLinkToPages } from './src/utils/notion.ts';
 export { colorToCSS } from './src/components/notion/colors.ts';
-export { preprocessNotionMarkdown } from './src/markdown/transformer.ts';
-export { remarkNfm } from './src/markdown/plugins/nfm.ts';
 export type { LinkToPages } from './src/types.ts';
