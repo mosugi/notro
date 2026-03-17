@@ -19,6 +19,5 @@ export type NavPageConfig = {
 };
 
 export const navPages: NavPageConfig[] = [
-  { slug: "about", bodyClass: "page-about" },
-  { slug: "privacy", bodyClass: "page-privacy" },
+  { slug: "blocks", label: "ブロック一覧", bodyClass: "page-blocks" },
 ];

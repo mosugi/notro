@@ -63,13 +63,13 @@ const markdown = entry.data.markdown;
 ---
 
 <Layout title={title} description={description} bodyClass={bodyClass}>
-  <main class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
-    <article class="mx-auto max-w-3xl">
-      <header class="mb-8 border-b border-gray-100 pb-6">
-        <h1 class="mb-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{title}</h1>
-        {description && <p class="mb-4 text-lg text-gray-500">{description}</p>}
+  <main class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
+    <article class="mx-auto max-w-[720px]">
+      <header class="mb-10 pb-6" style="border-bottom: 1px solid rgba(55,53,47,0.09);">
+        <h1 class="mb-3 text-[2rem] font-bold tracking-tight leading-tight" style="color: #37352f;">{title}</h1>
+        {description && <p class="mb-4 text-base leading-relaxed" style="color: rgba(55,53,47,0.65);">{description}</p>}
         <div class="flex flex-wrap items-center gap-3">
-          {date && <time datetime={date} class="text-sm text-gray-400">{date}</time>}
+          {date && <time datetime={date} class="text-sm" style="color: rgba(55,53,47,0.45);">{date}</time>}
           {
             tags.length > 0 && (
               <ul class="flex list-none flex-wrap gap-1.5">
@@ -77,7 +77,7 @@ const markdown = entry.data.markdown;
                   <li>
                     <a
                       href={`/blog/tag/${tag.name}/`}
-                      class="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 transition hover:bg-gray-200"
+                      style="font-size: 0.75rem; background: rgba(55,53,47,0.06); color: rgba(55,53,47,0.65); border-radius: 3px; padding: 0.15rem 0.5rem; text-decoration: none; transition: background 0.15s;"
                     >
                       {tag.name}
                     </a>
@@ -94,50 +94,53 @@ const markdown = entry.data.markdown;
         linkToPages={linkToPages}
         classMap={{
           // ── Notion-specific blocks ───────────────────────────
-          callout:     "flex items-start gap-3 my-4 rounded-lg border border-gray-200 p-4",
-          toggle:      "my-1 rounded-md",
+          callout:     "flex items-start gap-3 my-4 rounded-md p-4",
+          toggle:      "my-1",
           toggleTitle: "cursor-pointer select-none py-1 font-medium",
-          columns:     "grid grid-cols-1 gap-6 my-4 md:grid-cols-2",
+          columns:     "grid grid-cols-1 gap-8 my-4 md:grid-cols-2",
           column:      "min-w-0",
-          quote:       "my-4 border-l-4 border-gray-200 pl-4 italic text-gray-600",
-          h1:          "mb-3 mt-10 text-3xl font-bold text-gray-900",
-          h2:          "mb-2 mt-8 text-2xl font-semibold text-gray-900",
-          h3:          "mb-2 mt-6 text-xl font-semibold text-gray-900",
-          h4:          "mb-1 mt-4 text-lg font-semibold text-gray-900",
+          quote:       "my-4 border-l-[3px] pl-4 italic",
+          h1:          "mb-3 mt-10 text-[1.875rem] font-bold tracking-tight",
+          h2:          "mb-2 mt-8 text-2xl font-semibold tracking-tight",
+          h3:          "mb-2 mt-6 text-xl font-semibold",
+          h4:          "mb-1 mt-4 text-base font-semibold",
           image:       "my-4",
           tableWrapper:"my-4 w-full overflow-x-auto",
           table:       "w-full border-collapse text-sm",
-          tableCell:   "border border-gray-200 px-3 py-2 text-gray-700",
-          toc:         "my-4 rounded-md bg-gray-50 p-4",
+          tableCell:   "px-3 py-2 text-sm",
+          toc:         "my-4 rounded-md p-4 text-sm",
           // ── Standard HTML block elements ─────────────────────
-          p:           "mb-3 leading-7",
-          ul:          "mb-3 list-disc pl-6",
-          ol:          "mb-3 list-decimal pl-6",
-          li:          "mb-1 leading-7",
-          pre:         "my-4 overflow-x-auto rounded-md bg-gray-50 p-4 font-mono text-sm",
-          hr:          "my-8 border-gray-200",
+          p:           "mb-4 leading-7",
+          ul:          "mb-4 list-disc pl-6 space-y-1",
+          ol:          "mb-4 list-decimal pl-6 space-y-1",
+          li:          "leading-7",
+          pre:         "my-4 overflow-x-auto rounded-md p-4 font-mono text-sm",
+          hr:          "my-8",
           // ── Standard HTML inline elements ────────────────────
-          a:           "text-sky-600 underline underline-offset-2 hover:text-sky-700",
-          strong:      "font-bold",
+          a:           "underline underline-offset-2 hover:opacity-70",
+          strong:      "font-semibold",
           em:          "italic",
           del:         "line-through",
           // ── Table header cell ─────────────────────────────────
-          th:          "border border-gray-200 bg-gray-50 px-3 py-2 text-left font-semibold text-gray-700",
+          th:          "px-3 py-2 text-left text-sm font-semibold",
         }}
         components={{ callout: Callout }}
       />
 
       {(prevNav || nextNav) && (
-        <nav class="mt-12 flex items-stretch gap-4 border-t border-gray-100 pt-8 text-sm">
+        <nav class="mt-12 flex items-stretch gap-4 pt-8 text-sm" style="border-top: 1px solid rgba(55,53,47,0.09);">
           {/* prevNav = newer post (lower index in desc sort) */}
           <div class="flex-1">
             {prevNav && (
               <a
                 href={`/blog/${prevNav.slug}/`}
-                class="flex h-full flex-col gap-1 rounded-lg border border-gray-200 p-4 transition hover:border-gray-300 hover:bg-gray-50"
+                class="flex h-full flex-col gap-1 rounded-md p-4 transition"
+                style="border: 1px solid rgba(55,53,47,0.09); text-decoration: none; color: inherit;"
+                onmouseover="this.style.background='rgba(55,53,47,0.03)'"
+                onmouseout="this.style.background=''"
               >
-                <span class="text-xs text-gray-400">← 新しい記事</span>
-                <span class="font-medium text-gray-800 line-clamp-2">{prevNav.title}</span>
+                <span class="text-xs" style="color: rgba(55,53,47,0.45);">← 新しい記事</span>
+                <span class="font-medium line-clamp-2" style="color: #37352f;">{prevNav.title}</span>
               </a>
             )}
           </div>
@@ -146,10 +149,13 @@ const markdown = entry.data.markdown;
             {nextNav && (
               <a
                 href={`/blog/${nextNav.slug}/`}
-                class="flex h-full flex-col items-end gap-1 rounded-lg border border-gray-200 p-4 text-right transition hover:border-gray-300 hover:bg-gray-50"
+                class="flex h-full flex-col items-end gap-1 rounded-md p-4 text-right transition"
+                style="border: 1px solid rgba(55,53,47,0.09); text-decoration: none; color: inherit;"
+                onmouseover="this.style.background='rgba(55,53,47,0.03)'"
+                onmouseout="this.style.background=''"
               >
-                <span class="text-xs text-gray-400">古い記事 →</span>
-                <span class="font-medium text-gray-800 line-clamp-2">{nextNav.title}</span>
+                <span class="text-xs" style="color: rgba(55,53,47,0.45);">古い記事 →</span>
+                <span class="font-medium line-clamp-2" style="color: #37352f;">{nextNav.title}</span>
               </a>
             )}
           </div>

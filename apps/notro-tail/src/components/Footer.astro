@@ -1,8 +1,94 @@
 ---
 ---
 
-<footer class="mt-16 border-t border-gray-100 bg-white">
-  <div class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
-    <p class="text-center text-sm text-gray-400">&copy; {new Date().getFullYear()} NotroTail</p>
+<style>
+  footer {
+    border-top: 1px solid rgba(55, 53, 47, 0.09);
+    margin-top: 4rem;
+  }
+  .footer-grid {
+    display: grid;
+    gap: 2.5rem;
+    padding: 3rem 0 2rem;
+  }
+  @media (min-width: 640px) {
+    .footer-grid { grid-template-columns: 2fr 1fr 1fr; }
+  }
+  .footer-brand-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #37352f;
+    margin-bottom: 0.5rem;
+  }
+  .footer-brand-desc {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: rgba(55, 53, 47, 0.5);
+    max-width: 260px;
+  }
+  .footer-col-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(55, 53, 47, 0.4);
+    margin-bottom: 1rem;
+  }
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .footer-links a {
+    font-size: 0.875rem;
+    color: rgba(55, 53, 47, 0.6);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .footer-links a:hover { color: #37352f; }
+  .footer-bottom {
+    border-top: 1px solid rgba(55, 53, 47, 0.07);
+    padding: 1.25rem 0;
+    font-size: 0.8125rem;
+    color: rgba(55, 53, 47, 0.35);
+  }
+</style>
+
+<footer>
+  <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+    <div class="footer-grid">
+      <!-- Brand -->
+      <div>
+        <p class="footer-brand-name">NotroTail</p>
+        <p class="footer-brand-desc">
+          Notion を CMS として使う Astro 静的サイトジェネレーター。
+          notro + remark-nfm + TailwindCSS 4 で動いています。
+        </p>
+      </div>
+
+      <!-- Resources -->
+      <div>
+        <p class="footer-col-title">リソース</p>
+        <div class="footer-links">
+          <a href="/blog/">ブログ</a>
+          <a href="/about/">About</a>
+          <a href="/privacy/">プライバシーポリシー</a>
+          <a href="https://www.npmjs.com/package/notro" target="_blank" rel="noopener noreferrer">npm パッケージ</a>
+        </div>
+      </div>
+
+      <!-- Community -->
+      <div>
+        <p class="footer-col-title">コミュニティ</p>
+        <div class="footer-links">
+          <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://github.com/mosugi/notro-tail/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">コントリビュート</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      &copy; {new Date().getFullYear()} NotroTail
+    </div>
   </div>
 </footer>
