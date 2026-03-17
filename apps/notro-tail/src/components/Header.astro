@@ -72,6 +72,7 @@ const isActive = (href: string) => {
             </a>
           </li>
         ))}
+        <li><a href="/about/" class:list={["nav-link", { active: isActive("/about/") }]}>About</a></li>
         <li><a href="/contact/" class:list={["nav-link", { active: isActive("/contact/") }]}>Docs</a></li>
         <li>
           <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="nav-icon" aria-label="GitHub">
