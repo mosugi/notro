@@ -19,6 +19,7 @@ import mdx from '@astrojs/mdx';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeShiki from '@shikijs/rehype';
 import { remarkNfm } from 'remark-nfm';
 
 export function notro(): AstroIntegration {
@@ -36,7 +37,7 @@ export function notro(): AstroIntegration {
 						// files and the runtime evaluate() path share the same plugin
 						// pipeline (same remark and rehype plugins in the same order).
 						remarkPlugins: [remarkNfm, remarkGfm, remarkMath],
-						rehypePlugins: [rehypeKatex],
+						rehypePlugins: [rehypeKatex, [rehypeShiki, { theme: 'github-dark' }]],
 						// Do not inherit Astro's default markdown config.
 						// Astro adds remarkGfm and other plugins by default; allowing
 						// inheritance would register them twice alongside our explicit list.
