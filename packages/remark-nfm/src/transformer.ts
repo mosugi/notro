@@ -136,9 +136,12 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // Notion exports table cell links as [text](url) inside <td>...</td>, but remark
   // does not process inline markdown inside raw HTML blocks. Replace them with
   // proper anchor elements so they render as clickable links.
+  // The URL pattern handles one level of nested parentheses, e.g.:
+  //   https://en.wikipedia.org/wiki/Rust_(programming_language)
+  //   https://developer.mozilla.org/docs/Array/find()
   result = result.replace(/<td>([\s\S]*?)<\/td>/g, (_, content: string) => {
     const linked = content.replace(
-      /\[([^\]\n]+)\]\(([^)\n]+)\)/g,
+      /\[([^\]\n]+)\]\(([^()\n]*(?:\([^()\n]*\)[^()\n]*)*)\)/g,
       '<a href="$2">$1</a>'
     );
     return `<td>${linked}</td>`;
