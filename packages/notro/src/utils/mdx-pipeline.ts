@@ -8,6 +8,7 @@
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeShiki from '@shikijs/rehype';
 import { remarkNfm } from 'remark-nfm';
 import type { Plugin, PluggableList } from 'unified';
 import type { Root, Element } from 'hast';
@@ -93,6 +94,7 @@ export function buildMdxPlugins(linkToPages: LinkToPages): MdxPlugins {
 		],
 		rehypePlugins: [
 			rehypeKatex,
+			[rehypeShiki, { theme: 'github-dark' }],
 			[resolvePageLinksPlugin, { linkToPages }] as const,
 		],
 	};
