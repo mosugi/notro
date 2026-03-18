@@ -147,14 +147,25 @@ export function loader({
             }
 
             if (markdownResponse.truncated) {
-              // The Notion pages.retrieveMarkdown API does not support cursor-based
-              // pagination, so the full content cannot be retrieved in multiple requests.
-              // The page will be loaded with the truncated content available.
-              // Consider splitting large Notion pages into smaller ones to avoid truncation.
+              // The Notion pages.retrieveMarkdown API truncates content at ~20,000 blocks.
+              // There is no cursor/pagination parameter to retrieve the remaining content.
+              // The page will be loaded with the truncated content only.
+              // To avoid truncation, split large Notion pages into smaller sub-pages.
               logger.warn(
-                `Page ${page.id}: markdown content was truncated by the Notion API. ` +
-                  `The page content may be too large. ` +
+                `Page ${page.id}: markdown content was truncated by the Notion API ` +
+                  `(~20,000 block limit). No pagination is available for this endpoint. ` +
                   `Consider splitting this Notion page into smaller pages to avoid truncation.`,
+              );
+            }
+
+            if (markdownResponse.unknown_block_ids.length > 0) {
+              // unknown_block_ids contains IDs of blocks that could not be converted to
+              // Markdown by the Notion API (e.g. unsupported or unrenderable block types).
+              // These blocks are silently omitted from the markdown output.
+              // There is no way to retrieve their content via this API endpoint.
+              logger.warn(
+                `Page ${page.id}: ${markdownResponse.unknown_block_ids.length} block(s) could not be rendered to Markdown by the Notion API and were omitted. ` +
+                  `Block IDs: ${markdownResponse.unknown_block_ids.join(", ")}`,
               );
             }
 
