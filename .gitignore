@@ -23,6 +23,9 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
+# Claude Code internal files
+.claude/
+
 .vercel/
 cache/
 .vercel
