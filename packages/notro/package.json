@@ -38,6 +38,10 @@
     "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'",
     "test": "vitest run"
   },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
   "peerDependencies": {
     "astro": ">=6.0.0"
   },

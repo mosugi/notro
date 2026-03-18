@@ -28,7 +28,10 @@ const postsCollection = defineCollection({
       Name: notroProperties.title,
       Description: notroProperties.richText,
       Public: notroProperties.checkbox,
-      Slug: notroProperties.richText,
+      // Require at least one rich_text item so empty slugs are rejected at build time.
+      Slug: notroProperties.richText.extend({
+        rich_text: notroProperties.richText.shape.rich_text.min(1),
+      }),
       Tags: notroProperties.multiSelect,
       Date: notroProperties.date,
     }),

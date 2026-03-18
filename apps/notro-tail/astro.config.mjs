@@ -21,12 +21,13 @@ export default defineConfig({
 
   image: {
     service: notionImageServiceConfig(),
-    // Allow all HTTPS origins. Notion images are served from dynamic S3
-    // subdomains that change per region and cannot be enumerated in advance.
+    // Restrict to Notion-related S3 domains and notion.so origins.
+    // Notion images are served from AWS S3 (various subdomains) and notion.so CDN.
     remotePatterns: [
-      {
-        protocol: "https",
-      },
+      { protocol: "https", hostname: "*.amazonaws.com" },
+      { protocol: "https", hostname: "prod-files-secure.s3.us-west-2.amazonaws.com" },
+      { protocol: "https", hostname: "www.notion.so" },
+      { protocol: "https", hostname: "notion.so" },
     ],
   },
 

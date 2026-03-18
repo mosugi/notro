@@ -11,6 +11,10 @@
     "astro": "astro",
     "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'"
   },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
   "dependencies": {
     "@astrojs/check": "^0.9.7",
     "@astrojs/sitemap": "^3.7.1",
