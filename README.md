@@ -47,6 +47,10 @@ Create content and build a website with Notion’s user-friendly interface. No c
 
 Websites are output as static HTML by Astro, making them extremely fast and optimized for SEO. Whether for personal blogs or business purposes, it offers a great experience.
 
+### 🔌 No Block-by-Block Retrieval — Fast Builds
+
+Supports Notion's [Markdown Content API](https://developers.notion.com/guides/data-apis/working-with-markdown-content), so page content is fetched in a single API call rather than block by block. This significantly reduces the number of API calls at build time, resulting in fast builds.
+
 ### 📷 Image Optimization
 
 Images used in Notion are delivered in WebP format, optimized for each device by Astro Assets.
