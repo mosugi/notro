@@ -1,9 +1,11 @@
 ---
 /** <file src="URL" color="Color">Caption</file> */
+import { colorToCSS } from './colors';
+
 interface Props { src: string; color?: string; class?: string; }
-const { src, class: className } = Astro.props;
+const { src, color, class: className } = Astro.props;
 ---
-<div class:list={["notion-file", className]}>
+<div class:list={["notion-file", className]} style={colorToCSS(color)}>
 	<a href={src} target="_blank" rel="noopener noreferrer" class="notion-file__link">
 		<span class="notion-file__icon">📎</span>
 		<slot />
