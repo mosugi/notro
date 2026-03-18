@@ -21,9 +21,16 @@ function resolveNotionUrl(
 	url: string,
 	linkToPages: LinkToPages,
 ): { href: string; isExternal: boolean } {
+	// Notion URLs end with the page ID (32-char hex, with or without dashes).
+	// Example: https://www.notion.so/My-Page-Title-abc123def456...
+	// Strip dashes from both the URL and the ID, then check whether the URL
+	// ends with the normalised ID. Using endsWith() instead of includes()
+	// prevents a shorter ID from matching a different longer ID that happens
+	// to contain it as a substring (e.g. "abc" matching "abc123").
 	const urlNoDash = url.replace(/-/g, '');
 	for (const [pageId, info] of Object.entries(linkToPages)) {
-		if (urlNoDash.includes(pageId.replace(/-/g, ''))) {
+		const idNoDash = pageId.replace(/-/g, '');
+		if (urlNoDash === idNoDash || urlNoDash.endsWith(idNoDash)) {
 			return { href: `/${info.url}`, isExternal: false };
 		}
 	}

@@ -19,10 +19,11 @@ type LoaderOptions = {
   clientOptions: ConstructorParameters<typeof Client>[0];
 };
 
-// Notion file-type covers and inline images use pre-signed S3 URLs that expire after ~1 hour.
+// Notion file-type covers, icons, and inline images use pre-signed S3 URLs that expire after ~1 hour.
 // If any are present in a cached entry, it must be re-fetched to get fresh URLs.
 function hasNotionPresignedUrl(data: PageWithMarkdownType): boolean {
   if (data.cover?.type === "file") return true;
+  if (data.icon?.type === "file") return true;
   return markdownHasPresignedUrls(data.markdown);
 }
 
@@ -35,6 +36,47 @@ const RETRYABLE_API_ERROR_CODES: ReadonlySet<string> = new Set([
 
 // Retry delays in milliseconds for each attempt (exponential backoff: 1s, 2s, 4s).
 const RETRY_DELAYS_MS = [1000, 2000, 4000];
+
+/**
+ * Calls iteratePaginatedAPI(client.dataSources.query, ...) with retry logic for transient errors.
+ * - 429 (RateLimited), 500 (InternalServerError), 503 (ServiceUnavailable): retry up to 3 times
+ *   with exponential backoff (1s / 2s / 4s).
+ * - Other errors (401, 403, 404, etc.): re-thrown immediately.
+ */
+async function queryDataSourceWithRetry(
+  client: Client,
+  queryParameters: QueryDataSourceParameters,
+  logger: { warn: (msg: string) => void },
+): Promise<Awaited<ReturnType<typeof iteratePaginatedAPI<typeof client.dataSources.query>>>[]> {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    try {
+      return await Array.fromAsync(
+        iteratePaginatedAPI(client.dataSources.query, queryParameters),
+      );
+    } catch (error) {
+      lastError = error;
+
+      const isRetryable =
+        error instanceof APIResponseError &&
+        RETRYABLE_API_ERROR_CODES.has(error.code);
+
+      if (!isRetryable || attempt === RETRY_DELAYS_MS.length) {
+        throw error;
+      }
+
+      const delayMs = RETRY_DELAYS_MS[attempt];
+      logger.warn(
+        `dataSources.query: API error "${(error as APIResponseError).code}" (attempt ${attempt + 1}/${RETRY_DELAYS_MS.length + 1}), retrying in ${delayMs}ms...`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+
+  // Unreachable, but required for TypeScript exhaustiveness.
+  throw lastError;
+}
 
 /**
  * Calls client.pages.retrieveMarkdown with retry logic for transient errors.
@@ -86,9 +128,12 @@ export function loader({
   return {
     name: "notro-loader",
     load: async ({ store, parseData, logger }): Promise<void> => {
-      // Load data and update the store
-      const pageOrDatabases = await Array.fromAsync(
-        iteratePaginatedAPI(client.dataSources.query, queryParameters),
+      // Load data and update the store.
+      // Uses retry logic for transient API errors (rate limit, server errors).
+      const pageOrDatabases = await queryDataSourceWithRetry(
+        client,
+        queryParameters,
+        logger,
       );
 
       const pages = pageOrDatabases.filter((page) => isFullPage(page));
