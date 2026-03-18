@@ -232,6 +232,47 @@ import { remarkNfm, preprocessNotionMarkdown } from "remark-nfm";
 // import { remarkNfm } from "notro";
 ```
 
+## Notion API の制限事項
+
+> 参照: [Retrieve a page as Markdown – Notion API](https://developers.notion.com/reference/retrieve-page-markdown)
+
+### コンテンツの切り詰め（`truncated`）
+
+`GET /v1/pages/{page_id}/markdown` は約 **20,000 ブロック**を上限としてコンテンツを切り詰めて返す。
+
+- レスポンスの `truncated: true` で検出できるが、**残りのコンテンツを取得するページネーション API は存在しない**
+- notro は `truncated === true` のとき警告ログを出力し、取得できた範囲でビルドを継続する
+- 対処法: 大きな Notion ページを複数のサブページに分割すること
+
+```
+⚠ Page abc123: markdown content was truncated by the Notion API (~20,000 block limit).
+  No pagination is available for this endpoint.
+  Consider splitting this Notion page into smaller pages to avoid truncation.
+```
+
+### レンダリング不能なブロック（`unknown_block_ids`）
+
+レスポンスの `unknown_block_ids` には、Notion API が Markdown に変換できなかったブロックの ID が含まれる（未対応ブロック型など）。
+
+- これらのブロックは `markdown` フィールドから**無言で除外される**
+- このエンドポイント経由でその内容を取得する手段はない
+- notro は対象ブロック ID の一覧を警告ログに出力してビルドを継続する
+
+```
+⚠ Page abc123: 2 block(s) could not be rendered to Markdown by the Notion API and were omitted.
+  Block IDs: xxxxxxxx-..., yyyyyyyy-...
+```
+
+### API エラーと自動リトライ
+
+| エラー | 対応 |
+|---|---|
+| `429 rate_limited` / `500 internal_server_error` / `503 service_unavailable` | exponential backoff でリトライ（1s / 2s / 4s、最大 3 回） |
+| `401 unauthorized` / `403 restricted_resource` / `404 object_not_found` | リトライなし。警告ログを出力してそのページをスキップ |
+| その他の予期しないエラー | 警告ログを出力してスキップ（ビルド全体は継続） |
+
+---
+
 ## ロードマップ
 
 現時点の実装に対するセルフレビューをもとに、今後の課題を優先度別に整理しています。
@@ -246,11 +287,15 @@ import { remarkNfm, preprocessNotionMarkdown } from "remark-nfm";
 
 バッチサイズ 3・バッチ間 1 秒待機に変更し、3 req/s 制限を遵守するよう修正済み。
 
-#### 2. 切り詰められた Markdown の未処理（`loader.ts`）
+#### 2. 切り詰められた Markdown（`loader.ts`）
 
-Notion API がページ内容を切り詰めて返す場合（`markdownResponse.truncated === true`）、現状は警告ログのみで内容が不完全なまま保存される。コンテンツの一部が欠落するデータ損失バグ。
+Notion API がページ内容を切り詰めて返す場合（`markdownResponse.truncated === true`）、残りのコンテンツを取得する手段が存在しない。
 
-**対応方針**: `truncated === true` のとき `retrieveMarkdown` をオフセット付きでページネーションし、すべてのチャンクを結合する。
+> **Notion API の制限:** `GET /v1/pages/{page_id}/markdown` はカーソルやオフセットパラメータを持たない（`@notionhq/client` v5.11.1 で確認）。分割取得は **API レベルで不可能**。
+
+現在は詳細な警告ログを出力し、取得できた範囲のコンテンツでビルドを継続する。
+
+**根本的な対処法**: 大きな Notion ページを複数のサブページに分割すること。
 
 ---
 
@@ -294,11 +339,11 @@ urlNoDash.includes(pageId.replace(/-/g, ''))
 
 **対応方針**: ビルドキャッシュディレクトリ（`.astro/` など）に SHA256 キーで JSON シリアライズして永続化する。
 
-#### 8. ページ単位のビルド失敗分離
+#### ~~8. ページ単位のビルド失敗分離~~ ✅ 解決済み
 
-現状では任意の 1 ページの MDX コンパイルエラーや API エラーがビルド全体を停止させる。
+~~現状では任意の 1 ページの MDX コンパイルエラーや API エラーがビルド全体を停止させる。~~
 
-**対応方針**: ページごとに `try/catch` でエラーを捕捉し、警告を表示しつつそのページをスキップしてビルドを継続するフォールバックモードを追加する。
+`loader.ts` で各ページの `retrieveMarkdown` 呼び出しを `try/catch` で保護し、失敗したページは警告ログを出力してスキップするよう修正済み。429 / 500 / 503 は exponential backoff でリトライ（1s / 2s / 4s、最大 3 回）。
 
 #### 9. 大規模データベースのメモリ効率
 
