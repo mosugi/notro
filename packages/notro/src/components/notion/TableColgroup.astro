@@ -1,4 +1,11 @@
 ---
-/** Mapped to MDX `components.colgroup` */
+/**
+ * Mapped to MDX `components.colgroup`.
+ * Accepts an optional class prop (e.g. injected via classMap.colgroup).
+ */
+interface Props {
+	class?: string;
+}
+const { class: className } = Astro.props;
 ---
-<colgroup><slot /></colgroup>
+<colgroup class:list={[className]}><slot /></colgroup>

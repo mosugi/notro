@@ -16,7 +16,7 @@ const { icon, color, class: className } = Astro.props;
 ---
 
 <div class:list={["notion-callout", className]} style={colorToCSS(color) || 'background-color:#F1F1EF'}>
-	{icon && <span class="notion-callout__icon">{icon}</span>}
+	{icon && <span class="notion-callout__icon" aria-hidden="true">{icon}</span>}
 	<div class="notion-callout__body">
 		<slot />
 	</div>

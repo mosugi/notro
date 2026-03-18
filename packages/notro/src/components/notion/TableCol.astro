@@ -5,9 +5,10 @@
  * Applies background color to a column.
  * Color priority: cell > row > column.
  * Mapped to MDX `components.col`.
+ * Accepts an optional class prop (e.g. injected via classMap.col).
  */
 import { colorToCSS } from './colors';
-interface Props { color?: string; }
-const { color } = Astro.props;
+interface Props { color?: string; class?: string; }
+const { color, class: className } = Astro.props;
 ---
-<col style={colorToCSS(color)} />
+<col class:list={[className]} style={colorToCSS(color)} />
