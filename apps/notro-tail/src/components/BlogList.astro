@@ -103,5 +103,8 @@ const { posts } = Astro.props;
         );
       })}
     </ul>
-  ) : null
+  ) : (
+    /* Show a fallback message when there are no posts to display */
+    <p class="text-center text-sm text-gray-500 py-12">記事はまだありません。</p>
+  )
 }

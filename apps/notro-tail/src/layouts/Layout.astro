@@ -24,9 +24,14 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
     <link rel="canonical" href={canonicalUrl.toString()} />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" crossorigin="anonymous" />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
     <meta property="og:title" content={title} />
     {description && <meta property="og:description" content={description} />}
     <meta property="og:url" content={canonicalUrl.toString()} />
+    <meta property="og:image" content="/og-default.png" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    {description && <meta name="twitter:description" content={description} />}
     <title>{title}</title>
   </head>
   <body class={bodyClass}>

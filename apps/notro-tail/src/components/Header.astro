@@ -59,21 +59,25 @@ const isActive = (href: string) => {
   .nav-icon:hover { color: #37352f; }
 </style>
 
+<!-- Skip navigation link for keyboard and screen reader users -->
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:rounded">
+  コンテンツへスキップ
+</a>
 <header class="sticky top-0 z-10">
   <div class="mx-auto flex h-12 max-w-screen-xl items-center justify-between px-4 sm:px-6 lg:px-8">
     <a href="/" class="nav-logo">NotroTail</a>
     <nav>
       <ul class="flex items-center gap-6">
-        <li><a href="/blog/" class:list={["nav-link", { active: isActive("/blog/") }]}>ブログ</a></li>
+        <li><a href="/blog/" class:list={["nav-link", { active: isActive("/blog/") }]} aria-current={isActive("/blog/") ? "page" : undefined}>ブログ</a></li>
         {fixedPages.map((p) => (
           <li>
-            <a href={`/blog/${p.slug}/`} class:list={["nav-link", { active: isActive(`/blog/${p.slug}/`) }]}>
+            <a href={`/blog/${p.slug}/`} class:list={["nav-link", { active: isActive(`/blog/${p.slug}/`) }]} aria-current={isActive(`/blog/${p.slug}/`) ? "page" : undefined}>
               {p.title}
             </a>
           </li>
         ))}
-        <li><a href="/about/" class:list={["nav-link", { active: isActive("/about/") }]}>About</a></li>
-        <li><a href="/contact/" class:list={["nav-link", { active: isActive("/contact/") }]}>Docs</a></li>
+        <li><a href="/about/" class:list={["nav-link", { active: isActive("/about/") }]} aria-current={isActive("/about/") ? "page" : undefined}>About</a></li>
+        <li><a href="/contact/" class:list={["nav-link", { active: isActive("/contact/") }]} aria-current={isActive("/contact/") ? "page" : undefined}>Docs</a></li>
         <li>
           <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="nav-icon" aria-label="GitHub">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
