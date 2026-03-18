@@ -3,6 +3,8 @@ import {
   Client,
   isFullPage,
   iteratePaginatedAPI,
+  APIErrorCode,
+  APIResponseError,
 } from "@notionhq/client";
 import type { QueryDataSourceParameters } from "@notionhq/client";
 import {
@@ -22,6 +24,55 @@ type LoaderOptions = {
 function hasNotionPresignedUrl(data: PageWithMarkdownType): boolean {
   if (data.cover?.type === "file") return true;
   return markdownHasPresignedUrls(data.markdown);
+}
+
+// Error codes that are safe to retry (rate limit, server errors).
+const RETRYABLE_API_ERROR_CODES: ReadonlySet<string> = new Set([
+  APIErrorCode.RateLimited,
+  APIErrorCode.InternalServerError,
+  APIErrorCode.ServiceUnavailable,
+]);
+
+// Retry delays in milliseconds for each attempt (exponential backoff: 1s, 2s, 4s).
+const RETRY_DELAYS_MS = [1000, 2000, 4000];
+
+/**
+ * Calls client.pages.retrieveMarkdown with retry logic for transient errors.
+ * - 429 (RateLimited), 500 (InternalServerError), 503 (ServiceUnavailable): retry up to 3 times
+ *   with exponential backoff (1s / 2s / 4s).
+ * - Other errors: re-thrown immediately.
+ */
+async function retrieveMarkdownWithRetry(
+  client: Client,
+  pageId: string,
+  logger: { warn: (msg: string) => void },
+): Promise<Awaited<ReturnType<typeof client.pages.retrieveMarkdown>>> {
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    try {
+      return await client.pages.retrieveMarkdown({ page_id: pageId });
+    } catch (error) {
+      lastError = error;
+
+      const isRetryable =
+        error instanceof APIResponseError &&
+        RETRYABLE_API_ERROR_CODES.has(error.code);
+
+      if (!isRetryable || attempt === RETRY_DELAYS_MS.length) {
+        throw error;
+      }
+
+      const delayMs = RETRY_DELAYS_MS[attempt];
+      logger.warn(
+        `Page ${pageId}: API error "${error.code}" (attempt ${attempt + 1}/${RETRY_DELAYS_MS.length + 1}), retrying in ${delayMs}ms...`,
+      );
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+
+  // Unreachable, but required for TypeScript exhaustiveness.
+  throw lastError;
 }
 
 // Define any options that the loader needs
@@ -71,13 +122,40 @@ export function loader({
           batch.map(async (page) => {
             logger.info(`Loading page ${page.id} into store`);
 
-            const markdownResponse = await client.pages.retrieveMarkdown({
-              page_id: page.id,
-            });
+            let markdownResponse: Awaited<
+              ReturnType<typeof client.pages.retrieveMarkdown>
+            >;
+
+            try {
+              markdownResponse = await retrieveMarkdownWithRetry(
+                client,
+                page.id,
+                logger,
+              );
+            } catch (error) {
+              // Skip this page rather than aborting the entire build.
+              if (error instanceof APIResponseError) {
+                logger.warn(
+                  `Page ${page.id}: failed to retrieve markdown (${error.code}, status ${error.status}). Skipping.`,
+                );
+              } else {
+                logger.warn(
+                  `Page ${page.id}: unexpected error while retrieving markdown: ${String(error)}. Skipping.`,
+                );
+              }
+              return;
+            }
 
             if (markdownResponse.truncated) {
-              // TODO: handle truncated markdown (paginated retrieval)
-              logger.warn(`Page ${page.id} markdown was truncated`);
+              // The Notion pages.retrieveMarkdown API does not support cursor-based
+              // pagination, so the full content cannot be retrieved in multiple requests.
+              // The page will be loaded with the truncated content available.
+              // Consider splitting large Notion pages into smaller ones to avoid truncation.
+              logger.warn(
+                `Page ${page.id}: markdown content was truncated by the Notion API. ` +
+                  `The page content may be too large. ` +
+                  `Consider splitting this Notion page into smaller pages to avoid truncation.`,
+              );
             }
 
             // Store raw markdown from the Notion API.
@@ -119,7 +197,7 @@ export function loader({
               // requires body to be a top-level field distinct from the schema data.
               body: rawMarkdown,
             });
-          })
+          }),
         );
 
         // Wait 1 second between batches to stay within the 3 req/s rate limit
