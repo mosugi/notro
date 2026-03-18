@@ -51,6 +51,90 @@
   }
 
   /*
+   * DatabaseProperty component classes
+   * Used by DatabaseProperty.astro to render Notion property values.
+   */
+  .nt-collection-property {
+    @apply text-sm;
+  }
+
+  .nt-property-text {
+    @apply m-0 text-sm text-gray-700;
+  }
+
+  .nt-property-select {
+    @apply inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700;
+  }
+
+  .nt-property-multi-select {
+    @apply flex flex-wrap gap-1;
+  }
+
+  .nt-property-date {
+    @apply text-sm text-gray-600;
+  }
+
+  .nt-property-checkbox {
+    @apply text-sm font-mono;
+  }
+
+  .nt-property-checkbox--checked {
+    @apply text-green-600;
+  }
+
+  .nt-property-checkbox--unchecked {
+    @apply text-gray-400;
+  }
+
+  .nt-property-number {
+    @apply text-sm tabular-nums text-gray-700;
+  }
+
+  .nt-property-email,
+  .nt-property-url,
+  .nt-property-phone {
+    @apply text-sm text-blue-600 underline underline-offset-2;
+  }
+
+  /*
+   * Notion table wrapper classes
+   * Used by TableBlock.astro (notion-table-wrapper / notion-table).
+   */
+  .notion-table-wrapper {
+    overflow-x: auto;
+    @apply my-4 w-full;
+  }
+
+  .notion-table-wrapper--full {
+    @apply w-full;
+  }
+
+  .notion-table {
+    @apply w-full border-collapse text-sm;
+    border: 1px solid rgba(55, 53, 47, 0.09);
+  }
+
+  .notion-table td,
+  .notion-table th {
+    @apply px-3 py-1.5 text-left align-top;
+    border: 1px solid rgba(55, 53, 47, 0.09);
+  }
+
+  /* Header row: first <tr> in a table with header-row enabled */
+  .notion-table--header-row tr:first-child td,
+  .notion-table--header-row tr:first-child th {
+    @apply font-semibold;
+    background-color: rgba(55, 53, 47, 0.04);
+  }
+
+  /* Header column: first <td>/<th> in each row when header-column is enabled */
+  .notion-table--header-col td:first-child,
+  .notion-table--header-col th:first-child {
+    @apply font-semibold;
+    background-color: rgba(55, 53, 47, 0.04);
+  }
+
+  /*
    * Inline code — global CSS for :not(pre) > code selector
    * (classMap cannot express this nesting distinction)
    */
