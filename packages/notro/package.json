@@ -32,7 +32,6 @@
     "utils.ts",
     "src/components",
     "src/loader",
-    "src/markdown",
     "src/utils"
   ],
   "scripts": {

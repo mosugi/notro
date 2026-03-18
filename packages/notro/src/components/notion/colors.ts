@@ -18,6 +18,11 @@ const COLORS = {
 /** Convert a Notion color name to a CSS style string */
 export function colorToCSS(color: string | undefined): string {
 	if (!color) return '';
+	// Support both "_background" (Notion API) and "_bg" (legacy) suffixes
+	if (color.endsWith('_background')) {
+		const base = color.slice(0, -'_background'.length) as keyof typeof COLORS;
+		if (base in COLORS) return `background-color:${COLORS[base].bg}`;
+	}
 	if (color.endsWith('_bg')) {
 		const base = color.slice(0, -3) as keyof typeof COLORS;
 		if (base in COLORS) return `background-color:${COLORS[base].bg}`;
