@@ -29,20 +29,22 @@
     "src"
   ],
   "scripts": {
-    "format": "prettier --write 'src/**/*.ts'"
+    "format": "prettier --write 'src/**/*.ts'",
+    "test": "vitest run"
   },
   "publishConfig": {
     "provenance": true
   },
   "dependencies": {
-    "micromark-extension-directive": "^4.0.0",
     "mdast-util-directive": "^3.0.0",
+    "micromark-extension-directive": "^4.0.0",
     "unist-util-visit": "^5.0.0"
   },
   "peerDependencies": {
     "unified": ">=11.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   }
 }
