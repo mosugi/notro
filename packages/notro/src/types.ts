@@ -31,7 +31,8 @@ export type LinkToPages = Record<string, { url: string; title: string }>;
  * - `column`        — Single column inside a column layout
  * - `columns`       — Columns layout wrapper
  * - `emptyBlock`    — Empty block spacer
- * - `mention`       — Inline mention (user / page / database / date)
+ * - `mention`       — Inline mention (user / page / database)
+ * - `mention-date`  — Date mention inline element
  *
  * Heading levels:
  * - `h1` `h2` `h3` `h4`
@@ -44,6 +45,6 @@ export type ClassMapKeys =
   | 'image' | 'tableWrapper' | 'table' | 'tableRow' | 'tableCell'
   | 'audio' | 'video' | 'file' | 'pdf'
   | 'pageRef' | 'databaseRef' | 'toc' | 'syncedBlock'
-  | 'column' | 'columns' | 'emptyBlock' | 'mention'
+  | 'column' | 'columns' | 'emptyBlock' | 'mention' | 'mention-date'
   | 'h1' | 'h2' | 'h3' | 'h4'
   | 'p' | 'ul' | 'ol' | 'li' | 'pre' | 'hr' | 'a' | 'strong' | 'em' | 'del' | 'th';
