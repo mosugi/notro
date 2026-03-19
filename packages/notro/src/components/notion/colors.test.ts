@@ -1,119 +1,128 @@
 import { describe, it, expect } from "vitest";
-import { colorToCSS } from "./colors.js";
+import { colorToClass, colorToCSS } from "./colors.js";
 
 // ============================================================
-// colorToCSS — Notion color name → CSS style string
+// colorToClass — Notion color name → CSS class name (nt-color-*)
 // ============================================================
 
-describe("colorToCSS: undefined / empty input", () => {
+describe("colorToClass: undefined / empty input", () => {
   it("returns empty string for undefined", () => {
-    expect(colorToCSS(undefined)).toBe("");
+    expect(colorToClass(undefined)).toBe("");
   });
 
   it("returns empty string for empty string", () => {
-    expect(colorToCSS("")).toBe("");
+    expect(colorToClass("")).toBe("");
+  });
+
+  it("returns empty string for 'default' (not a color)", () => {
+    expect(colorToClass("default")).toBe("");
   });
 });
 
-describe("colorToCSS: plain text colors", () => {
-  it("gray → text color", () => {
-    expect(colorToCSS("gray")).toBe("color:#787774");
+describe("colorToClass: plain text colors", () => {
+  it("gray → nt-color-gray", () => {
+    expect(colorToClass("gray")).toBe("nt-color-gray");
   });
 
-  it("blue → text color", () => {
-    expect(colorToCSS("blue")).toBe("color:#337EA9");
+  it("blue → nt-color-blue", () => {
+    expect(colorToClass("blue")).toBe("nt-color-blue");
   });
 
-  it("red → text color", () => {
-    expect(colorToCSS("red")).toBe("color:#D44C47");
+  it("red → nt-color-red", () => {
+    expect(colorToClass("red")).toBe("nt-color-red");
   });
 
-  it("green → text color", () => {
-    expect(colorToCSS("green")).toBe("color:#448361");
+  it("green → nt-color-green", () => {
+    expect(colorToClass("green")).toBe("nt-color-green");
   });
 
-  it("yellow → text color", () => {
-    expect(colorToCSS("yellow")).toBe("color:#CB912F");
+  it("yellow → nt-color-yellow", () => {
+    expect(colorToClass("yellow")).toBe("nt-color-yellow");
   });
 
-  it("orange → text color", () => {
-    expect(colorToCSS("orange")).toBe("color:#D9730D");
+  it("orange → nt-color-orange", () => {
+    expect(colorToClass("orange")).toBe("nt-color-orange");
   });
 
-  it("brown → text color", () => {
-    expect(colorToCSS("brown")).toBe("color:#9F6B53");
+  it("brown → nt-color-brown", () => {
+    expect(colorToClass("brown")).toBe("nt-color-brown");
   });
 
-  it("purple → text color", () => {
-    expect(colorToCSS("purple")).toBe("color:#9065B0");
+  it("purple → nt-color-purple", () => {
+    expect(colorToClass("purple")).toBe("nt-color-purple");
   });
 
-  it("pink → text color", () => {
-    expect(colorToCSS("pink")).toBe("color:#C14C8A");
-  });
-});
-
-describe("colorToCSS: _bg suffix (background colors)", () => {
-  it("gray_bg → background-color", () => {
-    expect(colorToCSS("gray_bg")).toBe("background-color:#F1F1EF");
-  });
-
-  it("blue_bg → background-color", () => {
-    expect(colorToCSS("blue_bg")).toBe("background-color:#E7F3F8");
-  });
-
-  it("red_bg → background-color", () => {
-    expect(colorToCSS("red_bg")).toBe("background-color:#FDEBEC");
-  });
-
-  it("green_bg → background-color", () => {
-    expect(colorToCSS("green_bg")).toBe("background-color:#EDF3EC");
-  });
-
-  it("yellow_bg → background-color", () => {
-    expect(colorToCSS("yellow_bg")).toBe("background-color:#FBF3DB");
-  });
-
-  it("purple_bg → background-color", () => {
-    expect(colorToCSS("purple_bg")).toBe("background-color:#F6F3F9");
+  it("pink → nt-color-pink", () => {
+    expect(colorToClass("pink")).toBe("nt-color-pink");
   });
 });
 
-describe("colorToCSS: _background suffix (Notion API form)", () => {
-  // Notion API uses the _background suffix form for background colors.
-  // The implementation supports both _background and _bg suffixes.
-  it("gray_background → background-color", () => {
-    expect(colorToCSS("gray_background")).toBe("background-color:#F1F1EF");
+describe("colorToClass: _bg suffix (background colors)", () => {
+  it("gray_bg → nt-color-gray_bg", () => {
+    expect(colorToClass("gray_bg")).toBe("nt-color-gray_bg");
   });
 
-  it("blue_background → background-color", () => {
-    expect(colorToCSS("blue_background")).toBe("background-color:#E7F3F8");
+  it("blue_bg → nt-color-blue_bg", () => {
+    expect(colorToClass("blue_bg")).toBe("nt-color-blue_bg");
   });
 
-  it("red_background → background-color", () => {
-    expect(colorToCSS("red_background")).toBe("background-color:#FDEBEC");
+  it("red_bg → nt-color-red_bg", () => {
+    expect(colorToClass("red_bg")).toBe("nt-color-red_bg");
   });
 
-  it("green_background → background-color", () => {
-    expect(colorToCSS("green_background")).toBe("background-color:#EDF3EC");
+  it("green_bg → nt-color-green_bg", () => {
+    expect(colorToClass("green_bg")).toBe("nt-color-green_bg");
   });
 
-  it("yellow_background → background-color", () => {
-    expect(colorToCSS("yellow_background")).toBe("background-color:#FBF3DB");
+  it("yellow_bg → nt-color-yellow_bg", () => {
+    expect(colorToClass("yellow_bg")).toBe("nt-color-yellow_bg");
+  });
+
+  it("purple_bg → nt-color-purple_bg", () => {
+    expect(colorToClass("purple_bg")).toBe("nt-color-purple_bg");
   });
 });
 
-describe("colorToCSS: unknown color values", () => {
+describe("colorToClass: _background suffix (Notion API form)", () => {
+  it("gray_background → nt-color-gray_background", () => {
+    expect(colorToClass("gray_background")).toBe("nt-color-gray_background");
+  });
+
+  it("blue_background → nt-color-blue_background", () => {
+    expect(colorToClass("blue_background")).toBe("nt-color-blue_background");
+  });
+
+  it("red_background → nt-color-red_background", () => {
+    expect(colorToClass("red_background")).toBe("nt-color-red_background");
+  });
+
+  it("green_background → nt-color-green_background", () => {
+    expect(colorToClass("green_background")).toBe("nt-color-green_background");
+  });
+
+  it("yellow_background → nt-color-yellow_background", () => {
+    expect(colorToClass("yellow_background")).toBe("nt-color-yellow_background");
+  });
+});
+
+describe("colorToClass: unknown color values", () => {
   it("returns empty string for completely unknown color name", () => {
-    expect(colorToCSS("magenta")).toBe("");
+    expect(colorToClass("magenta")).toBe("");
   });
 
   it("returns empty string for unknown color with _bg suffix", () => {
-    expect(colorToCSS("magenta_bg")).toBe("");
+    expect(colorToClass("magenta_bg")).toBe("");
   });
+});
 
-  it("returns empty string for 'default' (not in color map)", () => {
-    // 'default' is used by Notion to mean no color
-    expect(colorToCSS("default")).toBe("");
+// ============================================================
+// colorToCSS — deprecated alias for colorToClass
+// ============================================================
+
+describe("colorToCSS: deprecated alias", () => {
+  it("returns the same value as colorToClass", () => {
+    expect(colorToCSS("gray")).toBe(colorToClass("gray"));
+    expect(colorToCSS("blue_background")).toBe(colorToClass("blue_background"));
+    expect(colorToCSS(undefined)).toBe(colorToClass(undefined));
   });
 });
