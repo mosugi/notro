@@ -98,38 +98,38 @@
 
   /*
    * Notion table wrapper classes
-   * Used by TableBlock.astro (notion-table-wrapper / notion-table).
+   * Used by TableBlock.astro (nt-table-wrapper / nt-table).
    */
-  .notion-table-wrapper {
+  .nt-table-wrapper {
     overflow-x: auto;
     @apply my-4 w-full;
   }
 
-  .notion-table-wrapper--full {
+  .nt-table-wrapper--full {
     @apply w-full;
   }
 
-  .notion-table {
+  .nt-table {
     @apply w-full border-collapse text-sm;
     border: 1px solid rgba(55, 53, 47, 0.09);
   }
 
-  .notion-table td,
-  .notion-table th {
+  .nt-table td,
+  .nt-table th {
     @apply px-3 py-1.5 text-left align-top;
     border: 1px solid rgba(55, 53, 47, 0.09);
   }
 
   /* Header row: first <tr> in a table with header-row enabled */
-  .notion-table--header-row tr:first-child td,
-  .notion-table--header-row tr:first-child th {
+  .nt-table--header-row tr:first-child td,
+  .nt-table--header-row tr:first-child th {
     @apply font-semibold;
     background-color: rgba(55, 53, 47, 0.04);
   }
 
   /* Header column: first <td>/<th> in each row when header-column is enabled */
-  .notion-table--header-col td:first-child,
-  .notion-table--header-col th:first-child {
+  .nt-table--header-col td:first-child,
+  .nt-table--header-col th:first-child {
     @apply font-semibold;
     background-color: rgba(55, 53, 47, 0.04);
   }
@@ -174,24 +174,24 @@
   /*
    * Toggle (details/summary) — smooth open/close transition for the disclosure triangle
    */
-  .notion-toggle__title {
+  .nt-toggle-block__title {
     cursor: pointer;
     list-style: none;
     transition: color 0.15s ease;
   }
 
-  .notion-toggle__title:hover {
+  .nt-toggle-block__title:hover {
     color: rgba(55, 53, 47, 0.7);
   }
 
   /* Hide default browser triangle marker */
-  .notion-toggle__title::marker,
-  .notion-toggle__title::-webkit-details-marker {
+  .nt-toggle-block__title::marker,
+  .nt-toggle-block__title::-webkit-details-marker {
     display: none;
   }
 
   /* Custom disclosure triangle with rotation transition */
-  .notion-toggle__title::before {
+  .nt-toggle-block__title::before {
     content: "▶";
     display: inline-block;
     margin-right: 0.4em;
@@ -200,7 +200,7 @@
     transform-origin: center;
   }
 
-  details[open] > .notion-toggle__title::before {
+  details[open] > .nt-toggle-block__title::before {
     transform: rotate(90deg);
   }
 
@@ -369,19 +369,19 @@
   }
 
   /* Notion table */
-  .notion-table {
+  .nt-table {
     border-color: rgba(255, 255, 255, 0.1);
   }
 
-  .notion-table td,
-  .notion-table th {
+  .nt-table td,
+  .nt-table th {
     border-color: rgba(255, 255, 255, 0.1);
   }
 
-  .notion-table--header-row tr:first-child td,
-  .notion-table--header-row tr:first-child th,
-  .notion-table--header-col td:first-child,
-  .notion-table--header-col th:first-child {
+  .nt-table--header-row tr:first-child td,
+  .nt-table--header-row tr:first-child th,
+  .nt-table--header-col td:first-child,
+  .nt-table--header-col th:first-child {
     background-color: rgba(255, 255, 255, 0.05);
   }
 
@@ -406,7 +406,7 @@
   .nt-color-red_bg    { background-color: #2d1314; }
 
   /* Toggle */
-  .notion-toggle__title:hover {
+  .nt-toggle-block__title:hover {
     color: rgba(226, 232, 240, 0.7);
   }
 }
