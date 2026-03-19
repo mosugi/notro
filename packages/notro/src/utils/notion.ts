@@ -5,9 +5,11 @@ export const getPlainText = (
   property: PropertyPageObjectResponseType,
 ): string | undefined => {
   if (property?.type === "rich_text" && property.rich_text.length > 0) {
+    // rich_text arrays represent adjacent text spans; direct concatenation (no separator) is correct per Notion spec.
     return property.rich_text.map((t) => t.plain_text).join("");
   }
   if (property?.type === "title" && property.title.length > 0) {
+    // title arrays also represent adjacent text spans; direct concatenation is correct.
     return property.title.map((t) => t.plain_text).join("");
   }
   if (property?.type === "select" && property.select?.name !== undefined) {
@@ -17,6 +19,7 @@ export const getPlainText = (
     property?.type === "multi_select" &&
     property.multi_select !== undefined
   ) {
+    // Use ", " separator so that multi-select values are human-readable (e.g. "A, B, C").
     return property.multi_select.map((option) => option.name).join(", ");
   }
   if (property?.type === "number" && property.number !== null) {

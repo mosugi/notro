@@ -10,15 +10,25 @@
 const AMZN_PRESIGNED_PARAM = 'X-Amz-Algorithm';
 
 /**
- * Returns true if the markdown text contains Notion pre-signed S3 query parameters
- * or matches the Notion secure S3 hostname pattern.
+ * Returns true if the text contains Notion pre-signed S3 URLs.
  *
- * To avoid false positives, the X-Amz-* check requires the parameter to appear
- * in a URL query string context (preceded by '?' or '&'), rather than matching
- * the bare string anywhere in the text (e.g. in prose or code blocks).
+ * Detection strategy:
+ * - X-Amz-Algorithm: must appear as a URL query parameter
+ *   (i.e. preceded by "?" or "&" within an https:// URL context) to avoid
+ *   false positives when the literal string appears in body text or code blocks.
+ * - prod-files-secure.s3: matched as a hostname within an https:// URL, which
+ *   is an unambiguous indicator of a Notion S3 URL regardless of query params.
  */
 export function markdownHasPresignedUrls(text: string): boolean {
-	return /[?&]X-Amz-|prod-files-secure\.s3/.test(text);
+	// Match X-Amz-Algorithm only when it appears as a URL query parameter
+	if (/https?:\/\/[^\s)"']*[?&]X-Amz-Algorithm=/.test(text)) {
+		return true;
+	}
+	// Match Notion's secure S3 hostname as a URL
+	if (/https?:\/\/prod-files-secure\.s3/.test(text)) {
+		return true;
+	}
+	return false;
 }
 
 /**
