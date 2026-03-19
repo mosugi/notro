@@ -117,6 +117,11 @@ export async function compileMdxForAstro(
 // `buildLinkToPages()` always produces a consistent insertion order, but
 // custom linkToPages objects constructed in different orders would create
 // redundant cache entries rather than sharing results.
+
+// Maximum number of entries kept in compilationCache.
+// When the limit is reached, the oldest entry (first inserted) is evicted
+// using Map's guaranteed insertion-order iteration (FIFO eviction).
+const MAX_CACHE_SIZE = 500;
 const compilationCache = new Map<string, ReturnType<typeof compileMdxForAstro>>();
 
 export async function compileMdxCached(
@@ -131,6 +136,17 @@ export async function compileMdxCached(
 
 	let entry = compilationCache.get(key);
 	if (!entry) {
+		// Evict the oldest entry (FIFO) before inserting a new one to keep
+		// memory usage bounded. Eviction is skipped when the current key is
+		// already present (cache hit), but a cache miss always inserts a new
+		// entry, so we check the size here before that insertion.
+		if (compilationCache.size >= MAX_CACHE_SIZE) {
+			const oldestKey = compilationCache.keys().next().value;
+			if (oldestKey !== undefined) {
+				compilationCache.delete(oldestKey);
+			}
+		}
+
 		// Store the promise immediately so concurrent callers share the same
 		// in-flight compilation. On error, evict the cache entry so the next
 		// request retries compilation rather than replaying the failure.
