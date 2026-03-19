@@ -62,11 +62,15 @@ export function preprocessNotionMarkdown(markdown: string): string {
   let result = markdown.replace(/\\\$([^$\n]+)\\\$/g, (_, content: string) => `$${content}$`);
 
   // Fix 1: Ensure --- dividers have a blank line before them.
-  // First, normalize lines that contain only spaces/tabs immediately before ---
-  // to truly empty lines, so downstream parsers that do not recognize
-  // whitespace-only lines as blank lines (per CommonMark) treat them correctly.
-  result = result.replace(/^[ \t]+\n(---+)/gm, "\n$1");
-  // Then insert a blank line between any non-blank line and a following --- divider.
+  // A "---" line immediately after any non-blank content (including after a
+  // whitespace-only line that itself follows text) is interpreted as a setext
+  // H2 heading. We ensure a blank line precedes every "---" divider.
+  //
+  // Step 1a: Handle "text\n   \n---" — a whitespace-only line between text and ---
+  // is not reliably treated as a blank line by all parsers, so explicitly insert
+  // a blank line before the --- and remove the trailing whitespace from the line.
+  result = result.replace(/([^\n])\n[ \t]+\n(---+)(\n|$)/g, "$1\n\n$2$3");
+  // Step 1b: Handle "text\n---" — no intervening line at all.
   result = result.replace(/([^\n])\n(---+)(\n|$)/g, "$1\n\n$2$3");
 
   // Fix 2: Normalize callout directive syntax.
