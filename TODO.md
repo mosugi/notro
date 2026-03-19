@@ -128,8 +128,8 @@
   MentionDate コンポーネントへのクラス注入ができない
   → `packages/notro/src/types.ts` および `component-resolver.ts` にすでに実装済みと確認
 
-- [ ] **`getPlainText` の `join()` に区切り文字なし**
-  multi_select などで `"A,B"` でなく `"AB"` に結合される（※Notionのrich_text配列は直接連結が正しい可能性あり。要調査）
+- [x] **`getPlainText` の `join()` に区切り文字なし** ✅
+  multi_select などで `"A,B"` でなく `"AB"` に結合される（※Notionのrich_text配列は直接連結が正しい仕様。multi_selectのみ `", "` 区切りに修正）
   → `packages/notro/src/utils/notion.ts`
 
 - [x] **`calloutPlugin` が `remark-nfm` の public API として不要にエクスポートされている** ✅
@@ -148,11 +148,11 @@
   パッケージ単独での型チェックが不正確になる
   → `packages/notro/tsconfig.json`（新規作成）
 
-- [ ] **`markdownHasPresignedUrls` の false positive**
+- [x] **`markdownHasPresignedUrls` の false positive** ✅
   本文に `X-Amz-Algorithm` という文字列が含まれるだけでキャッシュ無効化される
-  → `packages/notro/src/utils/notion-url.ts`（またはloader内）
+  → `packages/notro/src/utils/notion-url.ts` — URLクエリパラメータコンテキスト内でのみ検出する正規表現に改善
 
-- [ ] **hover/Toggleのトランジションなし**
+- [x] **hover/Toggleのトランジションなし** ✅
   `onmouseover` 直接変更によるちらつき
   → `apps/notro-tail/src/pages/blog/[slug].astro`
 
