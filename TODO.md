@@ -120,9 +120,9 @@
   横幅が広いテーブルがモバイルでスクロールできない
   → `packages/notro/src/components/notion/TableBlock.astro`
 
-- [ ] **クラス命名規約が不統一**
+- [x] **クラス命名規約が不統一** ✅
   コンポーネント内で `notion-*` と `nt-*` が混在している
-  → `packages/notro/src/components/notion/` 各コンポーネント
+  → `packages/notro/src/components/notion/` 各コンポーネント（調査の結果、すでに全コンポーネントが `nt-*` を使用しており変更不要）
 
 - [x] **`ClassMapKeys` に `mention-date` が欠落** ✅
   MentionDate コンポーネントへのクラス注入ができない
@@ -144,7 +144,7 @@
   タグ絞り込みなどで記事0件の場合に空白になる
   → `apps/notro-tail/src/components/BlogList.astro`
 
-- [ ] **`packages/notro/tsconfig.json` が存在しない**
+- [x] **`packages/notro/tsconfig.json` が存在しない** ✅
   パッケージ単独での型チェックが不正確になる
   → `packages/notro/tsconfig.json`（新規作成）
 
@@ -164,8 +164,8 @@
 |--------|------|----------|------|
 | 🔴 高  | 9件  | 9件 ✅   | 0件  |
 | 🟡 中  | 14件 | 12件 ✅  | 2件  |
-| 🟢 低  | 12件 | 8件 ✅   | 4件  |
-| **合計** | **35件** | **29件** | **6件** |
+| 🟢 低  | 12件 | 9件 ✅   | 3件  |
+| **合計** | **35件** | **30件** | **5件** |
 
 ---
 
