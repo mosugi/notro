@@ -62,6 +62,16 @@ const tags = getMultiSelect(entry.data.properties.Tags);
 const markdown = entry.data.markdown;
 ---
 
+<style>
+  /* Prev/next navigation card hover — CSS :hover replaces JS onmouseover */
+  .post-nav-link {
+    transition: background 0.15s ease;
+  }
+  .post-nav-link:hover {
+    background: rgba(55, 53, 47, 0.03);
+  }
+</style>
+
 <Layout title={title} description={description} bodyClass={bodyClass}>
   <main class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
     <article class="mx-auto max-w-[720px]">

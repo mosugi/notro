@@ -251,6 +251,42 @@
     padding: 0.2em 0.4em;
     font-size: 85%;
   }
+
+  /* Toggle block — smooth indicator rotation on open/close */
+  .nt-toggle-block > details > summary,
+  .nt-markdown-content details > summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  .nt-toggle-block > details > summary::-webkit-details-marker,
+  .nt-markdown-content details > summary::-webkit-details-marker {
+    display: none;
+  }
+  /* Animated disclosure triangle via ::before pseudo-element */
+  .nt-toggle-block > details > summary::before,
+  .nt-markdown-content details > summary::before {
+    content: "▶";
+    display: inline-block;
+    font-size: 0.6em;
+    margin-right: 0.5em;
+    transition: transform 0.2s ease;
+    transform-origin: center;
+    vertical-align: middle;
+    color: rgba(55, 53, 47, 0.45);
+  }
+  .nt-toggle-block > details[open] > summary::before,
+  .nt-markdown-content details[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  /* Fade-in for toggle content when opened */
+  .nt-toggle-block > details > :not(summary),
+  .nt-markdown-content details > :not(summary) {
+    animation: nt-toggle-fadein 0.15s ease;
+  }
+  @keyframes nt-toggle-fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
 }
 
 /*
