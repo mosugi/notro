@@ -192,3 +192,237 @@
 |---------|------|
 | `test-callout-edge-cases` | ネストcallout・三重ネスト・Callout内コード/リスト・連続Callout・URL括弧リンク |
 | `test-markdown-edge-cases` | Fix 1-9各種エッジケース・Fix 9テーブルリンク・インライン装飾組み合わせ |
+
+---
+
+## 🗓 2026-03-19 セッション — 全20ページ レンダリング確認調査（10エージェント並行）
+
+> branch: `claude/test-notion-rendering-fn2Sm`
+> 調査対象: Notionデータベース全20ページ
+
+### 🔴 重大（機能が根本的に壊れている）
+
+#### N-01: raw HTML ブロックがコンポーネントマッピングをバイパスする【最優先】
+
+`@mdx-js/mdx` の `evaluate()` は raw HTML ブロック（`<table>`, `<h2 color="...">` 等）を
+`_components` によるマッピングの対象にしない。
+Notion API はテーブル・色付き見出し・色付き段落を raw HTML として出力するため、
+`TableBlock.astro` / `H2.astro` / `ParagraphEl` に一切到達しない。
+
+**症状:**
+- テーブルがブラウザデフォルトスタイル（枠線なし・パディングなし）で表示される
+- `header-row="true"` による先頭行スタイルが機能しない
+- `nt-table-wrapper` / `nt-table` / `nt-table-cell` クラスが付与されない
+- Fix 3 生成の `<h2 color="blue">` / `<p color="gray_bg">` の色が完全に無視される
+
+**影響ページ:** 全テーブルページ（sample-04-tables 等）、色付きブロックを含む全ページ
+**対処案:** `rehype-raw` をパイプライン（`packages/notro/src/utils/mdx-pipeline.ts`）に追加し、
+raw HTML を hast element に変換してからコンポーネントマッピングを適用する
+
+---
+
+#### N-02: `<details>` / `<column>` 内コンテンツがタブインデントによりコードブロックとして誤レンダリングされる
+
+Notion API は `<details>` / `<summary>` / `<column>` 内のコンテンツをタブ1つでインデントして出力する。
+CommonMark ではタブ1つ（=4スペース相当）のインデントはコードブロックとして解釈される。
+
+**症状:**
+- トグルの本文テキスト・リスト・コードブロックがすべて `<pre><code>` として出力される
+- ネストされたトグルの内側 `<details>` タグがエスケープされた文字列として表示される
+- トグル内のフェンスコードブロック（` ``` `）がフェンスとして認識されない
+- カラムレイアウト（`<column>`）内の見出し・リストが生テキストになる
+- ネストされたリスト（`\t- item`）がコードブロックになる可能性がある
+
+**影響ページ:** sample-08-toggles, sample-10-columns, sample-03-lists
+**対処案:** `transformer.ts` に新 Fix を追加し、`<details>` / `<column>` / リストアイテムの
+タブインデントを dedent する（callout の Fix 2 dedent ロジックを参考に適用）
+**参照:** `packages/remark-nfm/src/transformer.ts`, `packages/notro/src/components/notion/Toggle.astro`, `packages/notro/src/components/notion/Column.astro`
+
+---
+
+#### N-03: Callout が API フォーマット不一致で icon・color が機能しない
+
+Notion API は callout を `<callout>\n\t💡 **Tip:** ...\n</callout>` という属性なし raw HTML で出力する。
+Fix 2 は `:::callout{icon="..." color="..."}` ディレクティブ形式のみ処理するため：
+- アイコン用 `<span>` が描画されない（絵文字がインラインテキストとして本文先頭に混入）
+- `color` が渡らないためデフォルトスタイルのみ
+
+**影響ページ:** sample-16-mixed-blog-post、callout を含む全ページ
+**対処案:** `transformer.ts` で raw HTML 形式の `<callout>` をディレクティブ形式に変換する
+前処理を Fix 2 に追加する
+**参照:** `packages/remark-nfm/src/transformer.ts` (Fix 2), `packages/notro/src/components/notion/Callout.astro`
+
+---
+
+#### N-04: インライン数式が KaTeX で正しくレンダリングされない
+
+Notion API はインライン数式を `\$x = frac\{-b pm sqrt\{b\^2 - 4ac\}\}\{2a\}\$` のように出力する。
+Fix 0 は `\$...\$` → `$...$` にデリミタを変換するが、内部の
+`\^` / `\{` / `\}` のエスケープ解除と、`frac` / `sqrt` / `pm` → `\frac` / `\sqrt` / `\pm`
+の LaTeX コマンド復元は行われないため、KaTeX が数式を解釈できない。
+（ブロック数式 `$$...$$` は正常）
+
+**影響ページ:** sample-09-math、インライン数式を含む全ページ
+**参照:** `packages/remark-nfm/src/transformer.ts` (Fix 0, Fix 5)
+
+---
+
+#### N-05: blockquote 直後の段落テキストが誤って blockquote 内に取り込まれる
+
+CommonMark の lazy continuation 規則により、blockquote の最後の段落が `>` なしで継続できる。
+Notion API は `> last-quote-line\nRegular paragraph` の形式（空行なし）で出力するため、
+`Regular paragraph` が blockquote 外の独立段落ではなく quote 内テキストとしてパースされる。
+
+**影響ページ:** sample-06-blockquotes、blockquote を含む全ページ
+**対処案:** `transformer.ts` に新 Fix を追加し、`> ...` で終わる行の直後に `>` で始まらない
+テキスト行が続く場合、間に空行を挿入する
+**参照:** `packages/remark-nfm/src/transformer.ts`
+
+---
+
+#### N-06: TableOfContents コンポーネントが静的プレースホルダーのみで目次を生成しない
+
+`<table_of_contents/>` は自己閉鎖タグのため `<slot />` が空になり、
+「📋 目次」というラベルのみが表示される。見出しへのジャンプリンクが一切生成されない。
+
+**影響ページ:** sample-12-toc、TOC ブロックを含む全ページ
+**対処案:** `rehype-slug` + `rehype-autolink-headings` をパイプラインに追加し、
+クライアントサイド JS または Astro ビルド時処理で見出し一覧を動的収集する
+**参照:** `packages/notro/src/components/notion/TableOfContents.astro`, `packages/notro/src/utils/mdx-pipeline.ts`
+
+---
+
+### 🟠 中程度（表示が崩れる・機能が一部欠損）
+
+#### N-07: `<hr>` 要素に視覚的スタイルがない
+
+`global.css` に `.nt-markdown-content hr` のスタイル定義が存在しない。
+Tailwind 4 preflight のみが適用され、上下余白がなく divider が本文に張り付いて表示される。
+
+**対処案:** `global.css` に `.nt-markdown-content hr` のマージン・ボーダー色を追加する
+
+---
+
+#### N-08: `.nt-quote-block` の CSS が未定義
+
+`Quote.astro` が出力する `<blockquote class="nt-quote-block">` に対応する CSS が `global.css` に存在しない。
+ブロッククォートが通常テキストと視覚的に区別できない（左ボーダー・インデント・背景色なし）。
+
+---
+
+#### N-09: 画像ブロックが Astro の画像最適化を受けない
+
+`ImageBlock.astro` がネイティブ `<img>` タグを使用しており、WebP 変換・リサイズ・lazy loading が適用されない。
+また画像の Alt テキストが常に `<figcaption>` として画面上に表示される。
+
+**参照:** `packages/notro/src/components/notion/ImageBlock.astro`
+
+---
+
+#### N-10: `truncated` フラグがページデータに保存されず訪問者への通知手段がない
+
+ビルドログに警告は出るが `schema.ts` に `truncated` フィールドがなく、
+`[slug].astro` で切り捨て有無を判断できない。大容量ページで無言のコンテンツ欠損が起きうる。
+
+**対処案:** `schema.ts` に `truncated: z.boolean().default(false)` を追加し、
+`[slug].astro` で注意書きを表示する
+
+---
+
+#### N-11: タスクリストのチェックボックスにスタイル定義がない
+
+remark-gfm が生成する `.contains-task-list` / `.task-list-item` / `input[type=checkbox]` に対する
+CSS が `global.css` に存在せず、ブラウザ間で見た目が大きく異なる。
+
+---
+
+#### N-12: About・privacy・sample-fixed-page が Public=false でビルドから除外されている
+
+- `about`: Public=false → `/blog/about/` が 404（静的 `/about/` とも設計が二重化）
+- `privacy`: Public=false → `/blog/privacy/` が 404
+- `sample-fixed-page`: Public=false かつ本文が空
+
+**対処案:** Notion 上で `Public` プロパティを `true` に変更する。
+About は静的 Astro ページとの実装方針統一も必要。
+
+---
+
+#### N-13: `config.ts` の `navPages` 設定が不完全
+
+- `privacy` が未登録 → `page-privacy` bodyClass が適用されず法的文書スタイルが当たらない
+- `about` が未登録 → `page-about` bodyClass が適用されない
+- `blocks` ページが Notion 上に存在しない
+
+**対処案:** `config.ts` に `{ slug: "privacy", bodyClass: "page-privacy" }` と
+`{ slug: "about", bodyClass: "page-about" }` を追加する
+
+---
+
+#### N-14: ピン留め記事がページネーション件数の計算から除外される
+
+`[...page].astro` が `paginate(regularPosts, ...)` に `pinnedPosts` を除いた件数を渡すため、
+ピン留め記事が多い場合に総記事数とページネーション件数が一致しない。
+
+---
+
+### 🟡 軽微（視覚的な問題・将来リスク）
+
+#### N-15: `.nt-toggle-block > details > summary` CSS セレクターがデッドコード
+
+`Toggle.astro` は `<details class="nt-toggle-block">` と書いており、
+`.nt-toggle-block` 自身が `<details>` のため `.nt-toggle-block > details` はマッチしない。
+`global.css` 内の関連ルール群は未使用（デッドコード）。
+
+---
+
+#### N-16: Fix 4 が `<table_of_contents>` の `color` 属性を破棄する
+
+`transformer.ts` Fix 4 が `<table_of_contents color="gray"/>` → `<div><table_of_contents/></div>` に
+変換する際、`color` 属性が除去される。
+
+---
+
+#### N-17: `.nt-toc-block` / `.nt-toc-block__label` の CSS が未定義
+
+`TableOfContents.astro` が使用するクラスに対応する CSS が `global.css` に存在しない。
+
+---
+
+#### N-18: KaTeX CSS を CDN から読み込んでいる
+
+`Layout.astro` が `https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css` を外部 CDN から読み込んでいる。
+オフライン環境・CDN 障害時に数式スタイルが崩れる。
+
+---
+
+#### N-19: About ページの Notion コンテンツに「Astro 5」の誤記（実際は Astro 6）
+
+---
+
+#### N-20: SyncedBlock フォールバック時に Notion 内部 URL が公開される
+
+Fix 6 が失敗した場合に `<synced_block>` がそのまま通過し、
+`SyncedBlock.astro` が `data-url` 属性に Notion 内部 URL を出力する。
+
+---
+
+### 集計（2026-03-19 追加分）
+
+| 優先度 | 件数 |
+|--------|------|
+| 🔴 重大 | 6件（N-01〜N-06） |
+| 🟠 中程度 | 8件（N-07〜N-14） |
+| 🟡 軽微 | 6件（N-15〜N-20） |
+| **合計** | **20件** |
+
+### 根本原因サマリー
+
+| 根本原因 | 影響する課題 |
+|---|---|
+| `@mdx-js/mdx` が raw HTML をコンポーネントマッピング対象にしない | N-01, N-02（一部）, N-03（一部） |
+| タブインデントが CommonMark コードブロックとして解釈される | N-02（toggles, columns, lists） |
+| Notion API のインライン数式フォーマットが壊れている | N-04 |
+| `preprocessNotionMarkdown` に Fix 不足 | N-05（blockquote lazy continuation） |
+| CSS 定義の欠落 | N-07, N-08, N-11, N-15, N-17 |
+| Notion ページの `Public=false` 設定 | N-12 |
+| `config.ts` の `navPages` 設定漏れ | N-13 |
