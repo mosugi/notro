@@ -323,6 +323,7 @@
   header a,
   footer a {
     color: #cbd5e1;
+    transition: color 0.15s;
   }
 
   header a:hover,
@@ -408,5 +409,91 @@
   /* Toggle */
   .nt-toggle-block__title:hover {
     color: rgba(226, 232, 240, 0.7);
+  }
+
+  /* Callout block — use dark background colors via nt-color-*_background overrides above */
+  .nt-callout-block {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* DatabaseProperty classes */
+  .nt-property-text,
+  .nt-property-number {
+    color: #94a3b8;
+  }
+
+  .nt-property-select {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+  }
+
+  .nt-property-date {
+    color: #64748b;
+  }
+
+  .nt-property-checkbox--unchecked {
+    color: #475569;
+  }
+
+  .nt-property-email,
+  .nt-property-url,
+  .nt-property-phone {
+    color: #60a5fa;
+  }
+
+  /* ── Per-page themes — dark overrides ──────────────────────────────── */
+
+  /* About page */
+  .page-about .nt-markdown-content h2 {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.12);
+  }
+
+  .page-about .nt-markdown-content h3 {
+    color: #60a5fa;
+  }
+
+  .page-about .nt-markdown-content a {
+    color: #60a5fa;
+  }
+
+  /* Privacy page */
+  .page-privacy .nt-markdown-content {
+    color: #94a3b8;
+  }
+
+  .page-privacy .nt-markdown-content h1 {
+    color: #e2e8f0;
+  }
+
+  .page-privacy .nt-markdown-content h2 {
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #64748b;
+  }
+
+  /* Blocks / Docs page */
+  .page-blocks .nt-markdown-content h2 {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Contact page */
+  .page-contact main {
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0px, transparent 240px);
+  }
+
+  .page-contact main h2 {
+    color: #93c5fd;
+  }
+
+  .page-contact main a {
+    color: #60a5fa;
+  }
+
+  .page-contact main a:hover {
+    color: #93c5fd;
+  }
+
+  .page-contact article > section {
+    border-color: rgba(255, 255, 255, 0.08);
   }
 }

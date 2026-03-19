@@ -83,9 +83,9 @@
   Node.js 22+ 要件がpackage.jsonに反映されていない（CLAUDE.mdには記載あり）
   → `/package.json`, `packages/notro/package.json`, `packages/remark-nfm/package.json`, `apps/notro-tail/package.json`
 
-- [ ] **CI の Node.js バージョンが 21.x**
+- [x] **CI の Node.js バージョンが 21.x** ✅
   CLAUDE.md の「Node.js 22+」推奨と不一致
-  → `.github/workflows/release.yml`
+  → `.github/workflows/release.yml`（確認: すでに 22.x になっていた）
 
 - [x] **`astro.config.mjs` の `remotePatterns` が全HTTPS許可** ✅
   `{ protocol: "https" }` ですべてのオリジンを許可しており広すぎる
@@ -108,7 +108,7 @@
 
 ## 🟢 低優先度（DX・一貫性）
 
-- [ ] **ダークモード対応なし**
+- [x] **ダークモード対応なし** ✅
   全色がライトモード固定のhardcoded値で、`prefers-color-scheme: dark` が未対応
   → `apps/notro-tail/src/styles/global.css`
 
@@ -124,17 +124,17 @@
   コンポーネント内で `notion-*` と `nt-*` が混在している
   → `packages/notro/src/components/notion/` 各コンポーネント
 
-- [ ] **`ClassMapKeys` に `mention-date` が欠落**
+- [x] **`ClassMapKeys` に `mention-date` が欠落** ✅
   MentionDate コンポーネントへのクラス注入ができない
-  → `packages/notro/src/components/notion/types.ts`（または相当箇所）
+  → `packages/notro/src/types.ts` および `component-resolver.ts` にすでに実装済みと確認
 
 - [ ] **`getPlainText` の `join()` に区切り文字なし**
   multi_select などで `"A,B"` でなく `"AB"` に結合される（※Notionのrich_text配列は直接連結が正しい可能性あり。要調査）
   → `packages/notro/src/utils/notion.ts`
 
-- [ ] **`calloutPlugin` が `remark-nfm` の public API として不要にエクスポートされている**
+- [x] **`calloutPlugin` が `remark-nfm` の public API として不要にエクスポートされている** ✅
   外部から単独適用すると二重処理のリスク
-  → `packages/remark-nfm/index.ts`
+  → `packages/remark-nfm/index.ts` にすでにエクスポートなし（内部実装として管理済みと確認）
 
 - [x] **カスタム 404 ページなし** ✅
   Astro デフォルトの404が表示される
@@ -163,9 +163,9 @@
 | 優先度 | 全件 | 修正済み | 残り |
 |--------|------|----------|------|
 | 🔴 高  | 9件  | 9件 ✅   | 0件  |
-| 🟡 中  | 14件 | 11件 ✅  | 3件  |
-| 🟢 低  | 12件 | 5件 ✅   | 7件  |
-| **合計** | **35件** | **25件** | **10件** |
+| 🟡 中  | 14件 | 12件 ✅  | 2件  |
+| 🟢 低  | 12件 | 7件 ✅   | 5件  |
+| **合計** | **35件** | **28件** | **7件** |
 
 ---
 
