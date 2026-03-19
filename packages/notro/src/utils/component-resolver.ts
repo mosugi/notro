@@ -46,6 +46,7 @@ export const COMPONENT_CLASS_MAP = [
 	['mention-database',       'mention'],
 	['mention-data-source',    'mention'],
 	['mention-agent',          'mention'],
+	['mention-date',           'mention-date'],
 ] as const;
 
 /** Standard HTML tags that support classMap overrides. */

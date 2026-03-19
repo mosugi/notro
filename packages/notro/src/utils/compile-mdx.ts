@@ -45,13 +45,35 @@ export async function compileMdxForAstro(
 
 	// evaluate() compiles + executes the MDX using Astro's jsx-runtime,
 	// producing a function that returns Astro VNodes.
-	const mod = await evaluate(mdxSource, {
-		jsx,
-		jsxs,
-		Fragment,
-		remarkPlugins,
-		rehypePlugins,
-	});
+	// Wrapped in try-catch so a broken page does not crash the entire build.
+	let mod: Awaited<ReturnType<typeof evaluate>>;
+	try {
+		mod = await evaluate(mdxSource, {
+			jsx,
+			jsxs,
+			Fragment,
+			remarkPlugins,
+			rehypePlugins,
+		});
+	} catch (error) {
+		console.warn(
+			`[notro] MDX compilation failed for markdown (${mdxSource.length} chars):`,
+			error,
+		);
+		// Return a fallback component that renders an error message so the build
+		// continues and the problem is visible in the output without a 500 error.
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		const FallbackContent = (props: Record<string, unknown> = {}) => {
+			void props;
+			return jsx('div', {
+				style: 'border:2px solid red;padding:1em;color:red;white-space:pre-wrap',
+				children: `[notro] MDX compilation error:\n${errorMessage}`,
+			});
+		};
+		FallbackContent[Symbol.for('astro.needsHeadRendering')] = true;
+		__astro_tag_component__(FallbackContent, 'astro:jsx');
+		return FallbackContent;
+	}
 	const MDXContent = mod.default;
 
 	// Pick up any `export const components = {...}` defined inside the MDX source.
@@ -95,6 +117,11 @@ export async function compileMdxForAstro(
 // `buildLinkToPages()` always produces a consistent insertion order, but
 // custom linkToPages objects constructed in different orders would create
 // redundant cache entries rather than sharing results.
+
+// Maximum number of entries kept in compilationCache.
+// When the limit is reached, the oldest entry (first inserted) is evicted
+// using Map's guaranteed insertion-order iteration (FIFO eviction).
+const MAX_CACHE_SIZE = 500;
 const compilationCache = new Map<string, ReturnType<typeof compileMdxForAstro>>();
 
 export async function compileMdxCached(
@@ -109,8 +136,24 @@ export async function compileMdxCached(
 
 	let entry = compilationCache.get(key);
 	if (!entry) {
-		entry = compileMdxForAstro(mdxSource, options);
-		compilationCache.set(key, entry);
+		// Evict the oldest entry (FIFO) before inserting a new one to keep
+		// memory usage bounded. Eviction is skipped when the current key is
+		// already present (cache hit), but a cache miss always inserts a new
+		// entry, so we check the size here before that insertion.
+		if (compilationCache.size >= MAX_CACHE_SIZE) {
+			const oldestKey = compilationCache.keys().next().value;
+			if (oldestKey !== undefined) {
+				compilationCache.delete(oldestKey);
+			}
+		}
+
+		// Store the promise immediately so concurrent callers share the same
+		// in-flight compilation. On error, evict the cache entry so the next
+		// request retries compilation rather than replaying the failure.
+		const promise = compileMdxForAstro(mdxSource, options);
+		compilationCache.set(key, promise);
+		promise.catch(() => compilationCache.delete(key));
+		entry = promise;
 	}
 	return entry;
 }

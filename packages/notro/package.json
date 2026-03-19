@@ -32,18 +32,23 @@
     "utils.ts",
     "src/components",
     "src/loader",
-    "src/markdown",
     "src/utils"
   ],
   "scripts": {
-    "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'"
+    "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
   },
   "peerDependencies": {
     "astro": ">=6.0.0"
   },
   "devDependencies": {
     "astro": "^6.0.4",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
   },
   "publishConfig": {
     "provenance": true

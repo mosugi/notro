@@ -1,9 +1,11 @@
 ---
 /** <video src="URL" color="Color">Caption</video> */
+import { colorToClass } from './colors';
+
 interface Props { src: string; color?: string; class?: string; }
-const { src, class: className } = Astro.props;
+const { src, color, class: className } = Astro.props;
 ---
-<figure class:list={["notion-media notion-media--video", className]}>
-	<video controls src={src} class="notion-media__player"></video>
-	{Astro.slots.has('default') && <figcaption class="notion-media__caption"><slot /></figcaption>}
+<figure class:list={["nt-media-block nt-media-block--video", colorToClass(color), className]}>
+	<video controls src={src} class="nt-media-block__player"></video>
+	{Astro.slots.has('default') && <figcaption class="nt-media-block__caption"><slot /></figcaption>}
 </figure>

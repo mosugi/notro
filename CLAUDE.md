@@ -483,4 +483,32 @@ print('Error:', d.get('errorMessage', 'none'))
 
 ## Known Issues / TODOs
 
-- Truncated Notion markdown (`markdownResponse.truncated === true`) is logged as a warning but not handled with paginated retrieval yet.
+_以下はいずれも Notion API 側の制限に起因するもので、notro では警告ログを出力して処理を継続する。_
+
+### `pages.retrieveMarkdown` API の制限事項
+
+> 参照: https://developers.notion.com/reference/retrieve-page-markdown
+
+#### truncated — コンテンツの切り詰め
+
+`markdownResponse.truncated === true` の場合、ページのコンテンツが Notion API の上限（約 20,000 ブロック）を超えており、**残りのコンテンツは取得できない**。
+
+- このエンドポイントにはカーソルやページネーションパラメータが存在しない（`@notionhq/client` v5.11.1 の型定義で確認済み）
+- 切り詰められたコンテンツはそのままビルドに使用される
+- **対処法**: 大きな Notion ページを複数のサブページに分割すること
+
+#### unknown_block_ids — レンダリング不能なブロック
+
+`markdownResponse.unknown_block_ids` に含まれるブロック ID は、Notion API が Markdown に変換できなかったブロック（未対応ブロック型など）を示す。
+
+- これらのブロックはレスポンスの `markdown` から**無言で除外される**
+- このエンドポイント経由でその内容を取得する方法はない
+- notro では block ID の一覧を警告ログに出力して処理を継続する
+
+#### エラーハンドリング方針
+
+| エラーコード | 対応 |
+|---|---|
+| `429 rate_limited` / `500 internal_server_error` / `503 service_unavailable` | exponential backoff でリトライ（1s / 2s / 4s、最大3回） |
+| `401 unauthorized` / `403 restricted_resource` / `404 object_not_found` | リトライなし。警告ログを出力してそのページをスキップ |
+| その他の予期しないエラー | 警告ログを出力してそのページをスキップ（ビルド全体は継続） |

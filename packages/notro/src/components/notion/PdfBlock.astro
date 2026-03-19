@@ -1,9 +1,11 @@
 ---
 /** <pdf src="URL" color="Color">Caption</pdf> */
+import { colorToClass } from './colors';
+
 interface Props { src: string; color?: string; class?: string; }
-const { src, class: className } = Astro.props;
+const { src, color, class: className } = Astro.props;
 ---
-<figure class:list={["notion-pdf", className]}>
-	<iframe src={src} class="notion-pdf__frame" title="PDF" loading="lazy"></iframe>
-	{Astro.slots.has('default') && <figcaption class="notion-pdf__caption"><slot /></figcaption>}
+<figure class:list={["nt-pdf-block", colorToClass(color), className]}>
+	<iframe src={src} class="nt-pdf-block__frame" title="PDF" loading="lazy"></iframe>
+	{Astro.slots.has('default') && <figcaption class="nt-pdf-block__caption"><slot /></figcaption>}
 </figure>

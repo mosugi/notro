@@ -62,6 +62,15 @@ export function preprocessNotionMarkdown(markdown: string): string {
   let result = markdown.replace(/\\\$([^$\n]+)\\\$/g, (_, content: string) => `$${content}$`);
 
   // Fix 1: Ensure --- dividers have a blank line before them.
+  // A "---" line immediately after any non-blank content (including after a
+  // whitespace-only line that itself follows text) is interpreted as a setext
+  // H2 heading. We ensure a blank line precedes every "---" divider.
+  //
+  // Step 1a: Handle "text\n   \n---" — a whitespace-only line between text and ---
+  // is not reliably treated as a blank line by all parsers, so explicitly insert
+  // a blank line before the --- and remove the trailing whitespace from the line.
+  result = result.replace(/([^\n])\n[ \t]+\n(---+)(\n|$)/g, "$1\n\n$2$3");
+  // Step 1b: Handle "text\n---" — no intervening line at all.
   result = result.replace(/([^\n])\n(---+)(\n|$)/g, "$1\n\n$2$3");
 
   // Fix 2: Normalize callout directive syntax.
@@ -70,12 +79,70 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // remark-directive requires ":::callout{...}" (no spaces, attrs optional).
   // Also dedent tab-indented content inside callout blocks — CommonMark
   // treats tab-indented lines as indented code blocks otherwise.
-  result = result.replace(/^::: callout( \{[^}]*\})?$/gm, (_, attrs) => `:::callout${attrs?.trim() ?? ""}`);
-  result = result.replace(
-    /^(:::callout[^\n]*)\n([\s\S]*?)^:::$/gm,
-    (_, opening: string, content: string) =>
-      `${opening}\n${content.replace(/^\t/gm, "")}:::`
-  );
+  // Process callout blocks line-by-line to correctly handle nested ::: directives.
+  // A regex-based approach fails when the callout body contains other ::: blocks
+  // (e.g. :::note … :::) because the lazy [\s\S]*? matches up to the first :::
+  // on a line, closing the outer callout too early. Instead we track nesting depth
+  // explicitly and find the matching closing ::: before dedenting the body.
+  //
+  // This function also handles nested callouts that are tab-indented inside an
+  // outer callout block. After dedenting the outer callout body, the inner
+  // "::: callout" syntax is normalized and then processed recursively so that
+  // nested callouts are fully expanded at every level.
+  result = (function processCalloutsDedent(input: string): string {
+    // Normalize "::: callout {attrs}" → ":::callout{attrs}" at any indentation level.
+    // This is run at each recursive level so that newly-dedented inner callout
+    // opening lines are normalized before the line scanner processes them.
+    const normalized = input.replace(
+      /^::: callout( \{[^}]*\})?$/gm,
+      (_, attrs) => `:::callout${attrs?.trim() ?? ""}`,
+    );
+    const lines = normalized.split("\n");
+    const out: string[] = [];
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      if (/^:::callout/.test(line)) {
+        // Scan forward to find the matching closing ::: at depth 0.
+        // Only lines that start exactly with ":::" (no leading whitespace) count
+        // as directive markers at this nesting level.
+        let depth = 1;
+        let j = i + 1;
+        while (j < lines.length) {
+          if (/^:::/.test(lines[j])) {
+            if (lines[j] === ":::") {
+              depth--;
+              if (depth === 0) break;
+            } else {
+              // Any other opening directive (:::callout, :::note, etc.) increases depth.
+              depth++;
+            }
+          }
+          j++;
+        }
+        if (j < lines.length) {
+          // Found the matching closing :::; dedent content between open and close,
+          // then recursively process the dedented content so that nested callout
+          // blocks inside are also normalized and dedented.
+          const contentLines = lines.slice(i + 1, j);
+          const dedented = contentLines.map((cl) => cl.replace(/^\t/, "")).join("\n");
+          const processedContent = processCalloutsDedent(dedented);
+          out.push(line);
+          if (processedContent) out.push(...processedContent.split("\n"));
+          out.push(":::");
+          i = j + 1;
+        } else {
+          // No matching closing ::: found — emit the opening line as-is and continue.
+          out.push(line);
+          i++;
+        }
+      } else {
+        out.push(line);
+        i++;
+      }
+    }
+    return out.join("\n");
+  })(result);
 
   // Fix 3: Convert block-level color annotations to raw HTML.
   result = result.replace(
@@ -136,9 +203,12 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // Notion exports table cell links as [text](url) inside <td>...</td>, but remark
   // does not process inline markdown inside raw HTML blocks. Replace them with
   // proper anchor elements so they render as clickable links.
+  // The URL pattern handles one level of nested parentheses, e.g.:
+  //   https://en.wikipedia.org/wiki/Rust_(programming_language)
+  //   https://developer.mozilla.org/docs/Array/find()
   result = result.replace(/<td>([\s\S]*?)<\/td>/g, (_, content: string) => {
     const linked = content.replace(
-      /\[([^\]\n]+)\]\(([^)\n]+)\)/g,
+      /\[([^\]\n]+)\]\(([^()\n]*(?:\([^()\n]*\)[^()\n]*)*)\)/g,
       '<a href="$2">$1</a>'
     );
     return `<td>${linked}</td>`;

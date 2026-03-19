@@ -18,6 +18,43 @@ function renderProperty(p: PropertyPageObjectResponseType) {
       return p.date?.start ?? null;
     case "title":
       return p.title?.length > 0 ? p.title.map((t) => t.plain_text).join("") : null;
+    case "checkbox":
+      return p.checkbox ? "✓" : "✗";
+    case "number":
+      return p.number !== null ? String(p.number) : null;
+    case "status":
+      return p.status?.name ?? null;
+    // Best-effort plain text for complex types
+    case "files":
+      return p.files.length > 0 ? p.files.map((f) => f.name).join(", ") : null;
+    case "people":
+      return p.people.length > 0
+        ? p.people.map((u) => ("name" in u && u.name ? u.name : u.id)).join(", ")
+        : null;
+    case "relation":
+      return p.relation.length > 0 ? p.relation.map((r) => r.id).join(", ") : null;
+    case "formula": {
+      const f = p.formula;
+      if (f.type === "string") return f.string ?? null;
+      if (f.type === "number") return f.number !== null ? String(f.number) : null;
+      if (f.type === "boolean") return f.boolean !== null ? String(f.boolean) : null;
+      if (f.type === "date") return f.date?.start ?? null;
+      return null;
+    }
+    case "rollup": {
+      const r = p.rollup;
+      if (r.type === "number") return r.number !== null ? String(r.number) : null;
+      if (r.type === "date") return r.date?.start ?? null;
+      return null;
+    }
+    case "created_time":
+      return p.created_time;
+    case "last_edited_time":
+      return p.last_edited_time;
+    case "unique_id":
+      return p.unique_id.number !== null
+        ? (p.unique_id.prefix ? `${p.unique_id.prefix}-${p.unique_id.number}` : String(p.unique_id.number))
+        : null;
     default:
       return null;
   }
@@ -43,5 +80,41 @@ function renderProperty(p: PropertyPageObjectResponseType) {
   )}
   {property.type === "title" && property.title?.length > 0 && (
     <p class="nt-property-text">{renderProperty(property)}</p>
+  )}
+  {property.type === "checkbox" && (
+    <span class={`nt-property-checkbox ${property.checkbox ? "nt-property-checkbox--checked" : "nt-property-checkbox--unchecked"}`}>
+      {property.checkbox ? "✓" : "✗"}
+    </span>
+  )}
+  {property.type === "number" && property.number !== null && (
+    <span class="nt-property-number">{property.number}</span>
+  )}
+  {property.type === "email" && property.email && (
+    <a class="nt-property-email" href={`mailto:${property.email}`}>{property.email}</a>
+  )}
+  {property.type === "url" && property.url && (
+    <a class="nt-property-url" href={property.url} target="_blank" rel="noopener noreferrer">{property.url}</a>
+  )}
+  {property.type === "phone_number" && property.phone_number && (
+    <a class="nt-property-phone" href={`tel:${property.phone_number}`}>{property.phone_number}</a>
+  )}
+  {property.type === "status" && property.status && (
+    <span class="nt-property-select">{property.status.name}</span>
+  )}
+  {/* Best-effort plain text rendering for complex types */}
+  {property.type === "files" && property.files.length > 0 && (
+    <span class="nt-property-text">{renderProperty(property)}</span>
+  )}
+  {property.type === "people" && property.people.length > 0 && (
+    <span class="nt-property-text">{renderProperty(property)}</span>
+  )}
+  {property.type === "relation" && property.relation.length > 0 && (
+    <span class="nt-property-text">{renderProperty(property)}</span>
+  )}
+  {property.type === "formula" && renderProperty(property) !== null && (
+    <span class="nt-property-text">{renderProperty(property)}</span>
+  )}
+  {property.type === "rollup" && renderProperty(property) !== null && (
+    <span class="nt-property-text">{renderProperty(property)}</span>
   )}
 </div>

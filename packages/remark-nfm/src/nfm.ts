@@ -51,7 +51,14 @@ export const remarkNfm: Plugin<[Options?], Root, Root> = function (options): Tra
 	// @ts-expect-error: TS is wrong about `this`.
 	const self = this as Processor<Root>;
 	const _settings = options || emptyOptions;
-	const data = self.data();
+	const data = self.data() as Record<string, unknown>;
+
+	// Guard against double-application: if this plugin has already been attached
+	// to the processor (e.g. via two remarkPlugins entries or a nested use()),
+	// skip re-registering extensions and the parser patch to avoid duplicate
+	// preprocessNotionMarkdown() runs and stacked micromark extensions.
+	if (data.remarkNfmAttached) return;
+	data.remarkNfmAttached = true;
 
 	// ── Pre-parse normalization ─────────────────────────────────────────────
 	// Wrap self.parser (unified v11 lowercase API; self.Parser uppercase is

@@ -5,9 +5,11 @@ export const getPlainText = (
   property: PropertyPageObjectResponseType,
 ): string | undefined => {
   if (property?.type === "rich_text" && property.rich_text.length > 0) {
+    // rich_text arrays represent adjacent text spans; direct concatenation (no separator) is correct per Notion spec.
     return property.rich_text.map((t) => t.plain_text).join("");
   }
   if (property?.type === "title" && property.title.length > 0) {
+    // title arrays also represent adjacent text spans; direct concatenation is correct.
     return property.title.map((t) => t.plain_text).join("");
   }
   if (property?.type === "select" && property.select?.name !== undefined) {
@@ -17,7 +19,8 @@ export const getPlainText = (
     property?.type === "multi_select" &&
     property.multi_select !== undefined
   ) {
-    return property.multi_select.map((option) => option.name).join();
+    // Use ", " separator so that multi-select values are human-readable (e.g. "A, B, C").
+    return property.multi_select.map((option) => option.name).join(", ");
   }
   if (property?.type === "number" && property.number !== null) {
     return String(property.number);
@@ -107,13 +110,18 @@ export function buildLinkToPages<T extends { id: string; data: Record<string, un
     title: (entry: T) => string;
   },
 ): LinkToPages {
-  return Object.fromEntries(
-    entries.map((entry) => [
-      entry.id,
-      {
-        url: options.url(entry),
-        title: options.title(entry),
-      },
-    ]),
-  );
+  const result: LinkToPages = {};
+  for (const entry of entries) {
+    if (entry.id in result) {
+      // Warn when two entries share the same Notion page ID; the later entry wins.
+      console.warn(
+        `[notro] buildLinkToPages: duplicate entry id "${entry.id}" — the later entry will overwrite the earlier one.`,
+      );
+    }
+    result[entry.id] = {
+      url: options.url(entry),
+      title: options.title(entry),
+    };
+  }
+  return result;
 }

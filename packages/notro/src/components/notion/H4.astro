@@ -1,6 +1,6 @@
 ---
-import { colorToCSS } from './colors';
+import { colorToClass } from './colors';
 interface Props { color?: string; id?: string; class?: string; }
 const { color, id, class: className } = Astro.props;
 ---
-<h4 {id} class:list={["notion-h4", className]} style={colorToCSS(color)}><slot /></h4>
+<h4 {id} class:list={["nt-header-block", colorToClass(color), className]}><slot /></h4>

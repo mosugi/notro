@@ -8,6 +8,38 @@
  * Accent: #2383e2 (Notion blue)
  */
 
+/*
+ * Notion color CSS custom properties (light mode defaults).
+ * These are referenced by .nt-color-* utility classes so that:
+ *   1. Dark mode can override all colors in one @media block.
+ *   2. Users can customise individual colors without touching components.
+ *
+ * Naming convention:
+ *   --nt-color-{name}     → text color
+ *   --nt-color-{name}-bg  → background color
+ */
+:root {
+  --nt-color-gray:      #787774;
+  --nt-color-brown:     #9F6B53;
+  --nt-color-orange:    #D9730D;
+  --nt-color-yellow:    #CB912F;
+  --nt-color-green:     #448361;
+  --nt-color-blue:      #337EA9;
+  --nt-color-purple:    #9065B0;
+  --nt-color-pink:      #C14C8A;
+  --nt-color-red:       #D44C47;
+
+  --nt-color-gray-bg:   #F1F1EF;
+  --nt-color-brown-bg:  #F4EEEE;
+  --nt-color-orange-bg: #FBECDD;
+  --nt-color-yellow-bg: #FBF3DB;
+  --nt-color-green-bg:  #EDF3EC;
+  --nt-color-blue-bg:   #E7F3F8;
+  --nt-color-purple-bg: #F6F3F9;
+  --nt-color-pink-bg:   #FAF1F5;
+  --nt-color-red-bg:    #FDEBEC;
+}
+
 @layer base {
   body {
     font-family:
@@ -51,6 +83,163 @@
   }
 
   /*
+   * DatabaseProperty component classes
+   * Used by DatabaseProperty.astro to render Notion property values.
+   */
+  .nt-collection-property {
+    @apply text-sm;
+  }
+
+  .nt-property-text {
+    @apply m-0 text-sm text-gray-700;
+  }
+
+  .nt-property-select {
+    @apply inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700;
+  }
+
+  .nt-property-multi-select {
+    @apply flex flex-wrap gap-1;
+  }
+
+  .nt-property-date {
+    @apply text-sm text-gray-600;
+  }
+
+  .nt-property-checkbox {
+    @apply text-sm font-mono;
+  }
+
+  .nt-property-checkbox--checked {
+    @apply text-green-600;
+  }
+
+  .nt-property-checkbox--unchecked {
+    @apply text-gray-400;
+  }
+
+  .nt-property-number {
+    @apply text-sm tabular-nums text-gray-700;
+  }
+
+  .nt-property-email,
+  .nt-property-url,
+  .nt-property-phone {
+    @apply text-sm text-blue-600 underline underline-offset-2;
+  }
+
+  /*
+   * Notion table wrapper classes
+   * Used by TableBlock.astro (nt-table-wrapper / nt-table).
+   */
+  .nt-table-wrapper {
+    overflow-x: auto;
+    @apply my-4 w-full;
+  }
+
+  .nt-table-wrapper--full {
+    @apply w-full;
+  }
+
+  .nt-table {
+    @apply w-full border-collapse text-sm;
+    border: 1px solid rgba(55, 53, 47, 0.09);
+  }
+
+  .nt-table td,
+  .nt-table th {
+    @apply px-3 py-1.5 text-left align-top;
+    border: 1px solid rgba(55, 53, 47, 0.09);
+  }
+
+  /* Header row: first <tr> in a table with header-row enabled */
+  .nt-table--header-row tr:first-child td,
+  .nt-table--header-row tr:first-child th {
+    @apply font-semibold;
+    background-color: rgba(55, 53, 47, 0.04);
+  }
+
+  /* Header column: first <td>/<th> in each row when header-column is enabled */
+  .nt-table--header-col td:first-child,
+  .nt-table--header-col th:first-child {
+    @apply font-semibold;
+    background-color: rgba(55, 53, 47, 0.04);
+  }
+
+  /*
+   * Notion color classes
+   * Applied by colorToClass() in colors.ts for text and background colors.
+   * Notion API color names: gray, brown, orange, yellow, green, blue, purple, pink, red
+   * Background variants use the _background suffix (Notion API) or _bg suffix (legacy).
+   *
+   * All values reference CSS custom properties defined on :root above.
+   * Override a color globally by setting the corresponding --nt-color-* variable.
+   */
+  .nt-color-gray              { color: var(--nt-color-gray); }
+  .nt-color-brown             { color: var(--nt-color-brown); }
+  .nt-color-orange            { color: var(--nt-color-orange); }
+  .nt-color-yellow            { color: var(--nt-color-yellow); }
+  .nt-color-green             { color: var(--nt-color-green); }
+  .nt-color-blue              { color: var(--nt-color-blue); }
+  .nt-color-purple            { color: var(--nt-color-purple); }
+  .nt-color-pink              { color: var(--nt-color-pink); }
+  .nt-color-red               { color: var(--nt-color-red); }
+
+  .nt-color-gray_background   { background-color: var(--nt-color-gray-bg); }
+  .nt-color-brown_background  { background-color: var(--nt-color-brown-bg); }
+  .nt-color-orange_background { background-color: var(--nt-color-orange-bg); }
+  .nt-color-yellow_background { background-color: var(--nt-color-yellow-bg); }
+  .nt-color-green_background  { background-color: var(--nt-color-green-bg); }
+  .nt-color-blue_background   { background-color: var(--nt-color-blue-bg); }
+  .nt-color-purple_background { background-color: var(--nt-color-purple-bg); }
+  .nt-color-pink_background   { background-color: var(--nt-color-pink-bg); }
+  .nt-color-red_background    { background-color: var(--nt-color-red-bg); }
+
+  /* Legacy _bg suffix aliases — same variables as _background */
+  .nt-color-gray_bg           { background-color: var(--nt-color-gray-bg); }
+  .nt-color-brown_bg          { background-color: var(--nt-color-brown-bg); }
+  .nt-color-orange_bg         { background-color: var(--nt-color-orange-bg); }
+  .nt-color-yellow_bg         { background-color: var(--nt-color-yellow-bg); }
+  .nt-color-green_bg          { background-color: var(--nt-color-green-bg); }
+  .nt-color-blue_bg           { background-color: var(--nt-color-blue-bg); }
+  .nt-color-purple_bg         { background-color: var(--nt-color-purple-bg); }
+  .nt-color-pink_bg           { background-color: var(--nt-color-pink-bg); }
+  .nt-color-red_bg            { background-color: var(--nt-color-red-bg); }
+
+  /*
+   * Toggle (details/summary) — smooth open/close transition for the disclosure triangle
+   */
+  .nt-toggle-block__title {
+    cursor: pointer;
+    list-style: none;
+    transition: color 0.15s ease;
+  }
+
+  .nt-toggle-block__title:hover {
+    color: rgba(55, 53, 47, 0.7);
+  }
+
+  /* Hide default browser triangle marker */
+  .nt-toggle-block__title::marker,
+  .nt-toggle-block__title::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Custom disclosure triangle with rotation transition */
+  .nt-toggle-block__title::before {
+    content: "▶";
+    display: inline-block;
+    margin-right: 0.4em;
+    font-size: 0.65em;
+    transition: transform 0.2s ease;
+    transform-origin: center;
+  }
+
+  details[open] > .nt-toggle-block__title::before {
+    transform: rotate(90deg);
+  }
+
+  /*
    * Inline code — global CSS for :not(pre) > code selector
    * (classMap cannot express this nesting distinction)
    */
@@ -61,6 +250,42 @@
     border-radius: 3px;
     padding: 0.2em 0.4em;
     font-size: 85%;
+  }
+
+  /* Toggle block — smooth indicator rotation on open/close */
+  .nt-toggle-block > details > summary,
+  .nt-markdown-content details > summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  .nt-toggle-block > details > summary::-webkit-details-marker,
+  .nt-markdown-content details > summary::-webkit-details-marker {
+    display: none;
+  }
+  /* Animated disclosure triangle via ::before pseudo-element */
+  .nt-toggle-block > details > summary::before,
+  .nt-markdown-content details > summary::before {
+    content: "▶";
+    display: inline-block;
+    font-size: 0.6em;
+    margin-right: 0.5em;
+    transition: transform 0.2s ease;
+    transform-origin: center;
+    vertical-align: middle;
+    color: rgba(55, 53, 47, 0.45);
+  }
+  .nt-toggle-block > details[open] > summary::before,
+  .nt-markdown-content details[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  /* Fade-in for toggle content when opened */
+  .nt-toggle-block > details > :not(summary),
+  .nt-markdown-content details > :not(summary) {
+    animation: nt-toggle-fadein 0.15s ease;
+  }
+  @keyframes nt-toggle-fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
 }
 
@@ -148,4 +373,205 @@
 
 .page-contact article > section:last-child {
   @apply border-b-0 pb-0;
+}
+
+/* ── Dark mode ───────────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  /*
+   * Override Notion color custom properties for dark mode.
+   * All .nt-color-* classes inherit these values automatically
+   * without needing per-class overrides.
+   */
+  :root {
+    --nt-color-gray:      #9b9b97;
+    --nt-color-brown:     #c49a82;
+    --nt-color-orange:    #e88c4a;
+    --nt-color-yellow:    #d9a84e;
+    --nt-color-green:     #6aad8a;
+    --nt-color-blue:      #5ba5cc;
+    --nt-color-purple:    #b08fd0;
+    --nt-color-pink:      #d97ab3;
+    --nt-color-red:       #e07b78;
+
+    --nt-color-gray-bg:   #2d2d2b;
+    --nt-color-brown-bg:  #2e2320;
+    --nt-color-orange-bg: #2e2010;
+    --nt-color-yellow-bg: #2b2410;
+    --nt-color-green-bg:  #182b22;
+    --nt-color-blue-bg:   #142533;
+    --nt-color-purple-bg: #21192d;
+    --nt-color-pink-bg:   #2d1425;
+    --nt-color-red-bg:    #2d1314;
+  }
+
+  @layer base {
+    body {
+      color: #e2e8f0;
+      background-color: #0f172a;
+    }
+  }
+
+  /* Header & footer */
+  header {
+    background-color: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0;
+  }
+
+  header a,
+  footer a {
+    color: #cbd5e1;
+    transition: color 0.15s;
+  }
+
+  header a:hover,
+  footer a:hover {
+    color: #f1f5f9;
+  }
+
+  footer {
+    background-color: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #94a3b8;
+  }
+
+  /* Notion markdown content */
+  .nt-markdown-content {
+    color: #e2e8f0;
+  }
+
+  /* Article header in blog/[slug].astro */
+  article header {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  /* Prev/next article nav */
+  .article-nav-link {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+  }
+
+  .article-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+  }
+
+  /* Inline code */
+  .nt-markdown-content :not(pre) > code {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f87171;
+  }
+
+  /* Code blocks (pre) */
+  .nt-markdown-content pre {
+    background-color: #1e293b;
+    color: #e2e8f0;
+  }
+
+  /* Notion table */
+  .nt-table {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .nt-table td,
+  .nt-table th {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .nt-table--header-row tr:first-child td,
+  .nt-table--header-row tr:first-child th,
+  .nt-table--header-col td:first-child,
+  .nt-table--header-col th:first-child {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Toggle */
+  .nt-toggle-block__title:hover {
+    color: rgba(226, 232, 240, 0.7);
+  }
+
+  /* Callout block — dark background colors are handled by --nt-color-*-bg variable overrides above */
+  .nt-callout-block {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* DatabaseProperty classes */
+  .nt-property-text,
+  .nt-property-number {
+    color: #94a3b8;
+  }
+
+  .nt-property-select {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #94a3b8;
+  }
+
+  .nt-property-date {
+    color: #64748b;
+  }
+
+  .nt-property-checkbox--unchecked {
+    color: #475569;
+  }
+
+  .nt-property-email,
+  .nt-property-url,
+  .nt-property-phone {
+    color: #60a5fa;
+  }
+
+  /* ── Per-page themes — dark overrides ──────────────────────────────── */
+
+  /* About page */
+  .page-about .nt-markdown-content h2 {
+    border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.12);
+  }
+
+  .page-about .nt-markdown-content h3 {
+    color: #60a5fa;
+  }
+
+  .page-about .nt-markdown-content a {
+    color: #60a5fa;
+  }
+
+  /* Privacy page */
+  .page-privacy .nt-markdown-content {
+    color: #94a3b8;
+  }
+
+  .page-privacy .nt-markdown-content h1 {
+    color: #e2e8f0;
+  }
+
+  .page-privacy .nt-markdown-content h2 {
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #64748b;
+  }
+
+  /* Blocks / Docs page */
+  .page-blocks .nt-markdown-content h2 {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Contact page */
+  .page-contact main {
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0px, transparent 240px);
+  }
+
+  .page-contact main h2 {
+    color: #93c5fd;
+  }
+
+  .page-contact main a {
+    color: #60a5fa;
+  }
+
+  .page-contact main a:hover {
+    color: #93c5fd;
+  }
+
+  .page-contact article > section {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
 }

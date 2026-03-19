@@ -138,6 +138,20 @@ This repository is an **npm workspace monorepo** containing three packages:
 remark-nfm  ←  notro  ←  notro-tail
 ```
 
+## Known Limitations
+
+### Content truncation
+
+The Notion API truncates page content at approximately **20,000 blocks**. There is no pagination API for this endpoint, so truncated content cannot be retrieved in full. notro logs a warning and builds with what is available.
+
+**Workaround:** Split large Notion pages into smaller sub-pages.
+
+### Unsupported block types
+
+Some Notion block types cannot be converted to Markdown by the API. These blocks are silently omitted from the response. notro logs the affected block IDs so you can identify and update the content.
+
+For details, see the [Notion API documentation](https://developers.notion.com/reference/retrieve-page-markdown) and the `notro` package [README](./packages/notro/README.md#notion-api-の制限事項).
+
 ## Contributing
 
 Please create an issue for bug reports or feature requests. Any feedback is welcome in any language. Pull requests are also appreciated.
