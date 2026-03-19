@@ -453,7 +453,7 @@
     color: rgba(226, 232, 240, 0.7);
   }
 
-  /* Callout block — use dark background colors via nt-color-*_background overrides above */
+  /* Callout block — dark background colors are handled by --nt-color-*-bg variable overrides above */
   .nt-callout-block {
     border-color: rgba(255, 255, 255, 0.1);
   }
