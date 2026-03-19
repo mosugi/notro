@@ -63,7 +63,7 @@
   同一IDのエントリが後勝ちで上書きされリンクが壊れる可能性がある（警告ログを追加）
   → `packages/notro/src/utils/notion.ts`
 
-- [ ] **コンパイルキャッシュのメモリ上限なし**
+- [x] **コンパイルキャッシュのメモリ上限なし** ✅
   大規模サイトで `compilationCache` が無制限に増大する
   → `packages/notro/src/utils/compile-mdx.ts`
 
@@ -163,9 +163,28 @@
 | 優先度 | 全件 | 修正済み | 残り |
 |--------|------|----------|------|
 | 🔴 高  | 9件  | 9件 ✅   | 0件  |
-| 🟡 中  | 14件 | 10件 ✅  | 4件  |
+| 🟡 中  | 14件 | 11件 ✅  | 3件  |
 | 🟢 低  | 12件 | 5件 ✅   | 7件  |
-| **合計** | **35件** | **24件** | **11件** |
+| **合計** | **35件** | **25件** | **10件** |
+
+---
+
+## 🚀 2026-03-19 セッション — 残り11件の対応計画（10エージェント並行）
+
+> branch: `claude/identify-missing-features-JeNyS`
+
+| Agent | 優先度 | 担当ファイル | タスク |
+|-------|--------|-------------|--------|
+| A1 | 🟡 中 | `packages/remark-nfm/src/transformer.ts` | Fix 1 スペースのみ行の誤マッチ修正 + Fix 2 ネストcallout対応 |
+| A2 | 🟡 中 | `packages/notro/src/utils/compile-mdx.ts` | コンパイルキャッシュのメモリ上限実装（LRU or FIFO MAX_CACHE_SIZE） |
+| A3 | 🟡 中 | `.github/workflows/release.yml` | CI の Node.js バージョンを 21.x → 22.x に修正 |
+| A4 | 🟢 低 | `apps/notro-tail/src/styles/global.css` | ダークモード対応（`prefers-color-scheme: dark`） |
+| A5 | 🟢 低 | `packages/notro/src/utils/colors.ts` + 関連コンポーネント | Notion色をCSS変数化（inline style → カスタムプロパティ） |
+| A6 | 🟢 低 | `packages/notro/src/components/notion/` 各コンポーネント | クラス命名規約統一（`notion-*` → `nt-*`） |
+| A7 | 🟢 低 | `packages/notro/src/types.ts` + `packages/remark-nfm/index.ts` | ClassMapKeys に `mention-date` 追加 + calloutPlugin を内部化 |
+| A8 | 🟢 低 | `packages/notro/src/utils/notion.ts` + `packages/notro/src/utils/notion-url.ts` | getPlainText join 調査・修正 + markdownHasPresignedUrls false positive 修正 |
+| A9 | 🟢 低 | `packages/notro/tsconfig.json`（新規） | packages/notro の tsconfig.json 作成 |
+| A10 | 🟢 低 | `apps/notro-tail/src/pages/blog/[slug].astro` | Toggle/hover トランジション追加（CSS transition） |
 
 ## テストページ（Notion）
 
