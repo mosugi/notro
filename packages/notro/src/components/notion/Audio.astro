@@ -1,11 +1,11 @@
 ---
 /** <audio src="URL" color="Color">Caption</audio> */
-import { colorToCSS } from './colors';
+import { colorToClass } from './colors';
 
 interface Props { src: string; color?: string; class?: string; }
 const { src, color, class: className } = Astro.props;
 ---
-<figure class:list={["notion-media notion-media--audio", className]} style={colorToCSS(color)}>
-	<audio controls src={src} class="notion-media__player"></audio>
-	{Astro.slots.has('default') && <figcaption class="notion-media__caption"><slot /></figcaption>}
+<figure class:list={["nt-media-block nt-media-block--audio", colorToClass(color), className]}>
+	<audio controls src={src} class="nt-media-block__player"></audio>
+	{Astro.slots.has('default') && <figcaption class="nt-media-block__caption"><slot /></figcaption>}
 </figure>

@@ -8,7 +8,7 @@
  * Mapped to MDX `components.details`.
  * Used together with ToggleTitle.astro (components.summary).
  */
-import { colorToCSS } from './colors';
+import { colorToClass } from './colors';
 
 interface Props {
 	color?: string;
@@ -18,6 +18,6 @@ interface Props {
 const { color, class: className } = Astro.props;
 ---
 
-<details class:list={["notion-toggle", className]} style={colorToCSS(color)}>
+<details class:list={["nt-toggle-block", colorToClass(color), className]}>
 	<slot />
 </details>

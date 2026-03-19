@@ -5,7 +5,7 @@
  *
  * Mapped to MDX `components.blockquote`.
  */
-import { colorToCSS } from './colors';
+import { colorToClass } from './colors';
 
 interface Props {
 	color?: string;
@@ -15,6 +15,6 @@ interface Props {
 const { color, class: className } = Astro.props;
 ---
 
-<blockquote class:list={["notion-quote", className]} style={colorToCSS(color)}>
+<blockquote class:list={["nt-quote-block", colorToClass(color), className]}>
 	<slot />
 </blockquote>

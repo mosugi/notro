@@ -6,12 +6,12 @@
  * In production, use rehype-slug + rehype-autolink-headings with
  * client-side JS for dynamic generation.
  */
-import { colorToCSS } from './colors';
+import { colorToClass } from './colors';
 interface Props { color?: string; class?: string; }
 const { color, class: className } = Astro.props;
 ---
 
-<nav class:list={["notion-toc", className]} style={colorToCSS(color)} aria-label="目次">
-	<p class="notion-toc__label">📋 目次</p>
+<nav class:list={["nt-toc-block", colorToClass(color), className]} aria-label="目次">
+	<p class="nt-toc-block__label">📋 目次</p>
 	<slot />
 </nav>

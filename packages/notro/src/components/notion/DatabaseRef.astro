@@ -10,9 +10,9 @@ const { url, inline = 'false', icon = '🗄️', color, class: className } = Ast
 ---
 <a
 	href={url}
-	class:list={['notion-database-ref', className, { 'notion-database-ref--inline': inline === 'true' }]}
+	class:list={['nt-database-ref', className, { 'nt-database-ref--inline': inline === 'true' }]}
 	style={colorToCSS(color)}
 >
-	<span class="notion-database-ref__icon" aria-hidden="true">{icon}</span>
+	<span class="nt-database-ref__icon" aria-hidden="true">{icon}</span>
 	<slot />
 </a>

@@ -4,12 +4,12 @@
  *
  * Notion image block. Mapped to MDX `components.img`.
  */
-import { colorToCSS } from './colors';
+import { colorToClass } from './colors';
 
 interface Props { src: string; alt?: string; color?: string; class?: string; }
 const { src, alt, color, class: className } = Astro.props;
 ---
-<figure class:list={["notion-image", className]} style={colorToCSS(color)}>
-	<img src={src} alt={alt ?? ''} loading="lazy" class="notion-image__img h-auto max-w-full" />
-	{alt && <figcaption class="notion-image__caption">{alt}</figcaption>}
+<figure class:list={["nt-image-block", colorToClass(color), className]}>
+	<img src={src} alt={alt ?? ''} loading="lazy" class="nt-image-block__img h-auto max-w-full" />
+	{alt && <figcaption class="nt-image-block__caption">{alt}</figcaption>}
 </figure>

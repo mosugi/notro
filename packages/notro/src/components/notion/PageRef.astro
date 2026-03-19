@@ -8,7 +8,7 @@ import { colorToCSS } from './colors';
 interface Props { url: string; color?: string; class?: string; }
 const { url, color, class: className } = Astro.props;
 ---
-<a href={url} class:list={["notion-page-ref", className]} style={colorToCSS(color)}>
-	<span class="notion-page-ref__icon" aria-hidden="true">📄</span>
+<a href={url} class:list={["nt-page-ref", className]} style={colorToCSS(color)}>
+	<span class="nt-page-ref__icon" aria-hidden="true">📄</span>
 	<slot />
 </a>

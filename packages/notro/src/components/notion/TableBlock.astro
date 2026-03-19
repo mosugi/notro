@@ -26,17 +26,17 @@ const {
 
 <div
 	class:list={[
-		'notion-table-wrapper',
+		'nt-table-wrapper',
 		tableWrapperClass,
-		{ 'notion-table-wrapper--full': fitPageWidth === 'true' },
+		{ 'nt-table-wrapper--full': fitPageWidth === 'true' },
 	]}
 >
 	<table
 		class:list={[
-			'notion-table',
+			'nt-table',
 			className,
-			{ 'notion-table--header-row': headerRow === 'true' },
-			{ 'notion-table--header-col': headerColumn === 'true' },
+			{ 'nt-table--header-row': headerRow === 'true' },
+			{ 'nt-table--header-col': headerColumn === 'true' },
 		]}
 	>
 		<slot />
