@@ -7,7 +7,7 @@
  * Supports inline text color, underline, and an optional extra class
  * (e.g. injected via classMap.span).
  */
-import { colorToCSS } from './colors';
+import { colorToClass } from './colors';
 
 interface Props {
 	color?: string;
@@ -16,9 +16,8 @@ interface Props {
 }
 
 const { color, underline, class: className } = Astro.props;
-const style = [colorToCSS(color), underline === 'true' ? 'text-decoration:underline' : '']
-	.filter(Boolean)
-	.join(';');
+// Underline cannot be expressed as a reusable CSS class here, so it remains inline.
+const style = underline === 'true' ? 'text-decoration:underline' : undefined;
 ---
 
-<span class:list={[className]} style={style || undefined}><slot /></span>
+<span class:list={[colorToClass(color), className]} style={style}><slot /></span>
