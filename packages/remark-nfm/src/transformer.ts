@@ -62,6 +62,11 @@ export function preprocessNotionMarkdown(markdown: string): string {
   let result = markdown.replace(/\\\$([^$\n]+)\\\$/g, (_, content: string) => `$${content}$`);
 
   // Fix 1: Ensure --- dividers have a blank line before them.
+  // First, normalize lines that contain only spaces/tabs immediately before ---
+  // to truly empty lines, so downstream parsers that do not recognize
+  // whitespace-only lines as blank lines (per CommonMark) treat them correctly.
+  result = result.replace(/^[ \t]+\n(---+)/gm, "\n$1");
+  // Then insert a blank line between any non-blank line and a following --- divider.
   result = result.replace(/([^\n])\n(---+)(\n|$)/g, "$1\n\n$2$3");
 
   // Fix 2: Normalize callout directive syntax.
@@ -71,11 +76,52 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // Also dedent tab-indented content inside callout blocks — CommonMark
   // treats tab-indented lines as indented code blocks otherwise.
   result = result.replace(/^::: callout( \{[^}]*\})?$/gm, (_, attrs) => `:::callout${attrs?.trim() ?? ""}`);
-  result = result.replace(
-    /^(:::callout[^\n]*)\n([\s\S]*?)^:::$/gm,
-    (_, opening: string, content: string) =>
-      `${opening}\n${content.replace(/^\t/gm, "")}:::`
-  );
+  // Process callout blocks line-by-line to correctly handle nested ::: directives.
+  // A regex-based approach fails when the callout body contains other ::: blocks
+  // (e.g. :::note … :::) because the lazy [\s\S]*? matches up to the first :::
+  // on a line, closing the outer callout too early. Instead we track nesting depth
+  // explicitly and find the matching closing ::: before dedenting the body.
+  result = (function processCalloutsDedent(input: string): string {
+    const lines = input.split("\n");
+    const out: string[] = [];
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      if (/^:::callout/.test(line)) {
+        // Scan forward to find the matching closing ::: at depth 0.
+        let depth = 1;
+        let j = i + 1;
+        while (j < lines.length) {
+          if (/^:::/.test(lines[j])) {
+            if (lines[j] === ":::") {
+              depth--;
+              if (depth === 0) break;
+            } else {
+              // Any other opening directive (:::callout, :::note, etc.) increases depth.
+              depth++;
+            }
+          }
+          j++;
+        }
+        if (j < lines.length) {
+          // Found the matching closing :::; dedent content between open and close.
+          const contentLines = lines.slice(i + 1, j);
+          out.push(line);
+          for (const cl of contentLines) out.push(cl.replace(/^\t/, ""));
+          out.push(":::");
+          i = j + 1;
+        } else {
+          // No matching closing ::: found — emit the opening line as-is and continue.
+          out.push(line);
+          i++;
+        }
+      } else {
+        out.push(line);
+        i++;
+      }
+    }
+    return out.join("\n");
+  })(result);
 
   // Fix 3: Convert block-level color annotations to raw HTML.
   result = result.replace(
