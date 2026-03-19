@@ -112,9 +112,9 @@
   全色がライトモード固定のhardcoded値で、`prefers-color-scheme: dark` が未対応
   → `apps/notro-tail/src/styles/global.css`
 
-- [ ] **Notion色がすべてinline styleで出力される**
+- [x] **Notion色がすべてinline styleで出力される** ✅
   CSS変数を使っていないため `classMap` での色指定ができない
-  → `packages/notro/src/utils/colors.ts`
+  → `apps/notro-tail/src/styles/global.css`（`:root` に `--nt-color-*` 変数を定義し、`.nt-color-*` クラスがそれを参照するよう変更。ダークモードも変数の上書きで対応）
 
 - [x] **テーブルに `overflow-x-auto` なし** ✅
   横幅が広いテーブルがモバイルでスクロールできない
@@ -164,8 +164,8 @@
 |--------|------|----------|------|
 | 🔴 高  | 9件  | 9件 ✅   | 0件  |
 | 🟡 中  | 14件 | 12件 ✅  | 2件  |
-| 🟢 低  | 12件 | 11件 ✅  | 1件  |
-| **合計** | **35件** | **32件** | **3件** |
+| 🟢 低  | 12件 | 12件 ✅  | 0件  |
+| **合計** | **35件** | **33件** | **2件** |
 
 ---
 
