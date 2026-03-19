@@ -172,6 +172,39 @@
   .nt-color-red_bg            { background-color: #FDEBEC; }
 
   /*
+   * Toggle (details/summary) — smooth open/close transition for the disclosure triangle
+   */
+  .notion-toggle__title {
+    cursor: pointer;
+    list-style: none;
+    transition: color 0.15s ease;
+  }
+
+  .notion-toggle__title:hover {
+    color: rgba(55, 53, 47, 0.7);
+  }
+
+  /* Hide default browser triangle marker */
+  .notion-toggle__title::marker,
+  .notion-toggle__title::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Custom disclosure triangle with rotation transition */
+  .notion-toggle__title::before {
+    content: "▶";
+    display: inline-block;
+    margin-right: 0.4em;
+    font-size: 0.65em;
+    transition: transform 0.2s ease;
+    transform-origin: center;
+  }
+
+  details[open] > .notion-toggle__title::before {
+    transform: rotate(90deg);
+  }
+
+  /*
    * Inline code — global CSS for :not(pre) > code selector
    * (classMap cannot express this nesting distinction)
    */
@@ -269,4 +302,111 @@
 
 .page-contact article > section:last-child {
   @apply border-b-0 pb-0;
+}
+
+/* ── Dark mode ───────────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  @layer base {
+    body {
+      color: #e2e8f0;
+      background-color: #0f172a;
+    }
+  }
+
+  /* Header & footer */
+  header {
+    background-color: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0;
+  }
+
+  header a,
+  footer a {
+    color: #cbd5e1;
+  }
+
+  header a:hover,
+  footer a:hover {
+    color: #f1f5f9;
+  }
+
+  footer {
+    background-color: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #94a3b8;
+  }
+
+  /* Notion markdown content */
+  .nt-markdown-content {
+    color: #e2e8f0;
+  }
+
+  /* Article header in blog/[slug].astro */
+  article header {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  /* Prev/next article nav */
+  .article-nav-link {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+  }
+
+  .article-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+  }
+
+  /* Inline code */
+  .nt-markdown-content :not(pre) > code {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #f87171;
+  }
+
+  /* Code blocks (pre) */
+  .nt-markdown-content pre {
+    background-color: #1e293b;
+    color: #e2e8f0;
+  }
+
+  /* Notion table */
+  .notion-table {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .notion-table td,
+  .notion-table th {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .notion-table--header-row tr:first-child td,
+  .notion-table--header-row tr:first-child th,
+  .notion-table--header-col td:first-child,
+  .notion-table--header-col th:first-child {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Notion color classes — dark overrides for background colors */
+  .nt-color-gray_background,
+  .nt-color-gray_bg   { background-color: #2d2d2b; }
+  .nt-color-brown_background,
+  .nt-color-brown_bg  { background-color: #2e2320; }
+  .nt-color-orange_background,
+  .nt-color-orange_bg { background-color: #2e2010; }
+  .nt-color-yellow_background,
+  .nt-color-yellow_bg { background-color: #2b2410; }
+  .nt-color-green_background,
+  .nt-color-green_bg  { background-color: #182b22; }
+  .nt-color-blue_background,
+  .nt-color-blue_bg   { background-color: #142533; }
+  .nt-color-purple_background,
+  .nt-color-purple_bg { background-color: #21192d; }
+  .nt-color-pink_background,
+  .nt-color-pink_bg   { background-color: #2d1425; }
+  .nt-color-red_background,
+  .nt-color-red_bg    { background-color: #2d1314; }
+
+  /* Toggle */
+  .notion-toggle__title:hover {
+    color: rgba(226, 232, 240, 0.7);
+  }
 }
