@@ -134,10 +134,8 @@ const markdown = entry.data.markdown;
             {prevNav && (
               <a
                 href={`/blog/${prevNav.slug}/`}
-                class="flex h-full flex-col gap-1 rounded-md p-4 transition"
+                class="article-nav-link flex h-full flex-col gap-1 rounded-md p-4"
                 style="border: 1px solid rgba(55,53,47,0.09); text-decoration: none; color: inherit;"
-                onmouseover="this.style.background='rgba(55,53,47,0.03)'"
-                onmouseout="this.style.background=''"
               >
                 <span class="text-xs" style="color: rgba(55,53,47,0.45);">← 新しい記事</span>
                 <span class="font-medium line-clamp-2" style="color: #37352f;">{prevNav.title}</span>
@@ -149,10 +147,8 @@ const markdown = entry.data.markdown;
             {nextNav && (
               <a
                 href={`/blog/${nextNav.slug}/`}
-                class="flex h-full flex-col items-end gap-1 rounded-md p-4 text-right transition"
+                class="article-nav-link flex h-full flex-col items-end gap-1 rounded-md p-4 text-right"
                 style="border: 1px solid rgba(55,53,47,0.09); text-decoration: none; color: inherit;"
-                onmouseover="this.style.background='rgba(55,53,47,0.03)'"
-                onmouseout="this.style.background=''"
               >
                 <span class="text-xs" style="color: rgba(55,53,47,0.45);">古い記事 →</span>
                 <span class="font-medium line-clamp-2" style="color: #37352f;">{nextNav.title}</span>
@@ -164,3 +160,13 @@ const markdown = entry.data.markdown;
     </article>
   </main>
 </Layout>
+
+<style>
+  /* Prev/next article nav links — CSS transition instead of inline JS onmouseover */
+  .article-nav-link {
+    transition: background-color 0.15s ease;
+  }
+  .article-nav-link:hover {
+    background-color: rgba(55, 53, 47, 0.03);
+  }
+</style>

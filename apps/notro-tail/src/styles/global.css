@@ -135,6 +135,43 @@
   }
 
   /*
+   * Notion color classes
+   * Applied by colorToClass() in colors.ts for text and background colors.
+   * Notion API color names: gray, brown, orange, yellow, green, blue, purple, pink, red
+   * Background variants use the _background suffix (Notion API) or _bg suffix (legacy).
+   */
+  .nt-color-gray              { color: #787774; }
+  .nt-color-brown             { color: #9F6B53; }
+  .nt-color-orange            { color: #D9730D; }
+  .nt-color-yellow            { color: #CB912F; }
+  .nt-color-green             { color: #448361; }
+  .nt-color-blue              { color: #337EA9; }
+  .nt-color-purple            { color: #9065B0; }
+  .nt-color-pink              { color: #C14C8A; }
+  .nt-color-red               { color: #D44C47; }
+
+  .nt-color-gray_background   { background-color: #F1F1EF; }
+  .nt-color-brown_background  { background-color: #F4EEEE; }
+  .nt-color-orange_background { background-color: #FBECDD; }
+  .nt-color-yellow_background { background-color: #FBF3DB; }
+  .nt-color-green_background  { background-color: #EDF3EC; }
+  .nt-color-blue_background   { background-color: #E7F3F8; }
+  .nt-color-purple_background { background-color: #F6F3F9; }
+  .nt-color-pink_background   { background-color: #FAF1F5; }
+  .nt-color-red_background    { background-color: #FDEBEC; }
+
+  /* Legacy _bg suffix aliases */
+  .nt-color-gray_bg           { background-color: #F1F1EF; }
+  .nt-color-brown_bg          { background-color: #F4EEEE; }
+  .nt-color-orange_bg         { background-color: #FBECDD; }
+  .nt-color-yellow_bg         { background-color: #FBF3DB; }
+  .nt-color-green_bg          { background-color: #EDF3EC; }
+  .nt-color-blue_bg           { background-color: #E7F3F8; }
+  .nt-color-purple_bg         { background-color: #F6F3F9; }
+  .nt-color-pink_bg           { background-color: #FAF1F5; }
+  .nt-color-red_bg            { background-color: #FDEBEC; }
+
+  /*
    * Inline code — global CSS for :not(pre) > code selector
    * (classMap cannot express this nesting distinction)
    */
