@@ -52,6 +52,25 @@ describe("Fix 1: setext heading prevention for ---", () => {
     const output = preprocessNotionMarkdown(input);
     expect(output).toBe("---\ntext");
   });
+
+  it("inserts blank line before --- when preceded by a spaces-only line that itself follows text", () => {
+    // "text\n   \n---" — the whitespace-only line is not a reliable blank line in all parsers
+    const input = "text\n   \n---";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("text\n\n---");
+  });
+
+  it("inserts blank line before --- when preceded by a tab-only line that itself follows text", () => {
+    const input = "text\n\t\n---";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("text\n\n---");
+  });
+
+  it("inserts blank line before --- with spaces-only line when followed by more content", () => {
+    const input = "paragraph\n   \n---\nnext line";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("paragraph\n\n---\nnext line");
+  });
 });
 
 // ============================================================
@@ -83,6 +102,49 @@ describe("Fix 2: callout directive normalization", () => {
     const input = "::: callout\ntext\n:::";
     const output = preprocessNotionMarkdown(input);
     expect(output).toContain(":::callout\n");
+  });
+
+  it("handles nested callout — inner ::: callout is normalized and dedented", () => {
+    // Notion outputs nested callouts as tab-indented ::: callout blocks.
+    // The inner "::: callout" should be normalized to ":::callout" and
+    // its tab-indented body should be dedented after the outer dedent.
+    const input = "::: callout {icon=\"💡\"}\n\touter content\n\t::: callout {icon=\"🔥\"}\n\t\tinner content\n\t:::\n:::";
+    const output = preprocessNotionMarkdown(input);
+    // Outer callout should be normalized
+    expect(output).toContain(':::callout{icon="💡"}');
+    // Inner callout should also be normalized (not left as "::: callout")
+    expect(output).toContain(':::callout{icon="🔥"}');
+    // Inner content should be fully dedented (no leading tabs)
+    expect(output).not.toMatch(/^\t/m);
+    // Structure: outer open, outer content, inner open, inner content, inner close, outer close
+    expect(output).toBe(
+      ':::callout{icon="💡"}\nouter content\n:::callout{icon="🔥"}\ninner content\n:::\n:::'
+    );
+  });
+
+  it("handles triple-nested callouts — all levels normalized and dedented", () => {
+    const input =
+      "::: callout\n\touter\n\t::: callout\n\t\tmiddle\n\t\t::: callout\n\t\t\tinner\n\t\t:::\n\t:::\n:::";
+    const output = preprocessNotionMarkdown(input);
+    // All three levels should be normalized
+    expect(output.split(":::callout").length - 1).toBe(3);
+    // No leading tabs anywhere in the output
+    expect(output).not.toMatch(/^\t/m);
+    expect(output).toBe(":::callout\nouter\n:::callout\nmiddle\n:::callout\ninner\n:::\n:::\n:::");
+  });
+
+  it("does not close outer callout early when inner ::: appears", () => {
+    // Without nesting-counter fix, the outer callout would close at the first ":::"
+    // (the inner closing :::), leaving the outer closing ::: as a stray line.
+    const input = ":::callout\n\touter text\n\t:::callout\n\t\tinner text\n\t:::\n\tmore outer\n:::";
+    const output = preprocessNotionMarkdown(input);
+    // "more outer" must be inside the outer callout (between :::callout and final :::)
+    const lines = output.split("\n");
+    const firstOpen = lines.indexOf(":::callout");
+    const lastClose = lines.lastIndexOf(":::");
+    const moreOuterIdx = lines.indexOf("more outer");
+    expect(moreOuterIdx).toBeGreaterThan(firstOpen);
+    expect(moreOuterIdx).toBeLessThan(lastClose);
   });
 });
 

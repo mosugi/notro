@@ -51,7 +51,7 @@
   `icon.type === "file"` のページが期限切れのままキャッシュされる
   → `packages/notro/src/loader/loader.ts`
 
-- [ ] **ネストされた callout 未対応**
+- [x] **ネストされた callout 未対応** ✅
   callout内の `:::` で外側のcalloutが誤って閉じられる（※現行APIは `<callout>` HTML形式を返すため影響範囲は旧形式のみ）
   → `packages/remark-nfm/src/transformer.ts`（Fix 2）
 
@@ -96,7 +96,7 @@
   空Slugのページが予期しないURLで生成される
   → `apps/notro-tail/src/content.config.ts`
 
-- [ ] **Fix 1 でスペースのみの行が誤マッチ**
+- [x] **Fix 1 でスペースのみの行が誤マッチ** ✅
   `"   \n---"` のような行頭スペースのみの場合が setext H2 防止処理の対象外
   → `packages/remark-nfm/src/transformer.ts`（Fix 1の正規表現）
 
@@ -163,9 +163,9 @@
 | 優先度 | 全件 | 修正済み | 残り |
 |--------|------|----------|------|
 | 🔴 高  | 9件  | 9件 ✅   | 0件  |
-| 🟡 中  | 14件 | 12件 ✅  | 2件  |
+| 🟡 中  | 14件 | 14件 ✅  | 0件  |
 | 🟢 低  | 12件 | 12件 ✅  | 0件  |
-| **合計** | **35件** | **33件** | **2件** |
+| **合計** | **35件** | **35件** | **0件** |
 
 ---
 
