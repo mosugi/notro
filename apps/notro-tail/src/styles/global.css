@@ -8,6 +8,38 @@
  * Accent: #2383e2 (Notion blue)
  */
 
+/*
+ * Notion color CSS custom properties (light mode defaults).
+ * These are referenced by .nt-color-* utility classes so that:
+ *   1. Dark mode can override all colors in one @media block.
+ *   2. Users can customise individual colors without touching components.
+ *
+ * Naming convention:
+ *   --nt-color-{name}     → text color
+ *   --nt-color-{name}-bg  → background color
+ */
+:root {
+  --nt-color-gray:      #787774;
+  --nt-color-brown:     #9F6B53;
+  --nt-color-orange:    #D9730D;
+  --nt-color-yellow:    #CB912F;
+  --nt-color-green:     #448361;
+  --nt-color-blue:      #337EA9;
+  --nt-color-purple:    #9065B0;
+  --nt-color-pink:      #C14C8A;
+  --nt-color-red:       #D44C47;
+
+  --nt-color-gray-bg:   #F1F1EF;
+  --nt-color-brown-bg:  #F4EEEE;
+  --nt-color-orange-bg: #FBECDD;
+  --nt-color-yellow-bg: #FBF3DB;
+  --nt-color-green-bg:  #EDF3EC;
+  --nt-color-blue-bg:   #E7F3F8;
+  --nt-color-purple-bg: #F6F3F9;
+  --nt-color-pink-bg:   #FAF1F5;
+  --nt-color-red-bg:    #FDEBEC;
+}
+
 @layer base {
   body {
     font-family:
@@ -139,37 +171,40 @@
    * Applied by colorToClass() in colors.ts for text and background colors.
    * Notion API color names: gray, brown, orange, yellow, green, blue, purple, pink, red
    * Background variants use the _background suffix (Notion API) or _bg suffix (legacy).
+   *
+   * All values reference CSS custom properties defined on :root above.
+   * Override a color globally by setting the corresponding --nt-color-* variable.
    */
-  .nt-color-gray              { color: #787774; }
-  .nt-color-brown             { color: #9F6B53; }
-  .nt-color-orange            { color: #D9730D; }
-  .nt-color-yellow            { color: #CB912F; }
-  .nt-color-green             { color: #448361; }
-  .nt-color-blue              { color: #337EA9; }
-  .nt-color-purple            { color: #9065B0; }
-  .nt-color-pink              { color: #C14C8A; }
-  .nt-color-red               { color: #D44C47; }
+  .nt-color-gray              { color: var(--nt-color-gray); }
+  .nt-color-brown             { color: var(--nt-color-brown); }
+  .nt-color-orange            { color: var(--nt-color-orange); }
+  .nt-color-yellow            { color: var(--nt-color-yellow); }
+  .nt-color-green             { color: var(--nt-color-green); }
+  .nt-color-blue              { color: var(--nt-color-blue); }
+  .nt-color-purple            { color: var(--nt-color-purple); }
+  .nt-color-pink              { color: var(--nt-color-pink); }
+  .nt-color-red               { color: var(--nt-color-red); }
 
-  .nt-color-gray_background   { background-color: #F1F1EF; }
-  .nt-color-brown_background  { background-color: #F4EEEE; }
-  .nt-color-orange_background { background-color: #FBECDD; }
-  .nt-color-yellow_background { background-color: #FBF3DB; }
-  .nt-color-green_background  { background-color: #EDF3EC; }
-  .nt-color-blue_background   { background-color: #E7F3F8; }
-  .nt-color-purple_background { background-color: #F6F3F9; }
-  .nt-color-pink_background   { background-color: #FAF1F5; }
-  .nt-color-red_background    { background-color: #FDEBEC; }
+  .nt-color-gray_background   { background-color: var(--nt-color-gray-bg); }
+  .nt-color-brown_background  { background-color: var(--nt-color-brown-bg); }
+  .nt-color-orange_background { background-color: var(--nt-color-orange-bg); }
+  .nt-color-yellow_background { background-color: var(--nt-color-yellow-bg); }
+  .nt-color-green_background  { background-color: var(--nt-color-green-bg); }
+  .nt-color-blue_background   { background-color: var(--nt-color-blue-bg); }
+  .nt-color-purple_background { background-color: var(--nt-color-purple-bg); }
+  .nt-color-pink_background   { background-color: var(--nt-color-pink-bg); }
+  .nt-color-red_background    { background-color: var(--nt-color-red-bg); }
 
-  /* Legacy _bg suffix aliases */
-  .nt-color-gray_bg           { background-color: #F1F1EF; }
-  .nt-color-brown_bg          { background-color: #F4EEEE; }
-  .nt-color-orange_bg         { background-color: #FBECDD; }
-  .nt-color-yellow_bg         { background-color: #FBF3DB; }
-  .nt-color-green_bg          { background-color: #EDF3EC; }
-  .nt-color-blue_bg           { background-color: #E7F3F8; }
-  .nt-color-purple_bg         { background-color: #F6F3F9; }
-  .nt-color-pink_bg           { background-color: #FAF1F5; }
-  .nt-color-red_bg            { background-color: #FDEBEC; }
+  /* Legacy _bg suffix aliases — same variables as _background */
+  .nt-color-gray_bg           { background-color: var(--nt-color-gray-bg); }
+  .nt-color-brown_bg          { background-color: var(--nt-color-brown-bg); }
+  .nt-color-orange_bg         { background-color: var(--nt-color-orange-bg); }
+  .nt-color-yellow_bg         { background-color: var(--nt-color-yellow-bg); }
+  .nt-color-green_bg          { background-color: var(--nt-color-green-bg); }
+  .nt-color-blue_bg           { background-color: var(--nt-color-blue-bg); }
+  .nt-color-purple_bg         { background-color: var(--nt-color-purple-bg); }
+  .nt-color-pink_bg           { background-color: var(--nt-color-pink-bg); }
+  .nt-color-red_bg            { background-color: var(--nt-color-red-bg); }
 
   /*
    * Toggle (details/summary) — smooth open/close transition for the disclosure triangle
@@ -306,6 +341,33 @@
 
 /* ── Dark mode ───────────────────────────────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
+  /*
+   * Override Notion color custom properties for dark mode.
+   * All .nt-color-* classes inherit these values automatically
+   * without needing per-class overrides.
+   */
+  :root {
+    --nt-color-gray:      #9b9b97;
+    --nt-color-brown:     #c49a82;
+    --nt-color-orange:    #e88c4a;
+    --nt-color-yellow:    #d9a84e;
+    --nt-color-green:     #6aad8a;
+    --nt-color-blue:      #5ba5cc;
+    --nt-color-purple:    #b08fd0;
+    --nt-color-pink:      #d97ab3;
+    --nt-color-red:       #e07b78;
+
+    --nt-color-gray-bg:   #2d2d2b;
+    --nt-color-brown-bg:  #2e2320;
+    --nt-color-orange-bg: #2e2010;
+    --nt-color-yellow-bg: #2b2410;
+    --nt-color-green-bg:  #182b22;
+    --nt-color-blue-bg:   #142533;
+    --nt-color-purple-bg: #21192d;
+    --nt-color-pink-bg:   #2d1425;
+    --nt-color-red-bg:    #2d1314;
+  }
+
   @layer base {
     body {
       color: #e2e8f0;
@@ -385,26 +447,6 @@
   .nt-table--header-col th:first-child {
     background-color: rgba(255, 255, 255, 0.05);
   }
-
-  /* Notion color classes — dark overrides for background colors */
-  .nt-color-gray_background,
-  .nt-color-gray_bg   { background-color: #2d2d2b; }
-  .nt-color-brown_background,
-  .nt-color-brown_bg  { background-color: #2e2320; }
-  .nt-color-orange_background,
-  .nt-color-orange_bg { background-color: #2e2010; }
-  .nt-color-yellow_background,
-  .nt-color-yellow_bg { background-color: #2b2410; }
-  .nt-color-green_background,
-  .nt-color-green_bg  { background-color: #182b22; }
-  .nt-color-blue_background,
-  .nt-color-blue_bg   { background-color: #142533; }
-  .nt-color-purple_background,
-  .nt-color-purple_bg { background-color: #21192d; }
-  .nt-color-pink_background,
-  .nt-color-pink_bg   { background-color: #2d1425; }
-  .nt-color-red_background,
-  .nt-color-red_bg    { background-color: #2d1314; }
 
   /* Toggle */
   .nt-toggle-block__title:hover {
