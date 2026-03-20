@@ -3,7 +3,6 @@ import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 import { NotionMarkdownRenderer, buildLinkToPages, getPlainText, getMultiSelect, hasTag } from "notro";
 import Layout from "../../layouts/Layout.astro";
-import { navPages } from "../../config";
 import Callout from "../../components/notion/Callout.astro";
 
 export async function getStaticPaths() {
@@ -14,9 +13,6 @@ export async function getStaticPaths() {
     url: (e) => `blog/${getPlainText(e.data.properties.Slug) || e.id}/`,
     title: (e) => getPlainText(e.data.properties.Name) ?? e.id,
   });
-
-  // Build a slug → bodyClass map from navPages config for per-page styling
-  const navPageMap = new Map(navPages.map((p) => [p.slug, p]));
 
   // Sorted blog posts (excluding "page"-tagged fixed pages) for prev/next nav
   const blogPosts = posts
@@ -45,7 +41,6 @@ export async function getStaticPaths() {
       props: {
         entry,
         linkToPages,
-        bodyClass: navPageMap.get(slug)?.bodyClass,
         prevNav: makeNav(idx > 0 ? blogPosts[idx - 1] : undefined),         // newer
         nextNav: makeNav(idx >= 0 && idx < blogPosts.length - 1 ? blogPosts[idx + 1] : undefined), // older
       },
@@ -53,7 +48,7 @@ export async function getStaticPaths() {
   });
 }
 
-const { entry, linkToPages, bodyClass, prevNav, nextNav } = Astro.props;
+const { entry, linkToPages, prevNav, nextNav } = Astro.props;
 
 const title = getPlainText(entry.data.properties.Name) ?? entry.id;
 const description = getPlainText(entry.data.properties.Description);
@@ -72,7 +67,7 @@ const markdown = entry.data.markdown;
   }
 </style>
 
-<Layout title={title} description={description} bodyClass={bodyClass}>
+<Layout title={title} description={description}>
   <main class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
     <article class="mx-auto max-w-[720px]">
       <header class="mb-10 pb-6" style="border-bottom: 1px solid rgba(55,53,47,0.09);">

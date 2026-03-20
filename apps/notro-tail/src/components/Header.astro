@@ -1,31 +1,8 @@
 ---
-import { getCollection } from "astro:content";
-import { getPlainText } from "notro";
-import { navPages } from "../config";
-
-// Resolve navPages config against the content collection to get titles and slugs
-const allPosts = await getCollection("posts");
-const slugToEntry = new Map(
-  allPosts.map((entry) => [getPlainText(entry.data.properties.Slug) || entry.id, entry]),
-);
-const fixedPages = navPages.flatMap((cfg) => {
-  const entry = slugToEntry.get(cfg.slug);
-  if (!entry) return [];
-  return [{
-    slug: cfg.slug,
-    title: cfg.label ?? getPlainText(entry.data.properties.Name) ?? cfg.slug,
-  }];
-});
-
 const pathname = Astro.url.pathname;
-const fixedSlugs = new Set(fixedPages.map((p) => `/blog/${p.slug}/`));
 
 // A link is "active" when the current pathname matches or starts with its href.
-// Blog is excluded when a fixed page (e.g. /blog/about/) is the current page.
-const isActive = (href: string) => {
-  if (href === "/blog/") return pathname.startsWith("/blog/") && !fixedSlugs.has(pathname);
-  return pathname === href || pathname.startsWith(href);
-};
+const isActive = (href: string) => pathname === href || pathname.startsWith(href);
 ---
 
 <style>
@@ -71,13 +48,6 @@ const isActive = (href: string) => {
     <nav>
       <ul class="flex items-center gap-6">
         <li><a href="/blog/" class:list={["nav-link", { active: isActive("/blog/") }]} aria-current={isActive("/blog/") ? "page" : undefined}>ブログ</a></li>
-        {fixedPages.map((p) => (
-          <li>
-            <a href={`/blog/${p.slug}/`} class:list={["nav-link", { active: isActive(`/blog/${p.slug}/`) }]} aria-current={isActive(`/blog/${p.slug}/`) ? "page" : undefined}>
-              {p.title}
-            </a>
-          </li>
-        ))}
         <li><a href="/about/" class:list={["nav-link", { active: isActive("/about/") }]} aria-current={isActive("/about/") ? "page" : undefined}>About</a></li>
         <li><a href="/contact/" class:list={["nav-link", { active: isActive("/contact/") }]} aria-current={isActive("/contact/") ? "page" : undefined}>Docs</a></li>
         <li>
