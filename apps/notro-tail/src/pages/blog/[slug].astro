@@ -73,8 +73,8 @@ const tags = getMultiSelect(entry.data.properties.Tags).filter(
   }
 </style>
 
-<Layout title={title} description={description}>
-  <main class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
+<Layout title={title} description={description} type={isEmbeddedPage ? "website" : "article"}>
+  <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
     <article class="mx-auto max-w-[720px]">
       <header class="mb-10 pb-6" style="border-bottom: 1px solid rgba(55,53,47,0.09);">
         <h1 class="mb-3 text-[2rem] font-bold tracking-tight leading-tight" style="color: #37352f;">{title}</h1>

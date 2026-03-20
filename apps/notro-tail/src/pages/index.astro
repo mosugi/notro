@@ -283,8 +283,11 @@ import Layout from "../layouts/Layout.astro";
   }
 </style>
 
-<Layout title="NotroTail — Notion を CMS として使う Astro 静的サイトジェネレーター">
-  <main class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+<Layout
+  title="NotroTail — Notion を CMS として使う Astro 静的サイトジェネレーター"
+  description="Notion Public API からコンテンツを取得し、MDX としてコンパイル。Notion のブロックを Astro コンポーネントにマッピングして高速・SEO 最適化された静的サイトを生成します。"
+>
+  <main id="main-content" class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
 
     <!-- Hero -->
     <section class="hero">
