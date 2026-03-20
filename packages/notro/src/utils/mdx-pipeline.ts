@@ -8,12 +8,37 @@
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeRaw from 'rehype-raw';
 import rehypeShiki from '@shikijs/rehype';
 import { remarkNfm } from 'remark-nfm';
 import type { Plugin, PluggableList } from 'unified';
 import type { Root, Element } from 'hast';
 import { visit } from 'unist-util-visit';
 import type { LinkToPages } from '../types.ts';
+
+// Notion-specific custom element names that rehype-raw must pass through
+// without stripping. These are mapped to Astro components in notionComponents.
+const NOTION_CUSTOM_ELEMENTS = [
+	'callout',
+	'columns',
+	'column',
+	'audio',
+	'video',
+	'file',
+	'pdf',
+	'page',
+	'database',
+	'table_of_contents',
+	'synced_block',
+	'synced_block_reference',
+	'empty-block',
+	'mention-user',
+	'mention-page',
+	'mention-database',
+	'mention-data-source',
+	'mention-agent',
+	'mention-date',
+];
 
 // ── URL resolution ─────────────────────────────────────────────────────────
 
@@ -100,6 +125,12 @@ export function buildMdxPlugins(linkToPages: LinkToPages): MdxPlugins {
 			remarkMath,
 		],
 		rehypePlugins: [
+			// rehypeRaw must come first: converts raw HTML strings in mdast into
+			// hast element nodes so that subsequent plugins and component mapping
+			// can process them (e.g. <table>, <h2 color="...">, etc.).
+			// passThrough preserves Notion-specific custom elements that are not
+			// valid HTML and would otherwise be stripped by the HTML parser.
+			[rehypeRaw, { passThrough: NOTION_CUSTOM_ELEMENTS }],
 			rehypeKatex,
 			[rehypeShiki, { theme: 'github-dark' }],
 			[resolvePageLinksPlugin, { linkToPages }] as const,
