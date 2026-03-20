@@ -1,428 +1,235 @@
-# TODO — notro-tail 調査結果
+# NotroTail ドキュメント整備 TODO
 
-> 調査日: 2026-03-18
-> 全10エージェントによるコードベース全域スキャン結果。優先度順に記載。
-> ✅ = 2026-03-18 修正済み
-
----
-
-## 🔴 高優先度（バグ・機能欠落）
-
-- [x] **`evaluate()` に try-catch がない** ✅
-  MDXコンパイルエラー時にページ全体が500エラーになる
-  → `packages/notro/src/utils/compile-mdx.ts`
-
-- [x] **`resolvePageLinksPlugin` の `includes()` 誤マッチ** ✅
-  `pageId "abc"` が `"abc123"` にも誤マッチしてリンク先が壊れる（`endsWith()` に変更）
-  → `packages/notro/src/utils/mdx-pipeline.ts`
-
-- [x] **`markdownHasPresignedUrls` が `notro` からエクスポートされていない** ✅
-  → `packages/notro/index.ts`
-
-- [x] **`Video`/`Audio`/`FileBlock`/`PdfBlock` の `color` prop が未実装** ✅
-  props定義はあるが `colorToCSS()` を呼んでいないので色が反映されない
-  → `packages/notro/src/components/notion/` 各コンポーネント
-
-- [x] **`StyledSpan` に `class` prop がない** ✅
-  `classMap.span` が機能しない
-  → `packages/notro/src/components/notion/StyledSpan.astro`
-
-- [x] **`TableColgroup`/`TableCol`/`MentionDate` に `class` prop がない** ✅
-  スタイルカスタマイズ不可
-  → `packages/notro/src/components/notion/` 各コンポーネント
-
-- [x] **`DatabaseProperty` の `nt-property-*` CSS が未定義** ✅
-  クラスがCSSに存在しないのでスタイルなし状態になる
-  → `apps/notro-tail/src/styles/global.css`
-
-- [x] **Fix 9のURL括弧問題** ✅
-  `[text](https://example.com/path(with)parens)` のような括弧入りURLでURLが途中で切れる
-  → `packages/remark-nfm/src/transformer.ts`（Fix 9の正規表現）
-
-- [x] **`dataSources.query` にリトライロジックなし** ✅
-  DBクエリ失敗でビルド全体が停止する（`pages.retrieveMarkdown` にはリトライあり）
-  → `packages/notro/src/loader/loader.ts`
+> 調査日: 2026-03-20
+> 10エージェントによるコードベース・ビルド結果・Astro公式サイト構造の並列調査結果をもとに作成。
+> 前提: NotroTail はテンプレートとして Vercel/Netlify へのデプロイを想定。notro・remark-nfm はオプション。
 
 ---
 
-## 🟡 中優先度（品質・信頼性）
+## 方針
 
-- [x] **`icon` の presigned URL チェック漏れ** ✅
-  `icon.type === "file"` のページが期限切れのままキャッシュされる
-  → `packages/notro/src/loader/loader.ts`
+### 対象オーディエンス（2種類）
 
-- [x] **ネストされた callout 未対応** ✅
-  callout内の `:::` で外側のcalloutが誤って閉じられる（※現行APIは `<callout>` HTML形式を返すため影響範囲は旧形式のみ）
-  → `packages/remark-nfm/src/transformer.ts`（Fix 2）
+| オーディエンス | 目的 | 主な動線 |
+|---|---|---|
+| **テンプレート利用者** | NotroTail をクローンして Notion ブログを立ち上げたい | トップ → クイックスタート → デプロイ |
+| **パッケージ利用者** | 既存 Astro プロジェクトに `notro` / `remark-nfm` を追加したい | Docs → API リファレンス → npm |
 
-- [x] **`remarkNfm` の多重適用ガードなし** ✅
-  `notro()` integration と手動設定の両方でプラグインが適用されると `preprocessNotionMarkdown` が二重実行される
-  → `packages/remark-nfm/src/nfm.ts`
+### 現状の課題
 
-- [x] **`buildLinkToPages` の重複ID未検証** ✅
-  同一IDのエントリが後勝ちで上書きされリンクが壊れる可能性がある（警告ログを追加）
-  → `packages/notro/src/utils/notion.ts`
-
-- [x] **コンパイルキャッシュのメモリ上限なし** ✅
-  大規模サイトで `compilationCache` が無制限に増大する
-  → `packages/notro/src/utils/compile-mdx.ts`
-
-- [x] **`og:image` / Twitter Card / `og:locale` 欠落** ✅
-  SEO最適化が不完全（CLAUDE.md では "SEO-optimized" を謳っている）
-  → `apps/notro-tail/src/layouts/Layout.astro`
-
-- [x] **`aria-current` 未設定・skip link なし** ✅
-  スクリーンリーダーでアクティブナビが伝わらない
-  → `apps/notro-tail/src/components/Header.astro`
-
-- [x] **Callout アイコンに `aria-hidden` なし** ✅
-  絵文字アイコンがスクリーンリーダーで読み上げられる
-  → `packages/notro/src/components/notion/Callout.astro`
-
-- [x] **全 `package.json` に `engines` フィールドなし** ✅
-  Node.js 22+ 要件がpackage.jsonに反映されていない（CLAUDE.mdには記載あり）
-  → `/package.json`, `packages/notro/package.json`, `packages/remark-nfm/package.json`, `apps/notro-tail/package.json`
-
-- [x] **CI の Node.js バージョンが 21.x** ✅
-  CLAUDE.md の「Node.js 22+」推奨と不一致
-  → `.github/workflows/release.yml`（確認: すでに 22.x になっていた）
-
-- [x] **`astro.config.mjs` の `remotePatterns` が全HTTPS許可** ✅
-  `{ protocol: "https" }` ですべてのオリジンを許可しており広すぎる
-  Notion S3ドメイン（`*.amazonaws.com` 等）に絞った
-  → `apps/notro-tail/astro.config.mjs`
-
-- [x] **`content.config.ts` の `Slug` に必須バリデーションなし** ✅
-  空Slugのページが予期しないURLで生成される
-  → `apps/notro-tail/src/content.config.ts`
-
-- [x] **Fix 1 でスペースのみの行が誤マッチ** ✅
-  `"   \n---"` のような行頭スペースのみの場合が setext H2 防止処理の対象外
-  → `packages/remark-nfm/src/transformer.ts`（Fix 1の正規表現）
-
-- [x] **`.changeset/config.json` の `ignore` に `notro-tail` 未指定** ✅
-  privateアプリがchangeset のバージョン管理対象になっている
-  → `.changeset/config.json`
+1. **トップページ** — デプロイ CTA がない。GitHub とデモブログへの誘導しかなく、テンプレートとして使う入口がない。
+2. **Docs ページ** (`/contact/`) — "How this site is built" という説明ページ止まり。クイックスタート・API リファレンス・デプロイガイドがない。
+3. **チュートリアルがブログに埋もれている** — 優良な入門記事（setup, add-notro-to-astro 等）がブログ一覧に並んでいて、学習パスとして機能していない。
+4. **notro がオプションであることが伝わらない** — テンプレートを Notion なしで使うパターンが示されていない。
+5. **テスト記事が本番表示されている** — `test-callout-edge-cases`, `test-markdown-edge-cases` がブログ一覧に出ている。
 
 ---
 
-## 🟢 低優先度（DX・一貫性）
+## 1. トップページ（`index.astro`）の改善
 
-- [x] **ダークモード対応なし** ✅
-  全色がライトモード固定のhardcoded値で、`prefers-color-scheme: dark` が未対応
-  → `apps/notro-tail/src/styles/global.css`
+### 1-1. ヒーローセクション
 
-- [x] **Notion色がすべてinline styleで出力される** ✅
-  CSS変数を使っていないため `classMap` での色指定ができない
-  → `apps/notro-tail/src/styles/global.css`（`:root` に `--nt-color-*` 変数を定義し、`.nt-color-*` クラスがそれを参照するよう変更。ダークモードも変数の上書きで対応）
+- [ ] **「Deploy to Vercel」「Deploy to Netlify」ボタン**をヒーローに追加
+  - Vercel: `[![Deploy with Vercel](...)](https://vercel.com/new/clone?...)` スタイル
+  - Netlify: `[![Deploy to Netlify](...)](https://app.netlify.com/start/deploy?...)` スタイル
+- [ ] CTAの重複を解消 — ヒーローと最終CTAで「GitHub」「デモブログ」が2回出ている。ヒーローはデプロイ重視、最終CTAはGitHub重視に役割を分ける。
+- [ ] **クイックスタートコマンド**をテンプレート利用者向けに変更
+  - 現状: `npm install notro`（パッケージ利用者向け）
+  - 追加: `Use this template` → clone → deploy の3ステップ
 
-- [x] **テーブルに `overflow-x-auto` なし** ✅
-  横幅が広いテーブルがモバイルでスクロールできない
-  → `packages/notro/src/components/notion/TableBlock.astro`
+### 1-2. 2つの使い方を明示するセクションを追加
 
-- [x] **クラス命名規約が不統一** ✅
-  コンポーネント内で `notion-*` と `nt-*` が混在している
-  → `packages/notro/src/components/notion/` 各コンポーネント（調査の結果、すでに全コンポーネントが `nt-*` を使用しており変更不要）
+```
+┌──────────────────────────┐  ┌──────────────────────────┐
+│  テンプレートとして使う     │  │  npm パッケージとして使う  │
+│  Notion ブログを5分で     │  │  既存 Astro プロジェクトに │
+│  Vercel/Netlify にデプロイ│  │  notro を追加する         │
+└──────────────────────────┘  └──────────────────────────┘
+```
 
-- [x] **`ClassMapKeys` に `mention-date` が欠落** ✅
-  MentionDate コンポーネントへのクラス注入ができない
-  → `packages/notro/src/types.ts` および `component-resolver.ts` にすでに実装済みと確認
+- [ ] notro・remark-nfm が**オプション**であることを「機能」セクションで明記
 
-- [x] **`getPlainText` の `join()` に区切り文字なし** ✅
-  multi_select などで `"A,B"` でなく `"AB"` に結合される（※Notionのrich_text配列は直接連結が正しい仕様。multi_selectのみ `", "` 区切りに修正）
-  → `packages/notro/src/utils/notion.ts`
+### 1-3. 「3ステップ」セクションをテンプレート視点に変更
 
-- [x] **`calloutPlugin` が `remark-nfm` の public API として不要にエクスポートされている** ✅
-  外部から単独適用すると二重処理のリスク
-  → `packages/remark-nfm/index.ts` にすでにエクスポートなし（内部実装として管理済みと確認）
+現在: 「Notionで書く → notroが変換 → Astroが生成」（パッケージ利用者視点）
+変更後: テンプレート利用者向けの3ステップを追加または並記
 
-- [x] **カスタム 404 ページなし** ✅
-  Astro デフォルトの404が表示される
-  → `apps/notro-tail/src/pages/404.astro`（新規作成）
+1. このリポジトリをテンプレートとして使う（GitHub の "Use this template"）
+2. Notion トークンとデータソース ID を環境変数に設定
+3. Vercel / Netlify にデプロイ（ワンクリック）
 
-- [x] **0件時のメッセージなし** ✅
-  タグ絞り込みなどで記事0件の場合に空白になる
-  → `apps/notro-tail/src/components/BlogList.astro`
+### 1-4. CTA「ブログを見る」→「Docs を見る」に変更
 
-- [x] **`packages/notro/tsconfig.json` が存在しない** ✅
-  パッケージ単独での型チェックが不正確になる
-  → `packages/notro/tsconfig.json`（新規作成）
-
-- [x] **`markdownHasPresignedUrls` の false positive** ✅
-  本文に `X-Amz-Algorithm` という文字列が含まれるだけでキャッシュ無効化される
-  → `packages/notro/src/utils/notion-url.ts` — URLクエリパラメータコンテキスト内でのみ検出する正規表現に改善
-
-- [x] **hover/Toggleのトランジションなし** ✅
-  `onmouseover` 直接変更によるちらつき
-  → `apps/notro-tail/src/pages/blog/[slug].astro`
+- [ ] ヒーローの「ブログを見る →」ボタンを「ドキュメントを見る →」（`/contact/`）に変更
+  ※ デモとしてのブログへのリンクは残す（セカンダリボタン）
 
 ---
 
-## 集計
+## 2. Docs ページ（`/contact/`）の整備
 
-| 優先度 | 全件 | 修正済み | 残り |
-|--------|------|----------|------|
-| 🔴 高  | 9件  | 9件 ✅   | 0件  |
-| 🟡 中  | 14件 | 14件 ✅  | 0件  |
-| 🟢 低  | 12件 | 12件 ✅  | 0件  |
-| **合計** | **35件** | **35件** | **0件** |
+### 2-1. ページ全体の再構成
 
----
+`contact.astro` を **Docs ハブ**として再構成。現在の「3ページ種類の説明 + パイプライン説明」は「サイトの仕組み」セクションとして残しつつ、以下を追加:
 
-## 🚀 2026-03-19 セッション — 残り11件の対応計画（10エージェント並行）
+- [ ] **クイックスタートセクション**（テンプレート利用者向け）
+  ```
+  1. リポジトリをクローン / GitHub の "Use this template" で作成
+  2. npm install（ルートで実行）
+  3. .env に NOTION_TOKEN, NOTION_DATASOURCE_ID を設定
+  4. npm run dev（localhost:4321 で確認）
+  5. Vercel / Netlify にデプロイ
+  ```
 
-> branch: `claude/identify-missing-features-JeNyS`
+- [ ] **Notion セットアップガイド**
+  - Notion インテグレーション作成手順（notion.so/my-integrations へのリンク）
+  - データソース ID の取得方法（URL から抽出）
+  - データベーススキーマ必須プロパティ一覧
 
-| Agent | 優先度 | 担当ファイル | タスク |
-|-------|--------|-------------|--------|
-| A1 | 🟡 中 | `packages/remark-nfm/src/transformer.ts` | Fix 1 スペースのみ行の誤マッチ修正 + Fix 2 ネストcallout対応 |
-| A2 | 🟡 中 | `packages/notro/src/utils/compile-mdx.ts` | コンパイルキャッシュのメモリ上限実装（LRU or FIFO MAX_CACHE_SIZE） |
-| A3 | 🟡 中 | `.github/workflows/release.yml` | CI の Node.js バージョンを 21.x → 22.x に修正 |
-| A4 | 🟢 低 | `apps/notro-tail/src/styles/global.css` | ダークモード対応（`prefers-color-scheme: dark`） |
-| A5 | 🟢 低 | `packages/notro/src/utils/colors.ts` + 関連コンポーネント | Notion色をCSS変数化（inline style → カスタムプロパティ） |
-| A6 | 🟢 低 | `packages/notro/src/components/notion/` 各コンポーネント | クラス命名規約統一（`notion-*` → `nt-*`） |
-| A7 | 🟢 低 | `packages/notro/src/types.ts` + `packages/remark-nfm/index.ts` | ClassMapKeys に `mention-date` 追加 + calloutPlugin を内部化 |
-| A8 | 🟢 低 | `packages/notro/src/utils/notion.ts` + `packages/notro/src/utils/notion-url.ts` | getPlainText join 調査・修正 + markdownHasPresignedUrls false positive 修正 |
-| A9 | 🟢 低 | `packages/notro/tsconfig.json`（新規） | packages/notro の tsconfig.json 作成 |
-| A10 | 🟢 低 | `apps/notro-tail/src/pages/blog/[slug].astro` | Toggle/hover トランジション追加（CSS transition） |
+  | プロパティ | 型 | 必須 | 説明 |
+  |---|---|---|---|
+  | `Name` | title | ✓ | 記事タイトル |
+  | `Slug` | rich_text | ✓ | URL スラッグ |
+  | `Public` | checkbox | ✓ | 公開フラグ |
+  | `Description` | rich_text | — | 説明文・meta description |
+  | `Tags` | multi_select | — | タグ（`page`/`pinned` は内部マーカー） |
+  | `Date` | date | — | 公開日 |
 
-## テストページ（Notion）
+- [ ] **環境変数リファレンス**テーブル
 
-| スラッグ | 目的 |
-|---------|------|
-| `test-callout-edge-cases` | ネストcallout・三重ネスト・Callout内コード/リスト・連続Callout・URL括弧リンク |
-| `test-markdown-edge-cases` | Fix 1-9各種エッジケース・Fix 9テーブルリンク・インライン装飾組み合わせ |
+  | 変数 | 必須 | 説明 |
+  |---|---|---|
+  | `NOTION_TOKEN` | ✓ | Notion Internal Integration Token |
+  | `NOTION_DATASOURCE_ID` | ✓ | Notion データソース ID（DB ID） |
 
----
+- [ ] **Vercel / Netlify デプロイガイド**
+  - Vercel: Root Directory を `apps/notro-tail` に設定
+  - Netlify: `netlify.toml` が設定済みのためそのままデプロイ可
+  - 環境変数の設定箇所（各ダッシュボードのスクリーンショット or リンク）
 
-## 🗓 2026-03-19 セッション — 全20ページ レンダリング確認調査（10エージェント並行）
+- [ ] **`notro` パッケージ API リファレンス**セクション
+  - 3つのエントリーポイント（`notro`, `notro/utils`, `notro/integration`）
+  - `loader()` オプション（`queryParameters`, `clientOptions`）
+  - `NotionMarkdownRenderer` props（`markdown`, `linkToPages`, `classMap`, `components`）
+  - `classMap` キー一覧（callout, toggle, h1–h4, p, ul, ol, li, a, pre, table, etc.）
 
-> branch: `claude/test-notion-rendering-fn2Sm`
-> 調査対象: Notionデータベース全20ページ
+- [ ] **`remark-nfm` スタンドアロン利用**セクション
+  - `import { remarkNfm } from 'remark-nfm'` の基本使用例
+  - 修正 Fix 0〜9 の簡易表
 
-### 🔴 重大（機能が根本的に壊れている）
+- [ ] **チュートリアルへの誘導リスト**
 
-#### N-01: raw HTML ブロックがコンポーネントマッピングをバイパスする【最優先】
+  ```
+  📖 チュートリアル（ブログ記事）
+  ├── セットアップガイド              → /blog/setup/
+  ├── 既存 Astro プロジェクトへの追加  → /blog/add-notro-to-astro/
+  ├── Notion でのコンテンツ管理        → /blog/content-management/
+  ├── ビルドとデプロイ                → /blog/build-and-deploy/
+  └── コンポーネントのカスタマイズ     → /blog/customize-components/
+  ```
 
-`@mdx-js/mdx` の `evaluate()` は raw HTML ブロック（`<table>`, `<h2 color="...">` 等）を
-`_components` によるマッピングの対象にしない。
-Notion API はテーブル・色付き見出し・色付き段落を raw HTML として出力するため、
-`TableBlock.astro` / `H2.astro` / `ParagraphEl` に一切到達しない。
+- [ ] **トラブルシューティングセクション**
+  - `truncated === true` の対処（大きなページを分割）
+  - `unknown_block_ids` の意味（Notion API が変換できなかったブロック）
+  - Notion API レート制限（429）への対応（自動リトライあり）
+  - 画像が表示されない（S3 プリサイン URL の有効期限切れ → 再ビルド）
 
-**症状:**
-- テーブルがブラウザデフォルトスタイル（枠線なし・パディングなし）で表示される
-- `header-row="true"` による先頭行スタイルが機能しない
-- `nt-table-wrapper` / `nt-table` / `nt-table-cell` クラスが付与されない
-- Fix 3 生成の `<h2 color="blue">` / `<p color="gray_bg">` の色が完全に無視される
+### 2-2. URL のリネーム検討
 
-**影響ページ:** 全テーブルページ（sample-04-tables 等）、色付きブロックを含む全ページ
-**対処案:** `rehype-raw` をパイプライン（`packages/notro/src/utils/mdx-pipeline.ts`）に追加し、
-raw HTML を hast element に変換してからコンポーネントマッピングを適用する
-
----
-
-#### N-02: `<details>` / `<column>` 内コンテンツがタブインデントによりコードブロックとして誤レンダリングされる
-
-Notion API は `<details>` / `<summary>` / `<column>` 内のコンテンツをタブ1つでインデントして出力する。
-CommonMark ではタブ1つ（=4スペース相当）のインデントはコードブロックとして解釈される。
-
-**症状:**
-- トグルの本文テキスト・リスト・コードブロックがすべて `<pre><code>` として出力される
-- ネストされたトグルの内側 `<details>` タグがエスケープされた文字列として表示される
-- トグル内のフェンスコードブロック（` ``` `）がフェンスとして認識されない
-- カラムレイアウト（`<column>`）内の見出し・リストが生テキストになる
-- ネストされたリスト（`\t- item`）がコードブロックになる可能性がある
-
-**影響ページ:** sample-08-toggles, sample-10-columns, sample-03-lists
-**対処案:** `transformer.ts` に新 Fix を追加し、`<details>` / `<column>` / リストアイテムの
-タブインデントを dedent する（callout の Fix 2 dedent ロジックを参考に適用）
-**参照:** `packages/remark-nfm/src/transformer.ts`, `packages/notro/src/components/notion/Toggle.astro`, `packages/notro/src/components/notion/Column.astro`
+- [ ] `/contact/` → `/docs/` へのリネームを検討（ファイル名が実体と乖離している）
+  - `src/pages/contact.astro` → `src/pages/docs.astro`
+  - `astro.config.mjs` に `redirects: { '/contact/': '/docs/' }` を追加（後方互換）
+  - Header・Footer のリンク先を更新
 
 ---
 
-#### N-03: Callout が API フォーマット不一致で icon・color が機能しない
+## 3. チュートリアル（ブログ記事）の整理
 
-Notion API は callout を `<callout>\n\t💡 **Tip:** ...\n</callout>` という属性なし raw HTML で出力する。
-Fix 2 は `:::callout{icon="..." color="..."}` ディレクティブ形式のみ処理するため：
-- アイコン用 `<span>` が描画されない（絵文字がインラインテキストとして本文先頭に混入）
-- `color` が渡らないためデフォルトスタイルのみ
+### 3-1. 既存記事マッピング
 
-**影響ページ:** sample-16-mixed-blog-post、callout を含む全ページ
-**対処案:** `transformer.ts` で raw HTML 形式の `<callout>` をディレクティブ形式に変換する
-前処理を Fix 2 に追加する
-**参照:** `packages/remark-nfm/src/transformer.ts` (Fix 2), `packages/notro/src/components/notion/Callout.astro`
+| スラッグ | タグ | 学習段階 |
+|---|---|---|
+| `setup` | セットアップ, 入門 | ★ 入門1 |
+| `add-notro-to-astro` | notro, Astro, 入門 | ★ 入門2 |
+| `content-management` | Notion, コンテンツ管理 | ★★ 基礎 |
+| `build-and-deploy` | デプロイ, Netlify, Vercel | ★★ 基礎 |
+| `customize-components` | カスタマイズ, Tailwind | ★★★ 応用 |
+| `blocks` | — | ★★★ リファレンス |
+| `test-callout-edge-cases` | test, callout | テスト用（非公開推奨）|
+| `test-markdown-edge-cases` | test, edge-cases | テスト用（非公開推奨）|
 
----
+### 3-2. テスト記事の非公開化（Notion 側操作）
 
-#### N-04: インライン数式が KaTeX で正しくレンダリングされない
+- [ ] Notion で `test-callout-edge-cases` と `test-markdown-edge-cases` の `Public` を **false** に変更
+  ※ コード変更不要
 
-Notion API はインライン数式を `\$x = frac\{-b pm sqrt\{b\^2 - 4ac\}\}\{2a\}\$` のように出力する。
-Fix 0 は `\$...\$` → `$...$` にデリミタを変換するが、内部の
-`\^` / `\{` / `\}` のエスケープ解除と、`frac` / `sqrt` / `pm` → `\frac` / `\sqrt` / `\pm`
-の LaTeX コマンド復元は行われないため、KaTeX が数式を解釈できない。
-（ブロック数式 `$$...$$` は正常）
+### 3-3. ブログ一覧での「入門」記事の優遇
 
-**影響ページ:** sample-09-math、インライン数式を含む全ページ
-**参照:** `packages/remark-nfm/src/transformer.ts` (Fix 0, Fix 5)
+- [ ] `blog/[...page].astro` で `入門` タグの記事を「ピン留め」同様に1ページ目上部に表示するか検討
+  - 現状: ピン留め（`pinned` タグ）と日付ソートのみ
+  - 案: `入門` タグ記事を「はじめての方へ」セクションとして固定表示
 
----
+### 3-4. 新規記事の執筆（Notion で作成）
 
-#### N-05: blockquote 直後の段落テキストが誤って blockquote 内に取り込まれる
-
-CommonMark の lazy continuation 規則により、blockquote の最後の段落が `>` なしで継続できる。
-Notion API は `> last-quote-line\nRegular paragraph` の形式（空行なし）で出力するため、
-`Regular paragraph` が blockquote 外の独立段落ではなく quote 内テキストとしてパースされる。
-
-**影響ページ:** sample-06-blockquotes、blockquote を含む全ページ
-**対処案:** `transformer.ts` に新 Fix を追加し、`> ...` で終わる行の直後に `>` で始まらない
-テキスト行が続く場合、間に空行を挿入する
-**参照:** `packages/remark-nfm/src/transformer.ts`
+- [ ] **テンプレートのフォルダ構成ガイド** — `src/` 各ディレクトリの役割説明（タグ: 入門）
+- [ ] **remark-nfm スタンドアロン使用ガイド** — Astro なしで使いたい人向け（タグ: remark-nfm）
+- [ ] **Notion ブロック対応状況リファレンス** — `blocks` 記事を拡充してコンポーネント + CSS クラス一覧（タグ: リファレンス）
 
 ---
 
-#### N-06: TableOfContents コンポーネントが静的プレースホルダーのみで目次を生成しない
+## 4. 内部タグの仕様を README / Docs で明文化
 
-`<table_of_contents/>` は自己閉鎖タグのため `<slot />` が空になり、
-「📋 目次」というラベルのみが表示される。見出しへのジャンプリンクが一切生成されない。
-
-**影響ページ:** sample-12-toc、TOC ブロックを含む全ページ
-**対処案:** `rehype-slug` + `rehype-autolink-headings` をパイプラインに追加し、
-クライアントサイド JS または Astro ビルド時処理で見出し一覧を動的収集する
-**参照:** `packages/notro/src/components/notion/TableOfContents.astro`, `packages/notro/src/utils/mdx-pipeline.ts`
+- [ ] `page` タグ — ブログ一覧・タグページ非表示、日付/タグ/前後ナビ非表示。固定ページ（About, Privacy 等）に使用。
+- [ ] `pinned` タグ — ブログ一覧1ページ目の「ピン留め」セクションに表示。通常リストからは除外。
+- [ ] `入門` タグ — 入門者向け。チュートリアル序列の基準として使用。
+- [ ] 上記を `content-management` 記事 または Docs ページで明記
 
 ---
 
-### 🟠 中程度（表示が崩れる・機能が一部欠損）
+## 5. 技術的な実装タスク（優先度順）
 
-#### N-07: `<hr>` 要素に視覚的スタイルがない
-
-`global.css` に `.nt-markdown-content hr` のスタイル定義が存在しない。
-Tailwind 4 preflight のみが適用され、上下余白がなく divider が本文に張り付いて表示される。
-
-**対処案:** `global.css` に `.nt-markdown-content hr` のマージン・ボーダー色を追加する
-
----
-
-#### N-08: `.nt-quote-block` の CSS が未定義
-
-`Quote.astro` が出力する `<blockquote class="nt-quote-block">` に対応する CSS が `global.css` に存在しない。
-ブロッククォートが通常テキストと視覚的に区別できない（左ボーダー・インデント・背景色なし）。
-
----
-
-#### N-09: 画像ブロックが Astro の画像最適化を受けない
-
-`ImageBlock.astro` がネイティブ `<img>` タグを使用しており、WebP 変換・リサイズ・lazy loading が適用されない。
-また画像の Alt テキストが常に `<figcaption>` として画面上に表示される。
-
-**参照:** `packages/notro/src/components/notion/ImageBlock.astro`
+| # | タスク | ファイル | 優先度 |
+|---|---|---|---|
+| 1 | test記事を非公開（Notion操作） | Notion DB | 🔴 即時 |
+| 2 | index.astro にデプロイボタン追加 | `src/pages/index.astro` | 🔴 高 |
+| 3 | index.astro のCTA重複解消 + ボタン役割整理 | `src/pages/index.astro` | 🔴 高 |
+| 4 | Docs ページにクイックスタート追加 | `src/pages/contact.astro` | 🔴 高 |
+| 5 | Docs ページに Vercel/Netlify デプロイガイド追加 | `src/pages/contact.astro` | 🟠 中 |
+| 6 | Docs ページに Notion セットアップガイド追加 | `src/pages/contact.astro` | 🟠 中 |
+| 7 | Docs ページにチュートリアル誘導リスト追加 | `src/pages/contact.astro` | 🟠 中 |
+| 8 | Docs ページに API リファレンス追加 | `src/pages/contact.astro` | 🟠 中 |
+| 9 | Docs ページにトラブルシューティング追加 | `src/pages/contact.astro` | 🟡 低 |
+| 10 | /contact/ → /docs/ リネーム + redirect | `astro.config.mjs`, `contact.astro` | 🟡 低 |
+| 11 | index.astro「ブログを見る」→「Docs を見る」に変更 | `src/pages/index.astro` | 🟡 低 |
+| 12 | ブログ一覧で「入門」記事を優先表示 | `src/pages/blog/[...page].astro` | 🟡 低 |
+| 13 | OGP 画像（og-default.png）をテンプレート向けに更新 | `public/og-default.png` | 🟡 低 |
 
 ---
 
-#### N-10: `truncated` フラグがページデータに保存されず訪問者への通知手段がない
+## サイト全体の情報設計（目標）
 
-ビルドログに警告は出るが `schema.ts` に `truncated` フィールドがなく、
-`[slug].astro` で切り捨て有無を判断できない。大容量ページで無言のコンテンツ欠損が起きうる。
+```
+/                    トップ
+                     └── テンプレートの価値提案 + デプロイ CTA（Vercel/Netlify）
+                         2つの使い方（テンプレート / npm パッケージ）
+                         3ステップ（テンプレート視点）+ 機能一覧
 
-**対処案:** `schema.ts` に `truncated: z.boolean().default(false)` を追加し、
-`[slug].astro` で注意書きを表示する
+/docs/               Docs（現在の /contact/）
+                     ├── クイックスタート（5分でデプロイ）
+                     ├── Notion セットアップ
+                     ├── 環境変数
+                     ├── デプロイガイド（Vercel / Netlify）
+                     ├── API リファレンス（loader, Renderer, classMap）
+                     ├── remark-nfm スタンドアロン
+                     ├── チュートリアル一覧（→ /blog/）
+                     ├── サイトの仕組み（現在の内容）
+                     └── トラブルシューティング
 
----
+/blog/               ブログ（Notion 管理）
+                     ├── 入門記事（setup, add-notro-to-astro, ...）
+                     ├── 基礎・応用記事
+                     └── リファレンス記事（blocks, ...）
 
-#### N-11: タスクリストのチェックボックスにスタイル定義がない
-
-remark-gfm が生成する `.contains-task-list` / `.task-list-item` / `input[type=checkbox]` に対する
-CSS が `global.css` に存在せず、ブラウザ間で見た目が大きく異なる。
-
----
-
-#### N-12: About・privacy・sample-fixed-page が Public=false でビルドから除外されている
-
-- `about`: Public=false → `/blog/about/` が 404（静的 `/about/` とも設計が二重化）
-- `privacy`: Public=false → `/blog/privacy/` が 404
-- `sample-fixed-page`: Public=false かつ本文が空
-
-**対処案:** Notion 上で `Public` プロパティを `true` に変更する。
-About は静的 Astro ページとの実装方針統一も必要。
-
----
-
-#### N-13: `config.ts` の `navPages` 設定が不完全
-
-- `privacy` が未登録 → `page-privacy` bodyClass が適用されず法的文書スタイルが当たらない
-- `about` が未登録 → `page-about` bodyClass が適用されない
-- `blocks` ページが Notion 上に存在しない
-
-**対処案:** `config.ts` に `{ slug: "privacy", bodyClass: "page-privacy" }` と
-`{ slug: "about", bodyClass: "page-about" }` を追加する
-
----
-
-#### N-14: ピン留め記事がページネーション件数の計算から除外される
-
-`[...page].astro` が `paginate(regularPosts, ...)` に `pinnedPosts` を除いた件数を渡すため、
-ピン留め記事が多い場合に総記事数とページネーション件数が一致しない。
-
----
-
-### 🟡 軽微（視覚的な問題・将来リスク）
-
-#### N-15: `.nt-toggle-block > details > summary` CSS セレクターがデッドコード
-
-`Toggle.astro` は `<details class="nt-toggle-block">` と書いており、
-`.nt-toggle-block` 自身が `<details>` のため `.nt-toggle-block > details` はマッチしない。
-`global.css` 内の関連ルール群は未使用（デッドコード）。
-
----
-
-#### N-16: Fix 4 が `<table_of_contents>` の `color` 属性を破棄する
-
-`transformer.ts` Fix 4 が `<table_of_contents color="gray"/>` → `<div><table_of_contents/></div>` に
-変換する際、`color` 属性が除去される。
-
----
-
-#### N-17: `.nt-toc-block` / `.nt-toc-block__label` の CSS が未定義
-
-`TableOfContents.astro` が使用するクラスに対応する CSS が `global.css` に存在しない。
-
----
-
-#### N-18: KaTeX CSS を CDN から読み込んでいる
-
-`Layout.astro` が `https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css` を外部 CDN から読み込んでいる。
-オフライン環境・CDN 障害時に数式スタイルが崩れる。
-
----
-
-#### N-19: About ページの Notion コンテンツに「Astro 5」の誤記（実際は Astro 6）
-
----
-
-#### N-20: SyncedBlock フォールバック時に Notion 内部 URL が公開される
-
-Fix 6 が失敗した場合に `<synced_block>` がそのまま通過し、
-`SyncedBlock.astro` が `data-url` 属性に Notion 内部 URL を出力する。
-
----
-
-### 集計（2026-03-19 追加分）
-
-| 優先度 | 件数 |
-|--------|------|
-| 🔴 重大 | 6件（N-01〜N-06） |
-| 🟠 中程度 | 8件（N-07〜N-14） |
-| 🟡 軽微 | 6件（N-15〜N-20） |
-| **合計** | **20件** |
-
-### 根本原因サマリー
-
-| 根本原因 | 影響する課題 |
-|---|---|
-| `@mdx-js/mdx` が raw HTML をコンポーネントマッピング対象にしない | N-01, N-02（一部）, N-03（一部） |
-| タブインデントが CommonMark コードブロックとして解釈される | N-02（toggles, columns, lists） |
-| Notion API のインライン数式フォーマットが壊れている | N-04 |
-| `preprocessNotionMarkdown` に Fix 不足 | N-05（blockquote lazy continuation） |
-| CSS 定義の欠落 | N-07, N-08, N-11, N-15, N-17 |
-| Notion ページの `Public=false` 設定 | N-12 |
-| `config.ts` の `navPages` 設定漏れ | N-13 |
+/blog/about/         About（Notion 管理、page タグ）
+/blog/privacy/       プライバシーポリシー（Notion 管理、page タグ）
+/404                 404 ページ
+```
