@@ -238,6 +238,7 @@ export function loader({
                 url: page.url,
                 public_url: page.public_url,
                 markdown: rawMarkdown,
+                truncated: markdownResponse.truncated,
               } as PageWithMarkdownType,
             });
 

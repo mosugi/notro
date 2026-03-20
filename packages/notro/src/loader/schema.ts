@@ -783,6 +783,7 @@ export type PageObjectResponseType = z.infer<typeof pageObjectResponseSchema>;
 
 export const pageWithMarkdownSchema = pageObjectResponseSchema.extend({
   markdown: z.string(),
+  truncated: z.boolean().default(false),
 });
 export type PageWithMarkdownType = z.infer<typeof pageWithMarkdownSchema>;
 

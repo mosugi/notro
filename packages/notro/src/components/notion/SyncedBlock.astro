@@ -5,6 +5,10 @@
  *
  * Synced block — renders child content as-is.
  * Mapped to MDX `components.synced_block` / `components.synced_block_reference`.
+ *
+ * Note: the `url` prop contains an internal Notion page URL and is intentionally
+ * NOT forwarded to the DOM to prevent leaking internal page IDs publicly.
+ * A safe `data-has-source` boolean attribute is used instead.
  */
 interface Props {
 	url?: string;
@@ -12,8 +16,10 @@ interface Props {
 }
 
 const { url, class: className } = Astro.props;
+// Derive a safe boolean indicator without exposing the internal Notion URL.
+const hasSource = url != null && url.length > 0;
 ---
 
-<div class:list={["nt-synced-block", className]} data-url={url}>
+<div class:list={["nt-synced-block", className]} data-has-source={hasSource || undefined}>
 	<slot />
 </div>
