@@ -21,6 +21,14 @@ import type { LinkToPages } from '../types.ts';
 // Notion-specific custom element names that rehype-raw must pass through
 // without stripping. These are mapped to Astro components in notionComponents.
 const NOTION_CUSTOM_ELEMENTS = [
+	// MDX AST node types — must be passed through rehype-raw or it throws
+	// "Cannot compile mdxJsxFlowElement node" at build time.
+	'mdxJsxFlowElement',
+	'mdxJsxTextElement',
+	'mdxFlowExpression',
+	'mdxTextExpression',
+	'mdxJsImport',
+	'mdxJsExport',
 	'callout',
 	'columns',
 	'column',
