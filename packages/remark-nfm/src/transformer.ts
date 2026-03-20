@@ -14,8 +14,10 @@
  *    each one to force it to become a <hr> thematic break.
  *
  * 2. Callout directive syntax:
- *    Notion outputs "::: callout {icon="..." color="..."}" with spaces.
- *    remark-directive requires ":::callout{...}" (no spaces).
+ *    Notion outputs raw <callout icon="..." color="...">...</callout> HTML blocks.
+ *    This fix first converts them to :::callout{...} directive syntax (Fix 3 below),
+ *    then normalizes any legacy "::: callout {icon="..." color="..."}" with spaces
+ *    to ":::callout{...}" (no spaces).
  *
  * 3. Block-level color annotations:
  *    Lines ending with {color="..."} are converted to raw HTML elements so the
@@ -26,6 +28,7 @@
  *    The underscore form <table_of_contents/> (Notion API output) is not recognized as HTML
  *    by CommonMark, so it gets escaped as text. Wrap it in <div> so remark treats it
  *    as HTML and the component mapping can render TableOfContents.astro.
+ *    The color attribute is preserved if present.
  *
  * 5. Inline equation format:
  *    Notion outputs inline math as $`E = mc^2`$ (backtick-delimited inside $...$).
@@ -53,7 +56,129 @@
  *    [text](url) inside raw HTML <td> blocks. remark does not process inline
  *    markdown inside raw HTML, so these appear as literal text. We convert
  *    them to <a href="url">text</a> before the pipeline runs.
+ *
+ * 10. Tab-indented content inside <details> and <column> blocks:
+ *    Notion API outputs content inside <details> and <column> elements with a
+ *    leading tab per nesting level. CommonMark treats tab-indented lines as
+ *    indented code blocks, so toggle/column body content is misrendered as
+ *    <pre><code>. We remove one leading tab from each content line inside these
+ *    blocks (tracking nesting depth with a stack).
+ *
+ * 11. Restore backslashes in LaTeX commands inside math delimiters:
+ *    Notion API sometimes strips backslashes from LaTeX commands inside inline
+ *    math ($...$) and block math ($$...$$), outputting e.g. "frac{...}{...}"
+ *    instead of "\frac{...}{...}". We restore the leading backslash for a set
+ *    of well-known LaTeX commands that appear without one.
+ *
+ * 12. Blockquote lazy continuation prevention:
+ *    CommonMark's lazy continuation rule causes a non-blank line immediately
+ *    following a blockquote line to be pulled into the blockquote. We insert a
+ *    blank line between a blockquote line and any following non-blockquote,
+ *    non-blank line.
  */
+
+// Leading emoji sequence pattern (covers most emoji including keycap sequences).
+// Used in Fix 2 to extract the icon from the first content line of an attribute-less
+// <callout> block.
+const LEADING_EMOJI_RE =
+  /^(?:[\u0023\u002A\u0030-\u0039]\uFE0F\u20E3|\p{Emoji_Modifier_Base}\p{Emoji_Modifier}|\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(?:\u200D(?:[\u0023\u002A\u0030-\u0039]\uFE0F\u20E3|\p{Emoji_Modifier_Base}\p{Emoji_Modifier}|\p{Emoji_Presentation}|\p{Emoji}\uFE0F))*/u;
+
+// LaTeX command names that may appear without a leading backslash in Notion's
+// math output. Sorted longest-first to prefer longer matches (e.g. "pmatrix"
+// before "matrix") when building the alternation.
+const LATEX_COMMANDS = [
+  "underbrace", "overline", "pmatrix", "bmatrix", "mathbb", "mathbf", "mathrm",
+  "epsilon", "partial", "approx", "matrix", "forall", "exists", "lambda",
+  "nabla", "cases", "infty", "sigma", "theta", "equiv", "alpha", "delta",
+  "right", "tilde", "begin", "gamma", "times", "cdot", "begin",
+  "frac", "sqrt", "prod", "left", "beta", "text", "ddot", "leq", "geq",
+  "neq", "hat", "bar", "vec", "dot", "end", "sum", "int", "lim", "sin",
+  "cos", "tan", "log", "ln", "mu", "pi", "pm", "div",
+];
+
+// Build regex: not preceded by backslash, the command as a word, word boundary after.
+// The 'u' flag is not needed here since all chars are ASCII.
+const LATEX_CMD_RE = new RegExp(
+  `(?<!\\\\)\\b(${[...new Set(LATEX_COMMANDS)].sort((a, b) => b.length - a.length).join("|")})\\b`,
+  "g",
+);
+
+/**
+ * Convert raw <callout ...>...</callout> HTML blocks to :::callout{...}
+ * container directive syntax, and extract the leading emoji as the icon
+ * attribute when no icon= attribute is present.
+ *
+ * This is called at the top level and recursively inside processCalloutsDedent
+ * so that nested callouts (which appear tab-indented inside the outer callout
+ * body) are also converted after dedenting.
+ */
+function convertRawCallouts(input: string): string {
+  const lines = input.split("\n");
+  const out: string[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    // Match <callout> or <callout attr="val" ...>
+    const openMatch = line.match(/^<callout((?:\s[^>]*)?)>/);
+
+    if (openMatch) {
+      const attrsStr = openMatch[1].trim();
+
+      // Extract existing icon= and color= attributes if present.
+      const iconMatch = attrsStr.match(/icon="([^"]*)"/);
+      const colorMatch = attrsStr.match(/color="([^"]*)"/);
+      let icon = iconMatch ? iconMatch[1] : "";
+      const color = colorMatch ? colorMatch[1] : "";
+
+      // Collect body lines until the matching </callout> (depth-aware).
+      const bodyLines: string[] = [];
+      i++;
+      let depth = 1;
+      while (i < lines.length) {
+        const bl = lines[i];
+        // A <callout ...> on a (possibly indented) line increases depth.
+        if (/^<callout/.test(bl.trimStart())) depth++;
+        // </callout> on any line (possibly indented) decreases depth.
+        if (bl.trimStart() === "</callout>") {
+          depth--;
+          if (depth === 0) break;
+        }
+        bodyLines.push(bl);
+        i++;
+      }
+
+      // If no icon attribute, try to extract a leading emoji from the first
+      // content line (stripping the one leading tab Notion adds).
+      if (!icon && bodyLines.length > 0) {
+        const firstContent = bodyLines[0].replace(/^\t/, "");
+        const emojiMatch = firstContent.match(LEADING_EMOJI_RE);
+        if (emojiMatch) {
+          icon = emojiMatch[0];
+          // Replace the first body line with the content after the emoji.
+          bodyLines[0] = "\t" + firstContent.slice(icon.length).trimStart();
+        }
+      }
+
+      // Build the directive attributes string.
+      const attrParts: string[] = [];
+      if (icon) attrParts.push(`icon="${icon}"`);
+      if (color) attrParts.push(`color="${color}"`);
+      const attrs = attrParts.join(" ");
+
+      out.push(`:::callout${attrs ? `{${attrs}}` : ""}`);
+      out.push(...bodyLines);
+      out.push(":::");
+      i++; // skip the </callout> line
+    } else {
+      out.push(line);
+      i++;
+    }
+  }
+
+  return out.join("\n");
+}
+
 export function preprocessNotionMarkdown(markdown: string): string {
   // Fix 0: Migration — convert \$...\$ (escaped dollars from old preprocessing bug)
   // back to $...$ so remark-math can parse inline math correctly.
@@ -73,27 +198,28 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // Step 1b: Handle "text\n---" — no intervening line at all.
   result = result.replace(/([^\n])\n(---+)(\n|$)/g, "$1\n\n$2$3");
 
-  // Fix 2: Normalize callout directive syntax.
-  // Notion outputs "::: callout {icon="..." color="..."}" (with spaces)
-  // or "::: callout" (no attrs) in newer API responses.
-  // remark-directive requires ":::callout{...}" (no spaces, attrs optional).
-  // Also dedent tab-indented content inside callout blocks — CommonMark
-  // treats tab-indented lines as indented code blocks otherwise.
-  // Process callout blocks line-by-line to correctly handle nested ::: directives.
-  // A regex-based approach fails when the callout body contains other ::: blocks
-  // (e.g. :::note … :::) because the lazy [\s\S]*? matches up to the first :::
-  // on a line, closing the outer callout too early. Instead we track nesting depth
-  // explicitly and find the matching closing ::: before dedenting the body.
+  // Fix 2: Callout directive syntax.
+  // Notion's Public API outputs raw <callout icon="..." color="...">…</callout>
+  // HTML blocks. We first convert them to :::callout{...} directive syntax, then
+  // normalize any legacy "::: callout {attrs}" form (with spaces) to
+  // ":::callout{attrs}" as required by remark-directive.
+  //
+  // Callout blocks may be nested: the outer body is tab-indented, so
+  // convertRawCallouts handles each depth level, and processCalloutsDedent
+  // recursively processes the dedented inner content.
   //
   // This function also handles nested callouts that are tab-indented inside an
   // outer callout block. After dedenting the outer callout body, the inner
   // "::: callout" syntax is normalized and then processed recursively so that
   // nested callouts are fully expanded at every level.
   result = (function processCalloutsDedent(input: string): string {
+    // Convert raw <callout> HTML blocks to :::callout directive syntax.
+    // This runs at each recursion level so that newly-dedented inner callout
+    // opening lines are converted before the line scanner processes them.
+    const withDirectives = convertRawCallouts(input);
+
     // Normalize "::: callout {attrs}" → ":::callout{attrs}" at any indentation level.
-    // This is run at each recursive level so that newly-dedented inner callout
-    // opening lines are normalized before the line scanner processes them.
-    const normalized = input.replace(
+    const normalized = withDirectives.replace(
       /^::: callout( \{[^}]*\})?$/gm,
       (_, attrs) => `:::callout${attrs?.trim() ?? ""}`,
     );
@@ -160,9 +286,13 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // The underscore form <table_of_contents/> (Notion API output) is not recognized as HTML
   // by CommonMark. The hyphenated form <table-of-contents/> (seed/user input) is valid but
   // we normalize both to <table_of_contents/> inside a <div> for consistent plugin handling.
+  // The color attribute (if present) is preserved in the inner tag.
   result = result.replace(
-    /^<table[_-]of[_-]contents(?:\s[^>]*)?\s*\/?>$/gm,
-    "<div><table_of_contents/></div>\n"
+    /^<table[_-]of[_-]contents(\s[^/>\s][^/>]*)?\s*\/?>$/gm,
+    (_, attrs: string | undefined) => {
+      const innerAttrs = attrs ? attrs.trim() : "";
+      return `<div><table_of_contents${innerAttrs ? ` ${innerAttrs}` : ""}/></div>\n`;
+    }
   );
 
   // Fix 5: Convert Notion inline equation format $`...`$ → $...$ for remark-math.
@@ -213,6 +343,65 @@ export function preprocessNotionMarkdown(markdown: string): string {
     );
     return `<td>${linked}</td>`;
   });
+
+  // Fix 10: Dedent tab-indented content inside <details>, <columns>, and <column> blocks.
+  // Notion API outputs each content line inside <details> and <column> elements
+  // with one leading tab per nesting level. CommonMark interprets tab-indented
+  // lines as indented code blocks, so toggle/column body text is misrendered as
+  // <pre><code>. We track nesting depth and remove one tab per depth level from
+  // each line that falls inside these containers (cumulative dedent).
+  // <summary>...</summary> lines have no leading tab and are passed through as-is.
+  result = (function dedentHtmlBlocks(input: string): string {
+    const lines = input.split("\n");
+    const out: string[] = [];
+    let depth = 0;
+
+    for (const line of lines) {
+      // Strip leading tabs to obtain the raw tag for matching.
+      const stripped = line.trimStart();
+
+      if (/^<\/(details|columns|column)>/.test(stripped)) {
+        // Closing tag: pop depth, then remove 'depth' tabs (after pop).
+        if (depth > 0) depth--;
+        out.push(depth > 0 ? line.replace(new RegExp(`^\t{1,${depth}}`), "") : line);
+      } else if (/^<(details|columns|column)(?:\s[^>]*)?>$/.test(stripped)) {
+        // Opening tag: remove 'depth' tabs before the tag, then push depth.
+        out.push(depth > 0 ? line.replace(new RegExp(`^\t{1,${depth}}`), "") : line);
+        depth++;
+      } else if (depth > 0) {
+        // Content line inside a container: remove up to 'depth' leading tabs.
+        out.push(line.replace(new RegExp(`^\t{1,${depth}}`), ""));
+      } else {
+        out.push(line);
+      }
+    }
+
+    return out.join("\n");
+  })(result);
+
+  // Fix 11: Restore missing backslashes before LaTeX command names in math content.
+  // Notion's API sometimes strips the leading backslash from LaTeX commands
+  // (e.g. outputs "frac{a}{b}" instead of "\frac{a}{b}").  We restore backslashes
+  // for a fixed set of well-known commands when they appear without one inside
+  // $...$ or $$...$$ delimiters.
+  //
+  // Inline math $...$ (single line): replace via simple regex.
+  result = result.replace(
+    /\$([^$\n]+)\$/g,
+    (_, content: string) => `$${content.replace(LATEX_CMD_RE, "\\$1")}$`
+  );
+  // Block math $$...$$ (potentially multi-line): replace via multiline regex.
+  result = result.replace(
+    /\$\$([\s\S]+?)\$\$/g,
+    (_, content: string) => `$$${content.replace(LATEX_CMD_RE, "\\$1")}$$`
+  );
+
+  // Fix 12: Prevent blockquote lazy continuation.
+  // CommonMark's lazy continuation rule causes a non-blank, non-blockquote line
+  // immediately following a blockquote line to be absorbed into the blockquote.
+  // We insert an empty line between a "> ..." line and any following line that
+  // does not start with ">" and is not itself blank.
+  result = result.replace(/(^>[ \t][^\n]*)\n(?!>|\n)/gm, "$1\n\n");
 
   return result;
 }
