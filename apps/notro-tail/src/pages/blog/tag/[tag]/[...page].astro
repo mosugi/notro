@@ -12,10 +12,14 @@ export async function getStaticPaths({
   paginate: PaginateFunction;
 }) {
   const posts = await getCollection("posts");
+  // "page" and "pinned" are internal markers, not public tags
+  const INTERNAL_TAGS = ["page", "pinned"];
   const tags = [
     ...new Set(
       posts.flatMap((entry) =>
-        getMultiSelect(entry.data.properties.Tags).map((t) => t.name),
+        getMultiSelect(entry.data.properties.Tags)
+          .map((t) => t.name)
+          .filter((name) => !INTERNAL_TAGS.includes(name)),
       ),
     ),
   ];
