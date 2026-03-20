@@ -48,7 +48,7 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
     <nav>
       <ul class="flex items-center gap-6">
         <li><a href="/blog/" class:list={["nav-link", { active: isActive("/blog/") }]} aria-current={isActive("/blog/") ? "page" : undefined}>ブログ</a></li>
-        <li><a href="/about/" class:list={["nav-link", { active: isActive("/about/") }]} aria-current={isActive("/about/") ? "page" : undefined}>About</a></li>
+        <li><a href="/blog/about/" class:list={["nav-link", { active: isActive("/blog/about/") }]} aria-current={isActive("/blog/about/") ? "page" : undefined}>About</a></li>
         <li><a href="/contact/" class:list={["nav-link", { active: isActive("/contact/") }]} aria-current={isActive("/contact/") ? "page" : undefined}>Docs</a></li>
         <li>
           <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="nav-icon" aria-label="GitHub">
