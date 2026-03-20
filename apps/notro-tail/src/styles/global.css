@@ -253,17 +253,18 @@
   }
 
   /* Toggle block — smooth indicator rotation on open/close */
-  .nt-toggle-block > details > summary,
+  /* N-15: .nt-toggle-block is itself <details>, so selectors target it directly (not .nt-toggle-block > details) */
+  .nt-toggle-block > summary,
   .nt-markdown-content details > summary {
     list-style: none;
     cursor: pointer;
   }
-  .nt-toggle-block > details > summary::-webkit-details-marker,
+  .nt-toggle-block > summary::-webkit-details-marker,
   .nt-markdown-content details > summary::-webkit-details-marker {
     display: none;
   }
   /* Animated disclosure triangle via ::before pseudo-element */
-  .nt-toggle-block > details > summary::before,
+  .nt-toggle-block > summary::before,
   .nt-markdown-content details > summary::before {
     content: "▶";
     display: inline-block;
@@ -274,18 +275,71 @@
     vertical-align: middle;
     color: rgba(55, 53, 47, 0.45);
   }
-  .nt-toggle-block > details[open] > summary::before,
+  .nt-toggle-block[open] > summary::before,
   .nt-markdown-content details[open] > summary::before {
     transform: rotate(90deg);
   }
   /* Fade-in for toggle content when opened */
-  .nt-toggle-block > details > :not(summary),
+  .nt-toggle-block > :not(summary),
   .nt-markdown-content details > :not(summary) {
     animation: nt-toggle-fadein 0.15s ease;
   }
   @keyframes nt-toggle-fadein {
     from { opacity: 0; }
     to   { opacity: 1; }
+  }
+
+  /* N-07: hr visual styles */
+  .nt-markdown-content hr {
+    margin: 2rem 0;
+    border: none;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  /* N-08: blockquote (Notion quote block) styles */
+  .nt-quote-block {
+    border-left: 3px solid #d1d5db;
+    padding: 0.5rem 0 0.5rem 1rem;
+    margin: 1rem 0;
+    color: #6b7280;
+  }
+  .nt-quote-block > p:first-child {
+    margin-top: 0;
+  }
+  .nt-quote-block > p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* N-11: task list checkbox styles for remark-gfm output */
+  .nt-markdown-content .contains-task-list {
+    list-style: none;
+    padding-left: 0;
+  }
+  .nt-markdown-content .task-list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding-left: 0;
+  }
+  .nt-markdown-content .task-list-item input[type="checkbox"] {
+    margin-top: 0.25rem;
+    flex-shrink: 0;
+    cursor: default;
+  }
+
+  /* N-17: table of contents block styles */
+  .nt-toc-block {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    background: #f9fafb;
+  }
+  .nt-toc-block__label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #374151;
+    margin-bottom: 0.5rem;
   }
 }
 
@@ -517,6 +571,26 @@
   .nt-property-url,
   .nt-property-phone {
     color: #60a5fa;
+  }
+
+  /* N-07: hr dark mode */
+  .nt-markdown-content hr {
+    border-top-color: rgba(255, 255, 255, 0.12);
+  }
+
+  /* N-08: blockquote dark mode */
+  .nt-quote-block {
+    border-left-color: rgba(255, 255, 255, 0.2);
+    color: #94a3b8;
+  }
+
+  /* N-17: table of contents dark mode */
+  .nt-toc-block {
+    border-color: rgba(255, 255, 255, 0.1);
+    background: #1e293b;
+  }
+  .nt-toc-block__label {
+    color: #cbd5e1;
   }
 
   /* ── Per-page themes — dark overrides ──────────────────────────────── */
