@@ -423,7 +423,7 @@ await notion.pages.update({
 # データソースのページ一覧を確認（curl版）
 curl -s "https://api.notion.com/v1/databases/$NOTION_DATASOURCE_ID/query" \
   -H "Authorization: Bearer $NOTION_TOKEN" \
-  -H "Notion-Version: 2022-06-28" \
+  -H "Notion-Version: 2026-03-11" \
   -H "Content-Type: application/json" \
   -d '{}' | python3 -c "
 import sys, json
@@ -438,7 +438,7 @@ for p in d.get('results', []):
 # ページを作成する（curl版）
 curl -s "https://api.notion.com/v1/pages" \
   -H "Authorization: Bearer $NOTION_TOKEN" \
-  -H "Notion-Version: 2022-06-28" \
+  -H "Notion-Version: 2026-03-11" \
   -H "Content-Type: application/json" \
   -d "{
     \"parent\": { \"database_id\": \"$NOTION_DATASOURCE_ID\" },
