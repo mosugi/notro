@@ -341,6 +341,28 @@
     color: #374151;
     margin-bottom: 0.5rem;
   }
+  .nt-toc-block__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nt-toc-item {
+    line-height: 1.6;
+  }
+  .nt-toc-item a {
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+  .nt-toc-item a:hover {
+    color: #2563eb;
+    text-decoration: underline;
+  }
+  /* Indent by heading level (h1=0, h2=1rem, h3=2rem, h4=3rem) */
+  .nt-toc-level-1 { padding-left: 0; }
+  .nt-toc-level-2 { padding-left: 1rem; }
+  .nt-toc-level-3 { padding-left: 2rem; }
+  .nt-toc-level-4 { padding-left: 3rem; }
 }
 
 /*
