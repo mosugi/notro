@@ -59,6 +59,7 @@
     "@notionhq/client": "5.11.1",
     "@shikijs/rehype": "^4.0.2",
     "rehype-katex": "^7.0.0",
+    "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
     "remark-nfm": "*",
