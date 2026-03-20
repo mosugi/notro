@@ -3,13 +3,17 @@
  * ![Caption](URL) {color="Color"}
  *
  * Notion image block. Mapped to MDX `components.img`.
+ *
+ * - `alt` is always set on the <img> element for screen readers.
+ * - `caption` is a separate prop for visible caption text rendered in <figcaption>.
+ *   If `caption` is not provided, no <figcaption> is rendered.
  */
 import { colorToClass } from './colors';
 
-interface Props { src: string; alt?: string; color?: string; class?: string; }
-const { src, alt, color, class: className } = Astro.props;
+interface Props { src: string; alt?: string; caption?: string; color?: string; class?: string; }
+const { src, alt, caption, color, class: className } = Astro.props;
 ---
 <figure class:list={["nt-image-block", colorToClass(color), className]}>
-	<img src={src} alt={alt ?? ''} loading="lazy" class="nt-image-block__img h-auto max-w-full" />
-	{alt && <figcaption class="nt-image-block__caption">{alt}</figcaption>}
+	<img src={src} alt={alt ?? ''} loading="lazy" decoding="async" class="nt-image-block__img h-auto max-w-full" />
+	{caption && <figcaption class="nt-image-block__caption">{caption}</figcaption>}
 </figure>
