@@ -770,8 +770,8 @@ export const pageObjectResponseSchema = z.object({
   id: z.string(),
   created_time: z.string(),
   last_edited_time: z.string(),
-  archived: z.boolean(),
-  in_trash: z.boolean(),
+  archived: z.boolean().optional().default(false),
+  in_trash: z.boolean().optional().default(false),
   url: z.string(),
   public_url: z.string().nullable(),
 });
@@ -783,6 +783,7 @@ export type PageObjectResponseType = z.infer<typeof pageObjectResponseSchema>;
 
 export const pageWithMarkdownSchema = pageObjectResponseSchema.extend({
   markdown: z.string(),
+  truncated: z.boolean().default(false),
 });
 export type PageWithMarkdownType = z.infer<typeof pageWithMarkdownSchema>;
 

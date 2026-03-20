@@ -122,7 +122,7 @@ export function loader({
   queryParameters,
   clientOptions,
 }: LoaderOptions): Loader {
-  const client = new Client(clientOptions);
+  const client = new Client({ notionVersion: "2026-03-11", ...clientOptions });
 
   // Return a loader object
   return {
@@ -238,6 +238,7 @@ export function loader({
                 url: page.url,
                 public_url: page.public_url,
                 markdown: rawMarkdown,
+                truncated: markdownResponse.truncated,
               } as PageWithMarkdownType,
             });
 
