@@ -137,6 +137,12 @@ const markdown = entry.data.markdown;
         components={{ callout: Callout }}
       />
 
+      {entry.data.truncated && (
+        <div class="mt-8 rounded-md border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm" style="color: #854d0e;">
+          このページのコンテンツは Notion API の制限により一部省略されています。
+        </div>
+      )}
+
       {(prevNav || nextNav) && (
         <nav class="mt-12 flex items-stretch gap-4 pt-8 text-sm" style="border-top: 1px solid rgba(55,53,47,0.09);">
           {/* prevNav = newer post (lower index in desc sort) */}
