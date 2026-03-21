@@ -4,6 +4,12 @@
 
 すべての返答は日本語で行うこと。ただし、コードのコメントは英語を使用する。
 
+## 作業ルール
+
+- **進捗管理**: 作業の進捗状況は `TODO.md` に記載しながら進めること。
+- **スタイリング**: スタイリングは TailwindCSS のみで行うこと。インラインスタイルや独自 CSS クラスの追加は禁止。
+- **実装後の検証**: 実装後は必ずビルド（`npm run build`）して出力結果を確認し、指示通りになっているかを検証すること。
+
 ## Project Overview
 
 **NotroTail** is a Notion-to-Astro static site generator. It fetches content from Notion via the Notion Public API (Markdown Content API), compiles it as MDX using `@mdx-js/mdx`'s `evaluate()`, and maps Notion block types to Astro components. Outputs a fast, SEO-optimized static site styled with TailwindCSS 4.
