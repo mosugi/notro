@@ -29,11 +29,3 @@ export function colorToClass(color: string | undefined): string {
 	return '';
 }
 
-/**
- * @deprecated Use colorToClass() instead.
- * colorToCSS() is kept for backward compatibility with custom components.
- * It now returns a CSS class name string instead of an inline style string.
- */
-export function colorToCSS(color: string | undefined): string {
-	return colorToClass(color);
-}
