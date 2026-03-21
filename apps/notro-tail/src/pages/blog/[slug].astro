@@ -63,25 +63,15 @@ const tags = getMultiSelect(entry.data.properties.Tags).filter(
 );
 ---
 
-<style>
-  /* Prev/next navigation card hover — CSS :hover replaces JS onmouseover */
-  .post-nav-link {
-    transition: background 0.15s ease;
-  }
-  .post-nav-link:hover {
-    background: rgba(55, 53, 47, 0.03);
-  }
-</style>
-
 <Layout title={title} description={description} type={isEmbeddedPage ? "website" : "article"}>
   <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
     <article class="mx-auto max-w-[720px]">
-      <header class="mb-10 pb-6" style="border-bottom: 1px solid rgba(55,53,47,0.09);">
-        <h1 class="mb-3 text-[2rem] font-bold tracking-tight leading-tight" style="color: #37352f;">{title}</h1>
-        {description && <p class="mb-4 text-base leading-relaxed" style="color: rgba(55,53,47,0.65);">{description}</p>}
+      <header class="mb-10 pb-6 border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
+        <h1 class="mb-3 text-[2rem] font-bold tracking-tight leading-tight text-[#37352f] dark:text-slate-200">{title}</h1>
+        {description && <p class="mb-4 text-base leading-relaxed text-[rgba(55,53,47,0.65)] dark:text-slate-400">{description}</p>}
         {!isEmbeddedPage && (
           <div class="flex flex-wrap items-center gap-3">
-            {date && <time datetime={date} class="text-sm" style="color: rgba(55,53,47,0.45);">{date}</time>}
+            {date && <time datetime={date} class="text-sm text-[rgba(55,53,47,0.45)] dark:text-slate-500">{date}</time>}
             {
               tags.length > 0 && (
                 <ul class="flex list-none flex-wrap gap-1.5">
@@ -89,7 +79,7 @@ const tags = getMultiSelect(entry.data.properties.Tags).filter(
                     <li>
                       <a
                         href={`/blog/tag/${tag.name}/`}
-                        style="font-size: 0.75rem; background: rgba(55,53,47,0.06); color: rgba(55,53,47,0.65); border-radius: 3px; padding: 0.15rem 0.5rem; text-decoration: none; transition: background 0.15s, color 0.15s;"
+                        class="text-xs bg-[rgba(55,53,47,0.06)] text-[rgba(55,53,47,0.65)] rounded-[3px] px-2 py-0.5 no-underline transition-colors hover:bg-[rgba(55,53,47,0.1)] dark:bg-white/6 dark:text-slate-400"
                       >
                         {tag.name}
                       </a>
@@ -141,23 +131,22 @@ const tags = getMultiSelect(entry.data.properties.Tags).filter(
       />
 
       {entry.data.truncated && (
-        <div class="mt-8 rounded-md border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm" style="color: #854d0e;">
+        <div class="mt-8 rounded-md border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-400">
           このページのコンテンツは Notion API の制限により一部省略されています。
         </div>
       )}
 
       {!isEmbeddedPage && (prevNav || nextNav) && (
-        <nav class="mt-12 flex items-stretch gap-4 pt-8 text-sm" style="border-top: 1px solid rgba(55,53,47,0.09);">
+        <nav class="mt-12 flex items-stretch gap-4 pt-8 text-sm border-t border-[rgba(55,53,47,0.09)] dark:border-white/8">
           {/* prevNav = newer post (lower index in desc sort) */}
           <div class="flex-1">
             {prevNav && (
               <a
                 href={`/blog/${prevNav.slug}/`}
-                class="article-nav-link flex h-full flex-col gap-1 rounded-md p-4"
-                style="border: 1px solid rgba(55,53,47,0.09); text-decoration: none; color: inherit;"
+                class="flex h-full flex-col gap-1 rounded-md p-4 border border-[rgba(55,53,47,0.09)] no-underline text-inherit transition-colors hover:bg-[rgba(55,53,47,0.03)] dark:border-white/8 dark:hover:bg-white/3"
               >
-                <span class="text-xs" style="color: rgba(55,53,47,0.45);">← 新しい記事</span>
-                <span class="font-medium line-clamp-2" style="color: #37352f;">{prevNav.title}</span>
+                <span class="text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500">← 新しい記事</span>
+                <span class="font-medium line-clamp-2 text-[#37352f] dark:text-slate-200">{prevNav.title}</span>
               </a>
             )}
           </div>
@@ -166,11 +155,10 @@ const tags = getMultiSelect(entry.data.properties.Tags).filter(
             {nextNav && (
               <a
                 href={`/blog/${nextNav.slug}/`}
-                class="article-nav-link flex h-full flex-col items-end gap-1 rounded-md p-4 text-right"
-                style="border: 1px solid rgba(55,53,47,0.09); text-decoration: none; color: inherit;"
+                class="flex h-full flex-col items-end gap-1 rounded-md p-4 text-right border border-[rgba(55,53,47,0.09)] no-underline text-inherit transition-colors hover:bg-[rgba(55,53,47,0.03)] dark:border-white/8 dark:hover:bg-white/3"
               >
-                <span class="text-xs" style="color: rgba(55,53,47,0.45);">古い記事 →</span>
-                <span class="font-medium line-clamp-2" style="color: #37352f;">{nextNav.title}</span>
+                <span class="text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500">古い記事 →</span>
+                <span class="font-medium line-clamp-2 text-[#37352f] dark:text-slate-200">{nextNav.title}</span>
               </a>
             )}
           </div>
@@ -179,13 +167,3 @@ const tags = getMultiSelect(entry.data.properties.Tags).filter(
     </article>
   </main>
 </Layout>
-
-<style>
-  /* Prev/next article nav links — CSS transition instead of inline JS onmouseover */
-  .article-nav-link {
-    transition: background-color 0.15s ease;
-  }
-  .article-nav-link:hover {
-    background-color: rgba(55, 53, 47, 0.03);
-  }
-</style>

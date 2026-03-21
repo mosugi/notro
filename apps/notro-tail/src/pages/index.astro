@@ -2,406 +2,6 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<style>
-  /* ── Hero ───────────────────────────────────────────────────────────────── */
-  .hero {
-    padding: 5rem 0 5rem;
-    text-align: center;
-    border-bottom: 1px solid rgba(55, 53, 47, 0.09);
-  }
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #2383e2;
-    background: rgba(35, 131, 226, 0.08);
-    border: 1px solid rgba(35, 131, 226, 0.2);
-    border-radius: 100px;
-    padding: 0.25rem 0.75rem;
-    margin-bottom: 1.5rem;
-  }
-  .hero-title {
-    font-size: clamp(2rem, 5vw, 3.25rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.15;
-    color: #37352f;
-    margin-bottom: 1.25rem;
-  }
-  .hero-title .accent { color: #2383e2; }
-  .hero-description {
-    font-size: 1.0625rem;
-    line-height: 1.7;
-    color: rgba(55, 53, 47, 0.65);
-    max-width: 560px;
-    margin: 0 auto 2rem;
-  }
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-  }
-
-  /* ── Buttons ─────────────────────────────────────────────────────────────── */
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    background: #2383e2;
-    color: #fff;
-    font-size: 0.875rem;
-    font-weight: 500;
-    padding: 0.625rem 1.25rem;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: opacity 0.15s;
-  }
-  .btn-primary:hover { opacity: 0.85; }
-  .btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    color: #37352f;
-    font-size: 0.875rem;
-    font-weight: 500;
-    padding: 0.625rem 1.25rem;
-    border-radius: 5px;
-    border: 1px solid rgba(55, 53, 47, 0.18);
-    background: #fff;
-    text-decoration: none;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .btn-secondary:hover {
-    background: rgba(55, 53, 47, 0.03);
-    border-color: rgba(55, 53, 47, 0.3);
-  }
-
-  /* ── Deploy badges ─────────────────────────────────────────────────────────── */
-  .hero-deploy {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-  }
-  .hero-deploy img {
-    height: 32px;
-    width: auto;
-  }
-
-  /* ── Section common ──────────────────────────────────────────────────────── */
-  .section {
-    padding: 4rem 0;
-    border-bottom: 1px solid rgba(55, 53, 47, 0.09);
-  }
-  .section:last-child { border-bottom: none; }
-  .section-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #2383e2;
-    margin-bottom: 0.75rem;
-  }
-  .section-title {
-    font-size: clamp(1.375rem, 2.5vw, 1.75rem);
-    font-weight: 700;
-    color: #37352f;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.5rem;
-  }
-  .section-subtitle {
-    font-size: 0.9375rem;
-    color: rgba(55, 53, 47, 0.55);
-    margin-bottom: 2.5rem;
-  }
-
-  /* ── Two use cases ──────────────────────────────────────────────────────────── */
-  .use-case-grid {
-    display: grid;
-    gap: 1rem;
-  }
-  @media (min-width: 768px) {
-    .use-case-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-  .use-case-card {
-    border: 1px solid rgba(55, 53, 47, 0.12);
-    border-radius: 8px;
-    padding: 1.75rem;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .use-case-primary {
-    border-color: rgba(35, 131, 226, 0.25);
-    background: rgba(35, 131, 226, 0.02);
-  }
-  .use-case-icon {
-    font-size: 1.5rem;
-  }
-  .use-case-title {
-    font-size: 1.0625rem;
-    font-weight: 600;
-    color: #37352f;
-  }
-  .use-case-desc {
-    font-size: 0.875rem;
-    line-height: 1.65;
-    color: rgba(55, 53, 47, 0.6);
-    flex: 1;
-  }
-  .use-case-desc code {
-    font-family: "SFMono-Regular", Consolas, monospace;
-    font-size: 0.75rem;
-    background: rgba(135, 131, 120, 0.15);
-    color: #eb5757;
-    border-radius: 3px;
-    padding: 0.1em 0.3em;
-  }
-  .use-case-link {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #2383e2;
-    text-decoration: none;
-  }
-  .use-case-link:hover { text-decoration: underline; }
-
-  /* ── How it works (3 steps) ──────────────────────────────────────────────── */
-  .steps {
-    display: grid;
-    gap: 1.5rem;
-  }
-  @media (min-width: 768px) {
-    .steps { grid-template-columns: repeat(3, 1fr); }
-  }
-  .step {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .step-num {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    background: rgba(35, 131, 226, 0.1);
-    color: #2383e2;
-    font-size: 0.875rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .step-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #37352f;
-  }
-  .step-desc {
-    font-size: 0.875rem;
-    line-height: 1.65;
-    color: rgba(55, 53, 47, 0.6);
-  }
-  .step-connector {
-    display: none;
-  }
-  @media (min-width: 768px) {
-    .step-connector {
-      display: flex;
-      align-items: flex-start;
-      padding-top: 0.9rem;
-      color: rgba(55, 53, 47, 0.2);
-      font-size: 1.25rem;
-    }
-  }
-
-  /* ── Features grid ───────────────────────────────────────────────────────── */
-  .features {
-    display: grid;
-    gap: 1px;
-    background: rgba(55, 53, 47, 0.09);
-    border: 1px solid rgba(55, 53, 47, 0.09);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  @media (min-width: 640px) {
-    .features { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (min-width: 1024px) {
-    .features { grid-template-columns: repeat(3, 1fr); }
-  }
-  .feature {
-    background: #fff;
-    padding: 1.5rem;
-  }
-  .feature-icon {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    margin-bottom: 0.75rem;
-    background: rgba(55, 53, 47, 0.04);
-  }
-  .feature-title {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: #37352f;
-    margin-bottom: 0.375rem;
-  }
-  .feature-desc {
-    font-size: 0.8125rem;
-    line-height: 1.6;
-    color: rgba(55, 53, 47, 0.6);
-  }
-  .feature-desc code {
-    font-family: "SFMono-Regular", Consolas, monospace;
-    font-size: 0.75rem;
-    background: rgba(135, 131, 120, 0.15);
-    color: #eb5757;
-    border-radius: 3px;
-    padding: 0.1em 0.3em;
-  }
-
-  /* ── Packages ────────────────────────────────────────────────────────────── */
-  .packages {
-    display: grid;
-    gap: 1rem;
-  }
-  @media (min-width: 768px) {
-    .packages { grid-template-columns: repeat(3, 1fr); }
-  }
-  .package-card {
-    border: 1px solid rgba(55, 53, 47, 0.09);
-    border-radius: 8px;
-    padding: 1.25rem;
-    background: #fff;
-  }
-  .package-name {
-    font-family: "SFMono-Regular", Consolas, monospace;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #37352f;
-    margin-bottom: 0.375rem;
-  }
-  .package-path {
-    font-family: "SFMono-Regular", Consolas, monospace;
-    font-size: 0.6875rem;
-    color: rgba(55,53,47,0.4);
-    margin-bottom: 0.5rem;
-  }
-  .package-desc {
-    font-size: 0.8125rem;
-    line-height: 1.55;
-    color: rgba(55, 53, 47, 0.6);
-  }
-  .package-badge {
-    display: inline-block;
-    font-size: 0.6875rem;
-    background: rgba(35, 131, 226, 0.1);
-    color: #2383e2;
-    border-radius: 3px;
-    padding: 0.1rem 0.4rem;
-    margin-bottom: 0.5rem;
-  }
-
-  /* ── CTA ─────────────────────────────────────────────────────────────────── */
-  .cta {
-    text-align: center;
-    padding: 3.5rem 1.5rem;
-    background: rgba(35, 131, 226, 0.04);
-    border: 1px solid rgba(35, 131, 226, 0.12);
-    border-radius: 10px;
-  }
-  .cta-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: #37352f;
-    margin-bottom: 0.5rem;
-  }
-  .cta-desc {
-    font-size: 0.9375rem;
-    color: rgba(55, 53, 47, 0.6);
-    margin-bottom: 1.75rem;
-  }
-
-  /* ── Dark mode ───────────────────────────────────────────────────────────── */
-  @media (prefers-color-scheme: dark) {
-    .hero { border-bottom-color: rgba(255, 255, 255, 0.08); }
-    .hero-badge {
-      color: #60a5fa;
-      background: rgba(96, 165, 250, 0.08);
-      border-color: rgba(96, 165, 250, 0.2);
-    }
-    .hero-title { color: #e2e8f0; }
-    .hero-title .accent { color: #60a5fa; }
-    .hero-description { color: rgba(226, 232, 240, 0.65); }
-    .btn-primary { background: #3b82f6; }
-    .btn-secondary {
-      color: #e2e8f0;
-      border-color: rgba(255, 255, 255, 0.15);
-      background: #1e293b;
-    }
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.25);
-    }
-    .section { border-bottom-color: rgba(255, 255, 255, 0.08); }
-    .section-label { color: #60a5fa; }
-    .section-title { color: #e2e8f0; }
-    .section-subtitle { color: rgba(226, 232, 240, 0.55); }
-    .use-case-card {
-      border-color: rgba(255, 255, 255, 0.1);
-      background: #1e293b;
-    }
-    .use-case-primary {
-      border-color: rgba(96, 165, 250, 0.25);
-      background: rgba(96, 165, 250, 0.05);
-    }
-    .use-case-title { color: #e2e8f0; }
-    .use-case-desc { color: rgba(226, 232, 240, 0.6); }
-    .use-case-desc code { background: rgba(255, 255, 255, 0.08); color: #f87171; }
-    .use-case-link { color: #60a5fa; }
-    .step-num { background: rgba(96, 165, 250, 0.12); color: #60a5fa; }
-    .step-title { color: #e2e8f0; }
-    .step-desc { color: rgba(226, 232, 240, 0.6); }
-    .step-desc code { background: rgba(255, 255, 255, 0.08); color: #f87171; }
-    .step-connector { color: rgba(255, 255, 255, 0.2); }
-    .features {
-      background: rgba(255, 255, 255, 0.06);
-      border-color: rgba(255, 255, 255, 0.08);
-    }
-    .feature { background: #0f172a; }
-    .feature-icon { background: rgba(255, 255, 255, 0.06); }
-    .feature-title { color: #e2e8f0; }
-    .feature-desc { color: rgba(226, 232, 240, 0.6); }
-    .feature-desc code { background: rgba(255, 255, 255, 0.08); color: #f87171; }
-    .package-card {
-      border-color: rgba(255, 255, 255, 0.08);
-      background: #1e293b;
-    }
-    .package-name { color: #e2e8f0; }
-    .package-path { color: rgba(226, 232, 240, 0.4); }
-    .package-desc { color: rgba(226, 232, 240, 0.6); }
-    .package-badge { background: rgba(96, 165, 250, 0.12); color: #60a5fa; }
-    .cta {
-      background: rgba(96, 165, 250, 0.06);
-      border-color: rgba(96, 165, 250, 0.15);
-    }
-    .cta-title { color: #e2e8f0; }
-    .cta-desc { color: rgba(226, 232, 240, 0.6); }
-  }
-</style>
-
 <Layout
   title="NotroTail — Notion を CMS として使う Astro 静的サイトジェネレーター"
   description="Notion Public API からコンテンツを取得し、MDX としてコンパイル。Notion のブロックを Astro コンポーネントにマッピングして高速・SEO 最適化された静的サイトを生成します。"
@@ -409,146 +9,146 @@ import Layout from "../layouts/Layout.astro";
   <main id="main-content" class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
 
     <!-- Hero -->
-    <section class="hero">
-      <div class="hero-badge">
+    <section class="py-20 text-center border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
+      <div class="inline-flex items-center gap-1.5 text-xs font-medium text-[#2383e2] bg-[rgba(35,131,226,0.08)] border border-[rgba(35,131,226,0.2)] rounded-full px-3 py-1 mb-6 dark:text-blue-400 dark:bg-blue-400/8 dark:border-blue-400/20">
         <span>⚡</span>
         <span>Notion × Astro × TailwindCSS 4</span>
       </div>
-      <h1 class="hero-title">
+      <h1 class="text-[clamp(2rem,5vw,3.25rem)] font-bold tracking-[-0.03em] leading-[1.15] text-[#37352f] mb-5 dark:text-slate-200">
         Notion をそのまま CMS に。<br />
-        <span class="accent">Astro で高速静的サイトへ。</span>
+        <span class="text-[#2383e2] dark:text-blue-400">Astro で高速静的サイトへ。</span>
       </h1>
-      <p class="hero-description">
+      <p class="text-[1.0625rem] leading-[1.7] text-[rgba(55,53,47,0.65)] max-w-[560px] mx-auto mb-8 dark:text-slate-300/65">
         Notion Public API からコンテンツを取得し、MDX としてコンパイル。
         Notion のブロックを Astro コンポーネントにマッピングして
         高速・SEO 最適化された静的サイトを生成します。
       </p>
-      <div class="hero-actions">
-        <a href="/docs/" class="btn-primary">Docs を見る →</a>
-        <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+      <div class="flex flex-wrap justify-center gap-3 mb-8">
+        <a href="/docs/" class="inline-flex items-center gap-1.5 bg-[#2383e2] text-white text-sm font-medium px-5 py-2.5 rounded-[5px] no-underline transition-opacity hover:opacity-85 dark:bg-blue-500">Docs を見る →</a>
+        <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[#37352f] text-sm font-medium px-5 py-2.5 rounded-[5px] border border-[rgba(55,53,47,0.18)] bg-white no-underline transition-[background,border-color] hover:bg-[rgba(55,53,47,0.03)] hover:border-[rgba(55,53,47,0.3)] dark:text-slate-200 dark:border-white/15 dark:bg-slate-800 dark:hover:bg-white/6 dark:hover:border-white/25">
           GitHub で見る
         </a>
       </div>
       <!-- Deploy badges -->
-      <div class="hero-deploy">
+      <div class="flex flex-wrap justify-center items-center gap-3 mt-6">
         <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail" target="_blank" rel="noopener noreferrer">
-          <img src="https://vercel.com/button" alt="Deploy with Vercel" />
+          <img src="https://vercel.com/button" alt="Deploy with Vercel" class="h-8 w-auto" />
         </a>
         <a href="https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer">
-          <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" />
+          <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" class="h-8 w-auto" />
         </a>
       </div>
     </section>
 
     <!-- Two use cases -->
-    <section class="section use-cases">
-      <p class="section-label">使い方を選ぶ</p>
-      <h2 class="section-title">2つの使い方</h2>
-      <div class="use-case-grid">
-        <div class="use-case-card use-case-primary">
-          <div class="use-case-icon">🚀</div>
-          <h3 class="use-case-title">テンプレートとして使う</h3>
-          <p class="use-case-desc">
+    <section class="py-16 border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
+      <p class="text-xs font-semibold tracking-[0.08em] uppercase text-[#2383e2] mb-3 dark:text-blue-400">使い方を選ぶ</p>
+      <h2 class="text-[clamp(1.375rem,2.5vw,1.75rem)] font-bold text-[#37352f] tracking-tight mb-2 dark:text-slate-200">2つの使い方</h2>
+      <div class="grid gap-4 mb-10 md:grid-cols-2">
+        <div class="border border-[rgba(35,131,226,0.25)] bg-[rgba(35,131,226,0.02)] rounded-lg p-7 flex flex-col gap-3 dark:border-blue-400/25 dark:bg-blue-400/5">
+          <div class="text-2xl">🚀</div>
+          <h3 class="text-[1.0625rem] font-semibold text-[#37352f] dark:text-slate-200">テンプレートとして使う</h3>
+          <p class="text-sm leading-[1.65] text-[rgba(55,53,47,0.6)] flex-1 dark:text-slate-300/60">
             このリポジトリをテンプレートにして、Notion でコンテンツを書き、
             Vercel / Netlify にワンクリックでデプロイ。5分で Notion ブログを立ち上げられます。
           </p>
-          <a href="/docs/" class="use-case-link">クイックスタートを見る →</a>
+          <a href="/docs/" class="text-sm font-medium text-[#2383e2] no-underline hover:underline dark:text-blue-400">クイックスタートを見る →</a>
         </div>
-        <div class="use-case-card">
-          <div class="use-case-icon">📦</div>
-          <h3 class="use-case-title">npm パッケージとして使う</h3>
-          <p class="use-case-desc">
-            既存の Astro プロジェクトに <code>notro</code> を追加するだけ。
-            ローダーとコンポーネントをドロップインで利用できます。<code>remark-nfm</code> は Astro なしでも使えます。
+        <div class="border border-[rgba(55,53,47,0.12)] bg-white rounded-lg p-7 flex flex-col gap-3 dark:border-white/10 dark:bg-slate-800">
+          <div class="text-2xl">📦</div>
+          <h3 class="text-[1.0625rem] font-semibold text-[#37352f] dark:text-slate-200">npm パッケージとして使う</h3>
+          <p class="text-sm leading-[1.65] text-[rgba(55,53,47,0.6)] flex-1 dark:text-slate-300/60">
+            既存の Astro プロジェクトに <code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">notro</code> を追加するだけ。
+            ローダーとコンポーネントをドロップインで利用できます。<code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">remark-nfm</code> は Astro なしでも使えます。
           </p>
-          <a href="/docs/#api" class="use-case-link">API リファレンスを見る →</a>
+          <a href="/docs/#api" class="text-sm font-medium text-[#2383e2] no-underline hover:underline dark:text-blue-400">API リファレンスを見る →</a>
         </div>
       </div>
     </section>
 
     <!-- How it works -->
-    <section class="section">
-      <p class="section-label">使い方</p>
-      <h2 class="section-title">3 ステップで始められる</h2>
-      <p class="section-subtitle">Notion にコンテンツを書いて、コマンド一つでデプロイ</p>
+    <section class="py-16 border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
+      <p class="text-xs font-semibold tracking-[0.08em] uppercase text-[#2383e2] mb-3 dark:text-blue-400">使い方</p>
+      <h2 class="text-[clamp(1.375rem,2.5vw,1.75rem)] font-bold text-[#37352f] tracking-tight mb-2 dark:text-slate-200">3 ステップで始められる</h2>
+      <p class="text-[0.9375rem] text-[rgba(55,53,47,0.55)] mb-10 dark:text-slate-300/55">Notion にコンテンツを書いて、コマンド一つでデプロイ</p>
 
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <p class="step-title">テンプレートを使う</p>
-          <p class="step-desc">
+      <div class="grid gap-6 md:grid-cols-3">
+        <div class="flex flex-col gap-3">
+          <div class="w-8 h-8 rounded-full bg-[rgba(35,131,226,0.1)] text-[#2383e2] text-sm font-bold flex items-center justify-center flex-shrink-0 dark:bg-blue-400/12 dark:text-blue-400">1</div>
+          <p class="text-base font-semibold text-[#37352f] dark:text-slate-200">テンプレートを使う</p>
+          <p class="text-sm leading-[1.65] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
             GitHub で "Use this template" をクリックしてリポジトリを作成。
             または上の Deploy ボタンから直接デプロイも可能。
           </p>
         </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <p class="step-title">Notion と環境変数を設定</p>
-          <p class="step-desc">
-            Notion インテグレーションを作成し、<code>NOTION_TOKEN</code> と <code>NOTION_DATASOURCE_ID</code> を環境変数に設定するだけ。
+        <div class="flex flex-col gap-3">
+          <div class="w-8 h-8 rounded-full bg-[rgba(35,131,226,0.1)] text-[#2383e2] text-sm font-bold flex items-center justify-center flex-shrink-0 dark:bg-blue-400/12 dark:text-blue-400">2</div>
+          <p class="text-base font-semibold text-[#37352f] dark:text-slate-200">Notion と環境変数を設定</p>
+          <p class="text-sm leading-[1.65] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
+            Notion インテグレーションを作成し、<code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">NOTION_TOKEN</code> と <code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">NOTION_DATASOURCE_ID</code> を環境変数に設定するだけ。
           </p>
         </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <p class="step-title">Vercel / Netlify にデプロイ</p>
-          <p class="step-desc">
-            <code>npm run build</code> で静的サイトを生成。Vercel や Netlify に接続して自動デプロイを設定しましょう。
+        <div class="flex flex-col gap-3">
+          <div class="w-8 h-8 rounded-full bg-[rgba(35,131,226,0.1)] text-[#2383e2] text-sm font-bold flex items-center justify-center flex-shrink-0 dark:bg-blue-400/12 dark:text-blue-400">3</div>
+          <p class="text-base font-semibold text-[#37352f] dark:text-slate-200">Vercel / Netlify にデプロイ</p>
+          <p class="text-sm leading-[1.65] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
+            <code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">npm run build</code> で静的サイトを生成。Vercel や Netlify に接続して自動デプロイを設定しましょう。
           </p>
         </div>
       </div>
     </section>
 
     <!-- Features -->
-    <section class="section">
-      <p class="section-label">機能</p>
-      <h2 class="section-title">必要なものがすべて揃っている</h2>
-      <p class="section-subtitle">Notion をヘッドレス CMS として使うためのフルスタック構成</p>
-      <div class="features">
-        <div class="feature">
-          <div class="feature-icon">📦</div>
-          <p class="feature-title">Notion Content Loader</p>
-          <p class="feature-desc">
+    <section class="py-16 border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
+      <p class="text-xs font-semibold tracking-[0.08em] uppercase text-[#2383e2] mb-3 dark:text-blue-400">機能</p>
+      <h2 class="text-[clamp(1.375rem,2.5vw,1.75rem)] font-bold text-[#37352f] tracking-tight mb-2 dark:text-slate-200">必要なものがすべて揃っている</h2>
+      <p class="text-[0.9375rem] text-[rgba(55,53,47,0.55)] mb-10 dark:text-slate-300/55">Notion をヘッドレス CMS として使うためのフルスタック構成</p>
+      <div class="grid gap-px bg-[rgba(55,53,47,0.09)] border border-[rgba(55,53,47,0.09)] rounded-lg overflow-hidden sm:grid-cols-2 lg:grid-cols-3 dark:bg-white/6 dark:border-white/8">
+        <div class="bg-white p-6 dark:bg-[#0f172a]">
+          <div class="w-8 h-8 rounded-md flex items-center justify-center text-base mb-3 bg-[rgba(55,53,47,0.04)] dark:bg-white/6">📦</div>
+          <p class="text-[0.9375rem] font-semibold text-[#37352f] mb-1.5 dark:text-slate-200">Notion Content Loader</p>
+          <p class="text-[0.8125rem] leading-[1.6] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
             Astro Content Collections を Notion Public API で動かす。
-            <code>last_edited_time</code> による差分ビルドで高速なインクリメンタルビルドを実現。
+            <code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">last_edited_time</code> による差分ビルドで高速なインクリメンタルビルドを実現。
           </p>
         </div>
-        <div class="feature">
-          <div class="feature-icon">🧩</div>
-          <p class="feature-title">コンポーネントマッピング</p>
-          <p class="feature-desc">
+        <div class="bg-white p-6 dark:bg-[#0f172a]">
+          <div class="w-8 h-8 rounded-md flex items-center justify-center text-base mb-3 bg-[rgba(55,53,47,0.04)] dark:bg-white/6">🧩</div>
+          <p class="text-[0.9375rem] font-semibold text-[#37352f] mb-1.5 dark:text-slate-200">コンポーネントマッピング</p>
+          <p class="text-[0.8125rem] leading-[1.6] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
             コールアウト・カラム・トグル・KaTeX 数式など、Notion ブロックを
-            MDX <code>evaluate()</code> + コンポーネントマッピングで Astro コンポーネントに変換。
+            MDX <code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">evaluate()</code> + コンポーネントマッピングで Astro コンポーネントに変換。
           </p>
         </div>
-        <div class="feature">
-          <div class="feature-icon">🎨</div>
-          <p class="feature-title">TailwindCSS 4</p>
-          <p class="feature-desc">
+        <div class="bg-white p-6 dark:bg-[#0f172a]">
+          <div class="w-8 h-8 rounded-md flex items-center justify-center text-base mb-3 bg-[rgba(55,53,47,0.04)] dark:bg-white/6">🎨</div>
+          <p class="text-[0.9375rem] font-semibold text-[#37352f] mb-1.5 dark:text-slate-200">TailwindCSS 4</p>
+          <p class="text-[0.8125rem] leading-[1.6] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
             Notion コンポーネントごとにスコープされたスタイル。
-            <code>classMap</code> prop でクラス上書き、<code>bodyClass</code> でページ別テーマに対応。
+            <code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">classMap</code> prop でクラス上書き、<code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">bodyClass</code> でページ別テーマに対応。
           </p>
         </div>
-        <div class="feature">
-          <div class="feature-icon">🖼️</div>
-          <p class="feature-title">画像の最適化</p>
-          <p class="feature-desc">
-            Notion の期限付き S3 プリサインド URL から <code>X-Amz-*</code> パラメーターを除去し、
+        <div class="bg-white p-6 dark:bg-[#0f172a]">
+          <div class="w-8 h-8 rounded-md flex items-center justify-center text-base mb-3 bg-[rgba(55,53,47,0.04)] dark:bg-white/6">🖼️</div>
+          <p class="text-[0.9375rem] font-semibold text-[#37352f] mb-1.5 dark:text-slate-200">画像の最適化</p>
+          <p class="text-[0.8125rem] leading-[1.6] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
+            Notion の期限付き S3 プリサインド URL から <code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">X-Amz-*</code> パラメーターを除去し、
             ビルド間でキャッシュを再利用するカスタム Astro 画像サービス。
           </p>
         </div>
-        <div class="feature">
-          <div class="feature-icon">📄</div>
-          <p class="feature-title">ページネーション付きブログ</p>
-          <p class="feature-desc">
+        <div class="bg-white p-6 dark:bg-[#0f172a]">
+          <div class="w-8 h-8 rounded-md flex items-center justify-center text-base mb-3 bg-[rgba(55,53,47,0.04)] dark:bg-white/6">📄</div>
+          <p class="text-[0.9375rem] font-semibold text-[#37352f] mb-1.5 dark:text-slate-200">ページネーション付きブログ</p>
+          <p class="text-[0.8125rem] leading-[1.6] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
             タグ・カテゴリフィルタリング対応の多ページブログ。
             ピン留め投稿・前後記事ナビゲーションもすぐに使えます。
           </p>
         </div>
-        <div class="feature">
-          <div class="feature-icon">📚</div>
-          <p class="feature-title">npm ライブラリとして公開</p>
-          <p class="feature-desc">
-            <code>notro</code> パッケージを任意の Astro プロジェクトに追加するだけ。
+        <div class="bg-white p-6 dark:bg-[#0f172a]">
+          <div class="w-8 h-8 rounded-md flex items-center justify-center text-base mb-3 bg-[rgba(55,53,47,0.04)] dark:bg-white/6">📚</div>
+          <p class="text-[0.9375rem] font-semibold text-[#37352f] mb-1.5 dark:text-slate-200">npm ライブラリとして公開</p>
+          <p class="text-[0.8125rem] leading-[1.6] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
+            <code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">notro</code> パッケージを任意の Astro プロジェクトに追加するだけ。
             ローダーとコンポーネントをドロップインで利用できます。
             notro と remark-nfm はそれぞれ単独でも利用可能な、<strong>オプション</strong>の npm パッケージです。
           </p>
@@ -557,60 +157,60 @@ import Layout from "../layouts/Layout.astro";
     </section>
 
     <!-- Packages -->
-    <section class="section">
-      <p class="section-label">モノレポ構成</p>
-      <h2 class="section-title">3 パッケージで責務を分割</h2>
-      <p class="section-subtitle">それぞれ独立して利用・公開できる設計</p>
-      <div class="packages">
-        <div class="package-card">
-          <span class="package-badge">npm</span>
-          <p class="package-name">remark-nfm</p>
-          <p class="package-path">packages/remark-nfm/</p>
-          <p class="package-desc">
+    <section class="py-16 border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
+      <p class="text-xs font-semibold tracking-[0.08em] uppercase text-[#2383e2] mb-3 dark:text-blue-400">モノレポ構成</p>
+      <h2 class="text-[clamp(1.375rem,2.5vw,1.75rem)] font-bold text-[#37352f] tracking-tight mb-2 dark:text-slate-200">3 パッケージで責務を分割</h2>
+      <p class="text-[0.9375rem] text-[rgba(55,53,47,0.55)] mb-10 dark:text-slate-300/55">それぞれ独立して利用・公開できる設計</p>
+      <div class="grid gap-4 md:grid-cols-3">
+        <div class="border border-[rgba(55,53,47,0.09)] rounded-lg p-5 bg-white dark:border-white/8 dark:bg-slate-800">
+          <span class="inline-block text-[0.6875rem] bg-[rgba(35,131,226,0.1)] text-[#2383e2] rounded-[3px] px-1.5 py-0.5 mb-2 dark:bg-blue-400/12 dark:text-blue-400">npm</span>
+          <p class="font-mono text-sm font-semibold text-[#37352f] mb-1.5 dark:text-slate-200">remark-nfm</p>
+          <p class="font-mono text-[0.6875rem] text-[rgba(55,53,47,0.4)] mb-2 dark:text-slate-300/40">packages/remark-nfm/</p>
+          <p class="text-[0.8125rem] leading-[1.55] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
             Notion Flavored Markdown 用の純粋な remark プラグイン。
-            前処理・<code>:::callout</code> ディレクティブ・コールアウト変換をまとめて担当。
+            前処理・<code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">:::callout</code> ディレクティブ・コールアウト変換をまとめて担当。
             Astro や Notion API に依存せず単独で npm 公開可能。
           </p>
         </div>
-        <div class="package-card">
-          <span class="package-badge">npm</span>
-          <p class="package-name">notro</p>
-          <p class="package-path">packages/notro/</p>
-          <p class="package-desc">
+        <div class="border border-[rgba(55,53,47,0.09)] rounded-lg p-5 bg-white dark:border-white/8 dark:bg-slate-800">
+          <span class="inline-block text-[0.6875rem] bg-[rgba(35,131,226,0.1)] text-[#2383e2] rounded-[3px] px-1.5 py-0.5 mb-2 dark:bg-blue-400/12 dark:text-blue-400">npm</span>
+          <p class="font-mono text-sm font-semibold text-[#37352f] mb-1.5 dark:text-slate-200">notro</p>
+          <p class="font-mono text-[0.6875rem] text-[rgba(55,53,47,0.4)] mb-2 dark:text-slate-300/40">packages/notro/</p>
+          <p class="text-[0.8125rem] leading-[1.55] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
             公開 npm ライブラリ本体。Astro Content Loader + MDX コンパイルパイプライン +
-            Notion ブロックコンポーネントを提供。<code>remark-nfm</code> を内部で利用。
+            Notion ブロックコンポーネントを提供。<code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">remark-nfm</code> を内部で利用。
           </p>
         </div>
-        <div class="package-card">
-          <span class="package-badge">template</span>
-          <p class="package-name">notro-tail</p>
-          <p class="package-path">apps/notro-tail/</p>
-          <p class="package-desc">
+        <div class="border border-[rgba(55,53,47,0.09)] rounded-lg p-5 bg-white dark:border-white/8 dark:bg-slate-800">
+          <span class="inline-block text-[0.6875rem] bg-[rgba(35,131,226,0.1)] text-[#2383e2] rounded-[3px] px-1.5 py-0.5 mb-2 dark:bg-blue-400/12 dark:text-blue-400">template</span>
+          <p class="font-mono text-sm font-semibold text-[#37352f] mb-1.5 dark:text-slate-200">notro-tail</p>
+          <p class="font-mono text-[0.6875rem] text-[rgba(55,53,47,0.4)] mb-2 dark:text-slate-300/40">apps/notro-tail/</p>
+          <p class="text-[0.8125rem] leading-[1.55] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">
             デプロイ可能な Astro 6 ウェブサイト。
-            <code>notro</code> の実装例として、ブログ・固定ページ・タグフィルタを含むテンプレート。
+            <code class="font-mono text-xs bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-sm px-1 dark:bg-white/8 dark:text-red-400">notro</code> の実装例として、ブログ・固定ページ・タグフィルタを含むテンプレート。
           </p>
         </div>
       </div>
     </section>
 
     <!-- CTA -->
-    <section class="section">
-      <div class="cta">
-        <p class="cta-title">今すぐ始める</p>
-        <p class="cta-desc">このリポジトリをテンプレートにして、Notion で書き、Astro でデプロイ。</p>
-        <div class="hero-actions" style="justify-content: center;">
-          <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="btn-primary">
+    <section class="py-16">
+      <div class="text-center py-14 px-6 bg-[rgba(35,131,226,0.04)] border border-[rgba(35,131,226,0.12)] rounded-[10px] dark:bg-blue-400/6 dark:border-blue-400/15">
+        <p class="text-2xl font-bold tracking-tight text-[#37352f] mb-2 dark:text-slate-200">今すぐ始める</p>
+        <p class="text-[0.9375rem] text-[rgba(55,53,47,0.6)] mb-7 dark:text-slate-300/60">このリポジトリをテンプレートにして、Notion で書き、Astro でデプロイ。</p>
+        <div class="flex flex-wrap justify-center gap-3 mb-6">
+          <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-[#2383e2] text-white text-sm font-medium px-5 py-2.5 rounded-[5px] no-underline transition-opacity hover:opacity-85 dark:bg-blue-500">
             GitHub で使い方を見る →
           </a>
-          <a href="/blog/" class="btn-secondary">デモブログを見る</a>
+          <a href="/blog/" class="inline-flex items-center gap-1.5 text-[#37352f] text-sm font-medium px-5 py-2.5 rounded-[5px] border border-[rgba(55,53,47,0.18)] bg-white no-underline transition-[background,border-color] hover:bg-[rgba(55,53,47,0.03)] hover:border-[rgba(55,53,47,0.3)] dark:text-slate-200 dark:border-white/15 dark:bg-slate-800 dark:hover:bg-white/6 dark:hover:border-white/25">デモブログを見る</a>
         </div>
         <!-- Deploy badges -->
-        <div class="hero-deploy">
+        <div class="flex flex-wrap justify-center items-center gap-3">
           <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail" target="_blank" rel="noopener noreferrer">
-            <img src="https://vercel.com/button" alt="Deploy with Vercel" />
+            <img src="https://vercel.com/button" alt="Deploy with Vercel" class="h-8 w-auto" />
           </a>
           <a href="https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer">
-            <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" />
+            <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" class="h-8 w-auto" />
           </a>
         </div>
       </div>
