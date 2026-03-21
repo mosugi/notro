@@ -4,6 +4,46 @@
 
 すべての返答は日本語で行うこと。ただし、コードのコメントは英語を使用する。
 
+---
+
+## Claude Code 作業ルール
+
+### スタイリング規約
+
+- スタイリングは **TailwindCSS 4 のユーティリティクラスのみ** で行うこと
+- インラインスタイル（`style="..."` 属性）は使わない
+- Astro コンポーネント内の `<style>` タグは使わない
+- Notion ブロック固有のスタイルは `global.css` の `nt-*` クラスとして定義する（既存の CSS 規約に従うこと）
+
+### ビルド確認・レイアウト確認
+
+コードを変更したら必ず以下の手順で確認すること：
+
+```bash
+# 1. 型チェック + ビルド（ルートから実行）
+npm run build
+
+# 2. ビルド結果をブラウザで確認（レイアウト崩れがないか目視確認）
+npm run preview --workspace=notro-tail
+```
+
+- `npm run build` が通らない状態で push しないこと
+- スタイリング変更は必ず `npm run preview` で目視確認してからコミットすること
+
+### サブエージェント・ブランチ管理
+
+- サブエージェント（Agent ツール）で作業させたブランチは、呼び出し元のブランチに **マージしてから** push すること
+- サブエージェントのブランチを直接 push してはならない
+- マージ後に必ずビルドが通ることを確認してから push すること
+
+### ブランチ命名規則
+
+- Claude が作業するブランチは必ず `claude/` プレフィックスを付けること
+- セッション ID をブランチ名末尾に含めること（`claude/feature-name-XXXXX` 形式）
+- **`claude/` プレフィックスとセッション ID がないと push が 403 エラーになる**
+
+---
+
 ## Project Overview
 
 **NotroTail** is a Notion-to-Astro static site generator. It fetches content from Notion via the Notion Public API (Markdown Content API), compiles it as MDX using `@mdx-js/mdx`'s `evaluate()`, and maps Notion block types to Astro components. Outputs a fast, SEO-optimized static site styled with TailwindCSS 4.
@@ -38,6 +78,8 @@ notro-tail/
 │       │   │   └── global.css  # TailwindCSS 4 imports + nt-* utility classes
 │       │   ├── content.config.ts  # Astro Content Collections (posts)
 │       │   └── env.d.ts
+│       ├── src/
+│       │   └── config.ts            # navPages (fixed pages map: slug → title/bodyClass)
 │       ├── astro.config.mjs
 │       ├── package.json
 │       └── tsconfig.json
@@ -237,6 +279,15 @@ Set these in Claude Code on the Web → Settings → Environment Variables:
 - Node.js 22+
 - Astro 6 (installed via npm)
 
+### ローカル環境変数の設定
+
+`apps/notro-tail/.env` ファイルを作成して環境変数を設定する（`.gitignore` 済み）:
+
+```bash
+NOTION_TOKEN=secret_xxxx
+NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+```
+
 ### Install & Run
 
 ```bash
@@ -262,6 +313,15 @@ cd apps/notro-tail && npm run build
 ```
 
 `npm run build` in the root delegates to `npm run build --workspace=notro-tail`.
+
+### Preview（ビルド結果の確認）
+
+```bash
+# ビルド後にプレビューサーバーを起動してレイアウト崩れを確認する
+npm run preview --workspace=notro-tail
+```
+
+プレビューサーバーは http://localhost:4321 で起動する。
 
 ### Format
 
