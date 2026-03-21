@@ -499,4 +499,91 @@ const BG_COLORS = [
       </div>
     </div>
   </section>
+
+  <!-- Mermaid diagrams -->
+  <section class="mb-10" id="mermaid">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">Mermaid ダイアグラム</h2>
+    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">```mermaid</code>
+      コードブロックは <a href="https://github.com/lukilabs/beautiful-mermaid" target="_blank" rel="noopener noreferrer" class="text-[#2383e2] underline underline-offset-2 hover:opacity-70">beautiful-mermaid</a>
+      を使ってビルド時に SVG へ変換されます。DOM・ブラウザ不要のサーバーサイドレンダリングです。
+    </p>
+    <div class="space-y-8">
+      <!-- Flowchart -->
+      <div>
+        <p class="mb-3 text-sm font-medium text-[rgba(55,53,47,0.65)] dark:text-slate-400">フローチャート (graph LR)</p>
+        <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 p-4 bg-[rgba(55,53,47,0.02)] dark:bg-white/2">
+          <NotionMarkdownRenderer
+            markdown={`\`\`\`mermaid
+graph LR
+  A[Notion API] --> B[loader]
+  B --> C{キャッシュ?}
+  C -- ヒット --> D[ストアから返す]
+  C -- ミス --> E[Markdown 取得]
+  E --> F[preprocessNotionMarkdown]
+  F --> G[Content Collection ストア]
+  G --> H[NotionMarkdownRenderer]
+  H --> I[compileMdxCached]
+  I --> J[evaluate MDX]
+  J --> K[ページ出力]
+\`\`\``}
+            classMap={classMap}
+          />
+        </div>
+        <details class="mt-2">
+          <summary class="cursor-pointer text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.7)] dark:hover:text-slate-400">Markdown ソースを表示</summary>
+          <pre class="mt-2 overflow-x-auto rounded bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 p-3 text-xs font-mono text-[rgba(55,53,47,0.7)] dark:text-slate-300 whitespace-pre">{`\`\`\`mermaid
+graph LR
+  A[Notion API] --> B[loader]
+  B --> C{キャッシュ?}
+  C -- ヒット --> D[ストアから返す]
+  C -- ミス --> E[Markdown 取得]
+  E --> F[preprocessNotionMarkdown]
+  F --> G[Content Collection ストア]
+  G --> H[NotionMarkdownRenderer]
+  H --> I[compileMdxCached]
+  I --> J[evaluate MDX]
+  J --> K[ページ出力]
+\`\`\``}</pre>
+        </details>
+      </div>
+
+      <!-- Sequence diagram -->
+      <div>
+        <p class="mb-3 text-sm font-medium text-[rgba(55,53,47,0.65)] dark:text-slate-400">シーケンス図 (sequenceDiagram)</p>
+        <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 p-4 bg-[rgba(55,53,47,0.02)] dark:bg-white/2">
+          <NotionMarkdownRenderer
+            markdown={`\`\`\`mermaid
+sequenceDiagram
+  autonumber
+  participant Browser
+  participant Astro
+  participant Notion
+  Browser->>Astro: GET /blog/my-post/
+  Astro->>Notion: pages.retrieveMarkdown(pageId)
+  Notion-->>Astro: { markdown, truncated }
+  Astro->>Astro: compileMdxCached(markdown)
+  Astro-->>Browser: HTML レスポンス
+\`\`\``}
+            classMap={classMap}
+          />
+        </div>
+        <details class="mt-2">
+          <summary class="cursor-pointer text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.7)] dark:hover:text-slate-400">Markdown ソースを表示</summary>
+          <pre class="mt-2 overflow-x-auto rounded bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 p-3 text-xs font-mono text-[rgba(55,53,47,0.7)] dark:text-slate-300 whitespace-pre">{`\`\`\`mermaid
+sequenceDiagram
+  autonumber
+  participant Browser
+  participant Astro
+  participant Notion
+  Browser->>Astro: GET /blog/my-post/
+  Astro->>Notion: pages.retrieveMarkdown(pageId)
+  Notion-->>Astro: { markdown, truncated }
+  Astro->>Astro: compileMdxCached(markdown)
+  Astro-->>Browser: HTML レスポンス
+\`\`\``}</pre>
+        </details>
+      </div>
+    </div>
+  </section>
 </DocsLayout>

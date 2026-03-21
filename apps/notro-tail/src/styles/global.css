@@ -303,6 +303,18 @@
   .nt-toc-level-2 { padding-left: 1rem; }
   .nt-toc-level-3 { padding-left: 2rem; }
   .nt-toc-level-4 { padding-left: 3rem; }
+
+  /* N-18: mermaid diagram block */
+  .nt-mermaid-block {
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    border-radius: 0.5rem;
+  }
+  .nt-mermaid-block svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
 }
 
 /* ── Dark mode ───────────────────────────────────────────────────────────── */
