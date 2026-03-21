@@ -138,8 +138,13 @@ const rehypeMermaid: Plugin<[], Root> = () => {
 			const code = hastToString(codeEl).trim();
 			try {
 				const svg = renderMermaidSVG(code, THEMES['github-dark']);
+				// Strip explicit width/height attributes so CSS can control sizing via viewBox.
+				// This makes diagrams responsive and prevents overflow on narrow viewports.
+				const responsiveSvg = svg
+					.replace(/\s+width="[^"]*"/, '')
+					.replace(/\s+height="[^"]*"/, '');
 				const fragment = fromHtmlIsomorphic(
-					`<div class="nt-mermaid-block">${svg}</div>`,
+					`<div class="nt-mermaid-block">${responsiveSvg}</div>`,
 					{ fragment: true },
 				);
 				parent.children.splice(index, 1, ...fragment.children);

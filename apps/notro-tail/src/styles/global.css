@@ -310,9 +310,11 @@
     overflow-x: auto;
     border-radius: 0.5rem;
   }
+  /* SVG has explicit width/height stripped by rehypeMermaid, so viewBox drives sizing.
+     width:100% fills the container; height:auto preserves aspect ratio. */
   .nt-mermaid-block svg {
     display: block;
-    max-width: 100%;
+    width: 100%;
     height: auto;
   }
 }
