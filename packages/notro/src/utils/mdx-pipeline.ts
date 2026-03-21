@@ -138,13 +138,13 @@ const rehypeMermaid: Plugin<[], Root> = () => {
 			const code = hastToString(codeEl).trim();
 			try {
 				const svg = renderMermaidSVG(code, THEMES['github-dark']);
-				// Strip explicit width/height attributes so CSS can control sizing via viewBox.
-				// This makes diagrams responsive and prevents overflow on narrow viewports.
-				const responsiveSvg = svg
-					.replace(/\s+width="[^"]*"/, '')
-					.replace(/\s+height="[^"]*"/, '');
+				// Keep the SVG's natural pixel dimensions (width/height attributes).
+				// The .nt-mermaid-block container has overflow-x:auto, so diagrams wider than
+				// the viewport scroll horizontally rather than being clipped or scaled down.
+				// Scaling via width:100% causes content outside the viewBox to be clipped by
+				// the scroll container even with overflow:visible on the SVG element.
 				const fragment = fromHtmlIsomorphic(
-					`<div class="nt-mermaid-block">${responsiveSvg}</div>`,
+					`<div class="nt-mermaid-block">${svg}</div>`,
 					{ fragment: true },
 				);
 				parent.children.splice(index, 1, ...fragment.children);

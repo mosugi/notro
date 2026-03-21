@@ -310,14 +310,12 @@
     overflow-x: auto;
     border-radius: 0.5rem;
   }
-  /* SVG has explicit width/height stripped by rehypeMermaid, so viewBox drives sizing.
-     overflow:visible un-clips content that beautiful-mermaid places outside its viewBox
-     (layout bug in TD graphs with branches); the container overflow-x:auto handles scroll. */
+  /* SVG keeps its natural pixel dimensions from beautiful-mermaid.
+     When wider than the container, overflow-x:auto on the parent shows a scrollbar.
+     Forcing width:100% causes SVG-internal content outside the viewBox to be hard-clipped
+     by the scroll container boundary even with overflow:visible on the SVG. */
   .nt-mermaid-block svg {
     display: block;
-    overflow: visible;
-    width: 100%;
-    height: auto;
   }
 }
 
