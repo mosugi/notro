@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { colorToClass, colorToCSS } from "./colors.js";
+import { colorToClass } from "./colors.js";
 
 // ============================================================
 // colorToClass — Notion color name → CSS class name (nt-color-*)
@@ -115,14 +115,3 @@ describe("colorToClass: unknown color values", () => {
   });
 });
 
-// ============================================================
-// colorToCSS — deprecated alias for colorToClass
-// ============================================================
-
-describe("colorToCSS: deprecated alias", () => {
-  it("returns the same value as colorToClass", () => {
-    expect(colorToCSS("gray")).toBe(colorToClass("gray"));
-    expect(colorToCSS("blue_background")).toBe(colorToClass("blue_background"));
-    expect(colorToCSS(undefined)).toBe(colorToClass(undefined));
-  });
-});

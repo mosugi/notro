@@ -10,7 +10,7 @@
  *   import Callout from "../../components/notion/Callout.astro";
  *   <NotionMarkdownRenderer components={{ callout: Callout }} ... />
  */
-import { colorToCSS } from "notro";
+import { colorToClass } from "notro";
 
 interface Props {
 	icon?: string;
@@ -21,8 +21,7 @@ const { icon, color } = Astro.props;
 ---
 
 <div
-	class="nt-callout-block flex items-start gap-3 my-4 rounded-lg border border-gray-200 bg-gray-50 p-4"
-	style={colorToCSS(color)}
+	class:list={["nt-callout-block flex items-start gap-3 my-4 rounded-lg border border-gray-200 bg-gray-50 p-4", colorToClass(color)]}
 >
 	{icon && <span class="text-xl leading-none shrink-0">{icon}</span>}
 	<div class="min-w-0 flex-1 [&>:first-child]:mt-0 [&>:last-child]:mb-0">
