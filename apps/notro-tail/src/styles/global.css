@@ -1,14 +1,6 @@
 @import "tailwindcss";
 
 /*
- * Notion-inspired design system
- * Text color: #37352f (warm near-black)
- * Border: rgba(55, 53, 47, 0.09)
- * Background: #ffffff
- * Accent: #2383e2 (Notion blue)
- */
-
-/*
  * Notion color CSS custom properties (light mode defaults).
  * These are referenced by .nt-color-* utility classes so that:
  *   1. Dark mode can override all colors in one @media block.
@@ -168,12 +160,7 @@
 
   /*
    * Notion color classes
-   * Applied by colorToClass() in colors.ts for text and background colors.
-   * Notion API color names: gray, brown, orange, yellow, green, blue, purple, pink, red
-   * Background variants use the _background suffix (Notion API) or _bg suffix (legacy).
-   *
    * All values reference CSS custom properties defined on :root above.
-   * Override a color globally by setting the corresponding --nt-color-* variable.
    */
   .nt-color-gray              { color: var(--nt-color-gray); }
   .nt-color-brown             { color: var(--nt-color-brown); }
@@ -253,7 +240,6 @@
   }
 
   /* Toggle block — smooth indicator rotation on open/close */
-  /* N-15: .nt-toggle-block is itself <details>, so selectors target it directly (not .nt-toggle-block > details) */
   .nt-toggle-block > summary,
   .nt-markdown-content details > summary {
     list-style: none;
@@ -365,98 +351,11 @@
   .nt-toc-level-4 { padding-left: 3rem; }
 }
 
-/*
- * Per-page styles
- *
- * Scope under bodyClass from config.ts (Notion pages) or passed to <Layout bodyClass="...">.
- */
-
-/* ── About page ──────────────────────────────────────────────────────────── */
-.page-about body,
-.page-about {
-  border-top: 3px solid #2383e2;
-}
-
-.page-about .nt-markdown-content h2 {
-  @apply mt-8 border-l-4 pl-3 py-1 rounded-r-md;
-  border-color: #2383e2;
-  background-color: rgba(35, 131, 226, 0.07);
-}
-
-.page-about .nt-markdown-content h3 {
-  color: #1a5fb4;
-}
-
-.page-about .nt-markdown-content a {
-  color: #2383e2;
-  @apply font-medium;
-}
-
-/* ── Privacy page ────────────────────────────────────────────────────────── */
-.page-privacy .nt-markdown-content {
-  @apply text-sm leading-relaxed;
-  color: #6b6b6b;
-}
-
-.page-privacy .nt-markdown-content h1 {
-  @apply text-2xl font-bold;
-  color: #37352f;
-}
-
-.page-privacy .nt-markdown-content h2 {
-  @apply mt-6 border-b pb-1 text-sm font-semibold uppercase tracking-widest;
-  border-color: rgba(55, 53, 47, 0.09);
-  color: #9b9b9b;
-}
-
-.page-privacy .nt-markdown-content table {
-  @apply text-xs;
-}
-
-/* ── Blocks / Docs page ──────────────────────────────────────────────────── */
-.page-blocks body,
-.page-blocks {
-  border-top: 3px solid #2383e2;
-}
-
-.page-blocks .nt-markdown-content h2 {
-  @apply mt-8 font-semibold;
-  border-bottom: 1px solid rgba(55, 53, 47, 0.09);
-  padding-bottom: 0.25rem;
-}
-
-/* ── Contact page (static Astro page) ───────────────────────────────────── */
-.page-docs main {
-  background: linear-gradient(180deg, rgba(35, 131, 226, 0.05) 0px, transparent 240px);
-}
-
-.page-docs main h2 {
-  color: #1a3a5c;
-}
-
-.page-docs main a {
-  color: #2383e2;
-  @apply underline underline-offset-2;
-}
-.page-docs main a:hover {
-  color: #1a5fb4;
-}
-
-.page-docs article > section {
-  border-bottom: 1px solid rgba(55, 53, 47, 0.09);
-  @apply pb-10;
-}
-
-.page-docs article > section:last-child {
-  @apply border-b-0 pb-0;
-}
-
 /* ── Dark mode ───────────────────────────────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
   /*
    * Override Notion color custom properties for dark mode.
-   * All .nt-color-* classes inherit these values automatically
-   * without needing per-class overrides.
+   * All .nt-color-* classes inherit these values automatically.
    */
   :root {
     --nt-color-gray:      #9b9b97;
@@ -487,48 +386,9 @@
     }
   }
 
-  /* Header & footer */
-  header {
-    background-color: #1e293b !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    color: #e2e8f0;
-  }
-
-  header a,
-  footer a {
-    color: #cbd5e1;
-    transition: color 0.15s;
-  }
-
-  header a:hover,
-  footer a:hover {
-    color: #f1f5f9;
-  }
-
-  footer {
-    background-color: #1e293b !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    color: #94a3b8;
-  }
-
   /* Notion markdown content */
   .nt-markdown-content {
     color: #e2e8f0;
-  }
-
-  /* Article header in blog/[slug].astro */
-  article header {
-    border-color: rgba(255, 255, 255, 0.08) !important;
-  }
-
-  /* Prev/next article nav */
-  .article-nav-link {
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    color: #e2e8f0 !important;
-  }
-
-  .article-nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.04) !important;
   }
 
   /* Inline code */
@@ -565,7 +425,7 @@
     color: rgba(226, 232, 240, 0.7);
   }
 
-  /* Callout block — dark background colors are handled by --nt-color-*-bg variable overrides above */
+  /* Callout block — dark background colors handled by --nt-color-*-bg variable overrides */
   .nt-callout-block {
     border-color: rgba(255, 255, 255, 0.1);
   }
@@ -613,89 +473,5 @@
   }
   .nt-toc-block__label {
     color: #cbd5e1;
-  }
-
-  /* ── Per-page themes — dark overrides ──────────────────────────────── */
-
-  /* About page */
-  .page-about .nt-markdown-content h2 {
-    border-color: #3b82f6;
-    background-color: rgba(59, 130, 246, 0.12);
-  }
-
-  .page-about .nt-markdown-content h3 {
-    color: #60a5fa;
-  }
-
-  .page-about .nt-markdown-content a {
-    color: #60a5fa;
-  }
-
-  /* Privacy page */
-  .page-privacy .nt-markdown-content {
-    color: #94a3b8;
-  }
-
-  .page-privacy .nt-markdown-content h1 {
-    color: #e2e8f0;
-  }
-
-  .page-privacy .nt-markdown-content h2 {
-    border-color: rgba(255, 255, 255, 0.1);
-    color: #64748b;
-  }
-
-  /* Blocks / Docs page */
-  .page-blocks .nt-markdown-content h2 {
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  /* Docs page */
-  .page-docs main {
-    background: linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0px, transparent 240px);
-  }
-
-  .page-docs main h1 { color: #e2e8f0; }
-  .page-docs main h2 { color: #93c5fd; }
-  .page-docs main h3 { color: #cbd5e1; }
-
-  .page-docs main p,
-  .page-docs main li { color: #94a3b8; }
-
-  .page-docs main strong { color: #cbd5e1; }
-
-  .page-docs main a { color: #60a5fa; }
-  .page-docs main a:hover { color: #93c5fd; }
-
-  .page-docs article > section { border-color: rgba(255, 255, 255, 0.08); }
-
-  /* Inline code */
-  .page-docs main :not(pre) > code {
-    background-color: rgba(255, 255, 255, 0.08);
-    color: #f87171;
-  }
-
-  /* Code blocks */
-  .page-docs main pre {
-    background-color: #1e293b !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    color: #e2e8f0;
-  }
-  .page-docs main pre code {
-    color: inherit;
-    background: none;
-  }
-
-  /* Tables */
-  .page-docs main .overflow-x-auto {
-    border-color: rgba(255, 255, 255, 0.08);
-  }
-  .page-docs main table { border-color: rgba(255, 255, 255, 0.08); }
-  .page-docs main thead { background-color: #1e293b !important; }
-  .page-docs main thead th { color: #cbd5e1; }
-  .page-docs main td,
-  .page-docs main th {
-    color: #94a3b8;
-    border-color: rgba(255, 255, 255, 0.08);
   }
 }

@@ -5,174 +5,68 @@ const pathname = Astro.url.pathname;
 const isActive = (href: string) => pathname === href || pathname.startsWith(href);
 ---
 
-<style>
-  header {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(55, 53, 47, 0.07);
-  }
-  .nav-logo {
-    color: #37352f;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: -0.02em;
-    text-decoration: none;
-    transition: opacity 0.15s;
-  }
-  .nav-logo:hover { opacity: 0.7; }
-
-  /* Desktop nav links */
-  .nav-links {
-    display: none;
-    align-items: center;
-    gap: 0.25rem;
-  }
-  @media (min-width: 640px) {
-    .nav-links { display: flex; }
-  }
-  .nav-link {
-    position: relative;
-    font-size: 0.875rem;
-    color: rgba(55, 53, 47, 0.6);
-    text-decoration: none;
-    padding: 0.375rem 0.625rem;
-    border-radius: 6px;
-    transition: color 0.15s, background 0.15s;
-  }
-  .nav-link:hover {
-    color: #37352f;
-    background: rgba(55, 53, 47, 0.05);
-  }
-  .nav-link.active {
-    color: #37352f;
-    font-weight: 500;
-  }
-  .nav-link.active::after {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    left: 0.625rem;
-    right: 0.625rem;
-    height: 2px;
-    background: #2383e2;
-    border-radius: 2px 2px 0 0;
-  }
-
-  /* GitHub button (desktop) */
-  .nav-github {
-    display: none;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: rgba(55, 53, 47, 0.65);
-    text-decoration: none;
-    padding: 0.375rem 0.75rem;
-    border: 1px solid rgba(55, 53, 47, 0.15);
-    border-radius: 6px;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
-  }
-  @media (min-width: 640px) {
-    .nav-github { display: inline-flex; }
-  }
-  .nav-github:hover {
-    color: #37352f;
-    border-color: rgba(55, 53, 47, 0.3);
-    background: rgba(55, 53, 47, 0.03);
-  }
-
-  /* Hamburger button (mobile only) */
-  .menu-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    color: rgba(55, 53, 47, 0.6);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    border-radius: 4px;
-    transition: color 0.15s, background 0.15s;
-  }
-  .menu-btn:hover {
-    color: #37352f;
-    background: rgba(55, 53, 47, 0.05);
-  }
-  @media (min-width: 640px) {
-    .menu-btn { display: none; }
-  }
-
-  /* Mobile menu drawer */
-  .mobile-menu {
-    display: none;
-    border-top: 1px solid rgba(55, 53, 47, 0.07);
-    background: rgba(255, 255, 255, 0.97);
-    padding: 0.75rem 0 1rem;
-  }
-  .mobile-menu.open { display: block; }
-  .mobile-menu-link {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9375rem;
-    color: rgba(55, 53, 47, 0.65);
-    text-decoration: none;
-    padding: 0.625rem 1rem;
-    transition: color 0.15s, background 0.15s;
-  }
-  .mobile-menu-link:hover {
-    color: #37352f;
-    background: rgba(55, 53, 47, 0.04);
-  }
-  .mobile-menu-link.active {
-    color: #37352f;
-    font-weight: 500;
-  }
-  .mobile-menu-github {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9375rem;
-    color: rgba(55, 53, 47, 0.65);
-    text-decoration: none;
-    padding: 0.625rem 1rem;
-    transition: color 0.15s;
-    margin-top: 0.25rem;
-    border-top: 1px solid rgba(55, 53, 47, 0.07);
-  }
-  .mobile-menu-github:hover { color: #37352f; }
-</style>
-
 <!-- Skip navigation link for keyboard and screen reader users -->
 <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:rounded">
   コンテンツへスキップ
 </a>
 
-<header class="sticky top-0 z-10">
+<header class="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-[rgba(55,53,47,0.07)] dark:bg-slate-800 dark:border-white/8">
   <div class="mx-auto flex h-14 max-w-screen-xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-    <a href="/" class="nav-logo">NotroTail</a>
+    <a href="/" class="font-bold text-base tracking-[-0.02em] text-[#37352f] no-underline transition-opacity hover:opacity-70 dark:text-slate-200">NotroTail</a>
 
     <!-- Desktop nav -->
     <nav aria-label="メインナビゲーション">
-      <ul class="nav-links">
-        <li><a href="/blog/" class:list={["nav-link", { active: isActive("/blog/") }]} aria-current={isActive("/blog/") ? "page" : undefined}>ブログ</a></li>
-        <li><a href="/docs/" class:list={["nav-link", { active: isActive("/docs/") }]} aria-current={isActive("/docs/") ? "page" : undefined}>Docs</a></li>
+      <ul class="hidden sm:flex items-center gap-1">
+        <li>
+          <a
+            href="/blog/"
+            class:list={[
+              "relative text-sm no-underline px-2.5 py-1.5 rounded-md transition-[color,background]",
+              isActive("/blog/")
+                ? "text-[#37352f] font-medium after:content-[''] after:absolute after:bottom-[-1px] after:left-2.5 after:right-2.5 after:h-0.5 after:bg-[#2383e2] after:rounded-t-sm dark:text-slate-200 dark:after:bg-blue-400"
+                : "text-[rgba(55,53,47,0.6)] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.05)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5",
+            ]}
+            aria-current={isActive("/blog/") ? "page" : undefined}
+          >ブログ</a>
+        </li>
+        <li>
+          <a
+            href="/docs/"
+            class:list={[
+              "relative text-sm no-underline px-2.5 py-1.5 rounded-md transition-[color,background]",
+              isActive("/docs/")
+                ? "text-[#37352f] font-medium after:content-[''] after:absolute after:bottom-[-1px] after:left-2.5 after:right-2.5 after:h-0.5 after:bg-[#2383e2] after:rounded-t-sm dark:text-slate-200 dark:after:bg-blue-400"
+                : "text-[rgba(55,53,47,0.6)] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.05)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5",
+            ]}
+            aria-current={isActive("/docs/") ? "page" : undefined}
+          >Docs</a>
+        </li>
       </ul>
     </nav>
 
     <!-- Desktop GitHub + mobile hamburger -->
     <div class="flex items-center gap-2">
-      <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="nav-github" aria-label="GitHub">
+      <a
+        href="https://github.com/mosugi/notro-tail"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hidden sm:inline-flex items-center gap-1.5 text-[0.8125rem] font-medium text-[rgba(55,53,47,0.65)] no-underline px-3 py-1.5 border border-[rgba(55,53,47,0.15)] rounded-md transition-[color,border-color,background] hover:text-[#37352f] hover:border-[rgba(55,53,47,0.3)] hover:bg-[rgba(55,53,47,0.03)] dark:text-slate-400 dark:border-white/15 dark:hover:text-slate-200 dark:hover:border-white/30 dark:hover:bg-white/3"
+        aria-label="GitHub"
+      >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
         </svg>
         GitHub
       </a>
 
-      <button id="menu-toggle" class="menu-btn" aria-label="メニューを開く" aria-expanded="false" aria-controls="mobile-menu">
+      <button
+        id="menu-toggle"
+        class="flex sm:hidden items-center justify-center w-8 h-8 text-[rgba(55,53,47,0.6)] bg-transparent border-0 cursor-pointer p-0 rounded-[4px] transition-[color,background] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.05)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5"
+        aria-label="メニューを開く"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
         <!-- Hamburger icon (shown when closed) -->
         <svg id="icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
           <line x1="3" y1="6" x2="21" y2="6"/>
@@ -189,11 +83,38 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
   </div>
 
   <!-- Mobile menu drawer -->
-  <div id="mobile-menu" class="mobile-menu" aria-hidden="true">
+  <div
+    id="mobile-menu"
+    class="hidden border-t border-[rgba(55,53,47,0.07)] bg-white/97 py-3 pb-4 dark:bg-slate-800 dark:border-white/8"
+    aria-hidden="true"
+  >
     <nav aria-label="モバイルナビゲーション">
-      <a href="/blog/" class:list={["mobile-menu-link", { active: isActive("/blog/") }]} aria-current={isActive("/blog/") ? "page" : undefined}>ブログ</a>
-      <a href="/docs/" class:list={["mobile-menu-link", { active: isActive("/docs/") }]} aria-current={isActive("/docs/") ? "page" : undefined}>Docs</a>
-      <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="mobile-menu-github">
+      <a
+        href="/blog/"
+        class:list={[
+          "flex items-center gap-2 text-[0.9375rem] no-underline px-4 py-2.5 transition-[color,background]",
+          isActive("/blog/")
+            ? "text-[#37352f] font-medium dark:text-slate-200"
+            : "text-[rgba(55,53,47,0.65)] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.04)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/4",
+        ]}
+        aria-current={isActive("/blog/") ? "page" : undefined}
+      >ブログ</a>
+      <a
+        href="/docs/"
+        class:list={[
+          "flex items-center gap-2 text-[0.9375rem] no-underline px-4 py-2.5 transition-[color,background]",
+          isActive("/docs/")
+            ? "text-[#37352f] font-medium dark:text-slate-200"
+            : "text-[rgba(55,53,47,0.65)] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.04)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/4",
+        ]}
+        aria-current={isActive("/docs/") ? "page" : undefined}
+      >Docs</a>
+      <a
+        href="https://github.com/mosugi/notro-tail"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-2 text-[0.9375rem] text-[rgba(55,53,47,0.65)] no-underline px-4 py-2.5 transition-colors hover:text-[#37352f] mt-1 border-t border-[rgba(55,53,47,0.07)] dark:text-slate-400 dark:hover:text-slate-200 dark:border-white/8"
+      >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
         </svg>
@@ -210,7 +131,8 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
   const iconClose = document.getElementById("icon-close");
 
   btn?.addEventListener("click", () => {
-    const isOpen = menu?.classList.toggle("open");
+    menu?.classList.toggle("hidden");
+    const isOpen = !menu?.classList.contains("hidden");
     btn.setAttribute("aria-expanded", String(isOpen));
     menu?.setAttribute("aria-hidden", String(!isOpen));
     if (iconOpen) iconOpen.style.display = isOpen ? "none" : "";
