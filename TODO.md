@@ -29,11 +29,11 @@
 
 ### 1-1. ヒーローセクション
 
-- [ ] **「Deploy to Vercel」「Deploy to Netlify」ボタン**をヒーローに追加
+- [x] **「Deploy to Vercel」「Deploy to Netlify」ボタン**をヒーローに追加
   - Vercel: `[![Deploy with Vercel](...)](https://vercel.com/new/clone?...)` スタイル
   - Netlify: `[![Deploy to Netlify](...)](https://app.netlify.com/start/deploy?...)` スタイル
-- [ ] CTAの重複を解消 — ヒーローと最終CTAで「GitHub」「デモブログ」が2回出ている。ヒーローはデプロイ重視、最終CTAはGitHub重視に役割を分ける。
-- [ ] **クイックスタートコマンド**をテンプレート利用者向けに変更
+- [x] CTAの重複を解消 — ヒーローと最終CTAで「GitHub」「デモブログ」が2回出ている。ヒーローはデプロイ重視、最終CTAはGitHub重視に役割を分ける。
+- [x] **クイックスタートコマンド**をテンプレート利用者向けに変更
   - 現状: `npm install notro`（パッケージ利用者向け）
   - 追加: `Use this template` → clone → deploy の3ステップ
 

@@ -1,0 +1,375 @@
+---
+// Static Astro page — comprehensive documentation hub for NotroTail.
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Docs — NotroTail" description="NotroTail のセットアップ・Notion 設定・デプロイ・API リファレンスを解説します。" bodyClass="page-docs">
+  <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 lg:px-8">
+    <article class="mx-auto max-w-3xl">
+
+      <!-- Hero -->
+      <h1 class="mb-2 text-3xl font-bold tracking-tight text-gray-900">Docs</h1>
+      <p class="mb-10 text-lg text-gray-500">
+        NotroTail のセットアップから API リファレンスまで。
+      </p>
+
+      <!-- Section 1: Quick Start -->
+      <section class="mb-10" id="quickstart">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">クイックスタート</h2>
+        <ol class="ml-4 list-decimal space-y-2 text-gray-600">
+          <li>GitHub で「Use this template」→ リポジトリ作成（または <code>git clone https://github.com/mosugi/notro-tail</code>）</li>
+          <li>ルートで <code>npm install</code> 実行</li>
+          <li><code>.env</code> に <code>NOTION_TOKEN</code> と <code>NOTION_DATASOURCE_ID</code> を設定</li>
+          <li><code>npm run dev</code> でローカル確認（<code>localhost:4321</code>）</li>
+          <li>Vercel / Netlify にデプロイ（下の「デプロイガイド」参照）</li>
+        </ol>
+      </section>
+
+      <!-- Section 2: Notion Setup -->
+      <section class="mb-10" id="notion-setup">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">Notion セットアップ</h2>
+
+        <h3 class="mb-2 mt-6 text-base font-semibold text-gray-900">Notion インテグレーションの作成</h3>
+        <ul class="ml-4 list-disc space-y-1 text-gray-600">
+          <li><a href="https://www.notion.so/my-integrations" target="_blank" rel="noopener noreferrer">notion.so/my-integrations</a> でインテグレーションを作成</li>
+          <li>「Internal Integration Token」をコピーして <code>NOTION_TOKEN</code> に設定</li>
+        </ul>
+
+        <h3 class="mb-2 mt-6 text-base font-semibold text-gray-900">データソース（データベース）の共有</h3>
+        <ul class="ml-4 list-disc space-y-1 text-gray-600">
+          <li>Notion データベースを作成（またはコピーテンプレートを使用）</li>
+          <li>そのデータベースをインテグレーションに共有（「Share」→「Connections」）</li>
+          <li>データベース URL の ID 部分（32文字）を <code>NOTION_DATASOURCE_ID</code> に設定</li>
+        </ul>
+
+        <h3 class="mb-2 mt-6 text-base font-semibold text-gray-900">データベーススキーマ</h3>
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-left text-gray-600">
+              <tr>
+                <th class="px-4 py-3 font-semibold">プロパティ</th>
+                <th class="px-4 py-3 font-semibold">型</th>
+                <th class="px-4 py-3 font-semibold">必須</th>
+                <th class="px-4 py-3 font-semibold">説明</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-gray-700">
+              <tr>
+                <td class="px-4 py-3"><code>Name</code></td>
+                <td class="px-4 py-3">title</td>
+                <td class="px-4 py-3">✓</td>
+                <td class="px-4 py-3">記事タイトル</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>Slug</code></td>
+                <td class="px-4 py-3">rich_text</td>
+                <td class="px-4 py-3">✓</td>
+                <td class="px-4 py-3">URL スラッグ（例: <code>my-first-post</code>）</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>Public</code></td>
+                <td class="px-4 py-3">checkbox</td>
+                <td class="px-4 py-3">✓</td>
+                <td class="px-4 py-3">チェックで公開、未チェックで非公開</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>Description</code></td>
+                <td class="px-4 py-3">rich_text</td>
+                <td class="px-4 py-3">—</td>
+                <td class="px-4 py-3">説明文・meta description</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>Tags</code></td>
+                <td class="px-4 py-3">multi_select</td>
+                <td class="px-4 py-3">—</td>
+                <td class="px-4 py-3">タグ（<code>page</code>/<code>pinned</code> は内部マーカー）</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>Date</code></td>
+                <td class="px-4 py-3">date</td>
+                <td class="px-4 py-3">—</td>
+                <td class="px-4 py-3">公開日</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>Category</code></td>
+                <td class="px-4 py-3">select</td>
+                <td class="px-4 py-3">—</td>
+                <td class="px-4 py-3">カテゴリ</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-2 mt-6 text-base font-semibold text-gray-900">内部タグの仕様</h3>
+        <ul class="ml-4 list-disc space-y-2 text-gray-600">
+          <li><code>page</code> タグ: ブログ一覧・タグページから非表示。日付・タグリンク・前後ナビなし。固定ページ（About、Privacy 等）に使用。</li>
+          <li><code>pinned</code> タグ: ブログ一覧1ページ目の「ピン留め」セクションに表示。通常リストからは除外。</li>
+          <li><code>入門</code> タグ: 入門者向けコンテンツ。ブログ一覧で「入門」セクションとして優先表示される。</li>
+        </ul>
+      </section>
+
+      <!-- Section 3: Environment Variables -->
+      <section class="mb-10" id="env">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">環境変数</h2>
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-left text-gray-600">
+              <tr>
+                <th class="px-4 py-3 font-semibold">変数</th>
+                <th class="px-4 py-3 font-semibold">必須</th>
+                <th class="px-4 py-3 font-semibold">説明</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-gray-700">
+              <tr>
+                <td class="px-4 py-3"><code>NOTION_TOKEN</code></td>
+                <td class="px-4 py-3">✓</td>
+                <td class="px-4 py-3">Notion Internal Integration Token</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>NOTION_DATASOURCE_ID</code></td>
+                <td class="px-4 py-3">✓</td>
+                <td class="px-4 py-3">Notion データソース ID（データベース ID）</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 4: Deploy Guide -->
+      <section class="mb-10" id="deploy">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">デプロイガイド</h2>
+
+        <h3 class="mb-2 mt-6 text-base font-semibold text-gray-900">Vercel へのデプロイ</h3>
+        <ol class="ml-4 list-decimal space-y-2 text-gray-600">
+          <li>Vercel にリポジトリを接続</li>
+          <li><strong>Root Directory</strong> を <code>apps/notro-tail</code> に設定（重要）</li>
+          <li>Environment Variables に <code>NOTION_TOKEN</code> と <code>NOTION_DATASOURCE_ID</code> を設定</li>
+          <li>デプロイ</li>
+        </ol>
+        <div class="mt-4">
+          <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail" target="_blank" rel="noopener noreferrer">
+            <img src="https://vercel.com/button" alt="Deploy with Vercel" style="height:32px" />
+          </a>
+        </div>
+
+        <h3 class="mb-2 mt-8 text-base font-semibold text-gray-900">Netlify へのデプロイ</h3>
+        <ol class="ml-4 list-decimal space-y-2 text-gray-600">
+          <li>Netlify にリポジトリを接続</li>
+          <li><code>netlify.toml</code> が設定済みのためビルド設定は自動</li>
+          <li>Environment Variables に <code>NOTION_TOKEN</code> と <code>NOTION_DATASOURCE_ID</code> を設定</li>
+          <li>デプロイ</li>
+        </ol>
+        <div class="mt-4">
+          <a href="https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer">
+            <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" style="height:32px" />
+          </a>
+        </div>
+      </section>
+
+      <!-- Section 5: API Reference -->
+      <section class="mb-10" id="api">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">API リファレンス</h2>
+
+        <h3 class="mb-2 mt-6 text-base font-semibold text-gray-900"><code>notro</code> パッケージのエントリーポイント</h3>
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-left text-gray-600">
+              <tr>
+                <th class="px-4 py-3 font-semibold">エントリーポイント</th>
+                <th class="px-4 py-3 font-semibold">インポート</th>
+                <th class="px-4 py-3 font-semibold">用途</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-gray-700">
+              <tr>
+                <td class="px-4 py-3"><code>notro</code></td>
+                <td class="px-4 py-3"><code>import {"{ NotionMarkdownRenderer, loader }"} from "notro"</code></td>
+                <td class="px-4 py-3">Astroコンポーネントとローダー</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>notro/utils</code></td>
+                <td class="px-4 py-3"><code>import {"{ getPlainText }"} from "notro/utils"</code></td>
+                <td class="px-4 py-3">Pure TypeScriptヘルパー。設定ファイルや Node スクリプトで使用可</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>notro/integration</code></td>
+                <td class="px-4 py-3"><code>import {"{ notro }"} from "notro/integration"</code></td>
+                <td class="px-4 py-3">Astro インテグレーション。<code>astro.config.mjs</code> で使用</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-2 mt-8 text-base font-semibold text-gray-900"><code>loader()</code> オプション</h3>
+        <p class="mb-3 text-gray-600"><code>content.config.ts</code> での使用例:</p>
+        <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm overflow-x-auto"><code>import {"{ loader }"} from "notro";
+const posts = defineCollection({"{"})
+  loader: loader({"{ dataSourceId: import.meta.env.NOTION_DATASOURCE_ID }"}),
+{"}"});</code></pre>
+
+        <h3 class="mb-2 mt-8 text-base font-semibold text-gray-900"><code>NotionMarkdownRenderer</code> props</h3>
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-left text-gray-600">
+              <tr>
+                <th class="px-4 py-3 font-semibold">Prop</th>
+                <th class="px-4 py-3 font-semibold">型</th>
+                <th class="px-4 py-3 font-semibold">説明</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-gray-700">
+              <tr>
+                <td class="px-4 py-3"><code>markdown</code></td>
+                <td class="px-4 py-3"><code>string</code></td>
+                <td class="px-4 py-3">ローダーが取得したMarkdown（必須）</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>linkToPages</code></td>
+                <td class="px-4 py-3"><code>Record&lt;string, {"{ url: string; title: string }"}&gt;</code></td>
+                <td class="px-4 py-3">Notion 内部リンクの解決マップ</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>classMap</code></td>
+                <td class="px-4 py-3"><code>Partial&lt;Record&lt;ClassMapKeys, string&gt;&gt;</code></td>
+                <td class="px-4 py-3">デフォルトコンポーネントにTailwindクラスを注入</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3"><code>components</code></td>
+                <td class="px-4 py-3"><code>Partial&lt;NotionComponents&gt;</code></td>
+                <td class="px-4 py-3">コンポーネントを完全に上書き</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-2 mt-8 text-base font-semibold text-gray-900"><code>classMap</code> で使用可能なキー</h3>
+        <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm overflow-x-auto"><code>callout, toggle, toggleTitle, quote, image, tableWrapper, table,
+tableRow, tableCell, audio, video, file, pdf, pageRef, databaseRef,
+toc, syncedBlock, column, columns, emptyBlock, mention, mention-date,
+h1, h2, h3, h4, p, ul, ol, li, pre, hr, a, strong, em, del, th</code></pre>
+
+        <p class="mb-3 mt-4 text-gray-600">使用例:</p>
+        <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm overflow-x-auto"><code>&lt;NotionMarkdownRenderer
+  markdown={"{markdown}"}
+  classMap={"{{"} callout: "border-l-4 border-blue-500 pl-4" {"}}"}
+/&gt;</code></pre>
+      </section>
+
+      <!-- Section 6: remark-nfm Standalone -->
+      <section class="mb-10" id="remark-nfm">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">remark-nfm スタンドアロン</h2>
+        <p class="mb-4 text-gray-600">
+          <code>remark-nfm</code> は Astro なしで単独利用可能な remark プラグインです。
+        </p>
+        <pre class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm overflow-x-auto"><code>import {"{ unified }"} from "unified";
+import remarkParse from "remark-parse";
+import {"{ remarkNfm }"} from "remark-nfm";
+
+const result = await unified()
+  .use(remarkParse)
+  .use(remarkNfm)
+  .process(notionMarkdown);</code></pre>
+      </section>
+
+      <!-- Section 7: Tutorials -->
+      <section class="mb-10" id="tutorials">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">チュートリアル</h2>
+        <ul class="ml-4 list-disc space-y-2 text-gray-600">
+          <li>📖 <a href="/blog/setup/">セットアップガイド</a> — NotroTail のインストールと初期設定</li>
+          <li>📖 <a href="/blog/add-notro-to-astro/">既存 Astro プロジェクトへの追加</a> — notro を既存プロジェクトに導入する</li>
+          <li>📖 <a href="/blog/content-management/">Notion でのコンテンツ管理</a> — Notion データベースの使い方</li>
+          <li>📖 <a href="/blog/build-and-deploy/">ビルドとデプロイ</a> — Vercel/Netlify へのデプロイ手順</li>
+          <li>📖 <a href="/blog/customize-components/">コンポーネントのカスタマイズ</a> — classMap と Tailwind でのカスタマイズ</li>
+        </ul>
+      </section>
+
+      <!-- Section 8: Architecture (from contact.astro) -->
+      <section class="mb-10" id="architecture">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">サイトの仕組み</h2>
+
+        <h3 class="mb-2 mt-6 text-base font-semibold text-gray-900">Three types of pages</h3>
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-left text-gray-600">
+              <tr>
+                <th class="px-4 py-3 font-semibold">Type</th>
+                <th class="px-4 py-3 font-semibold">URL</th>
+                <th class="px-4 py-3 font-semibold">Content source</th>
+                <th class="px-4 py-3 font-semibold">Appears in blog list</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-gray-700">
+              <tr>
+                <td class="px-4 py-3 font-medium">Static page</td>
+                <td class="px-4 py-3"><code>/</code>, <code>/docs/</code>, <code>/404</code></td>
+                <td class="px-4 py-3"><code>.astro</code> file in <code>src/pages/</code></td>
+                <td class="px-4 py-3">No</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-medium">Embedded page</td>
+                <td class="px-4 py-3"><code>/blog/about/</code>, <code>/blog/privacy/</code></td>
+                <td class="px-4 py-3">Notion database — tagged <code>page</code></td>
+                <td class="px-4 py-3">No (hidden by tag filter)</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-medium">Blog article</td>
+                <td class="px-4 py-3"><code>/blog/{"{slug}"}/</code></td>
+                <td class="px-4 py-3">Notion database — no <code>page</code> tag</td>
+                <td class="px-4 py-3">Yes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-2 mt-8 text-base font-semibold text-gray-900">Embedded pages</h3>
+        <p class="mb-4 text-gray-600">
+          Pages tagged <code>page</code> in Notion are served at
+          <code>/blog/{"{slug}"}/</code> but are excluded from the blog listing
+          and tag pages. They have no date, no tag links, and no prev/next navigation —
+          they behave like standalone fixed pages while being fully editable in Notion.
+        </p>
+        <ul class="ml-4 list-disc space-y-1 text-gray-600">
+          <li><a href="/blog/about/">About</a> — <code>page</code> tag in Notion</li>
+          <li><a href="/blog/privacy/">Privacy Policy</a> — <code>page</code> tag in Notion</li>
+        </ul>
+
+        <h3 class="mb-2 mt-8 text-base font-semibold text-gray-900">Content loading pipeline</h3>
+        <ol class="ml-4 list-decimal space-y-2 text-gray-600">
+          <li>The <code>loader()</code> from <code>notro</code> calls the <strong>Notion Public API</strong> and fetches pages as Markdown.</li>
+          <li>Pages are cached by <code>last_edited_time</code>; only changed pages are re-fetched on rebuild.</li>
+          <li>Preprocessed Markdown is stored in the Astro Content Collection store.</li>
+          <li>At render time, <code>NotionMarkdownRenderer</code> compiles Markdown to MDX via <code>evaluate()</code> and renders with <strong>Astro component mapping</strong>: callouts, toggles, columns, KaTeX math, table of contents, and more.</li>
+          <li>Notion pre-signed S3 image URLs are cached correctly via a custom Astro image service that strips expiring <code>X-Amz-*</code> query parameters.</li>
+        </ol>
+      </section>
+
+      <!-- Section 9: Troubleshooting -->
+      <section class="mb-10" id="troubleshooting">
+        <h2 class="mb-3 text-xl font-semibold text-gray-900">トラブルシューティング</h2>
+
+        <h3 class="mb-2 mt-6 text-base font-semibold text-gray-900">コンテンツが表示されない（truncated）</h3>
+        <p class="mb-4 text-gray-600">
+          <code>markdownResponse.truncated === true</code> の場合、ページが Notion API の上限（約20,000ブロック）を超えています。
+          <strong>対処法</strong>: 大きな Notion ページを複数のサブページに分割してください。
+        </p>
+
+        <h3 class="mb-2 mt-6 text-base font-semibold text-gray-900">ブロックが表示されない（unknown_block_ids）</h3>
+        <p class="mb-4 text-gray-600">
+          Notion API が変換できなかったブロックです。ビルドログに警告が出力されます。未対応ブロック型は現在サポート外です。
+        </p>
+
+        <h3 class="mb-2 mt-6 text-base font-semibold text-gray-900">Notion API レート制限（429）</h3>
+        <p class="mb-4 text-gray-600">
+          notro は自動でリトライします（1s / 2s / 4s、最大3回）。それでも失敗する場合は時間をおいて再ビルドしてください。
+        </p>
+
+        <h3 class="mb-2 mt-6 text-base font-semibold text-gray-900">画像が表示されない</h3>
+        <p class="mb-4 text-gray-600">
+          Notion の S3 プリサイン URL は期限切れになります。再ビルドで解決します。<code>notionImageService</code> がキャッシュキーから <code>X-Amz-*</code> パラメーターを除去しているため、定期的な再ビルドにより安定して表示できます。
+        </p>
+      </section>
+
+    </article>
+  </main>
+</Layout>
