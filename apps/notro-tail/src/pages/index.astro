@@ -45,19 +45,6 @@ import Layout from "../layouts/Layout.astro";
     gap: 0.75rem;
     margin-bottom: 2rem;
   }
-  .hero-install {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: "SFMono-Regular", Consolas, monospace;
-    font-size: 0.875rem;
-    background: #f7f6f3;
-    border: 1px solid rgba(55, 53, 47, 0.12);
-    border-radius: 6px;
-    padding: 0.5rem 1rem;
-    color: rgba(55, 53, 47, 0.7);
-  }
-  .hero-install span { color: #2383e2; user-select: none; }
 
   /* ── Buttons ─────────────────────────────────────────────────────────────── */
   .btn-primary {
@@ -93,6 +80,20 @@ import Layout from "../layouts/Layout.astro";
     border-color: rgba(55, 53, 47, 0.3);
   }
 
+  /* ── Deploy badges ─────────────────────────────────────────────────────────── */
+  .hero-deploy {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .hero-deploy img {
+    height: 32px;
+    width: auto;
+  }
+
   /* ── Section common ──────────────────────────────────────────────────────── */
   .section {
     padding: 4rem 0;
@@ -119,6 +120,57 @@ import Layout from "../layouts/Layout.astro";
     color: rgba(55, 53, 47, 0.55);
     margin-bottom: 2.5rem;
   }
+
+  /* ── Two use cases ──────────────────────────────────────────────────────────── */
+  .use-case-grid {
+    display: grid;
+    gap: 1rem;
+  }
+  @media (min-width: 768px) {
+    .use-case-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .use-case-card {
+    border: 1px solid rgba(55, 53, 47, 0.12);
+    border-radius: 8px;
+    padding: 1.75rem;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .use-case-primary {
+    border-color: rgba(35, 131, 226, 0.25);
+    background: rgba(35, 131, 226, 0.02);
+  }
+  .use-case-icon {
+    font-size: 1.5rem;
+  }
+  .use-case-title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: #37352f;
+  }
+  .use-case-desc {
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: rgba(55, 53, 47, 0.6);
+    flex: 1;
+  }
+  .use-case-desc code {
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 0.75rem;
+    background: rgba(135, 131, 120, 0.15);
+    color: #eb5757;
+    border-radius: 3px;
+    padding: 0.1em 0.3em;
+  }
+  .use-case-link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #2383e2;
+    text-decoration: none;
+  }
+  .use-case-link:hover { text-decoration: underline; }
 
   /* ── How it works (3 steps) ──────────────────────────────────────────────── */
   .steps {
@@ -281,10 +333,80 @@ import Layout from "../layouts/Layout.astro";
     color: rgba(55, 53, 47, 0.6);
     margin-bottom: 1.75rem;
   }
+
+  /* ── Dark mode ───────────────────────────────────────────────────────────── */
+  @media (prefers-color-scheme: dark) {
+    .hero { border-bottom-color: rgba(255, 255, 255, 0.08); }
+    .hero-badge {
+      color: #60a5fa;
+      background: rgba(96, 165, 250, 0.08);
+      border-color: rgba(96, 165, 250, 0.2);
+    }
+    .hero-title { color: #e2e8f0; }
+    .hero-title .accent { color: #60a5fa; }
+    .hero-description { color: rgba(226, 232, 240, 0.65); }
+    .btn-primary { background: #3b82f6; }
+    .btn-secondary {
+      color: #e2e8f0;
+      border-color: rgba(255, 255, 255, 0.15);
+      background: #1e293b;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .section { border-bottom-color: rgba(255, 255, 255, 0.08); }
+    .section-label { color: #60a5fa; }
+    .section-title { color: #e2e8f0; }
+    .section-subtitle { color: rgba(226, 232, 240, 0.55); }
+    .use-case-card {
+      border-color: rgba(255, 255, 255, 0.1);
+      background: #1e293b;
+    }
+    .use-case-primary {
+      border-color: rgba(96, 165, 250, 0.25);
+      background: rgba(96, 165, 250, 0.05);
+    }
+    .use-case-title { color: #e2e8f0; }
+    .use-case-desc { color: rgba(226, 232, 240, 0.6); }
+    .use-case-desc code { background: rgba(255, 255, 255, 0.08); color: #f87171; }
+    .use-case-link { color: #60a5fa; }
+    .step-num { background: rgba(96, 165, 250, 0.12); color: #60a5fa; }
+    .step-title { color: #e2e8f0; }
+    .step-desc { color: rgba(226, 232, 240, 0.6); }
+    .step-desc code { background: rgba(255, 255, 255, 0.08); color: #f87171; }
+    .step-connector { color: rgba(255, 255, 255, 0.2); }
+    .features {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+    .feature { background: #0f172a; }
+    .feature-icon { background: rgba(255, 255, 255, 0.06); }
+    .feature-title { color: #e2e8f0; }
+    .feature-desc { color: rgba(226, 232, 240, 0.6); }
+    .feature-desc code { background: rgba(255, 255, 255, 0.08); color: #f87171; }
+    .package-card {
+      border-color: rgba(255, 255, 255, 0.08);
+      background: #1e293b;
+    }
+    .package-name { color: #e2e8f0; }
+    .package-path { color: rgba(226, 232, 240, 0.4); }
+    .package-desc { color: rgba(226, 232, 240, 0.6); }
+    .package-badge { background: rgba(96, 165, 250, 0.12); color: #60a5fa; }
+    .cta {
+      background: rgba(96, 165, 250, 0.06);
+      border-color: rgba(96, 165, 250, 0.15);
+    }
+    .cta-title { color: #e2e8f0; }
+    .cta-desc { color: rgba(226, 232, 240, 0.6); }
+  }
 </style>
 
-<Layout title="NotroTail — Notion を CMS として使う Astro 静的サイトジェネレーター">
-  <main class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+<Layout
+  title="NotroTail — Notion を CMS として使う Astro 静的サイトジェネレーター"
+  description="Notion Public API からコンテンツを取得し、MDX としてコンパイル。Notion のブロックを Astro コンポーネントにマッピングして高速・SEO 最適化された静的サイトを生成します。"
+>
+  <main id="main-content" class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
 
     <!-- Hero -->
     <section class="hero">
@@ -302,15 +424,45 @@ import Layout from "../layouts/Layout.astro";
         高速・SEO 最適化された静的サイトを生成します。
       </p>
       <div class="hero-actions">
-        <a href="/blog/" class="btn-primary">ブログを見る →</a>
+        <a href="/docs/" class="btn-primary">Docs を見る →</a>
         <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" class="btn-secondary">
           GitHub で見る
         </a>
       </div>
-      <div>
-        <code class="hero-install">
-          <span>$</span> npm install notro
-        </code>
+      <!-- Deploy badges -->
+      <div class="hero-deploy">
+        <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail" target="_blank" rel="noopener noreferrer">
+          <img src="https://vercel.com/button" alt="Deploy with Vercel" />
+        </a>
+        <a href="https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer">
+          <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" />
+        </a>
+      </div>
+    </section>
+
+    <!-- Two use cases -->
+    <section class="section use-cases">
+      <p class="section-label">使い方を選ぶ</p>
+      <h2 class="section-title">2つの使い方</h2>
+      <div class="use-case-grid">
+        <div class="use-case-card use-case-primary">
+          <div class="use-case-icon">🚀</div>
+          <h3 class="use-case-title">テンプレートとして使う</h3>
+          <p class="use-case-desc">
+            このリポジトリをテンプレートにして、Notion でコンテンツを書き、
+            Vercel / Netlify にワンクリックでデプロイ。5分で Notion ブログを立ち上げられます。
+          </p>
+          <a href="/docs/" class="use-case-link">クイックスタートを見る →</a>
+        </div>
+        <div class="use-case-card">
+          <div class="use-case-icon">📦</div>
+          <h3 class="use-case-title">npm パッケージとして使う</h3>
+          <p class="use-case-desc">
+            既存の Astro プロジェクトに <code>notro</code> を追加するだけ。
+            ローダーとコンポーネントをドロップインで利用できます。<code>remark-nfm</code> は Astro なしでも使えます。
+          </p>
+          <a href="/docs/#api" class="use-case-link">API リファレンスを見る →</a>
+        </div>
       </div>
     </section>
 
@@ -323,26 +475,24 @@ import Layout from "../layouts/Layout.astro";
       <div class="steps">
         <div class="step">
           <div class="step-num">1</div>
-          <p class="step-title">Notion でコンテンツを書く</p>
+          <p class="step-title">テンプレートを使う</p>
           <p class="step-desc">
-            Notion データベースに記事を追加するだけ。
-            コールアウト・数式・テーブルなど、Notion のリッチブロックをそのまま使えます。
+            GitHub で "Use this template" をクリックしてリポジトリを作成。
+            または上の Deploy ボタンから直接デプロイも可能。
           </p>
         </div>
         <div class="step">
           <div class="step-num">2</div>
-          <p class="step-title">notro がビルド時に取得・変換</p>
+          <p class="step-title">Notion と環境変数を設定</p>
           <p class="step-desc">
-            <code>notro</code> Content Loader が Notion API から Markdown を取得。
-            <code>last_edited_time</code> によるキャッシュで差分ビルドを実現します。
+            Notion インテグレーションを作成し、<code>NOTION_TOKEN</code> と <code>NOTION_DATASOURCE_ID</code> を環境変数に設定するだけ。
           </p>
         </div>
         <div class="step">
           <div class="step-num">3</div>
-          <p class="step-title">Astro が静的サイトを生成</p>
+          <p class="step-title">Vercel / Netlify にデプロイ</p>
           <p class="step-desc">
-            MDX として評価された Notion ブロックが Astro コンポーネントに変換され、
-            高速な静的 HTML として配信されます。
+            <code>npm run build</code> で静的サイトを生成。Vercel や Netlify に接続して自動デプロイを設定しましょう。
           </p>
         </div>
       </div>
@@ -400,6 +550,7 @@ import Layout from "../layouts/Layout.astro";
           <p class="feature-desc">
             <code>notro</code> パッケージを任意の Astro プロジェクトに追加するだけ。
             ローダーとコンポーネントをドロップインで利用できます。
+            notro と remark-nfm はそれぞれ単独でも利用可能な、<strong>オプション</strong>の npm パッケージです。
           </p>
         </div>
       </div>
@@ -452,6 +603,15 @@ import Layout from "../layouts/Layout.astro";
             GitHub で使い方を見る →
           </a>
           <a href="/blog/" class="btn-secondary">デモブログを見る</a>
+        </div>
+        <!-- Deploy badges -->
+        <div class="hero-deploy">
+          <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail" target="_blank" rel="noopener noreferrer">
+            <img src="https://vercel.com/button" alt="Deploy with Vercel" />
+          </a>
+          <a href="https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer">
+            <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" />
+          </a>
         </div>
       </div>
     </section>

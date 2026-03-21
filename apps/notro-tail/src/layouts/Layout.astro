@@ -7,9 +7,11 @@ interface Props {
   title: string;
   description?: string;
   bodyClass?: string;
+  /** og:type — defaults to "website"; use "article" for blog posts */
+  type?: "website" | "article";
 }
 
-const { title, description, bodyClass } = Astro.props;
+const { title, description, bodyClass, type = "website" } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 ---
 
@@ -17,13 +19,13 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description ?? ""} />
+    {description && <meta name="description" content={description} />}
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="canonical" href={canonicalUrl.toString()} />
     <link rel="stylesheet" href="/katex/katex.min.css" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={type} />
     <meta property="og:locale" content="ja_JP" />
     <meta property="og:title" content={title} />
     {description && <meta property="og:description" content={description} />}

@@ -426,28 +426,28 @@
 }
 
 /* ── Contact page (static Astro page) ───────────────────────────────────── */
-.page-contact main {
+.page-docs main {
   background: linear-gradient(180deg, rgba(35, 131, 226, 0.05) 0px, transparent 240px);
 }
 
-.page-contact main h2 {
+.page-docs main h2 {
   color: #1a3a5c;
 }
 
-.page-contact main a {
+.page-docs main a {
   color: #2383e2;
   @apply underline underline-offset-2;
 }
-.page-contact main a:hover {
+.page-docs main a:hover {
   color: #1a5fb4;
 }
 
-.page-contact article > section {
+.page-docs article > section {
   border-bottom: 1px solid rgba(55, 53, 47, 0.09);
   @apply pb-10;
 }
 
-.page-contact article > section:last-child {
+.page-docs article > section:last-child {
   @apply border-b-0 pb-0;
 }
 
@@ -650,24 +650,52 @@
     border-color: rgba(255, 255, 255, 0.1);
   }
 
-  /* Contact page */
-  .page-contact main {
+  /* Docs page */
+  .page-docs main {
     background: linear-gradient(180deg, rgba(59, 130, 246, 0.08) 0px, transparent 240px);
   }
 
-  .page-contact main h2 {
-    color: #93c5fd;
+  .page-docs main h1 { color: #e2e8f0; }
+  .page-docs main h2 { color: #93c5fd; }
+  .page-docs main h3 { color: #cbd5e1; }
+
+  .page-docs main p,
+  .page-docs main li { color: #94a3b8; }
+
+  .page-docs main strong { color: #cbd5e1; }
+
+  .page-docs main a { color: #60a5fa; }
+  .page-docs main a:hover { color: #93c5fd; }
+
+  .page-docs article > section { border-color: rgba(255, 255, 255, 0.08); }
+
+  /* Inline code */
+  .page-docs main :not(pre) > code {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #f87171;
   }
 
-  .page-contact main a {
-    color: #60a5fa;
+  /* Code blocks */
+  .page-docs main pre {
+    background-color: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0;
+  }
+  .page-docs main pre code {
+    color: inherit;
+    background: none;
   }
 
-  .page-contact main a:hover {
-    color: #93c5fd;
+  /* Tables */
+  .page-docs main .overflow-x-auto {
+    border-color: rgba(255, 255, 255, 0.08);
   }
-
-  .page-contact article > section {
+  .page-docs main table { border-color: rgba(255, 255, 255, 0.08); }
+  .page-docs main thead { background-color: #1e293b !important; }
+  .page-docs main thead th { color: #cbd5e1; }
+  .page-docs main td,
+  .page-docs main th {
+    color: #94a3b8;
     border-color: rgba(255, 255, 255, 0.08);
   }
 }

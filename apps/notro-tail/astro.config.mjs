@@ -19,6 +19,10 @@ if (httpsProxy) {
 export default defineConfig({
   site: "https://notrotail.mosugi.com",
 
+  redirects: {
+    "/contact/": "/docs/",
+  },
+
   image: {
     service: notionImageServiceConfig(),
     // Restrict to Notion-related S3 domains and notion.so origins.

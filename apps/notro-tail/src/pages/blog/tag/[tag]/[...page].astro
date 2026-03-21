@@ -12,10 +12,14 @@ export async function getStaticPaths({
   paginate: PaginateFunction;
 }) {
   const posts = await getCollection("posts");
+  // "page" and "pinned" are internal markers, not public tags
+  const INTERNAL_TAGS = ["page", "pinned"];
   const tags = [
     ...new Set(
       posts.flatMap((entry) =>
-        getMultiSelect(entry.data.properties.Tags).map((t) => t.name),
+        getMultiSelect(entry.data.properties.Tags)
+          .map((t) => t.name)
+          .filter((name) => !INTERNAL_TAGS.includes(name)),
       ),
     ),
   ];
@@ -36,8 +40,8 @@ const { tag } = Astro.params;
 const data = page.data.map(({ data }) => data);
 ---
 
-<Layout title={`タグ: ${tag}`} description={`「${tag}」タグの記事一覧`}>
-  <main class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
+<Layout title={`タグ: ${tag} — NotroTail`} description={`「${tag}」タグの記事一覧`}>
+  <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
     <div class="mb-8">
       <a href="/blog/" class="mb-3 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900">
         ← ブログ一覧
