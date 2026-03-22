@@ -1,16 +1,16 @@
 ---
-// Deploy guide for Vercel and Netlify.
+// Deploy guide for Vercel, Netlify, and Cloudflare Pages.
 import DocsLayout from "../../layouts/DocsLayout.astro";
 ---
 
 <DocsLayout
   title="デプロイガイド — Docs — NotroTail"
-  description="NotroTail を Vercel・Netlify にデプロイする手順。"
+  description="NotroTail を Vercel・Netlify・Cloudflare Pages にデプロイする手順。"
   heading="デプロイガイド"
 >
   <p class="mb-8 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
-    NotroTail は Astro の静的出力モードを使用しています。
-    Vercel・Netlify どちらにも簡単にデプロイできます。
+    NotroTail は Astro の静的出力モードを使用しています。アダプター不要で
+    Vercel・Netlify・Cloudflare Pages にデプロイできます。
   </p>
 
   <!-- Vercel -->
@@ -32,20 +32,54 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
         でリポジトリをインポート
       </li>
       <li>
-        <strong>Root Directory</strong> を
-        <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">apps/notro-tail</code>
-        に設定（重要: モノレポのため必須）
-      </li>
-      <li>
         Environment Variables に以下を追加:
         <pre class="mt-2 bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">NOTION_TOKEN=secret_xxxx
 NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
       </li>
-      <li>「Deploy」をクリック</li>
+      <li>「Deploy」をクリック — ビルド設定は <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">vercel.json</code> が自動で処理</li>
     </ol>
     <div class="mt-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-300">
       <strong>ヒント:</strong> Vercel では「Redeploy」ボタンで手動再ビルドできます。
       Notion 記事を更新した後は再ビルドが必要です。
+    </div>
+  </section>
+
+  <!-- Cloudflare Pages -->
+  <section class="mb-10" id="cloudflare">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">Cloudflare Pages へのデプロイ</h2>
+    <div class="mb-4">
+      <a
+        href="https://deploy.workers.cloudflare.com/?url=https://github.com/mosugi/notro-tail"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare" class="h-8" />
+      </a>
+    </div>
+    <ol class="ml-4 list-decimal space-y-3 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+      <li>
+        上の「Deploy to Cloudflare」ボタンをクリック、または
+        <a href="https://dash.cloudflare.com" target="_blank" rel="noopener noreferrer" class="text-[#2383e2] underline underline-offset-2 hover:opacity-70">Cloudflare ダッシュボード</a>
+        で「Workers & Pages」→「Create」→「Pages」→「Connect to Git」
+      </li>
+      <li>
+        リポジトリを選択し、以下のビルド設定を入力:
+        <pre class="mt-2 bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">Framework preset:  None
+Build command:     npm run build
+Build output dir:  apps/notro-tail/dist
+Root directory:    (空欄のまま)</pre>
+      </li>
+      <li>
+        「Environment variables」に以下を追加:
+        <pre class="mt-2 bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">NOTION_TOKEN=secret_xxxx
+NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
+      </li>
+      <li>「Save and Deploy」をクリック</li>
+    </ol>
+    <div class="mt-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-300">
+      <strong>ヒント:</strong> リポジトリに含まれる
+      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">wrangler.toml</code>
+      は Cloudflare Pages のビルド設定を補足しますが、ダッシュボードの設定が優先されます。
     </div>
   </section>
 
@@ -105,6 +139,44 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-sm">npm run dev --workspace=notro-tail</code></td>
             <td class="px-4 py-3">開発サーバー起動（ホットリロード）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SSR -->
+  <section class="mb-10" id="ssr">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">SSR を有効にする（オプション）</h2>
+    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+      デフォルトは静的出力（SSG）です。オンデマンドレンダリングが必要な場合は、
+      プラットフォームのアダプターをインストールして
+      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">astro.config.mjs</code>
+      のコメントを外してください。
+      Vercel / Netlify アダプターは静的サイトのまま Image CDN を有効化する用途でも使えますが、
+      notro-tail の独自 image service（<code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">notionImageService</code>）
+      との兼ね合いに注意してください。
+    </p>
+    <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
+      <table class="w-full text-sm">
+        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+          <tr>
+            <th class="px-4 py-3 font-semibold">プラットフォーム</th>
+            <th class="px-4 py-3 font-semibold">インストール</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+          <tr>
+            <td class="px-4 py-3">Vercel</td>
+            <td class="px-4 py-3"><code class="font-mono text-sm">npm i @astrojs/vercel</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3">Netlify</td>
+            <td class="px-4 py-3"><code class="font-mono text-sm">npm i @astrojs/netlify</code></td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3">Cloudflare Workers</td>
+            <td class="px-4 py-3"><code class="font-mono text-sm">npm i @astrojs/cloudflare</code></td>
           </tr>
         </tbody>
       </table>

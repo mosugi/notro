@@ -112,6 +112,42 @@ NOTION_SECRET=<NOTION_TOKEN>
 
 ブラウザで [http://localhost:4321](http://localhost:4321/) を開きます
 
+## デプロイ
+
+NotroTail は Astro の静的出力モードを使用しています。SSR アダプター不要で各プラットフォームにデプロイできます。設定ファイルはリポジトリに含まれています。
+
+### Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail)
+
+1. 上のボタンをクリック、または [vercel.com](https://vercel.com) でリポジトリをインポート
+2. 環境変数 `NOTION_TOKEN` と `NOTION_DATASOURCE_ID` を追加
+3. **Deploy** をクリック — ビルド設定は `vercel.json` が自動で処理
+
+### Netlify
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail)
+
+1. 上のボタンをクリック、または [netlify.com](https://app.netlify.com) でリポジトリをインポート
+2. 環境変数 `NOTION_TOKEN` と `NOTION_DATASOURCE_ID` を追加
+3. **Deploy** をクリック — ビルド設定は `netlify.toml` が自動で処理
+
+### Cloudflare Pages
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/mosugi/notro-tail)
+
+1. 上のボタンをクリック、または [Cloudflare ダッシュボード](https://dash.cloudflare.com) で **Workers & Pages → Create → Pages → Connect to Git**
+2. リポジトリを選択し、以下のビルド設定を入力:
+   ```
+   Build command:    npm run build
+   Build output dir: apps/notro-tail/dist
+   Root directory:   (空欄のまま)
+   ```
+3. 環境変数 `NOTION_TOKEN` と `NOTION_DATASOURCE_ID` を追加
+4. **Save and Deploy** をクリック — `wrangler.toml` も参考として同梱されています
+
+> Notion のコンテンツを更新した後は、プラットフォームのダッシュボードから手動で再デプロイをトリガーしてください。
+
 ## 制限事項
 
 ### コンテンツの切り詰め

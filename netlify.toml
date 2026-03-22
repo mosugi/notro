@@ -1,3 +1,8 @@
+[build]
+  base    = "."
+  command = "npm run build"
+  publish = "apps/notro-tail/dist"
+
 [template.environment]
   NOTION_TOKEN = "Your Notion Integration Token"
   NOTION_DATASOURCE_ID = "Your Notion Data Source ID (posts collection)"
