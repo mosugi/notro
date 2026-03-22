@@ -1,6 +1,7 @@
 ---
-import { colorToClass } from './colors';
+// Thin wrapper around TableCellBase.astro for the td element.
+import TableCellBase from './TableCellBase.astro';
 interface Props { color?: string; class?: string; }
 const { color, class: className } = Astro.props;
 ---
-<td class:list={["nt-table-cell", colorToClass(color), className]}><slot /></td>
+<TableCellBase tag="td" baseClass="nt-table-cell" {color} class={className}><slot /></TableCellBase>

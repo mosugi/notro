@@ -1,6 +1,7 @@
 ---
-import { colorToClass } from './colors';
+// Thin wrapper around Heading.astro for the h4 tag.
+import Heading from './Heading.astro';
 interface Props { color?: string; id?: string; class?: string; }
 const { color, id, class: className } = Astro.props;
 ---
-<h4 {id} class:list={["nt-header-block", colorToClass(color), className]}><slot /></h4>
+<Heading tag="h4" {color} {id} class={className}><slot /></Heading>

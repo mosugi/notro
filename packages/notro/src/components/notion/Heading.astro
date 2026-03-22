@@ -1,0 +1,18 @@
+---
+/**
+ * Generic heading component used by H1–H4 wrappers.
+ * Accepts a `tag` prop (h1 | h2 | h3 | h4) so the four heading levels
+ * share one implementation instead of duplicating the same logic.
+ */
+import { colorToClass } from './colors';
+
+interface Props {
+  tag: 'h1' | 'h2' | 'h3' | 'h4';
+  color?: string;
+  id?: string;
+  class?: string;
+}
+
+const { tag: Tag, color, id, class: className } = Astro.props;
+---
+<Tag {id} class:list={["nt-header-block", colorToClass(color), className]}><slot /></Tag>

@@ -1,0 +1,18 @@
+---
+/**
+ * Shared implementation for TableRow (tr) and TableCell (td).
+ * Both components have identical logic: colorToClass + class:list + slot.
+ * They differ only in tag name and the base CSS class applied.
+ */
+import { colorToClass } from './colors';
+
+interface Props {
+  tag: 'tr' | 'td';
+  baseClass: string;
+  color?: string;
+  class?: string;
+}
+
+const { tag: Tag, baseClass, color, class: className } = Astro.props;
+---
+<Tag class:list={[baseClass, colorToClass(color), className]}><slot /></Tag>
