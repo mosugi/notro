@@ -148,6 +148,9 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
       プラットフォームのアダプターをインストールして
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">astro.config.mjs</code>
       のコメントを外してください。
+      Vercel / Netlify アダプターは静的サイトのまま Image CDN を有効化する用途でも使えますが、
+      notro-tail の独自 image service（<code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">notionImageService</code>）
+      との兼ね合いに注意してください。
     </p>
     <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
       <table class="w-full text-sm">
