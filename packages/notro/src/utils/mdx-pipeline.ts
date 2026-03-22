@@ -222,16 +222,23 @@ export type MdxPlugins = {
 	rehypePlugins: PluggableList;
 };
 
+/**
+ * Base remark plugins shared between the runtime MDX pipeline and the
+ * static @astrojs/mdx integration. Exported so integration.ts can import
+ * them directly instead of duplicating the list.
+ */
+export const BASE_REMARK_PLUGINS: PluggableList = [
+	// remarkNfm bundles: preprocessNotionMarkdown (pre-parse), remarkDirective,
+	// and calloutPlugin — everything specific to Notion-flavored Markdown.
+	remarkNfm,
+	remarkGfm,
+	remarkMath,
+];
+
 /** Returns the remark and rehype plugin configuration for Notion MDX. */
 export function buildMdxPlugins(linkToPages: LinkToPages): MdxPlugins {
 	return {
-		remarkPlugins: [
-			// remarkNfm bundles: preprocessNotionMarkdown (pre-parse), remarkDirective,
-			// and calloutPlugin — everything specific to Notion-flavored Markdown.
-			remarkNfm,
-			remarkGfm,
-			remarkMath,
-		],
+		remarkPlugins: BASE_REMARK_PLUGINS,
 		rehypePlugins: [
 			// rehypeRaw must come first: converts raw HTML strings in mdast into
 			// hast element nodes so that subsequent plugins and component mapping

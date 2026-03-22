@@ -16,11 +16,10 @@
 
 import type { AstroIntegration } from 'astro';
 import mdx from '@astrojs/mdx';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeShiki from '@shikijs/rehype';
-import { remarkNfm } from 'remark-nfm';
+// Import the shared remark plugin list to avoid duplicating it here.
+import { BASE_REMARK_PLUGINS } from './utils/mdx-pipeline.ts';
 
 export function notro(): AstroIntegration {
 	return {
@@ -33,10 +32,10 @@ export function notro(): AstroIntegration {
 				// own astro:config:setup hook runs immediately after notro's hook.
 				updateConfig({
 					integrations: [mdx({
-						// Mirror buildMdxPlugins() from mdx-pipeline.ts so static .mdx
-						// files and the runtime evaluate() path share the same plugin
-						// pipeline (same remark and rehype plugins in the same order).
-						remarkPlugins: [remarkNfm, remarkGfm, remarkMath],
+						// Use BASE_REMARK_PLUGINS from mdx-pipeline.ts so static .mdx
+						// files and the runtime evaluate() path share the same remark
+						// plugin list (remarkNfm, remarkGfm, remarkMath) in one place.
+						remarkPlugins: BASE_REMARK_PLUGINS,
 						rehypePlugins: [rehypeKatex, [rehypeShiki, { theme: 'github-dark' }]],
 						// Do not inherit Astro's default markdown config.
 						// Astro adds remarkGfm and other plugins by default; allowing

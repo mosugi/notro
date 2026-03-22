@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import SeoHead from "../components/SeoHead.astro";
 
 interface Props {
   title: string;
@@ -12,29 +13,13 @@ interface Props {
 }
 
 const { title, description, bodyClass, type = "website" } = Astro.props;
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
 ---
 
 <!doctype html>
 <html lang="ja">
   <head>
-    <meta charset="UTF-8" />
-    {description && <meta name="description" content={description} />}
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="canonical" href={canonicalUrl.toString()} />
-    <link rel="stylesheet" href="/katex/katex.min.css" />
-    <meta property="og:type" content={type} />
-    <meta property="og:locale" content="ja_JP" />
-    <meta property="og:title" content={title} />
-    {description && <meta property="og:description" content={description} />}
-    <meta property="og:url" content={canonicalUrl.toString()} />
-    <meta property="og:image" content="/og-default.png" />
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary" />
-    {description && <meta name="twitter:description" content={description} />}
-    <title>{title}</title>
+    <SeoHead title={title} description={description} canonicalUrl={canonicalUrl} type={type} />
   </head>
   <body class={bodyClass}>
     <Header />
