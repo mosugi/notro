@@ -74,15 +74,29 @@ npm run preview --workspace=notro-tail
   - `packages/*/src/utils/` 配下の外部から呼び出される関数
   - Astro コンポーネント（`.astro`）自体はテスト不要。ロジックを `.ts` に切り出してその関数をテストすること
 
-```
-// Good
-// src/lib/posts.ts に関数を定義し、.astro からインポートする
-import { getSortedPosts } from "@/lib/posts";
-const posts = await getSortedPosts(allPosts);
+```astro
+// Good: src/lib/posts.ts にロジックを切り出し、フロントマターはインポートと呼び出しのみ
+---
+import { getCollection } from "astro:content";
+import { getSortedPosts, excludeFixedPages } from "@/lib/posts";
 
-// Bad
-// .astro のフロントマターに直接ロジックを書かない
-const posts = allPosts.sort((a, b) => ...複雑なロジック...);
+const allPosts = await getCollection("posts");
+const posts = getSortedPosts(excludeFixedPages(allPosts));
+---
+<ul>{posts.map(p => <li>{p.data.title}</li>)}</ul>
+```
+
+```astro
+// Bad: フロントマターに直接ロジックを書く
+---
+import { getCollection } from "astro:content";
+
+const allPosts = await getCollection("posts");
+const posts = allPosts
+  .filter(p => !p.data.tags?.includes("page"))
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+<ul>{posts.map(p => <li>{p.data.title}</li>)}</ul>
 ```
 
 #### コンポーネント設計
