@@ -123,6 +123,42 @@ npm run dev
 
 Open [http://localhost:4321](http://localhost:4321/) in your browser.
 
+## Deploy
+
+NotroTail uses Astro's static output mode — no SSR adapter required. Config files for each platform are included in the repository.
+
+### Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail)
+
+1. Click the button above, or import the repository at [vercel.com](https://vercel.com)
+2. Add environment variables: `NOTION_TOKEN` and `NOTION_DATASOURCE_ID`
+3. Click **Deploy** — `vercel.json` handles all build settings automatically
+
+### Netlify
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail)
+
+1. Click the button above, or import the repository at [netlify.com](https://app.netlify.com)
+2. Add environment variables: `NOTION_TOKEN` and `NOTION_DATASOURCE_ID`
+3. Click **Deploy** — `netlify.toml` handles all build settings automatically
+
+### Cloudflare Pages
+
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/mosugi/notro-tail)
+
+1. Click the button above, or go to **Workers & Pages → Create → Pages → Connect to Git** in the [Cloudflare dashboard](https://dash.cloudflare.com)
+2. Select the repository and enter the following build settings:
+   ```
+   Build command:    npm run build
+   Build output dir: apps/notro-tail/dist
+   Root directory:   (leave empty)
+   ```
+3. Add environment variables: `NOTION_TOKEN` and `NOTION_DATASOURCE_ID`
+4. Click **Save and Deploy** — `wrangler.toml` is also included for reference
+
+> After updating Notion content, trigger a manual redeploy from the platform dashboard to rebuild the static site.
+
 ## Repository Structure
 
 This repository is an **npm workspace monorepo** containing three packages:

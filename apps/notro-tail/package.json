@@ -16,13 +16,16 @@
     "npm": ">=10.0.0"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.7",
+    "@astrojs/partytown": "^2.1.5",
     "@astrojs/rss": "^4.0.17",
     "@astrojs/sitemap": "^3.7.1",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^6.0.4",
     "notro": "^0.0.1",
-    "tailwindcss": "^4.2.1",
+    "tailwindcss": "^4.2.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.7",
     "typescript": "^5.9.3",
     "undici": "^7.24.5",
     "vite": "^7.3.1"

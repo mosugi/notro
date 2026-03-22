@@ -4,7 +4,8 @@ import { getCollection } from "astro:content";
 import { NotionMarkdownRenderer, buildLinkToPages, getPlainText, getMultiSelect, hasTag } from "notro";
 import Layout from "../../layouts/Layout.astro";
 import Callout from "../../components/notion/Callout.astro";
-import { INTERNAL_TAGS, SITE_NAME } from "../../config";
+import config from "../../config";
+const { internalTags } = config.blog;
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -59,11 +60,15 @@ const markdown = entry.data.markdown;
 // "page" = embedded fixed page (no article header)
 const isEmbeddedPage = hasTag(entry.data.properties.Tags, "page");
 const tags = getMultiSelect(entry.data.properties.Tags).filter(
-  (t) => !INTERNAL_TAGS.includes(t.name),
+  (t) => !internalTags.includes(t.name),
 );
+
+// Look up per-page bodyClass from navPages config (for fixed pages only)
+const slug = getPlainText(entry.data.properties.Slug) || entry.id;
+const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass : undefined;
 ---
 
-<Layout title={`${title} — ${SITE_NAME}`} description={description} type={isEmbeddedPage ? "website" : "article"}>
+<Layout title={`${title} — ${config.site.name}`} description={description} type={isEmbeddedPage ? "website" : "article"} bodyClass={bodyClass} datePublished={date}>
   <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
     <article class="mx-auto max-w-[720px]">
       <header class="mb-10 pb-6 border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
