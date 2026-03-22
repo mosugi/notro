@@ -1,10 +1,10 @@
 ---
-import type { CollectionEntry } from "astro:content";
+import type { PageWithMarkdownType } from "notro";
 import { getPlainText, getMultiSelect, OptimizedDatabaseCover } from "notro";
 import { INTERNAL_TAGS } from "../../config";
 
 interface Props {
-  data: CollectionEntry<"posts">["data"];
+  data: PageWithMarkdownType;
 }
 
 const { data } = Astro.props;

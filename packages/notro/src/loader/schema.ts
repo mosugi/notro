@@ -721,7 +721,7 @@ export const pageObjectResponseSchema = z.object({
       data_source_id: z.string(),
     }),
   ]),
-  properties: z.record(propertyPageObjectResponseSchema),
+  properties: z.record(z.string(), propertyPageObjectResponseSchema),
   icon: z
     .union([
       z.object({

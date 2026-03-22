@@ -1,55 +1,63 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import { getCollection } from "astro:content";
+export const prerender = false;
+
+import { getLiveCollection, getLiveEntry } from "astro:content";
 import { NotionMarkdownRenderer, buildLinkToPages, getPlainText, getMultiSelect, hasTag } from "notro";
 import Layout from "../../layouts/Layout.astro";
 import Callout from "../../components/notion/Callout.astro";
 import { INTERNAL_TAGS, SITE_NAME } from "../../config";
 
-export async function getStaticPaths() {
-  const posts = await getCollection("posts");
+const { slug } = Astro.params;
 
-  // Build linkToPages map so NotionMarkdownRenderer can resolve inter-page links
-  const linkToPages = buildLinkToPages(posts, {
-    url: (e) => `blog/${getPlainText(e.data.properties.Slug) || e.id}/`,
-    title: (e) => getPlainText(e.data.properties.Name) ?? e.id,
-  });
+// Fetch metadata for all posts to build the linkToPages map and prev/next nav
+const allResult = await getLiveCollection("posts");
+const allPosts = allResult.entries ?? [];
 
-  // Sorted blog posts (excluding "page"-tagged fixed pages) for prev/next nav
-  const blogPosts = posts
-    .filter((entry) => !hasTag(entry.data.properties.Tags, "page"))
-    .sort((a, b) => {
-      const dateA = a.data.properties.Date.date?.start ?? "";
-      const dateB = b.data.properties.Date.date?.start ?? "";
-      return dateB.localeCompare(dateA); // newest first
-    });
+// Build linkToPages map so NotionMarkdownRenderer can resolve inter-page links
+const linkToPages = buildLinkToPages(allPosts, {
+  url: (e) => `blog/${getPlainText(e.data.properties.Slug) || e.id}/`,
+  title: (e) => getPlainText(e.data.properties.Name) ?? e.id,
+});
 
-  return posts.map((entry) => {
-    const slug = getPlainText(entry.data.properties.Slug) || entry.id;
-    const idx = blogPosts.findIndex((p) => p.id === entry.id);
+// Find the entry matching the slug
+const metaEntry = allPosts.find(
+  (e) => (getPlainText(e.data.properties.Slug) || e.id) === slug,
+);
 
-    // In descending date order: idx-1 = newer, idx+1 = older
-    const makeNav = (e: CollectionEntry<"posts"> | undefined) =>
-      e
-        ? {
-            slug: getPlainText(e.data.properties.Slug) || e.id,
-            title: getPlainText(e.data.properties.Name) ?? e.id,
-          }
-        : undefined;
-
-    return {
-      params: { slug },
-      props: {
-        entry,
-        linkToPages,
-        prevNav: makeNav(idx > 0 ? blogPosts[idx - 1] : undefined),         // newer
-        nextNav: makeNav(idx >= 0 && idx < blogPosts.length - 1 ? blogPosts[idx + 1] : undefined), // older
-      },
-    };
-  });
+if (!metaEntry) {
+  return Astro.redirect("/404");
 }
 
-const { entry, linkToPages, prevNav, nextNav } = Astro.props;
+// Fetch the full entry with markdown content
+const fullResult = await getLiveEntry("posts", metaEntry.id);
+if (!fullResult.entry) {
+  return Astro.redirect("/404");
+}
+const entry = fullResult.entry;
+
+// Sorted blog posts (excluding "page"-tagged fixed pages) for prev/next nav
+const blogPosts = allPosts
+  .filter((e) => !hasTag(e.data.properties.Tags, "page"))
+  .sort((a, b) => {
+    const dateA = a.data.properties.Date.date?.start ?? "";
+    const dateB = b.data.properties.Date.date?.start ?? "";
+    return dateB.localeCompare(dateA); // newest first
+  });
+
+const idx = blogPosts.findIndex((p) => p.id === entry.id);
+
+const makeNav = (e: (typeof allPosts)[number] | undefined) =>
+  e
+    ? {
+        slug: getPlainText(e.data.properties.Slug) || e.id,
+        title: getPlainText(e.data.properties.Name) ?? e.id,
+      }
+    : undefined;
+
+const prevNav = makeNav(idx > 0 ? blogPosts[idx - 1] : undefined); // newer
+const nextNav = makeNav(
+  idx >= 0 && idx < blogPosts.length - 1 ? blogPosts[idx + 1] : undefined,
+); // older
 
 const title = getPlainText(entry.data.properties.Name) ?? entry.id;
 const description = getPlainText(entry.data.properties.Description);

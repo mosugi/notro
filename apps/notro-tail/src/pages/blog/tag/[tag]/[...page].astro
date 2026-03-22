@@ -1,43 +1,46 @@
 ---
-import type { PaginateFunction } from "astro";
-import { getCollection } from "astro:content";
+export const prerender = false;
+
+import { getLiveCollection } from "astro:content";
 import { getMultiSelect, hasTag } from "notro";
 import BlogList from "../../../../components/blog/BlogList.astro";
 import Layout from "../../../../layouts/Layout.astro";
 import Pagination from "../../../../components/blog/Pagination.astro";
 import { INTERNAL_TAGS, BLOG_POSTS_PER_PAGE, SITE_NAME } from "../../../../config";
 
-export async function getStaticPaths({
-  paginate,
-}: {
-  paginate: PaginateFunction;
-}) {
-  const posts = await getCollection("posts");
-  // INTERNAL_TAGS ("page", "pinned") are system markers, not public tags
-  const tags = [
-    ...new Set(
-      posts.flatMap((entry) =>
-        getMultiSelect(entry.data.properties.Tags)
-          .map((t) => t.name)
-          .filter((name) => !INTERNAL_TAGS.includes(name)),
-      ),
-    ),
-  ];
-  return tags.flatMap((tag) => {
-    const filteredPosts = posts.filter((post) =>
-      hasTag(post.data.properties.Tags, tag),
-    );
-    return paginate(filteredPosts, {
-      params: { tag },
-      pageSize: BLOG_POSTS_PER_PAGE,
-    });
-  });
+const { tag } = Astro.params;
+const pageParam = Astro.params.page;
+const currentPage = pageParam ? parseInt(pageParam as string) : 1;
+
+if (!tag || isNaN(currentPage) || currentPage < 1) {
+  return Astro.redirect("/blog/");
 }
 
-const { page } = Astro.props;
-const { tag } = Astro.params;
+const result = await getLiveCollection("posts");
+const allPosts = result.entries ?? [];
 
-const data = page.data.map(({ data }) => data);
+const filteredPosts = allPosts.filter((post) =>
+  hasTag(post.data.properties.Tags, tag),
+);
+
+const lastPage = Math.max(1, Math.ceil(filteredPosts.length / BLOG_POSTS_PER_PAGE));
+
+if (currentPage > lastPage) {
+  return Astro.redirect(`/blog/tag/${tag}/`);
+}
+
+const startIdx = (currentPage - 1) * BLOG_POSTS_PER_PAGE;
+const pageEntries = filteredPosts.slice(startIdx, startIdx + BLOG_POSTS_PER_PAGE);
+const data = pageEntries.map(({ data }) => data);
+
+const prevUrl =
+  currentPage > 1
+    ? currentPage === 2
+      ? `/blog/tag/${tag}/`
+      : `/blog/tag/${tag}/${currentPage - 1}/`
+    : undefined;
+const nextUrl =
+  currentPage < lastPage ? `/blog/tag/${tag}/${currentPage + 1}/` : undefined;
 ---
 
 <Layout title={`タグ: ${tag} — ${SITE_NAME}`} description={`「${tag}」タグの記事一覧`}>
@@ -50,10 +53,10 @@ const data = page.data.map(({ data }) => data);
     </div>
     <BlogList posts={data} />
     <Pagination
-      currentPage={page.currentPage}
-      lastPage={page.lastPage}
-      prevUrl={page.url.prev}
-      nextUrl={page.url.next}
+      currentPage={currentPage}
+      lastPage={lastPage}
+      prevUrl={prevUrl}
+      nextUrl={nextUrl}
     />
   </main>
 </Layout>
