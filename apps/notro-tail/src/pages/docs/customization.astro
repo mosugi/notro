@@ -36,9 +36,6 @@ export const SITE_DESCRIPTION = "Notion で書く、Astro でデプロイ。";
 // 1ページあたりの記事数
 export const BLOG_POSTS_PER_PAGE = 10;
 
-// GitHub リポジトリ URL
-export const GITHUB_URL = "https://github.com/yourname/your-repo";
-
 // ヘッダーナビゲーション
 export const NAV_LINKS = [
   { href: "/blog/", label: "ブログ" },
@@ -75,8 +72,6 @@ export const FOOTER_LINKS = [
             ["PUBLIC_SITE_NAME", "SITE_NAME"],
             ["PUBLIC_SITE_URL", "SITE_URL"],
             ["PUBLIC_SITE_DESCRIPTION", "SITE_DESCRIPTION"],
-            ["PUBLIC_GITHUB_URL", "GITHUB_URL"],
-            ["PUBLIC_NPM_URL", "NPM_URL"],
             ["PUBLIC_BLOG_POSTS_PER_PAGE", "BLOG_POSTS_PER_PAGE"],
           ].map(([env, cfg]) => (
             <tr class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">

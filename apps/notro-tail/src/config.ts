@@ -5,11 +5,9 @@
  * Set them in your .env file or deployment platform (Vercel / Netlify).
  *
  * Environment variables (PUBLIC_ prefix makes them available in the browser):
- *   PUBLIC_SITE_NAME        — site name shown in header, footer, <title>
- *   PUBLIC_SITE_URL         — canonical origin (must match astro.config.mjs `site`)
- *   PUBLIC_SITE_DESCRIPTION — default meta description
- *   PUBLIC_GITHUB_URL       — link shown in header / footer GitHub button
- *   PUBLIC_NPM_URL          — link shown in footer npm button
+ *   PUBLIC_SITE_NAME           — site name shown in header, footer, <title>
+ *   PUBLIC_SITE_URL            — canonical origin (must match astro.config.mjs `site`)
+ *   PUBLIC_SITE_DESCRIPTION    — default meta description
  *   PUBLIC_BLOG_POSTS_PER_PAGE — number of posts per page (integer string)
  */
 
@@ -36,18 +34,6 @@ export const BLOG_POSTS_PER_PAGE: number = (() => {
   const n = v ? parseInt(v, 10) : NaN;
   return isNaN(n) ? 10 : n;
 })();
-
-// ---------------------------------------------------------------------------
-// External links
-// ---------------------------------------------------------------------------
-
-export const GITHUB_URL =
-  import.meta.env.PUBLIC_GITHUB_URL ??
-  "https://github.com/mosugi/notro-tail";
-
-export const NPM_URL =
-  import.meta.env.PUBLIC_NPM_URL ??
-  "https://www.npmjs.com/package/notro";
 
 // ---------------------------------------------------------------------------
 // Navigation
@@ -78,7 +64,7 @@ export const FOOTER_LINKS: {
     heading: "ドキュメント",
     links: [
       { href: "/docs/", label: "Docs" },
-      { href: NPM_URL, label: "npm", external: true },
+      { href: "https://www.npmjs.com/package/notro", label: "npm", external: true },
     ],
   },
   {

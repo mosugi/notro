@@ -10,8 +10,6 @@ interface ImportMetaEnv {
   readonly PUBLIC_SITE_NAME?: string;
   readonly PUBLIC_SITE_URL?: string;
   readonly PUBLIC_SITE_DESCRIPTION?: string;
-  readonly PUBLIC_GITHUB_URL?: string;
-  readonly PUBLIC_NPM_URL?: string;
   readonly PUBLIC_BLOG_POSTS_PER_PAGE?: string;
 }
 
