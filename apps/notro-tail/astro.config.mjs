@@ -1,6 +1,7 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
+import vercel from "@astrojs/vercel";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
 import { notro } from "notro/integration";
 
@@ -34,6 +35,8 @@ export default defineConfig({
       { protocol: "https", hostname: "notion.so" },
     ],
   },
+
+  adapter: vercel({ imageService: false }),
 
   integrations: [notro(), sitemap()],
 
