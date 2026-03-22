@@ -1,0 +1,36 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  canonicalUrl: string;
+  /** og:type — defaults to "website"; use "article" for blog posts */
+  type?: "website" | "article";
+  ogImage?: string;
+}
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  type = "website",
+  ogImage = "/og-default.png",
+} = Astro.props;
+---
+
+<meta charset="UTF-8" />
+{description && <meta name="description" content={description} />}
+<meta name="viewport" content="width=device-width" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="canonical" href={canonicalUrl} />
+<link rel="stylesheet" href="/katex/katex.min.css" />
+<meta property="og:type" content={type} />
+<meta property="og:locale" content="ja_JP" />
+<meta property="og:title" content={title} />
+{description && <meta property="og:description" content={description} />}
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={ogImage} />
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary" />
+{description && <meta name="twitter:description" content={description} />}
+<title>{title}</title>

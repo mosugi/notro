@@ -38,23 +38,25 @@ const RETRYABLE_API_ERROR_CODES: ReadonlySet<string> = new Set([
 const RETRY_DELAYS_MS = [1000, 2000, 4000];
 
 /**
- * Calls iteratePaginatedAPI(client.dataSources.query, ...) with retry logic for transient errors.
+ * Generic retry wrapper for Notion API calls.
  * - 429 (RateLimited), 500 (InternalServerError), 503 (ServiceUnavailable): retry up to 3 times
  *   with exponential backoff (1s / 2s / 4s).
  * - Other errors (401, 403, 404, etc.): re-thrown immediately.
+ *
+ * @param fn - Async function to call (and retry on transient errors).
+ * @param label - Human-readable label for warning messages (e.g. "Page <id>").
+ * @param logger - Logger with a warn method.
  */
-async function queryDataSourceWithRetry(
-  client: Client,
-  queryParameters: QueryDataSourceParameters,
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  label: string,
   logger: { warn: (msg: string) => void },
-): Promise<Awaited<ReturnType<typeof iteratePaginatedAPI<typeof client.dataSources.query>>>[]> {
+): Promise<T> {
   let lastError: unknown;
 
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
     try {
-      return await Array.fromAsync(
-        iteratePaginatedAPI(client.dataSources.query, queryParameters),
-      );
+      return await fn();
     } catch (error) {
       lastError = error;
 
@@ -68,7 +70,7 @@ async function queryDataSourceWithRetry(
 
       const delayMs = RETRY_DELAYS_MS[attempt];
       logger.warn(
-        `dataSources.query: API error "${(error as APIResponseError).code}" (attempt ${attempt + 1}/${RETRY_DELAYS_MS.length + 1}), retrying in ${delayMs}ms...`,
+        `${label}: API error "${(error as APIResponseError).code}" (attempt ${attempt + 1}/${RETRY_DELAYS_MS.length + 1}), retrying in ${delayMs}ms...`,
       );
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
@@ -76,6 +78,24 @@ async function queryDataSourceWithRetry(
 
   // Unreachable, but required for TypeScript exhaustiveness.
   throw lastError;
+}
+
+/**
+ * Calls iteratePaginatedAPI(client.dataSources.query, ...) with retry logic for transient errors.
+ * - 429 (RateLimited), 500 (InternalServerError), 503 (ServiceUnavailable): retry up to 3 times
+ *   with exponential backoff (1s / 2s / 4s).
+ * - Other errors (401, 403, 404, etc.): re-thrown immediately.
+ */
+async function queryDataSourceWithRetry(
+  client: Client,
+  queryParameters: QueryDataSourceParameters,
+  logger: { warn: (msg: string) => void },
+): Promise<Awaited<ReturnType<typeof iteratePaginatedAPI<typeof client.dataSources.query>>>[]> {
+  return withRetry(
+    () => Array.fromAsync(iteratePaginatedAPI(client.dataSources.query, queryParameters)),
+    "dataSources.query",
+    logger,
+  );
 }
 
 /**
@@ -89,32 +109,11 @@ async function retrieveMarkdownWithRetry(
   pageId: string,
   logger: { warn: (msg: string) => void },
 ): Promise<Awaited<ReturnType<typeof client.pages.retrieveMarkdown>>> {
-  let lastError: unknown;
-
-  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
-    try {
-      return await client.pages.retrieveMarkdown({ page_id: pageId });
-    } catch (error) {
-      lastError = error;
-
-      const isRetryable =
-        error instanceof APIResponseError &&
-        RETRYABLE_API_ERROR_CODES.has(error.code);
-
-      if (!isRetryable || attempt === RETRY_DELAYS_MS.length) {
-        throw error;
-      }
-
-      const delayMs = RETRY_DELAYS_MS[attempt];
-      logger.warn(
-        `Page ${pageId}: API error "${error.code}" (attempt ${attempt + 1}/${RETRY_DELAYS_MS.length + 1}), retrying in ${delayMs}ms...`,
-      );
-      await new Promise((resolve) => setTimeout(resolve, delayMs));
-    }
-  }
-
-  // Unreachable, but required for TypeScript exhaustiveness.
-  throw lastError;
+  return withRetry(
+    () => client.pages.retrieveMarkdown({ page_id: pageId }),
+    `Page ${pageId}`,
+    logger,
+  );
 }
 
 // Define any options that the loader needs
