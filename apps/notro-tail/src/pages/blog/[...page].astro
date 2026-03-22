@@ -2,9 +2,10 @@
 import type { PaginateFunction } from "astro";
 import { getCollection } from "astro:content";
 import { hasTag } from "notro";
-import BlogList from "../../components/BlogList.astro";
+import BlogList from "../../components/blog/BlogList.astro";
 import Layout from "../../layouts/Layout.astro";
-import Pagination from "../../components/Pagination.astro";
+import Pagination from "../../components/blog/Pagination.astro";
+import { SITE_NAME, BLOG_POSTS_PER_PAGE } from "../../config";
 
 export async function getStaticPaths({
   paginate,
@@ -27,7 +28,7 @@ export async function getStaticPaths({
   // Paginate all blogPosts so that total count includes pinned posts.
   // Pinned posts are filtered out from page.data before rendering to avoid duplication.
   return paginate(blogPosts, {
-    pageSize: 10,
+    pageSize: BLOG_POSTS_PER_PAGE,
     props: {
       pinnedPostsData: pinnedPosts.map(({ data }) => data),
       beginnerPostsData: beginnerPosts.map(({ data }) => data),
@@ -44,7 +45,7 @@ const data = page.data
   .map(({ data }) => data);
 ---
 
-<Layout title="ブログ — NotroTail" description="Notion × Astro で作られたブログ。セットアップ・カスタマイズ・デプロイまで、notro の使い方を解説します。">
+<Layout title={`ブログ — ${SITE_NAME}`} description="Notion × Astro で作られたブログ。セットアップ・カスタマイズ・デプロイまで、notro の使い方を解説します。">
   <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Blog</h1>

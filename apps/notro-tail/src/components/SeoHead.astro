@@ -1,4 +1,6 @@
 ---
+import { SITE_NAME, SITE_URL } from "../config";
+
 interface Props {
   title: string;
   description?: string;
@@ -15,6 +17,8 @@ const {
   type = "website",
   ogImage = "/og-default.png",
 } = Astro.props;
+
+const rssUrl = new URL("/rss.xml", SITE_URL).toString();
 ---
 
 <meta charset="UTF-8" />
@@ -22,10 +26,12 @@ const {
 <meta name="viewport" content="width=device-width" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="alternate" type="application/rss+xml" title={`${SITE_NAME} — RSS フィード`} href={rssUrl} />
 <link rel="canonical" href={canonicalUrl} />
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <meta property="og:type" content={type} />
 <meta property="og:locale" content="ja_JP" />
+<meta property="og:site_name" content={SITE_NAME} />
 <meta property="og:title" content={title} />
 {description && <meta property="og:description" content={description} />}
 <meta property="og:url" content={canonicalUrl} />
