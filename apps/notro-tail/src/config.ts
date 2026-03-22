@@ -3,6 +3,8 @@ const config = {
   site: {
     name: "NotroTail",
     description: "Notion を CMS として使う Astro 静的サイトジェネレーター。",
+    /** Author name — used in JSON-LD structured data */
+    author: "NotroTail",
     /** BCP 47 language tag — used in <html lang="..."> */
     lang: "ja",
     /** og:locale — typically lang + region, e.g. "ja_JP", "en_US" */

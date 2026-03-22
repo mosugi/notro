@@ -68,7 +68,7 @@ const slug = getPlainText(entry.data.properties.Slug) || entry.id;
 const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass : undefined;
 ---
 
-<Layout title={`${title} — ${config.site.name}`} description={description} type={isEmbeddedPage ? "website" : "article"} bodyClass={bodyClass}>
+<Layout title={`${title} — ${config.site.name}`} description={description} type={isEmbeddedPage ? "website" : "article"} bodyClass={bodyClass} datePublished={date}>
   <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
     <article class="mx-auto max-w-[720px]">
       <header class="mb-10 pb-6 border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">

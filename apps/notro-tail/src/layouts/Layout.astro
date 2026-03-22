@@ -11,16 +11,30 @@ interface Props {
   bodyClass?: string;
   /** og:type — defaults to "website"; use "article" for blog posts */
   type?: "website" | "article";
+  /** ISO 8601 date string for article published date (used in JSON-LD) */
+  datePublished?: string;
+  /** Previous page URL for paginated pages (adds rel=prev link) */
+  prevUrl?: string;
+  /** Next page URL for paginated pages (adds rel=next link) */
+  nextUrl?: string;
 }
 
-const { title, description, bodyClass, type = "website" } = Astro.props;
+const { title, description, bodyClass, type = "website", datePublished, prevUrl, nextUrl } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
 ---
 
 <!doctype html>
 <html lang={config.site.lang}>
   <head>
-    <SeoHead title={title} description={description} canonicalUrl={canonicalUrl} type={type} />
+    <SeoHead
+      title={title}
+      description={description}
+      canonicalUrl={canonicalUrl}
+      type={type}
+      datePublished={datePublished}
+      prevUrl={prevUrl}
+      nextUrl={nextUrl}
+    />
   </head>
   <body class={bodyClass}>
     <Header />

@@ -8,6 +8,12 @@ interface Props {
   /** og:type — defaults to "website"; use "article" for blog posts */
   type?: "website" | "article";
   ogImage?: string;
+  /** ISO 8601 date string for article published date (used in JSON-LD) */
+  datePublished?: string;
+  /** Previous page URL for paginated pages */
+  prevUrl?: string;
+  /** Next page URL for paginated pages */
+  nextUrl?: string;
 }
 
 const {
@@ -16,9 +22,33 @@ const {
   canonicalUrl,
   type = "website",
   ogImage = "/og-default.png",
+  datePublished,
+  prevUrl,
+  nextUrl,
 } = Astro.props;
 
 const rssUrl = new URL("/rss.xml", Astro.site ?? Astro.url.origin).toString();
+const ogImageAbsolute = new URL(ogImage, Astro.site ?? Astro.url.origin).toString();
+
+// JSON-LD: BlogPosting for articles, WebSite for the home/list pages
+const jsonLd = type === "article"
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: title,
+      ...(description && { description }),
+      ...(datePublished && { datePublished }),
+      image: ogImageAbsolute,
+      url: canonicalUrl,
+      author: { "@type": "Person", name: config.site.author },
+      publisher: { "@type": "Organization", name: config.site.name },
+    }
+  : {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: config.site.name,
+      url: (Astro.site ?? Astro.url.origin).toString(),
+    };
 ---
 
 <meta charset="UTF-8" />
@@ -28,15 +58,22 @@ const rssUrl = new URL("/rss.xml", Astro.site ?? Astro.url.origin).toString();
 <link rel="sitemap" href="/sitemap-index.xml" />
 <link rel="alternate" type="application/rss+xml" title={`${config.site.name} — RSS フィード`} href={rssUrl} />
 <link rel="canonical" href={canonicalUrl} />
+{prevUrl && <link rel="prev" href={new URL(prevUrl, Astro.site ?? Astro.url.origin).toString()} />}
+{nextUrl && <link rel="next" href={new URL(nextUrl, Astro.site ?? Astro.url.origin).toString()} />}
 <link rel="stylesheet" href="/katex/katex.min.css" />
+<!-- Open Graph -->
 <meta property="og:type" content={type} />
 <meta property="og:locale" content={config.site.locale} />
 <meta property="og:site_name" content={config.site.name} />
 <meta property="og:title" content={title} />
 {description && <meta property="og:description" content={description} />}
 <meta property="og:url" content={canonicalUrl} />
-<meta property="og:image" content={ogImage} />
+<meta property="og:image" content={ogImageAbsolute} />
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content={title} />
 {description && <meta name="twitter:description" content={description} />}
+<meta name="twitter:image" content={ogImageAbsolute} />
+<!-- JSON-LD structured data -->
+<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 <title>{title}</title>
