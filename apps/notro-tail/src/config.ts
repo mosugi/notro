@@ -10,6 +10,14 @@ const config = {
     /** og:locale — typically lang + region, e.g. "ja_JP", "en_US" */
     locale: "ja_JP",
   },
+  analytics: {
+    /**
+     * Google Analytics 4 Measurement ID (e.g. "G-XXXXXXXXXX").
+     * Set to undefined to disable analytics entirely.
+     * Uses Partytown to offload gtag to a web worker.
+     */
+    gaMeasurementId: undefined as string | undefined,
+  },
   blog: {
     postsPerPage: 10,
     // System tags — affect post filtering logic (not shown as public tags)

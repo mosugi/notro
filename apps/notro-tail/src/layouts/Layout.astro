@@ -11,15 +11,19 @@ interface Props {
   bodyClass?: string;
   /** og:type — defaults to "website"; use "article" for blog posts */
   type?: "website" | "article";
-  /** ISO 8601 date string for article published date (used in JSON-LD) */
+  /** Alt text for the og:image (also used for twitter:image:alt) */
+  ogImageAlt?: string;
+  /** ISO 8601 date string for article published date (used in JSON-LD and article:published_time) */
   datePublished?: string;
   /** Previous page URL for paginated pages (adds rel=prev link) */
   prevUrl?: string;
   /** Next page URL for paginated pages (adds rel=next link) */
   nextUrl?: string;
+  /** Prevent search engines from indexing this page */
+  noindex?: boolean;
 }
 
-const { title, description, bodyClass, type = "website", datePublished, prevUrl, nextUrl } = Astro.props;
+const { title, description, bodyClass, type = "website", ogImageAlt, datePublished, prevUrl, nextUrl, noindex } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
 ---
 
@@ -31,9 +35,11 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
       description={description}
       canonicalUrl={canonicalUrl}
       type={type}
+      ogImageAlt={ogImageAlt}
       datePublished={datePublished}
       prevUrl={prevUrl}
       nextUrl={nextUrl}
+      noindex={noindex}
     />
   </head>
   <body class={bodyClass}>
