@@ -1,0 +1,186 @@
+---
+// Architecture documentation page.
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="アーキテクチャ — Docs — NotroTail"
+  description="NotroTail のシステムアーキテクチャ・コンテンツローディングフロー・MDX コンパイルパイプラインの解説。"
+  heading="アーキテクチャ"
+>
+  <p class="mb-8 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    NotroTail がどのように動作するか、システム全体の設計と各コンポーネントの役割を解説します。
+  </p>
+
+  <!-- Package structure -->
+  <section class="mb-10" id="packages">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">パッケージ構成</h2>
+    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+      npm ワークスペースモノレポで3つのパッケージを管理しています。
+    </p>
+    <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
+      <table class="w-full text-sm">
+        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+          <tr>
+            <th class="px-4 py-3 font-semibold">パッケージ</th>
+            <th class="px-4 py-3 font-semibold">パス</th>
+            <th class="px-4 py-3 font-semibold">役割</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+          <tr>
+            <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">remark-nfm</code></td>
+            <td class="px-4 py-3"><code class="font-mono text-xs">packages/remark-nfm/</code></td>
+            <td class="px-4 py-3">Notion Flavored Markdown 向け純粋 remark プラグイン。Astro 依存なし。</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">notro</code></td>
+            <td class="px-4 py-3"><code class="font-mono text-xs">packages/notro/</code></td>
+            <td class="px-4 py-3">公開 npm ライブラリ。Astro Content Loader・MDX コンパイル・Notion ブロックコンポーネント。</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">notro-tail</code></td>
+            <td class="px-4 py-3"><code class="font-mono text-xs">apps/notro-tail/</code></td>
+            <td class="px-4 py-3">デプロイ可能な Astro 6 ウェブサイト（テンプレート実装）。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Page types -->
+  <section class="mb-10" id="page-types">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">3種類のページ</h2>
+    <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
+      <table class="w-full text-sm">
+        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+          <tr>
+            <th class="px-4 py-3 font-semibold">種類</th>
+            <th class="px-4 py-3 font-semibold">URL 例</th>
+            <th class="px-4 py-3 font-semibold">コンテンツソース</th>
+            <th class="px-4 py-3 font-semibold">ブログ一覧表示</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+          <tr>
+            <td class="px-4 py-3 font-medium">静的ページ</td>
+            <td class="px-4 py-3"><code class="font-mono text-xs">/</code>, <code class="font-mono text-xs">/docs/</code></td>
+            <td class="px-4 py-3"><code class="font-mono text-xs">src/pages/</code> 内の <code class="font-mono text-xs">.astro</code> ファイル</td>
+            <td class="px-4 py-3">なし</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-medium">埋め込みページ</td>
+            <td class="px-4 py-3"><code class="font-mono text-xs">/blog/about/</code></td>
+            <td class="px-4 py-3">Notion データベース — <code class="font-mono text-xs">page</code> タグ付き</td>
+            <td class="px-4 py-3">非表示（タグフィルターで除外）</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3 font-medium">ブログ記事</td>
+            <td class="px-4 py-3"><code class="font-mono text-xs">/blog/my-post/</code></td>
+            <td class="px-4 py-3">Notion データベース — <code class="font-mono text-xs">page</code> タグなし</td>
+            <td class="px-4 py-3">表示</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Content loading flow -->
+  <section class="mb-10" id="loading-flow">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">コンテンツローディングフロー</h2>
+    <ol class="space-y-4">
+      <li class="flex gap-3">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[rgba(35,131,226,0.12)] text-sm font-semibold text-[#2383e2] dark:bg-blue-950 dark:text-blue-400">1</span>
+        <div class="pt-0.5">
+          <p class="text-sm font-medium text-[#37352f] dark:text-slate-100">Astro Content Collections の定義</p>
+          <p class="mt-1 text-sm text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-6">
+            <code class="font-mono text-xs">content.config.ts</code> で <code class="font-mono text-xs">posts</code> コレクションを定義し、
+            <code class="font-mono text-xs">loader()</code> を設定。
+          </p>
+        </div>
+      </li>
+      <li class="flex gap-3">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[rgba(35,131,226,0.12)] text-sm font-semibold text-[#2383e2] dark:bg-blue-950 dark:text-blue-400">2</span>
+        <div class="pt-0.5">
+          <p class="text-sm font-medium text-[#37352f] dark:text-slate-100">Notion Public API からのデータ取得</p>
+          <p class="mt-1 text-sm text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-6">
+            <code class="font-mono text-xs">loader()</code> が <code class="font-mono text-xs">dataSources.query</code> でページ一覧を取得し、
+            <code class="font-mono text-xs">pages.retrieveMarkdown</code> で Markdown を取得。
+            <code class="font-mono text-xs">last_edited_time</code> でキャッシュし、変更ページのみ再取得。
+          </p>
+        </div>
+      </li>
+      <li class="flex gap-3">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[rgba(35,131,226,0.12)] text-sm font-semibold text-[#2383e2] dark:bg-blue-950 dark:text-blue-400">3</span>
+        <div class="pt-0.5">
+          <p class="text-sm font-medium text-[#37352f] dark:text-slate-100">前処理済み Markdown をストアに保存</p>
+          <p class="mt-1 text-sm text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-6">
+            <code class="font-mono text-xs">preprocessNotionMarkdown()</code> で Notion Markdown の構造的な問題を修正し、
+            Astro Content Collection ストアに保存。
+          </p>
+        </div>
+      </li>
+      <li class="flex gap-3">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[rgba(35,131,226,0.12)] text-sm font-semibold text-[#2383e2] dark:bg-blue-950 dark:text-blue-400">4</span>
+        <div class="pt-0.5">
+          <p class="text-sm font-medium text-[#37352f] dark:text-slate-100">レンダリング時の MDX コンパイル</p>
+          <p class="mt-1 text-sm text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-6">
+            <code class="font-mono text-xs">NotionMarkdownRenderer</code> が <code class="font-mono text-xs">compileMdxCached()</code> で
+            <code class="font-mono text-xs">@mdx-js/mdx</code> の <code class="font-mono text-xs">evaluate()</code> を呼び出し、
+            <code class="font-mono text-xs">&lt;Content components={"{notionComponents}"} /&gt;</code> でレンダリング。
+          </p>
+        </div>
+      </li>
+      <li class="flex gap-3">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[rgba(35,131,226,0.12)] text-sm font-semibold text-[#2383e2] dark:bg-blue-950 dark:text-blue-400">5</span>
+        <div class="pt-0.5">
+          <p class="text-sm font-medium text-[#37352f] dark:text-slate-100">Notion ブロックコンポーネントへのマッピング</p>
+          <p class="mt-1 text-sm text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-6">
+            コールアウト・トグル・カラム・数式（KaTeX）・目次など、各 Notion ブロックタイプが
+            <code class="font-mono text-xs">src/components/notion/</code> の Astro コンポーネントにマッピングされる。
+          </p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- MDX compile pipeline -->
+  <section class="mb-10" id="mdx-pipeline">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">MDX コンパイルパイプライン</h2>
+    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">packages/notro/src/utils/compile-mdx.ts</code>
+      内で定義。<code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">astro.config.mjs</code> の設定は不要で、
+      レンダリング時に <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NotionMarkdownRenderer</code> 内で実行されます。
+    </p>
+    <div class="space-y-4">
+      <div>
+        <h3 class="mb-2 text-sm font-semibold text-[rgba(55,53,47,0.65)] dark:text-slate-400 uppercase tracking-wider">Remark プラグイン（Markdown → mdast）</h3>
+        <ul class="ml-4 list-disc space-y-1.5 text-sm text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-6">
+          <li><code class="font-mono text-xs text-[#eb5757]">remarkNfm</code> — 前処理・ディレクティブ・コールアウト変換をまとめて実行</li>
+          <li><code class="font-mono text-xs text-[#eb5757]">remark-gfm</code> — GitHub Flavored Markdown（テーブル・取り消し線等）</li>
+          <li><code class="font-mono text-xs text-[#eb5757]">remark-math</code> — インライン・ブロック数式構文</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="mb-2 text-sm font-semibold text-[rgba(55,53,47,0.65)] dark:text-slate-400 uppercase tracking-wider">Rehype プラグイン（hast → HTML）</h3>
+        <ul class="ml-4 list-disc space-y-1.5 text-sm text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-6">
+          <li><code class="font-mono text-xs text-[#eb5757]">rehypeKatex</code> — 数式ノードを KaTeX HTML にレンダリング</li>
+          <li><code class="font-mono text-xs text-[#eb5757]">resolvePageLinksPlugin</code> — Notion 内部リンクを <code class="font-mono text-xs">linkToPages</code> マップで解決</li>
+          <li><code class="font-mono text-xs text-[#eb5757]">@shikijs/rehype</code> — コードブロックのシンタックスハイライト</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Image handling -->
+  <section class="mb-10" id="image-handling">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">画像ハンドリング</h2>
+    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">apps/notro-tail/src/lib/notionImageService.ts</code>
+      は Astro の Sharp 画像サービスをラップし、Notion S3 プリサイン URL から
+      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">X-Amz-*</code>
+      クエリパラメーターを除去してキャッシュキーを計算します。
+      これにより、同じ画像の URL が期限切れで変わっても、ビルドキャッシュが再利用されます。
+    </p>
+  </section>
+</DocsLayout>

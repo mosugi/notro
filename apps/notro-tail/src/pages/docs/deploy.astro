@@ -1,0 +1,129 @@
+---
+// Deploy guide for Vercel and Netlify.
+import DocsLayout from "../../layouts/DocsLayout.astro";
+---
+
+<DocsLayout
+  title="デプロイガイド — Docs — NotroTail"
+  description="NotroTail を Vercel・Netlify にデプロイする手順。"
+  heading="デプロイガイド"
+>
+  <p class="mb-8 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    NotroTail は Astro の静的出力モードを使用しています。
+    Vercel・Netlify どちらにも簡単にデプロイできます。
+  </p>
+
+  <!-- Vercel -->
+  <section class="mb-10" id="vercel">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">Vercel へのデプロイ</h2>
+    <div class="mb-4">
+      <a
+        href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="https://vercel.com/button" alt="Deploy with Vercel" class="h-8" />
+      </a>
+    </div>
+    <ol class="ml-4 list-decimal space-y-3 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+      <li>
+        上の「Deploy with Vercel」ボタンをクリック、または
+        <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" class="text-[#2383e2] underline underline-offset-2 hover:opacity-70">vercel.com</a>
+        でリポジトリをインポート
+      </li>
+      <li>
+        <strong>Root Directory</strong> を
+        <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">apps/notro-tail</code>
+        に設定（重要: モノレポのため必須）
+      </li>
+      <li>
+        Environment Variables に以下を追加:
+        <pre class="mt-2 bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">NOTION_TOKEN=secret_xxxx
+NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
+      </li>
+      <li>「Deploy」をクリック</li>
+    </ol>
+    <div class="mt-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-300">
+      <strong>ヒント:</strong> Vercel では「Redeploy」ボタンで手動再ビルドできます。
+      Notion 記事を更新した後は再ビルドが必要です。
+    </div>
+  </section>
+
+  <!-- Netlify -->
+  <section class="mb-10" id="netlify">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">Netlify へのデプロイ</h2>
+    <div class="mb-4">
+      <a
+        href="https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" class="h-8" />
+      </a>
+    </div>
+    <ol class="ml-4 list-decimal space-y-3 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+      <li>
+        上の「Deploy to Netlify」ボタンをクリック、または
+        <a href="https://app.netlify.com" target="_blank" rel="noopener noreferrer" class="text-[#2383e2] underline underline-offset-2 hover:opacity-70">Netlify</a>
+        でリポジトリをインポート
+      </li>
+      <li>
+        <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">netlify.toml</code>
+        が設定済みのためビルド設定は自動（Base directory・Build command・Publish directory）
+      </li>
+      <li>
+        Site settings → Environment variables に
+        <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NOTION_TOKEN</code>
+        と
+        <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NOTION_DATASOURCE_ID</code>
+        を追加
+      </li>
+      <li>「Trigger deploy」で再ビルド</li>
+    </ol>
+  </section>
+
+  <!-- Build commands -->
+  <section class="mb-10" id="build-commands">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">ビルドコマンド</h2>
+    <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
+      <table class="w-full text-sm">
+        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+          <tr>
+            <th class="px-4 py-3 font-semibold">コマンド</th>
+            <th class="px-4 py-3 font-semibold">説明</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+          <tr>
+            <td class="px-4 py-3"><code class="font-mono text-sm">npm run build</code></td>
+            <td class="px-4 py-3">型チェック + ビルド（ルートから実行、CI 推奨）</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3"><code class="font-mono text-sm">npm run preview --workspace=notro-tail</code></td>
+            <td class="px-4 py-3">ビルド結果をローカルプレビュー（レイアウト確認）</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-3"><code class="font-mono text-sm">npm run dev --workspace=notro-tail</code></td>
+            <td class="px-4 py-3">開発サーバー起動（ホットリロード）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Incremental builds -->
+  <section class="mb-10" id="incremental-builds">
+    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">増分ビルドについて</h2>
+    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+      notro の <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">loader()</code> は
+      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">last_edited_time</code>
+      でキャッシュし、変更されたページのみ再取得します。
+      Notion のプリサイン S3 URL の有効期限切れも自動検出して再取得します。
+    </p>
+    <ul class="ml-4 list-disc space-y-2 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+      <li>初回ビルド: 全ページを取得</li>
+      <li>2回目以降: 変更・追加・削除されたページのみ差分取得</li>
+      <li>S3 URL が期限切れのページは自動的に再取得</li>
+    </ul>
+  </section>
+</DocsLayout>

@@ -12,6 +12,8 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
 import rehypeShiki from '@shikijs/rehype';
 import { remarkNfm } from 'remark-nfm';
+import { renderMermaidSVG, THEMES } from 'beautiful-mermaid';
+import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic';
 import type { Plugin, PluggableList } from 'unified';
 import type { Root, Element, ElementContent } from 'hast';
 import { visit } from 'unist-util-visit';
@@ -117,6 +119,42 @@ const resolvePageLinksPlugin: Plugin<[ResolveOptions], Root> = (options) => {
 	};
 };
 
+// ── Mermaid diagram rendering ──────────────────────────────────────────────
+
+/**
+ * Rehype plugin: converts ```mermaid code blocks to inline SVG diagrams.
+ * Runs before rehypeShiki so that Shiki does not try to highlight mermaid code.
+ * Uses beautiful-mermaid for synchronous SSG-friendly rendering (no DOM/browser required).
+ */
+const rehypeMermaid: Plugin<[], Root> = () => {
+	return (tree) => {
+		visit(tree, 'element', (node: Element, index, parent) => {
+			if (node.tagName !== 'pre' || !parent || index === null) return;
+			const codeEl = node.children[0];
+			if (!codeEl || codeEl.type !== 'element' || codeEl.tagName !== 'code') return;
+			const cls = codeEl.properties?.className;
+			if (!Array.isArray(cls) || !cls.includes('language-mermaid')) return;
+
+			const code = hastToString(codeEl).trim();
+			try {
+				const svg = renderMermaidSVG(code, THEMES['github-dark']);
+				// Keep the SVG's natural pixel dimensions (width/height attributes).
+				// The .nt-mermaid-block container has overflow-x:auto, so diagrams wider than
+				// the viewport scroll horizontally rather than being clipped or scaled down.
+				// Scaling via width:100% causes content outside the viewBox to be clipped by
+				// the scroll container even with overflow:visible on the SVG element.
+				const fragment = fromHtmlIsomorphic(
+					`<div class="nt-mermaid-block">${svg}</div>`,
+					{ fragment: true },
+				);
+				parent.children.splice(index, 1, ...fragment.children);
+			} catch (err) {
+				console.warn('[notro] Mermaid rendering failed:', err);
+			}
+		});
+	};
+};
+
 // ── TOC population ─────────────────────────────────────────────────────────
 
 /**
@@ -202,6 +240,9 @@ export function buildMdxPlugins(linkToPages: LinkToPages): MdxPlugins {
 			// valid HTML and would otherwise be stripped by the HTML parser.
 			[rehypeRaw, { passThrough: NOTION_CUSTOM_ELEMENTS }],
 			rehypeKatex,
+			// rehypeMermaid must run before rehypeShiki so Shiki does not
+			// attempt to highlight mermaid code blocks.
+			rehypeMermaid,
 			[rehypeShiki, { theme: 'github-dark' }],
 			// rehype-slug adds id attributes to h1–h4 elements.
 			// Must run before rehypeTocPlugin, which reads those ids.
