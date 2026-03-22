@@ -107,7 +107,7 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
           toggleTitle: "cursor-pointer select-none py-1 font-medium",
           columns:     "grid grid-cols-1 gap-8 my-4 md:grid-cols-2",
           column:      "min-w-0",
-          quote:       "my-4 border-l-[3px] pl-4 italic",
+          quote:       "my-4 border-l-[3px] pl-4 italic [&>p:first-child]:mt-0 [&>p:last-child]:mb-0",
           h1:          "mb-3 mt-10 text-[1.875rem] font-bold tracking-tight",
           h2:          "mb-2 mt-8 text-2xl font-semibold tracking-tight",
           h3:          "mb-2 mt-6 text-xl font-semibold",
@@ -116,7 +116,7 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
           tableWrapper:"my-4 w-full overflow-x-auto",
           table:       "w-full border-collapse text-sm",
           tableCell:   "px-3 py-2 text-sm",
-          toc:         "my-4 rounded-md p-4 text-sm",
+          toc:         "my-4 rounded-md border border-gray-200 bg-gray-50 p-4 text-sm",
           // ── Standard HTML block elements ─────────────────────
           p:           "mb-4 leading-7",
           ul:          "mb-4 list-disc pl-6 space-y-1",
@@ -131,6 +131,23 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
           del:         "line-through",
           // ── Table header cell ─────────────────────────────────
           th:          "px-3 py-2 text-left text-sm font-semibold",
+          // ── Table row ─────────────────────────────────────────
+          tableRow:    "",
+          // ── Media blocks ──────────────────────────────────────
+          audio:       "my-4",
+          video:       "my-4",
+          // ── File & PDF ────────────────────────────────────────
+          file:        "my-2",
+          pdf:         "my-4",
+          // ── Page / database references ────────────────────────
+          pageRef:     "inline-flex items-center gap-1 underline underline-offset-2",
+          databaseRef: "inline-flex items-center gap-1 underline underline-offset-2",
+          // ── Structural blocks ─────────────────────────────────
+          syncedBlock: "",
+          emptyBlock:  "my-2",
+          // ── Inline elements ───────────────────────────────────
+          mention:        "underline underline-offset-2",
+          "mention-date": "font-mono text-sm",
         }}
         components={{ callout: Callout }}
       />
