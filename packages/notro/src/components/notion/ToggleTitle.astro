@@ -12,6 +12,6 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<summary class:list={["nt-toggle-block__title", className]}>
+<summary class:list={[className]}>
 	<slot />
 </summary>

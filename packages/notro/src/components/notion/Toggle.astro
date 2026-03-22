@@ -18,6 +18,6 @@ interface Props {
 const { color, class: className } = Astro.props;
 ---
 
-<details class:list={["nt-toggle-block", colorToClass(color), className]}>
+<details class:list={[colorToClass(color), className]}>
 	<slot />
 </details>
