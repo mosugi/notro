@@ -1,8 +1,4 @@
 ---
-// Edit these to match your site — keep SITE_URL in sync with astro.config.mjs `site`
-const SITE_NAME = "NotroTail";
-const SITE_URL = "https://notrotail.mosugi.com";
-
 interface Props {
   title: string;
   description?: string;
@@ -20,7 +16,7 @@ const {
   ogImage = "/og-default.png",
 } = Astro.props;
 
-const rssUrl = new URL("/rss.xml", SITE_URL).toString();
+const rssUrl = new URL("/rss.xml", "https://notrotail.mosugi.com").toString();
 ---
 
 <meta charset="UTF-8" />
@@ -28,12 +24,12 @@ const rssUrl = new URL("/rss.xml", SITE_URL).toString();
 <meta name="viewport" content="width=device-width" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="sitemap" href="/sitemap-index.xml" />
-<link rel="alternate" type="application/rss+xml" title={`${SITE_NAME} — RSS フィード`} href={rssUrl} />
+<link rel="alternate" type="application/rss+xml" title="NotroTail — RSS フィード" href={rssUrl} />
 <link rel="canonical" href={canonicalUrl} />
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <meta property="og:type" content={type} />
 <meta property="og:locale" content="ja_JP" />
-<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:site_name" content="NotroTail" />
 <meta property="og:title" content={title} />
 {description && <meta property="og:description" content={description} />}
 <meta property="og:url" content={canonicalUrl} />
