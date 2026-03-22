@@ -4,7 +4,8 @@ import { getCollection } from "astro:content";
 import { NotionMarkdownRenderer, buildLinkToPages, getPlainText, getMultiSelect, hasTag } from "notro";
 import Layout from "../../layouts/Layout.astro";
 import Callout from "../../components/notion/Callout.astro";
-import { INTERNAL_TAGS, SITE_NAME } from "../../config";
+import { INTERNAL_TAGS } from "../../config";
+const SITE_NAME = "NotroTail";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");

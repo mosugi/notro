@@ -2,10 +2,6 @@
 // Site configuration — edit these values for your site
 // ---------------------------------------------------------------------------
 
-export const SITE_NAME = "NotroTail";
-export const SITE_URL = "https://notrotail.mosugi.com";
-export const SITE_DESCRIPTION = "Notion を CMS として使う Astro 静的サイトジェネレーター。";
-
 // Number of posts shown per page in blog listing
 export const BLOG_POSTS_PER_PAGE = 10;
 

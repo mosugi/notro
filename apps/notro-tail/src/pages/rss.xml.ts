@@ -2,7 +2,8 @@ import rss from "@astrojs/rss";
 import type { APIContext } from "astro";
 import { getCollection } from "astro:content";
 import { getPlainText, hasTag } from "notro";
-import { SITE_NAME, SITE_DESCRIPTION } from "../config";
+const SITE_NAME = "NotroTail";
+const SITE_DESCRIPTION = "Notion を CMS として使う Astro 静的サイトジェネレーター。";
 
 export async function GET(context: APIContext) {
   const posts = await getCollection("posts");

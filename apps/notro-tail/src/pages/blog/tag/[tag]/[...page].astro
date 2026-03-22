@@ -5,7 +5,8 @@ import { getMultiSelect, hasTag } from "notro";
 import BlogList from "../../../../components/blog/BlogList.astro";
 import Layout from "../../../../layouts/Layout.astro";
 import Pagination from "../../../../components/blog/Pagination.astro";
-import { INTERNAL_TAGS, BLOG_POSTS_PER_PAGE, SITE_NAME } from "../../../../config";
+import { INTERNAL_TAGS, BLOG_POSTS_PER_PAGE } from "../../../../config";
+const SITE_NAME = "NotroTail";
 
 export async function getStaticPaths({
   paginate,
