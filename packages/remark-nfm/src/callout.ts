@@ -15,19 +15,18 @@ export const calloutPlugin: Plugin<[], Root> = () => {
       if (node.name !== "callout") return;
 
       const attrs = node.attributes ?? {};
-      const color = attrs.color ?? "";
-      const icon = attrs.icon ?? "";
 
       // Output as <callout> custom element so the component mapping
       // (notionComponents.callout = Callout.astro) can handle rendering.
       // Pass color as-is (e.g. "gray_bg") — Callout.astro's colorToCSS()
       // handles both _bg and _background suffix formats.
+      // Only include properties that have a value to avoid setting empty strings.
       node.data = {
         ...node.data,
         hName: "callout",
         hProperties: {
-          color: color || undefined,
-          icon: icon || undefined,
+          ...(attrs.color && { color: attrs.color }),
+          ...(attrs.icon && { icon: attrs.icon }),
         },
       };
     });

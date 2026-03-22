@@ -83,6 +83,11 @@
 const LEADING_EMOJI_RE =
   /^(?:[\u0023\u002A\u0030-\u0039]\uFE0F\u20E3|\p{Emoji_Modifier_Base}\p{Emoji_Modifier}|\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(?:\u200D(?:[\u0023\u002A\u0030-\u0039]\uFE0F\u20E3|\p{Emoji_Modifier_Base}\p{Emoji_Modifier}|\p{Emoji_Presentation}|\p{Emoji}\uFE0F))*/u;
 
+// Block-level HTML closing tags that require a trailing blank line so that
+// CommonMark HTML blocks (type 6) end correctly and following markdown is not
+// consumed as raw HTML text.
+const BLOCK_CLOSING_TAGS = ["table", "details", "columns", "column", "summary"] as const;
+
 // LaTeX command names that may appear without a leading backslash in Notion's
 // math output. Sorted longest-first to prefer longer matches (e.g. "pmatrix"
 // before "matrix") when building the alternation.
@@ -90,7 +95,7 @@ const LATEX_COMMANDS = [
   "underbrace", "overline", "pmatrix", "bmatrix", "mathbb", "mathbf", "mathrm",
   "epsilon", "partial", "approx", "matrix", "forall", "exists", "lambda",
   "nabla", "cases", "infty", "sigma", "theta", "equiv", "alpha", "delta",
-  "right", "tilde", "begin", "gamma", "times", "cdot", "begin",
+  "right", "tilde", "begin", "gamma", "times", "cdot",
   "frac", "sqrt", "prod", "left", "beta", "text", "ddot", "leq", "geq",
   "neq", "hat", "bar", "vec", "dot", "end", "sum", "int", "lim", "sin",
   "cos", "tan", "log", "ln", "mu", "pi", "pm", "div",
@@ -321,13 +326,14 @@ export function preprocessNotionMarkdown(markdown: string): string {
 
   // Fix 8: Ensure block-level HTML closing tags have a trailing blank line.
   // CommonMark HTML blocks (type 6) end only at a blank line. Notion omits
-  // this blank line after </table>, </details>, </columns>, </column>, etc.,
-  // causing any following markdown to be consumed as raw HTML text and rendered
-  // as a literal string instead of proper HTML elements.
-  result = result.replace(
-    /(<\/(?:table|details|columns|column|summary)>)\n([^\n])/g,
-    "$1\n\n$2"
+  // this blank line after closing tags (see BLOCK_CLOSING_TAGS), causing any
+  // following markdown to be consumed as raw HTML text and rendered as a
+  // literal string instead of proper HTML elements.
+  const blockClosingPattern = new RegExp(
+    `(<\\/(${BLOCK_CLOSING_TAGS.join("|")})>)\\n([^\\n])`,
+    "g"
   );
+  result = result.replace(blockClosingPattern, "$1\n\n$3");
 
   // Fix 9: Convert markdown link syntax inside raw HTML <td> cells to <a> tags.
   // Notion exports table cell links as [text](url) inside <td>...</td>, but remark
