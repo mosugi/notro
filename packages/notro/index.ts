@@ -9,4 +9,5 @@ export * from "./src/utils/notion";
 export { normalizeNotionPresignedUrl, markdownHasPresignedUrls } from "./src/utils/notion-url.ts";
 export { colorToClass } from "./src/components/notion/colors.ts";
 export * from "./src/loader/loader";
+export * from "./src/loader/live-loader";
 export * from "./src/loader/schema";
