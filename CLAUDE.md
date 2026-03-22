@@ -42,6 +42,61 @@ npm run preview --workspace=notro-tail
 - セッション ID をブランチ名末尾に含めること（`claude/feature-name-XXXXX` 形式）
 - **`claude/` プレフィックスとセッション ID がないと push が 403 エラーになる**
 
+### 実装方針が複数ある場合
+
+- 実装方針が複数考えられる場合、**必ず作業前に `AskUserQuestion` ツールで選択肢を提示してユーザーに確認すること**
+- 自分で方針を決めて進めてはならない
+- 選択肢は具体的なトレードオフ（パフォーマンス・保守性・実装コスト等）とともに提示すること
+
+### コミットメッセージ規約
+
+- コミットメッセージは **必ず英語** で書くこと
+- フォーマット: `<type>: <summary>` （例: `feat: add tag filter to blog list`）
+- type は `feat` / `fix` / `refactor` / `docs` / `chore` / `style` / `test` のいずれか
+
+### UI/UX の判断基準
+
+- **多言語対応を前提** としたデザインを基本とすること（テキスト長・文字幅・RTL の考慮）
+- ユーザーにとってわかりやすいか・使いやすいかを最優先の判断基準とすること
+- 装飾よりも情報の明瞭さ・アクセシビリティを優先すること
+
+### Astro 実装ベストプラクティス
+
+#### ロジックは `.ts` ファイルに切り出す
+
+- Astro ファイル（`.astro`）のフロントマター（`---` ブロック）には **最小限のコードのみ** 記述すること
+- データ取得・変換・ビジネスロジックは `src/lib/` 配下の `.ts` ファイルに関数として切り出すこと
+- 切り出した関数には必ずユニットテストを書くこと（`vitest` を使用）
+
+```
+// Good
+// src/lib/posts.ts に関数を定義し、.astro からインポートする
+import { getSortedPosts } from "@/lib/posts";
+const posts = await getSortedPosts(allPosts);
+
+// Bad
+// .astro のフロントマターに直接ロジックを書かない
+const posts = allPosts.sort((a, b) => ...複雑なロジック...);
+```
+
+#### コンポーネント設計
+
+- コンポーネントは **単一責任** を持つよう小さく保つこと
+- Props の型は必ず明示的に定義すること（`interface Props { ... }`）
+- デフォルト値は Props の分割代入で設定すること
+
+#### パフォーマンス
+
+- 画像は必ず Astro の `<Image />` コンポーネントを使うこと（`<img>` タグを直接使わない）
+- クライアント側 JavaScript は必要最小限にすること（`client:load` より `client:idle` / `client:visible` を優先）
+- ページ単位のデータ取得は `Astro.glob()` や Content Collections API を使うこと
+
+#### アクセシビリティ
+
+- インタラクティブ要素には適切な `aria-*` 属性を付けること
+- 色のみで情報を伝えないこと（アイコンやテキストを併用する）
+- フォーム要素には必ず `<label>` を関連付けること
+
 ---
 
 ## Project Overview
