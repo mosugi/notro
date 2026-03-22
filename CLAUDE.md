@@ -103,6 +103,34 @@ const posts = allPosts.sort((a, b) => ...複雑なロジック...);
 - `<script>` 内のロジックが複雑な場合は `src/lib/` 配下の `.ts` ファイルに切り出してインポートすること
 - `is:inline` は必要な場合のみ使用すること（通常は Astro がバンドル最適化するため不要）
 
+```astro
+<!-- Good: ロジックを .ts に切り出してインポート -->
+<button id="menu-btn" aria-expanded="false">Menu</button>
+<script>
+  import { initMenu } from "@/lib/menu";
+  initMenu();
+</script>
+
+<!-- Bad: <script> に直接ロジックを書く / style を直接操作する -->
+<script>
+  const btn = document.getElementById("menu-btn");
+  const nav = document.getElementById("nav");
+  btn?.addEventListener("click", () => {
+    nav.style.display = nav.style.display === "none" ? "block" : "none"; // ❌ style 操作
+  });
+</script>
+
+<!-- Good: クラス操作で表示を制御 -->
+<script>
+  const btn = document.getElementById("menu-btn");
+  const nav = document.getElementById("nav");
+  btn?.addEventListener("click", () => {
+    nav.classList.toggle("hidden"); // ✅ classList 操作
+    btn.setAttribute("aria-expanded", String(!nav.classList.contains("hidden")));
+  });
+</script>
+```
+
 #### アクセシビリティ
 
 - インタラクティブ要素には適切な `aria-*` 属性を付けること
