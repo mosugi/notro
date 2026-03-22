@@ -66,7 +66,7 @@ const active = (href: string) => isActive(pathname, href);
           <line x1="3" y1="18" x2="21" y2="18"/>
         </svg>
         <!-- Close icon (shown when open) -->
-        <svg id="icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="display:none;">
+        <svg id="icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" class="hidden">
           <line x1="18" y1="6" x2="6" y2="18"/>
           <line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
@@ -117,7 +117,7 @@ const active = (href: string) => isActive(pathname, href);
     const isOpen = !menu?.classList.contains("hidden");
     btn.setAttribute("aria-expanded", String(isOpen));
     menu?.setAttribute("aria-hidden", String(!isOpen));
-    if (iconOpen) iconOpen.style.display = isOpen ? "none" : "";
-    if (iconClose) iconClose.style.display = isOpen ? "" : "none";
+    if (iconOpen) iconOpen.classList.toggle("hidden", isOpen);
+    if (iconClose) iconClose.classList.toggle("hidden", !isOpen);
   });
 </script>
