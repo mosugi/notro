@@ -3,44 +3,55 @@
  * Reference implementation: SSR blog post page using liveLoader.
  *
  * To use this file:
- *   1. Copy to src/pages/live/[id].astro
- *   2. Set up an SSR adapter (e.g. @astrojs/netlify) and output: 'server'
- *      in astro.config.mjs, OR use output: 'server' with per-page prerender.
- *   3. Ensure src/live.config.ts exists and exports a "posts" live collection.
+ *   1. Copy to src/pages/blog/[slug].astro (replacing the existing file)
+ *   2. Replace src/content.config.ts with src/examples/live.config.ts
+ *      (rename to src/live.config.ts)
+ *   3. Add an SSR adapter and set output: 'server' in astro.config.mjs
  *
  * This page fetches a single Notion page on every request (no rebuild needed).
  */
 
 // On-demand rendering: fetch from Notion on every request.
-// Remove this line (or set to true) to prerender at build time instead.
 export const prerender = false;
 
-import { getLiveEntry } from "astro:content";
-import { NotionMarkdownRenderer, getPlainText, getMultiSelect } from "notro";
+import { getLiveEntry, getLiveCollection } from "astro:content";
+import { NotionMarkdownRenderer, buildLinkToPages, getPlainText, getMultiSelect, hasTag } from "notro";
 import Layout from "../../layouts/Layout.astro";
+import Callout from "../../components/notion/Callout.astro";
 import { INTERNAL_TAGS, SITE_NAME } from "../../config";
 
-const { id } = Astro.params;
+const { slug } = Astro.params;
 
-// Fetch the entry on this request. Returns { entry?, error?, cacheHint? }.
-const result = await getLiveEntry("livePosts", id!);
+// getLiveEntry accepts the Notion page ID or a slug-based filter.
+// To look up by slug, fetch all entries and find the matching one.
+const allResult = await getLiveCollection("posts");
+const allEntries = allResult.entries ?? [];
 
-if (result.error || !result.entry) {
+const entry = allEntries.find(
+  (e) => (getPlainText(e.data.properties.Slug) || e.id) === slug,
+);
+
+if (!entry) {
   return Astro.redirect("/404");
 }
 
-const entry = result.entry;
+// Build linkToPages map for resolving inter-page links in Notion content.
+const linkToPages = buildLinkToPages(allEntries, {
+  url: (e) => `blog/${getPlainText(e.data.properties.Slug) || e.id}/`,
+  title: (e) => getPlainText(e.data.properties.Name) ?? e.id,
+});
 
 const title = getPlainText(entry.data.properties.Name) ?? entry.id;
 const description = getPlainText(entry.data.properties.Description);
 const date = entry.data.properties.Date.date?.start;
+const isEmbeddedPage = hasTag(entry.data.properties.Tags, "page");
 const tags = getMultiSelect(entry.data.properties.Tags).filter(
   (t) => !INTERNAL_TAGS.includes(t.name),
 );
 ---
 
-<Layout title={`${title} — ${SITE_NAME}`} description={description}>
-  <main class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
+<Layout title={`${title} — ${SITE_NAME}`} description={description} type={isEmbeddedPage ? "website" : "article"}>
+  <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
     <article class="mx-auto max-w-[720px]">
       <header class="mb-10 pb-6 border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
         <h1 class="mb-3 text-[2rem] font-bold tracking-tight leading-tight text-[#37352f] dark:text-slate-200">
@@ -51,28 +62,34 @@ const tags = getMultiSelect(entry.data.properties.Tags).filter(
             {description}
           </p>
         )}
-        <div class="flex flex-wrap items-center gap-3">
-          {date && (
-            <time datetime={date} class="text-sm text-[rgba(55,53,47,0.45)] dark:text-slate-500">
-              {date}
-            </time>
-          )}
-          {tags.length > 0 && (
-            <ul class="flex list-none flex-wrap gap-1.5">
-              {tags.map((tag) => (
-                <li>
-                  <span class="text-xs bg-[rgba(55,53,47,0.06)] text-[rgba(55,53,47,0.65)] rounded-[3px] px-2 py-0.5 dark:bg-white/6 dark:text-slate-400">
-                    {tag.name}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        {!isEmbeddedPage && (
+          <div class="flex flex-wrap items-center gap-3">
+            {date && (
+              <time datetime={date} class="text-sm text-[rgba(55,53,47,0.45)] dark:text-slate-500">
+                {date}
+              </time>
+            )}
+            {tags.length > 0 && (
+              <ul class="flex list-none flex-wrap gap-1.5">
+                {tags.map((tag) => (
+                  <li>
+                    <a
+                      href={`/blog/tag/${tag.name}/`}
+                      class="text-xs bg-[rgba(55,53,47,0.06)] text-[rgba(55,53,47,0.65)] rounded-[3px] px-2 py-0.5 no-underline transition-colors hover:bg-[rgba(55,53,47,0.1)] dark:bg-white/6 dark:text-slate-400"
+                    >
+                      {tag.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </header>
 
       <NotionMarkdownRenderer
         markdown={entry.data.markdown}
+        linkToPages={linkToPages}
         classMap={{
           callout:     "flex items-start gap-3 my-4 rounded-md p-4",
           toggle:      "my-1",
@@ -101,6 +118,7 @@ const tags = getMultiSelect(entry.data.properties.Tags).filter(
           del:         "line-through",
           th:          "px-3 py-2 text-left text-sm font-semibold",
         }}
+        components={{ callout: Callout }}
       />
 
       {entry.data.truncated && (

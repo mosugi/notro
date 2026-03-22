@@ -1,26 +1,24 @@
 /**
  * Reference implementation: Live Content Collections configuration.
  *
- * Copy this file to src/live.config.ts to enable live collections.
- * Defines collections fetched on every request (SSR), unlike build-time content.config.ts.
+ * This file REPLACES src/content.config.ts in SSR projects.
+ * Do NOT use both files simultaneously — they conflict.
  *
- * Requirements:
- *   - SSR adapter (e.g. @astrojs/netlify or @astrojs/node)
- *   - output: 'server' in astro.config.mjs (or per-page `prerender = false`)
- *   - Do NOT use the same collection name ("posts") in both content.config.ts
- *     and live.config.ts — they must be distinct to avoid store conflicts.
+ * Setup:
+ *   1. Copy this file to src/live.config.ts
+ *   2. Delete (or rename) src/content.config.ts
+ *   3. Add an SSR adapter and set output: 'server' in astro.config.mjs
+ *   4. In pages, use `getLiveCollection` / `getLiveEntry` instead of
+ *      `getCollection` / `getEntry`
  *
- * Usage: use getLiveCollection / getLiveEntry in pages with `prerender = false`.
- *
- * See page examples: apps/notro-tail/src/examples/live/
+ * The collection name ("posts") matches the build-time config so all
+ * imports using "posts" continue to work after the switch.
  */
 import { defineLiveCollection } from "astro:content";
 import { liveLoader, notroProperties, pageWithMarkdownSchema } from "notro";
 import { z } from "zod";
 
-// Use a different name from the build-time "posts" collection in content.config.ts
-// to avoid conflicts when both configs are present in the same project.
-export const livePosts = defineLiveCollection({
+export const posts = defineLiveCollection({
   loader: liveLoader({
     queryParameters: {
       data_source_id: import.meta.env.NOTION_DATASOURCE_ID,
@@ -41,7 +39,6 @@ export const livePosts = defineLiveCollection({
       auth: import.meta.env.NOTION_TOKEN,
     },
   }),
-  // Optional: same Zod schema as the build-time collection for type safety
   schema: pageWithMarkdownSchema.extend({
     properties: z.object({
       Name: notroProperties.title,

@@ -3,10 +3,10 @@
  * Reference implementation: SSR blog list page using liveLoader.
  *
  * To use this file:
- *   1. Copy to src/pages/live/index.astro
- *   2. Set up an SSR adapter (e.g. @astrojs/netlify) and output: 'server'
- *      in astro.config.mjs, OR use output: 'server' with per-page prerender.
- *   3. Ensure src/live.config.ts exists and exports a "posts" live collection.
+ *   1. Copy to src/pages/blog/index.astro (or [...page].astro for pagination)
+ *   2. Replace src/content.config.ts with src/examples/live.config.ts
+ *      (rename to src/live.config.ts)
+ *   3. Add an SSR adapter and set output: 'server' in astro.config.mjs
  *
  * This page fetches all Notion pages on every request (no rebuild needed).
  */
@@ -20,12 +20,13 @@ import Layout from "../../layouts/Layout.astro";
 import { INTERNAL_TAGS, SITE_NAME, SITE_DESCRIPTION } from "../../config";
 
 // Fetch all entries on this request. Returns { entries?, error?, cacheHint? }.
-const result = await getLiveCollection("livePosts");
+const result = await getLiveCollection("posts");
 
 // On API error, show an empty list rather than crashing.
 const allEntries = result.error ? [] : (result.entries ?? []);
 
-// Filter out fixed pages (tagged "page") and sort by date descending
+// Filter out fixed pages (tagged "page") and sort by date descending.
+// Matches the same logic as the build-time blog/[...page].astro.
 const posts = allEntries
   .filter((e) => !hasTag(e.data.properties.Tags, "page"))
   .sort((a, b) => {
@@ -64,7 +65,7 @@ const posts = allEntries
           return (
             <li>
               <a
-                href={`/live/${slug}/`}
+                href={`/blog/${slug}/`}
                 class="block rounded-md border border-[rgba(55,53,47,0.09)] p-5 no-underline text-inherit transition-colors hover:bg-[rgba(55,53,47,0.03)] dark:border-white/8 dark:hover:bg-white/3"
               >
                 <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-200">
