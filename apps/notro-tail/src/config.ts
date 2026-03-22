@@ -2,8 +2,6 @@
 const config = {
   site: {
     name: "NotroTail",
-    // Keep in sync with astro.config.mjs `site`
-    url: "https://notrotail.mosugi.com",
     description: "Notion を CMS として使う Astro 静的サイトジェネレーター。",
   },
   blog: {

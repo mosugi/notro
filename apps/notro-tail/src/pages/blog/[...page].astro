@@ -6,7 +6,6 @@ import BlogList from "../../components/blog/BlogList.astro";
 import Layout from "../../layouts/Layout.astro";
 import Pagination from "../../components/blog/Pagination.astro";
 import config from "../../config";
-const { postsPerPage, internalTags } = config.blog;
 
 export async function getStaticPaths({
   paginate,
@@ -29,7 +28,7 @@ export async function getStaticPaths({
   // Paginate all blogPosts so that total count includes pinned posts.
   // Pinned posts are filtered out from page.data before rendering to avoid duplication.
   return paginate(blogPosts, {
-    pageSize: postsPerPage,
+    pageSize: config.blog.postsPerPage,
     props: {
       pinnedPostsData: pinnedPosts.map(({ data }) => data),
       beginnerPostsData: beginnerPosts.map(({ data }) => data),

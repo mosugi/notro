@@ -18,7 +18,7 @@ const {
   ogImage = "/og-default.png",
 } = Astro.props;
 
-const rssUrl = new URL("/rss.xml", config.site.url).toString();
+const rssUrl = new URL("/rss.xml", Astro.site ?? Astro.url.origin).toString();
 ---
 
 <meta charset="UTF-8" />
