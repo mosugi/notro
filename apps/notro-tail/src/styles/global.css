@@ -34,112 +34,86 @@
 
 @layer base {
   body {
-    font-family:
-      ui-sans-serif,
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      Helvetica,
-      Arial,
-      sans-serif;
-    color: #37352f;
-    background-color: #ffffff;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply font-sans text-[#37352f] bg-white antialiased;
   }
 }
 
 @layer utilities {
   /* Base wrapper style for Notion markdown content */
   .nt-markdown-content {
-    @apply text-base leading-relaxed;
-    color: #37352f;
+    @apply text-base leading-relaxed text-[#37352f];
   }
 
   /* Code blocks — styled by @shikijs/rehype (colors injected inline) */
   .nt-markdown-content pre {
-    border-radius: 6px;
-    padding: 1rem 1.25rem;
-    overflow-x: auto;
-    font-size: 0.875rem;
-    line-height: 1.7;
-    margin: 1.25rem 0;
+    @apply rounded-md py-4 px-5 overflow-x-auto text-sm leading-[1.7] my-5;
   }
 
   .nt-markdown-content pre > code {
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-    background: none;
-    padding: 0;
+    @apply font-mono bg-transparent p-0 text-inherit;
     font-size: inherit;
-    color: inherit;
   }
 
   /*
    * Notion color classes
    * All values reference CSS custom properties defined on :root above.
    */
-  .nt-color-gray              { color: var(--nt-color-gray); }
-  .nt-color-brown             { color: var(--nt-color-brown); }
-  .nt-color-orange            { color: var(--nt-color-orange); }
-  .nt-color-yellow            { color: var(--nt-color-yellow); }
-  .nt-color-green             { color: var(--nt-color-green); }
-  .nt-color-blue              { color: var(--nt-color-blue); }
-  .nt-color-purple            { color: var(--nt-color-purple); }
-  .nt-color-pink              { color: var(--nt-color-pink); }
-  .nt-color-red               { color: var(--nt-color-red); }
+  .nt-color-gray              { @apply text-[var(--nt-color-gray)]; }
+  .nt-color-brown             { @apply text-[var(--nt-color-brown)]; }
+  .nt-color-orange            { @apply text-[var(--nt-color-orange)]; }
+  .nt-color-yellow            { @apply text-[var(--nt-color-yellow)]; }
+  .nt-color-green             { @apply text-[var(--nt-color-green)]; }
+  .nt-color-blue              { @apply text-[var(--nt-color-blue)]; }
+  .nt-color-purple            { @apply text-[var(--nt-color-purple)]; }
+  .nt-color-pink              { @apply text-[var(--nt-color-pink)]; }
+  .nt-color-red               { @apply text-[var(--nt-color-red)]; }
 
-  .nt-color-gray_background   { background-color: var(--nt-color-gray-bg); }
-  .nt-color-brown_background  { background-color: var(--nt-color-brown-bg); }
-  .nt-color-orange_background { background-color: var(--nt-color-orange-bg); }
-  .nt-color-yellow_background { background-color: var(--nt-color-yellow-bg); }
-  .nt-color-green_background  { background-color: var(--nt-color-green-bg); }
-  .nt-color-blue_background   { background-color: var(--nt-color-blue-bg); }
-  .nt-color-purple_background { background-color: var(--nt-color-purple-bg); }
-  .nt-color-pink_background   { background-color: var(--nt-color-pink-bg); }
-  .nt-color-red_background    { background-color: var(--nt-color-red-bg); }
+  .nt-color-gray_background   { @apply bg-[var(--nt-color-gray-bg)]; }
+  .nt-color-brown_background  { @apply bg-[var(--nt-color-brown-bg)]; }
+  .nt-color-orange_background { @apply bg-[var(--nt-color-orange-bg)]; }
+  .nt-color-yellow_background { @apply bg-[var(--nt-color-yellow-bg)]; }
+  .nt-color-green_background  { @apply bg-[var(--nt-color-green-bg)]; }
+  .nt-color-blue_background   { @apply bg-[var(--nt-color-blue-bg)]; }
+  .nt-color-purple_background { @apply bg-[var(--nt-color-purple-bg)]; }
+  .nt-color-pink_background   { @apply bg-[var(--nt-color-pink-bg)]; }
+  .nt-color-red_background    { @apply bg-[var(--nt-color-red-bg)]; }
 
   /* Legacy _bg suffix aliases — same variables as _background */
-  .nt-color-gray_bg           { background-color: var(--nt-color-gray-bg); }
-  .nt-color-brown_bg          { background-color: var(--nt-color-brown-bg); }
-  .nt-color-orange_bg         { background-color: var(--nt-color-orange-bg); }
-  .nt-color-yellow_bg         { background-color: var(--nt-color-yellow-bg); }
-  .nt-color-green_bg          { background-color: var(--nt-color-green-bg); }
-  .nt-color-blue_bg           { background-color: var(--nt-color-blue-bg); }
-  .nt-color-purple_bg         { background-color: var(--nt-color-purple-bg); }
-  .nt-color-pink_bg           { background-color: var(--nt-color-pink-bg); }
-  .nt-color-red_bg            { background-color: var(--nt-color-red-bg); }
+  .nt-color-gray_bg           { @apply bg-[var(--nt-color-gray-bg)]; }
+  .nt-color-brown_bg          { @apply bg-[var(--nt-color-brown-bg)]; }
+  .nt-color-orange_bg         { @apply bg-[var(--nt-color-orange-bg)]; }
+  .nt-color-yellow_bg         { @apply bg-[var(--nt-color-yellow-bg)]; }
+  .nt-color-green_bg          { @apply bg-[var(--nt-color-green-bg)]; }
+  .nt-color-blue_bg           { @apply bg-[var(--nt-color-blue-bg)]; }
+  .nt-color-purple_bg         { @apply bg-[var(--nt-color-purple-bg)]; }
+  .nt-color-pink_bg           { @apply bg-[var(--nt-color-pink-bg)]; }
+  .nt-color-red_bg            { @apply bg-[var(--nt-color-red-bg)]; }
 
   /*
    * Toggle (details/summary) — smooth open/close transition for the disclosure triangle
    */
   .nt-toggle-block__title {
-    cursor: pointer;
-    list-style: none;
-    transition: color 0.15s ease;
+    @apply cursor-pointer list-none transition-colors duration-150;
   }
 
   .nt-toggle-block__title:hover {
-    color: rgba(55, 53, 47, 0.7);
+    @apply text-[rgba(55,53,47,0.7)];
   }
 
   /* Hide default browser triangle marker */
   .nt-toggle-block__title::marker,
   .nt-toggle-block__title::-webkit-details-marker {
-    display: none;
+    @apply hidden;
   }
 
   /* Custom disclosure triangle with rotation transition */
   .nt-toggle-block__title::before {
     content: "▶";
-    display: inline-block;
-    margin-right: 0.4em;
-    font-size: 0.65em;
-    transition: transform 0.2s ease;
-    transform-origin: center;
+    @apply inline-block mr-[0.4em] text-[0.65em] transition-transform duration-200 origin-center;
   }
 
   details[open] > .nt-toggle-block__title::before {
-    transform: rotate(90deg);
+    @apply rotate-90;
   }
 
   /*
@@ -147,39 +121,27 @@
    * (classMap cannot express this nesting distinction)
    */
   .nt-markdown-content :not(pre) > code {
-    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-    background-color: rgba(135, 131, 120, 0.15);
-    color: #eb5757;
-    border-radius: 3px;
-    padding: 0.2em 0.4em;
-    font-size: 85%;
+    @apply font-mono bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] py-[0.2em] px-[0.4em] text-[85%];
   }
 
   /* Toggle block — smooth indicator rotation on open/close */
   .nt-toggle-block > summary,
   .nt-markdown-content details > summary {
-    list-style: none;
-    cursor: pointer;
+    @apply list-none cursor-pointer;
   }
   .nt-toggle-block > summary::-webkit-details-marker,
   .nt-markdown-content details > summary::-webkit-details-marker {
-    display: none;
+    @apply hidden;
   }
   /* Animated disclosure triangle via ::before pseudo-element */
   .nt-toggle-block > summary::before,
   .nt-markdown-content details > summary::before {
     content: "▶";
-    display: inline-block;
-    font-size: 0.6em;
-    margin-right: 0.5em;
-    transition: transform 0.2s ease;
-    transform-origin: center;
-    vertical-align: middle;
-    color: rgba(55, 53, 47, 0.45);
+    @apply inline-block text-[0.6em] mr-[0.5em] transition-transform duration-200 origin-center align-middle text-[rgba(55,53,47,0.45)];
   }
   .nt-toggle-block[open] > summary::before,
   .nt-markdown-content details[open] > summary::before {
-    transform: rotate(90deg);
+    @apply rotate-90;
   }
   /* Fade-in for toggle content when opened */
   .nt-toggle-block > :not(summary),
@@ -193,172 +155,133 @@
 
   /* N-07: hr visual styles */
   .nt-markdown-content hr {
-    margin: 2rem 0;
-    border: none;
-    border-top: 1px solid #e5e7eb;
+    @apply my-8 border-0 border-t border-solid border-gray-200;
   }
 
   /* N-11: task list checkbox styles for remark-gfm output */
   .nt-markdown-content .contains-task-list {
-    list-style: none;
-    padding-left: 0;
+    @apply list-none pl-0;
   }
   .nt-markdown-content .task-list-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    padding-left: 0;
+    @apply flex items-start gap-2 pl-0;
   }
   .nt-markdown-content .task-list-item input[type="checkbox"] {
-    margin-top: 0.25rem;
-    flex-shrink: 0;
-    cursor: default;
+    @apply mt-1 shrink-0 cursor-default;
   }
 
   /* N-17: table of contents block styles */
   .nt-toc-block__list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    @apply list-none m-0 p-0;
   }
   .nt-toc-item {
-    line-height: 1.6;
+    @apply leading-[1.6];
   }
   .nt-toc-item a {
-    color: #374151;
-    text-decoration: none;
-    font-size: 0.875rem;
+    @apply text-gray-700 no-underline text-sm;
   }
   .nt-toc-item a:hover {
-    color: #2563eb;
-    text-decoration: underline;
+    @apply text-blue-600 underline;
   }
   /* Indent by heading level (h1=0, h2=1rem, h3=2rem, h4=3rem) */
-  .nt-toc-level-1 { padding-left: 0; }
-  .nt-toc-level-2 { padding-left: 1rem; }
-  .nt-toc-level-3 { padding-left: 2rem; }
-  .nt-toc-level-4 { padding-left: 3rem; }
+  .nt-toc-level-1 { @apply pl-0; }
+  .nt-toc-level-2 { @apply pl-4; }
+  .nt-toc-level-3 { @apply pl-8; }
+  .nt-toc-level-4 { @apply pl-12; }
 
   /* N-18: mermaid diagram block */
   .nt-mermaid-block {
-    margin: 1.5rem 0;
-    overflow-x: auto;
-    border-radius: 0.5rem;
+    @apply my-6 overflow-x-auto rounded-lg;
   }
   /* SVG keeps its natural pixel dimensions from beautiful-mermaid.
      When wider than the container, overflow-x:auto on the parent shows a scrollbar.
      Forcing width:100% causes SVG-internal content outside the viewBox to be hard-clipped
      by the scroll container boundary even with overflow:visible on the SVG. */
   .nt-mermaid-block svg {
-    display: block;
+    @apply block;
   }
 
   /* Image block sub-elements */
   [data-image-img] {
-    height: auto;
-    max-width: 100%;
+    @apply h-auto max-w-full;
   }
   [data-image-caption] {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-top: 0.375rem;
-    text-align: center;
+    @apply text-sm text-gray-500 mt-1.5 text-center;
   }
 
   /* Media blocks (audio / video) */
   [data-media-player] {
-    width: 100%;
+    @apply w-full;
   }
   [data-media-caption] {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-top: 0.375rem;
+    @apply text-sm text-gray-500 mt-1.5;
   }
 
   /* File block sub-elements */
   [data-file-link] {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    color: #374151;
-    text-decoration: underline;
-    text-underline-offset: 2px;
+    @apply inline-flex items-center gap-1.5 text-gray-700 underline underline-offset-2;
   }
   [data-file-link]:hover {
-    opacity: 0.7;
+    @apply opacity-70;
   }
   [data-file-icon] {
-    font-size: 1rem;
+    @apply text-base;
   }
 
   /* PDF block sub-elements */
   [data-pdf-frame] {
-    width: 100%;
-    min-height: 500px;
-    border: none;
+    @apply w-full min-h-[500px] border-0;
   }
   [data-pdf-caption] {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin-top: 0.375rem;
+    @apply text-sm text-gray-500 mt-1.5;
   }
 
   /* Page / database reference icons */
   [data-pageref-icon],
   [data-databaseref-icon] {
-    font-size: 0.9em;
+    @apply text-[0.9em];
   }
 
   /* TOC label */
   [data-toc-label] {
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: #374151;
-    margin-bottom: 0.5rem;
+    @apply font-semibold text-sm text-gray-700 mb-2;
   }
 
   /* Table structural variants (injection-impossible via classMap) */
   [data-fit-page-width] {
-    width: 100%;
+    @apply w-full;
   }
   [data-header-row] tr:first-child td,
   [data-header-row] tr:first-child th {
-    font-weight: 600;
-    background-color: rgba(55, 53, 47, 0.04);
+    @apply font-semibold bg-[rgba(55,53,47,0.04)];
   }
   [data-header-col] td:first-child,
   [data-header-col] th:first-child {
-    font-weight: 600;
-    background-color: rgba(55, 53, 47, 0.04);
+    @apply font-semibold bg-[rgba(55,53,47,0.04)];
   }
 
   /* Table cell borders (injection-impossible: td/th need parent context) */
   .nt-markdown-content table td,
   .nt-markdown-content table th {
-    @apply px-3 py-1.5 text-left align-top;
-    border: 1px solid rgba(55, 53, 47, 0.09);
+    @apply px-3 py-1.5 text-left align-top border border-[rgba(55,53,47,0.09)];
   }
   .nt-markdown-content table {
-    border: 1px solid rgba(55, 53, 47, 0.09);
+    @apply border border-[rgba(55,53,47,0.09)];
   }
 
   /* DatabaseRef inline variant */
   a[data-inline] {
-    display: inline;
+    @apply inline;
   }
 
   /* Callout icon/body */
   [data-callout-icon] {
-    flex-shrink: 0;
-    font-size: 1.25rem;
-    line-height: 1;
+    @apply shrink-0 text-xl leading-none;
   }
   [data-callout-body] {
-    min-width: 0;
-    flex: 1;
+    @apply min-w-0 flex-1;
   }
-  [data-callout-body] > :first-child { margin-top: 0; }
-  [data-callout-body] > :last-child  { margin-bottom: 0; }
+  [data-callout-body] > :first-child { @apply mt-0; }
+  [data-callout-body] > :last-child  { @apply mb-0; }
 }
 
 /* ── Dark mode ───────────────────────────────────────────────────────────── */
@@ -391,53 +314,50 @@
 
   @layer base {
     body {
-      color: #e2e8f0;
-      background-color: #0f172a;
+      @apply text-slate-200 bg-slate-950;
     }
   }
 
   /* Notion markdown content */
   .nt-markdown-content {
-    color: #e2e8f0;
+    @apply text-slate-200;
   }
 
   /* Inline code */
   .nt-markdown-content :not(pre) > code {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #f87171;
+    @apply bg-white/10 text-red-400;
   }
 
   /* Code blocks (pre) */
   .nt-markdown-content pre {
-    background-color: #1e293b;
-    color: #e2e8f0;
+    @apply bg-slate-800 text-slate-200;
   }
 
   /* Toggle */
   .nt-toggle-block__title:hover {
-    color: rgba(226, 232, 240, 0.7);
+    @apply text-slate-200/70;
   }
 
   /* N-07: hr dark mode */
   .nt-markdown-content hr {
-    border-top-color: rgba(255, 255, 255, 0.12);
+    @apply border-white/[0.12];
   }
 
   /* Image / media / file captions */
   [data-image-caption],
   [data-media-caption],
   [data-pdf-caption] {
-    color: #94a3b8;
+    @apply text-slate-400;
   }
 
   /* File link */
   [data-file-link] {
-    color: #cbd5e1;
+    @apply text-slate-300;
   }
 
   /* TOC label */
   [data-toc-label] {
-    color: #cbd5e1;
+    @apply text-slate-300;
   }
 
   /* Table structural */
@@ -445,13 +365,13 @@
   [data-header-row] tr:first-child th,
   [data-header-col] td:first-child,
   [data-header-col] th:first-child {
-    background-color: rgba(255, 255, 255, 0.05);
+    @apply bg-white/5;
   }
   .nt-markdown-content table td,
   .nt-markdown-content table th {
-    border-color: rgba(255, 255, 255, 0.1);
+    @apply border-white/10;
   }
   .nt-markdown-content table {
-    border-color: rgba(255, 255, 255, 0.1);
+    @apply border-white/10;
   }
 }
