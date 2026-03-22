@@ -1,0 +1,53 @@
+---
+const GITHUB_URL = "https://github.com/mosugi/notro-tail";
+
+interface Props {
+  title?: string;
+  description?: string;
+  primaryHref?: string;
+  primaryLabel?: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
+}
+
+const {
+  title = "今すぐ始める",
+  description = "このリポジトリをテンプレートにして、Notion で書き、Astro でデプロイ。",
+  primaryHref = GITHUB_URL,
+  primaryLabel = "GitHub で使い方を見る →",
+  secondaryHref = "/blog/",
+  secondaryLabel = "デモブログを見る",
+} = Astro.props;
+---
+
+<section class="py-16">
+  <div class="text-center py-14 px-6 bg-[rgba(35,131,226,0.04)] border border-[rgba(35,131,226,0.12)] rounded-[10px] dark:bg-blue-400/6 dark:border-blue-400/15">
+    <p class="text-2xl font-bold tracking-tight text-[#37352f] mb-2 dark:text-slate-200">{title}</p>
+    <p class="text-[0.9375rem] text-[rgba(55,53,47,0.6)] mb-7 dark:text-slate-300/60">{description}</p>
+    <div class="flex flex-wrap justify-center gap-3 mb-6">
+      <a
+        href={primaryHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-1.5 bg-[#2383e2] text-white text-sm font-medium px-5 py-2.5 rounded-[5px] no-underline transition-opacity hover:opacity-85 dark:bg-blue-500"
+      >
+        {primaryLabel}
+      </a>
+      <a
+        href={secondaryHref}
+        class="inline-flex items-center gap-1.5 text-[#37352f] text-sm font-medium px-5 py-2.5 rounded-[5px] border border-[rgba(55,53,47,0.18)] bg-white no-underline transition-[background,border-color] hover:bg-[rgba(55,53,47,0.03)] hover:border-[rgba(55,53,47,0.3)] dark:text-slate-200 dark:border-white/15 dark:bg-slate-800 dark:hover:bg-white/6 dark:hover:border-white/25"
+      >
+        {secondaryLabel}
+      </a>
+    </div>
+    <!-- Deploy badges -->
+    <div class="flex flex-wrap justify-center items-center gap-3">
+      <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail" target="_blank" rel="noopener noreferrer">
+        <img src="https://vercel.com/button" alt="Deploy with Vercel" class="h-8 w-auto" />
+      </a>
+      <a href="https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer">
+        <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" class="h-8 w-auto" />
+      </a>
+    </div>
+  </div>
+</section>

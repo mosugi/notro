@@ -1,5 +1,9 @@
 ---
 import GitHubIcon from "./GitHubIcon.astro";
+import { SITE_NAME, SITE_DESCRIPTION, FOOTER_LINKS } from "../config";
+
+const GITHUB_URL = "https://github.com/mosugi/notro-tail";
+const NPM_URL = "https://www.npmjs.com/package/notro";
 ---
 
 <footer class="border-t border-[rgba(55,53,47,0.09)] mt-16 dark:bg-slate-800 dark:border-white/8">
@@ -9,50 +13,41 @@ import GitHubIcon from "./GitHubIcon.astro";
 
         <!-- Brand -->
         <div>
-          <a href="/" class="text-[0.9375rem] font-bold tracking-[-0.02em] text-[#37352f] no-underline inline-block mb-2.5 transition-opacity hover:opacity-70 dark:text-slate-200">NotroTail</a>
+          <a href="/" class="text-[0.9375rem] font-bold tracking-[-0.02em] text-[#37352f] no-underline inline-block mb-2.5 transition-opacity hover:opacity-70 dark:text-slate-200">{SITE_NAME}</a>
           <p class="text-[0.8125rem] leading-[1.65] text-[rgba(55,53,47,0.45)] max-w-[240px] dark:text-slate-400">
-            Notion を CMS として使う<br />Astro 静的サイトジェネレーター。
+            {SITE_DESCRIPTION}
           </p>
         </div>
 
-        <!-- Explore -->
-        <div>
-          <p class="text-[0.6875rem] font-semibold tracking-[0.08em] uppercase text-[rgba(55,53,47,0.4)] mb-3.5 dark:text-slate-500">コンテンツ</p>
-          <div class="flex flex-col gap-2">
-            <a href="/blog/" class="text-sm text-[rgba(55,53,47,0.55)] no-underline transition-colors hover:text-[#37352f] dark:text-slate-400 dark:hover:text-slate-200">ブログ</a>
-            <a href="/blog/about/" class="text-sm text-[rgba(55,53,47,0.55)] no-underline transition-colors hover:text-[#37352f] dark:text-slate-400 dark:hover:text-slate-200">About</a>
+        <!-- Footer link groups from config -->
+        {FOOTER_LINKS.map(({ heading, links }) => (
+          <div>
+            <p class="text-[0.6875rem] font-semibold tracking-[0.08em] uppercase text-[rgba(55,53,47,0.4)] mb-3.5 dark:text-slate-500">{heading}</p>
+            <div class="flex flex-col gap-2">
+              {links.map(({ href, label, external }) => (
+                <a
+                  href={href}
+                  target={external ? "_blank" : undefined}
+                  rel={external ? "noopener noreferrer" : undefined}
+                  class="text-sm text-[rgba(55,53,47,0.55)] no-underline transition-colors hover:text-[#37352f] dark:text-slate-400 dark:hover:text-slate-200"
+                >{label}</a>
+              ))}
+            </div>
           </div>
-        </div>
-
-        <!-- Docs -->
-        <div>
-          <p class="text-[0.6875rem] font-semibold tracking-[0.08em] uppercase text-[rgba(55,53,47,0.4)] mb-3.5 dark:text-slate-500">ドキュメント</p>
-          <div class="flex flex-col gap-2">
-            <a href="/docs/" class="text-sm text-[rgba(55,53,47,0.55)] no-underline transition-colors hover:text-[#37352f] dark:text-slate-400 dark:hover:text-slate-200">Docs</a>
-            <a href="https://www.npmjs.com/package/notro" target="_blank" rel="noopener noreferrer" class="text-sm text-[rgba(55,53,47,0.55)] no-underline transition-colors hover:text-[#37352f] dark:text-slate-400 dark:hover:text-slate-200">npm</a>
-          </div>
-        </div>
-
-        <!-- Legal -->
-        <div>
-          <p class="text-[0.6875rem] font-semibold tracking-[0.08em] uppercase text-[rgba(55,53,47,0.4)] mb-3.5 dark:text-slate-500">法的情報</p>
-          <div class="flex flex-col gap-2">
-            <a href="/blog/privacy/" class="text-sm text-[rgba(55,53,47,0.55)] no-underline transition-colors hover:text-[#37352f] dark:text-slate-400 dark:hover:text-slate-200">プライバシーポリシー</a>
-          </div>
-        </div>
+        ))}
 
       </div>
 
       <!-- Bottom bar -->
       <div class="border-t border-[rgba(55,53,47,0.07)] py-5 flex items-center justify-between gap-4 flex-wrap dark:border-white/8">
-        <span class="text-[0.8125rem] text-[rgba(55,53,47,0.35)] dark:text-slate-600">&copy; {new Date().getFullYear()} NotroTail</span>
+        <span class="text-[0.8125rem] text-[rgba(55,53,47,0.35)] dark:text-slate-600">&copy; {new Date().getFullYear()} {SITE_NAME}</span>
         <div class="flex items-center gap-3">
           <!-- GitHub -->
-          <a href="https://github.com/mosugi/notro-tail" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="flex items-center text-[rgba(55,53,47,0.35)] transition-colors hover:text-[#37352f] dark:text-slate-600 dark:hover:text-slate-300">
+          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="flex items-center text-[rgba(55,53,47,0.35)] transition-colors hover:text-[#37352f] dark:text-slate-600 dark:hover:text-slate-300">
             <GitHubIcon width={18} height={18} />
           </a>
           <!-- npm -->
-          <a href="https://www.npmjs.com/package/notro" target="_blank" rel="noopener noreferrer" aria-label="npm" class="flex items-center text-[rgba(55,53,47,0.35)] transition-colors hover:text-[#37352f] dark:text-slate-600 dark:hover:text-slate-300">
+          <a href={NPM_URL} target="_blank" rel="noopener noreferrer" aria-label="npm" class="flex items-center text-[rgba(55,53,47,0.35)] transition-colors hover:text-[#37352f] dark:text-slate-600 dark:hover:text-slate-300">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331z"/>
             </svg>

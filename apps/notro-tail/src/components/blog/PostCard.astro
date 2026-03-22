@@ -1,0 +1,50 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getPlainText, getMultiSelect, OptimizedDatabaseCover } from "notro";
+import { INTERNAL_TAGS } from "../../config";
+
+interface Props {
+  data: CollectionEntry<"posts">["data"];
+}
+
+const { data } = Astro.props;
+
+const slug = getPlainText(data.properties.Slug) || data.id;
+const title = getPlainText(data.properties.Name);
+const description = getPlainText(data.properties.Description);
+const date = data.properties.Date?.type === "date" ? data.properties.Date.date?.start : undefined;
+const tags = getMultiSelect(data.properties.Tags).filter(
+  (t) => !INTERNAL_TAGS.includes(t.name),
+);
+---
+
+<a
+  href={`/blog/${slug}/`}
+  class="group block h-full rounded-md border border-[rgba(55,53,47,0.09)] bg-white overflow-hidden transition-[box-shadow,border-color] no-underline text-inherit hover:border-[rgba(55,53,47,0.18)] hover:shadow-[rgba(15,15,15,0.06)_0px_2px_8px] dark:bg-slate-800 dark:border-white/8 dark:hover:border-white/15"
+>
+  <OptimizedDatabaseCover
+    cover={data.cover}
+    alt={title}
+    class="[&_img]:h-40 [&_img]:w-full [&_img]:object-cover"
+  />
+  <div class="p-4">
+    {date && (
+      <time datetime={date} class="block mb-1 text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500">
+        {date}
+      </time>
+    )}
+    <p class="text-[0.9375rem] font-semibold text-[#37352f] line-clamp-2 leading-snug transition-colors group-hover:text-[#2383e2] dark:text-slate-200 dark:group-hover:text-blue-400">{title}</p>
+    {description && (
+      <p class="text-[0.8125rem] text-[rgba(55,53,47,0.65)] line-clamp-2 leading-relaxed mt-1 dark:text-slate-400">
+        {description}
+      </p>
+    )}
+    {tags.length > 0 && (
+      <div class="mt-3 flex flex-wrap gap-1">
+        {tags.map((tag) => (
+          <span class="text-[0.6875rem] bg-[rgba(55,53,47,0.06)] text-[rgba(55,53,47,0.65)] rounded-[3px] px-1.5 py-0.5 dark:bg-white/6 dark:text-slate-400">{tag.name}</span>
+        ))}
+      </div>
+    )}
+  </div>
+</a>
