@@ -4,6 +4,7 @@ import { getCollection } from "astro:content";
 import { NotionMarkdownRenderer, buildLinkToPages, getPlainText, getMultiSelect, hasTag } from "notro";
 import Layout from "../../layouts/Layout.astro";
 import Callout from "../../components/notion/Callout.astro";
+import { INTERNAL_TAGS } from "../../lib/constants";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -55,8 +56,7 @@ const description = getPlainText(entry.data.properties.Description);
 const date = entry.data.properties.Date.date?.start;
 const markdown = entry.data.markdown;
 
-// "page" = embedded fixed page (no article header); "pinned" = internal marker
-const INTERNAL_TAGS = ["page", "pinned"];
+// "page" = embedded fixed page (no article header)
 const isEmbeddedPage = hasTag(entry.data.properties.Tags, "page");
 const tags = getMultiSelect(entry.data.properties.Tags).filter(
   (t) => !INTERNAL_TAGS.includes(t.name),

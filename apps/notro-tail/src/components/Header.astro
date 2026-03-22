@@ -1,10 +1,11 @@
 ---
 import GitHubIcon from "./GitHubIcon.astro";
+import { isActive } from "../lib/nav";
 
 const pathname = Astro.url.pathname;
 
-// A link is "active" when the current pathname matches or starts with its href.
-const isActive = (href: string) => pathname === href || pathname.startsWith(href);
+// Wrap isActive to bind the current pathname
+const active = (href: string) => isActive(pathname, href);
 ---
 
 <!-- Skip navigation link for keyboard and screen reader users -->
@@ -25,11 +26,11 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
             href="/blog/"
             class:list={[
               "relative text-sm no-underline px-2.5 py-1.5 rounded-md transition-[color,background]",
-              isActive("/blog/")
+              active("/blog/")
                 ? "text-[#37352f] font-medium after:content-[''] after:absolute after:bottom-[-1px] after:left-2.5 after:right-2.5 after:h-0.5 after:bg-[#2383e2] after:rounded-t-sm dark:text-slate-200 dark:after:bg-blue-400"
                 : "text-[rgba(55,53,47,0.6)] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.05)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5",
             ]}
-            aria-current={isActive("/blog/") ? "page" : undefined}
+            aria-current={active("/blog/") ? "page" : undefined}
           >ブログ</a>
         </li>
         <li>
@@ -37,11 +38,11 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
             href="/docs/"
             class:list={[
               "relative text-sm no-underline px-2.5 py-1.5 rounded-md transition-[color,background]",
-              isActive("/docs/")
+              active("/docs/")
                 ? "text-[#37352f] font-medium after:content-[''] after:absolute after:bottom-[-1px] after:left-2.5 after:right-2.5 after:h-0.5 after:bg-[#2383e2] after:rounded-t-sm dark:text-slate-200 dark:after:bg-blue-400"
                 : "text-[rgba(55,53,47,0.6)] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.05)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5",
             ]}
-            aria-current={isActive("/docs/") ? "page" : undefined}
+            aria-current={active("/docs/") ? "page" : undefined}
           >Docs</a>
         </li>
       </ul>
@@ -93,21 +94,21 @@ const isActive = (href: string) => pathname === href || pathname.startsWith(href
         href="/blog/"
         class:list={[
           "flex items-center gap-2 text-[0.9375rem] no-underline px-4 py-2.5 transition-[color,background]",
-          isActive("/blog/")
+          active("/blog/")
             ? "text-[#37352f] font-medium dark:text-slate-200"
             : "text-[rgba(55,53,47,0.65)] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.04)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/4",
         ]}
-        aria-current={isActive("/blog/") ? "page" : undefined}
+        aria-current={active("/blog/") ? "page" : undefined}
       >ブログ</a>
       <a
         href="/docs/"
         class:list={[
           "flex items-center gap-2 text-[0.9375rem] no-underline px-4 py-2.5 transition-[color,background]",
-          isActive("/docs/")
+          active("/docs/")
             ? "text-[#37352f] font-medium dark:text-slate-200"
             : "text-[rgba(55,53,47,0.65)] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.04)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/4",
         ]}
-        aria-current={isActive("/docs/") ? "page" : undefined}
+        aria-current={active("/docs/") ? "page" : undefined}
       >Docs</a>
       <a
         href="https://github.com/mosugi/notro-tail"

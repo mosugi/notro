@@ -4,6 +4,7 @@ import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import SeoHead from "../components/SeoHead.astro";
+import { isActive } from "../lib/nav";
 
 interface NavItem {
   label: string;
@@ -55,12 +56,8 @@ const navGroups: NavGroup[] = [
   },
 ];
 
-// Normalize trailing slash for comparison
-const normalizedPath = pathname.endsWith("/") ? pathname : pathname + "/";
-const isActive = (href: string) => {
-  const normalizedHref = href.endsWith("/") ? href : href + "/";
-  return normalizedPath === normalizedHref;
-};
+// Bind isActive to the current pathname
+const active = (href: string) => isActive(pathname, href);
 ---
 
 <!doctype html>
@@ -103,11 +100,11 @@ const isActive = (href: string) => {
                       href={item.href}
                       class:list={[
                         "block rounded-[5px] px-2 py-1 text-sm no-underline transition-[color,background]",
-                        isActive(item.href)
+                        active(item.href)
                           ? "font-medium text-[#2383e2] dark:text-blue-400"
                           : "text-[rgba(55,53,47,0.7)] hover:text-[#37352f] dark:text-slate-400 dark:hover:text-slate-200",
                       ]}
-                      aria-current={isActive(item.href) ? "page" : undefined}
+                      aria-current={active(item.href) ? "page" : undefined}
                     >
                       {item.label}
                     </a>
@@ -137,11 +134,11 @@ const isActive = (href: string) => {
                         href={item.href}
                         class:list={[
                           "block rounded-[5px] px-2.5 py-1.5 text-sm no-underline transition-[color,background]",
-                          isActive(item.href)
+                          active(item.href)
                             ? "bg-[rgba(35,131,226,0.08)] font-medium text-[#2383e2] dark:bg-blue-950 dark:text-blue-400"
                             : "text-[rgba(55,53,47,0.7)] hover:bg-[rgba(55,53,47,0.05)] hover:text-[#37352f] dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-200",
                         ]}
-                        aria-current={isActive(item.href) ? "page" : undefined}
+                        aria-current={active(item.href) ? "page" : undefined}
                       >
                         {item.label}
                       </a>
