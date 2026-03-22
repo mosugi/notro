@@ -2,7 +2,7 @@ import rss from "@astrojs/rss";
 import type { APIContext } from "astro";
 import { getCollection } from "astro:content";
 import { getPlainText, hasTag } from "notro";
-import { SITE_NAME, SITE_DESCRIPTION } from "../config";
+import config from "../config";
 
 export async function GET(context: APIContext) {
   const posts = await getCollection("posts");
@@ -17,8 +17,8 @@ export async function GET(context: APIContext) {
     });
 
   return rss({
-    title: SITE_NAME,
-    description: SITE_DESCRIPTION,
+    title: config.site.name,
+    description: config.site.description,
     site: context.site ?? context.url.origin,
     items: blogPosts.map((entry) => {
       const slug = getPlainText(entry.data.properties.Slug) || entry.id;

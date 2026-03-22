@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
+import partytown from "@astrojs/partytown";
 import tailwindcss from "@tailwindcss/vite";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
 import { notro } from "notro/integration";
@@ -39,7 +40,13 @@ export default defineConfig({
     ],
   },
 
-  integrations: [notro(), sitemap()],
+  integrations: [
+    notro(),
+    sitemap(),
+    // Offloads third-party scripts (Google Analytics) to a web worker via Partytown.
+    // "dataLayer.push" must be forwarded so gtag() calls reach the worker.
+    partytown({ config: { forward: ["dataLayer.push"] } }),
+  ],
 
   vite: {
     plugins: [tailwindcss()],

@@ -1,9 +1,7 @@
 ---
 import GitHubIcon from "./GitHubIcon.astro";
 import { isActive } from "../lib/nav";
-import { SITE_NAME, NAV_LINKS } from "../config";
-
-const GITHUB_URL = "https://github.com/mosugi/notro-tail";
+import config from "../config";
 
 const pathname = Astro.url.pathname;
 
@@ -19,12 +17,12 @@ const active = (href: string) => isActive(pathname, href);
 <header class="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-[rgba(55,53,47,0.07)] dark:bg-slate-800 dark:border-white/8">
   <div class="mx-auto flex h-14 max-w-screen-xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-    <a href="/" class="font-bold text-base tracking-[-0.02em] text-[#37352f] no-underline transition-opacity hover:opacity-70 dark:text-slate-200">{SITE_NAME}</a>
+    <a href="/" class="font-bold text-base tracking-[-0.02em] text-[#37352f] no-underline transition-opacity hover:opacity-70 dark:text-slate-200">{config.site.name}</a>
 
     <!-- Desktop nav -->
     <nav aria-label="メインナビゲーション">
       <ul class="hidden sm:flex items-center gap-1">
-        {NAV_LINKS.map(({ href, label }) => (
+        {config.navigation.nav.map(({ href, label }) => (
           <li>
             <a
               href={href}
@@ -44,7 +42,7 @@ const active = (href: string) => isActive(pathname, href);
     <!-- Desktop GitHub + mobile hamburger -->
     <div class="flex items-center gap-2">
       <a
-        href={GITHUB_URL}
+        href={config.navigation.social.github}
         target="_blank"
         rel="noopener noreferrer"
         class="hidden sm:inline-flex items-center gap-1.5 text-[0.8125rem] font-medium text-[rgba(55,53,47,0.65)] no-underline px-3 py-1.5 border border-[rgba(55,53,47,0.15)] rounded-md transition-[color,border-color,background] hover:text-[#37352f] hover:border-[rgba(55,53,47,0.3)] hover:bg-[rgba(55,53,47,0.03)] dark:text-slate-400 dark:border-white/15 dark:hover:text-slate-200 dark:hover:border-white/30 dark:hover:bg-white/3"
@@ -83,7 +81,7 @@ const active = (href: string) => isActive(pathname, href);
     aria-hidden="true"
   >
     <nav aria-label="モバイルナビゲーション">
-      {NAV_LINKS.map(({ href, label }) => (
+      {config.navigation.nav.map(({ href, label }) => (
         <a
           href={href}
           class:list={[
@@ -96,7 +94,7 @@ const active = (href: string) => isActive(pathname, href);
         >{label}</a>
       ))}
       <a
-        href={GITHUB_URL}
+        href={config.navigation.social.github}
         target="_blank"
         rel="noopener noreferrer"
         class="flex items-center gap-2 text-[0.9375rem] text-[rgba(55,53,47,0.65)] no-underline px-4 py-2.5 transition-colors hover:text-[#37352f] mt-1 border-t border-[rgba(55,53,47,0.07)] dark:text-slate-400 dark:hover:text-slate-200 dark:border-white/8"
