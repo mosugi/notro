@@ -1,4 +1,6 @@
 ---
+import config from "../config";
+
 interface Props {
   title: string;
   description?: string;
@@ -16,7 +18,7 @@ const {
   ogImage = "/og-default.png",
 } = Astro.props;
 
-const rssUrl = new URL("/rss.xml", "https://notrotail.mosugi.com").toString();
+const rssUrl = new URL("/rss.xml", config.site.url).toString();
 ---
 
 <meta charset="UTF-8" />
@@ -24,12 +26,12 @@ const rssUrl = new URL("/rss.xml", "https://notrotail.mosugi.com").toString();
 <meta name="viewport" content="width=device-width" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="sitemap" href="/sitemap-index.xml" />
-<link rel="alternate" type="application/rss+xml" title="NotroTail — RSS フィード" href={rssUrl} />
+<link rel="alternate" type="application/rss+xml" title={`${config.site.name} — RSS フィード`} href={rssUrl} />
 <link rel="canonical" href={canonicalUrl} />
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <meta property="og:type" content={type} />
 <meta property="og:locale" content="ja_JP" />
-<meta property="og:site_name" content="NotroTail" />
+<meta property="og:site_name" content={config.site.name} />
 <meta property="og:title" content={title} />
 {description && <meta property="og:description" content={description} />}
 <meta property="og:url" content={canonicalUrl} />

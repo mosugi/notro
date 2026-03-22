@@ -1,5 +1,7 @@
 ---
 import GitHubIcon from "./GitHubIcon.astro";
+import config from "../config";
+
 // Edit these links for your site footer
 const FOOTER_LINKS: {
   heading: string;
@@ -36,9 +38,9 @@ const NPM_URL = "https://www.npmjs.com/package/notro";
 
         <!-- Brand -->
         <div>
-          <a href="/" class="text-[0.9375rem] font-bold tracking-[-0.02em] text-[#37352f] no-underline inline-block mb-2.5 transition-opacity hover:opacity-70 dark:text-slate-200">NotroTail</a>
+          <a href="/" class="text-[0.9375rem] font-bold tracking-[-0.02em] text-[#37352f] no-underline inline-block mb-2.5 transition-opacity hover:opacity-70 dark:text-slate-200">{config.site.name}</a>
           <p class="text-[0.8125rem] leading-[1.65] text-[rgba(55,53,47,0.45)] max-w-[240px] dark:text-slate-400">
-            Notion を CMS として使う Astro 静的サイトジェネレーター。
+            {config.site.description}
           </p>
         </div>
 
@@ -63,7 +65,7 @@ const NPM_URL = "https://www.npmjs.com/package/notro";
 
       <!-- Bottom bar -->
       <div class="border-t border-[rgba(55,53,47,0.07)] py-5 flex items-center justify-between gap-4 flex-wrap dark:border-white/8">
-        <span class="text-[0.8125rem] text-[rgba(55,53,47,0.35)] dark:text-slate-600">&copy; {new Date().getFullYear()} NotroTail</span>
+        <span class="text-[0.8125rem] text-[rgba(55,53,47,0.35)] dark:text-slate-600">&copy; {new Date().getFullYear()} {config.site.name}</span>
         <div class="flex items-center gap-3">
           <!-- GitHub -->
           <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="flex items-center text-[rgba(55,53,47,0.35)] transition-colors hover:text-[#37352f] dark:text-slate-600 dark:hover:text-slate-300">

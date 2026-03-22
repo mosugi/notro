@@ -1,6 +1,8 @@
 ---
 import GitHubIcon from "./GitHubIcon.astro";
 import { isActive } from "../lib/nav";
+import config from "../config";
+
 // Edit these links for your site navigation
 const NAV_LINKS = [
   { href: "/blog/", label: "ブログ" },
@@ -23,7 +25,7 @@ const active = (href: string) => isActive(pathname, href);
 <header class="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-[rgba(55,53,47,0.07)] dark:bg-slate-800 dark:border-white/8">
   <div class="mx-auto flex h-14 max-w-screen-xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-    <a href="/" class="font-bold text-base tracking-[-0.02em] text-[#37352f] no-underline transition-opacity hover:opacity-70 dark:text-slate-200">NotroTail</a>
+    <a href="/" class="font-bold text-base tracking-[-0.02em] text-[#37352f] no-underline transition-opacity hover:opacity-70 dark:text-slate-200">{config.site.name}</a>
 
     <!-- Desktop nav -->
     <nav aria-label="メインナビゲーション">
