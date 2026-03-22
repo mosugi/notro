@@ -14,6 +14,8 @@
 - インラインスタイル（`style="..."` 属性）は使わない
 - Astro コンポーネント内の `<style>` タグは使わない
 - Notion ブロック固有のスタイルは `global.css` の `nt-*` クラスとして定義する（既存の CSS 規約に従うこと）
+- クライアント側 `<script>` 内でも `element.style.*` でスタイルを直接操作しないこと
+- 表示/非表示の制御は `element.classList.toggle("hidden")` など **クラス操作** で行うこと（`element.style.display` は使わない）
 
 ### ビルド確認・レイアウト確認
 
@@ -67,6 +69,10 @@ npm run preview --workspace=notro-tail
 - Astro ファイル（`.astro`）のフロントマター（`---` ブロック）には **最小限のコードのみ** 記述すること
 - データ取得・変換・ビジネスロジックは `src/lib/` 配下の `.ts` ファイルに関数として切り出すこと
 - 切り出した関数には必ずユニットテストを書くこと（`vitest` を使用）
+- テスト対象の範囲：
+  - `apps/notro-tail/src/lib/` 配下の関数（追加・変更時）
+  - `packages/*/src/utils/` 配下の外部から呼び出される関数
+  - Astro コンポーネント（`.astro`）自体はテスト不要。ロジックを `.ts` に切り出してその関数をテストすること
 
 ```
 // Good
@@ -90,6 +96,12 @@ const posts = allPosts.sort((a, b) => ...複雑なロジック...);
 - 画像は必ず Astro の `<Image />` コンポーネントを使うこと（`<img>` タグを直接使わない）
 - クライアント側 JavaScript は必要最小限にすること（`client:load` より `client:idle` / `client:visible` を優先）
 - ページ単位のデータ取得は `Astro.glob()` や Content Collections API を使うこと
+
+#### `<script>` タグの書き方
+
+- Astro コンポーネント内の `<script>` タグのロジックは最小限にすること
+- `<script>` 内のロジックが複雑な場合は `src/lib/` 配下の `.ts` ファイルに切り出してインポートすること
+- `is:inline` は必要な場合のみ使用すること（通常は Astro がバンドル最適化するため不要）
 
 #### アクセシビリティ
 
