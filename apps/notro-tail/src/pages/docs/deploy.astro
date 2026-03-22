@@ -32,16 +32,11 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
         でリポジトリをインポート
       </li>
       <li>
-        <strong>Root Directory</strong> を
-        <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">apps/notro-tail</code>
-        に設定（重要: モノレポのため必須）
-      </li>
-      <li>
         Environment Variables に以下を追加:
         <pre class="mt-2 bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">NOTION_TOKEN=secret_xxxx
 NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
       </li>
-      <li>「Deploy」をクリック</li>
+      <li>「Deploy」をクリック — ビルド設定は <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">vercel.json</code> が自動で処理</li>
     </ol>
     <div class="mt-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-300">
       <strong>ヒント:</strong> Vercel では「Redeploy」ボタンで手動再ビルドできます。
