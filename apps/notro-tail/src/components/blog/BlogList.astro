@@ -1,9 +1,9 @@
 ---
-import type { PageWithMarkdownType } from "notro";
+import type { CollectionEntry } from "astro:content";
 import PostCard from "./PostCard.astro";
 
 interface Props {
-  posts: PageWithMarkdownType[];
+  posts: CollectionEntry<"posts">["data"][];
 }
 
 const { posts } = Astro.props;

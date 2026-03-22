@@ -1,17 +1,14 @@
-export const prerender = false;
-
 import rss from "@astrojs/rss";
 import type { APIContext } from "astro";
-import { getLiveCollection } from "astro:content";
+import { getCollection } from "astro:content";
 import { getPlainText, hasTag } from "notro";
 import { SITE_NAME, SITE_DESCRIPTION } from "../config";
 
 export async function GET(context: APIContext) {
-  const result = await getLiveCollection("posts");
-  const allPosts = result.entries ?? [];
+  const posts = await getCollection("posts");
 
   // Exclude fixed pages; sort by date descending
-  const blogPosts = allPosts
+  const blogPosts = posts
     .filter((entry) => !hasTag(entry.data.properties.Tags, "page"))
     .sort((a, b) => {
       const dateA = a.data.properties.Date.date?.start ?? "";
