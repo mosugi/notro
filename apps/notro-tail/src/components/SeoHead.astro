@@ -30,7 +30,7 @@ const rssUrl = new URL("/rss.xml", Astro.site ?? Astro.url.origin).toString();
 <link rel="canonical" href={canonicalUrl} />
 <link rel="stylesheet" href="/katex/katex.min.css" />
 <meta property="og:type" content={type} />
-<meta property="og:locale" content="ja_JP" />
+<meta property="og:locale" content={config.site.locale} />
 <meta property="og:site_name" content={config.site.name} />
 <meta property="og:title" content={title} />
 {description && <meta property="og:description" content={description} />}

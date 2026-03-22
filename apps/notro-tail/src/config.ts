@@ -3,6 +3,10 @@ const config = {
   site: {
     name: "NotroTail",
     description: "Notion を CMS として使う Astro 静的サイトジェネレーター。",
+    /** BCP 47 language tag — used in <html lang="..."> */
+    lang: "ja",
+    /** og:locale — typically lang + region, e.g. "ja_JP", "en_US" */
+    locale: "ja_JP",
   },
   blog: {
     postsPerPage: 10,
@@ -43,6 +47,13 @@ const config = {
       github: "https://github.com/mosugi/notro-tail",
       npm: "https://www.npmjs.com/package/notro",
     },
+    // Per-page settings for Notion fixed pages (tagged "page").
+    // Key = Notion page slug. bodyClass is injected into <body> for per-page theming.
+    navPages: {
+      about:   { bodyClass: "page-about" },
+      privacy: { bodyClass: "page-privacy" },
+      contact: { bodyClass: "page-contact" },
+    } as Record<string, { bodyClass?: string }>,
   },
 };
 
