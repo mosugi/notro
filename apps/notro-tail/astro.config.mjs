@@ -7,7 +7,7 @@ import { notro } from "notro/integration";
 // To enable SSR, install the adapter for your platform and uncomment the relevant lines:
 // - Vercel:     npm i @astrojs/vercel     → import vercel from "@astrojs/vercel";
 // - Netlify:    npm i @astrojs/netlify    → import netlify from "@astrojs/netlify";
-// - Cloudflare: npm i @astrojs/cloudflare → import cloudflare from "@astrojs/cloudflare";
+// - Cloudflare Workers: npm i @astrojs/cloudflare → import cloudflare from "@astrojs/cloudflare"; (v13+, Workers only)
 
 // Apply HTTPS proxy for corporate networks or CI environments.
 // Node.js does not honor the system https_proxy env var by default; undici
