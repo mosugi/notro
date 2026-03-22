@@ -25,6 +25,20 @@ export const SITE_DESCRIPTION =
   import.meta.env.PUBLIC_SITE_DESCRIPTION ??
   "Notion を CMS として使う Astro 静的サイトジェネレーター。";
 
+/**
+ * Short tagline used in the top page <title> and hero section.
+ * Appears as: "<SITE_NAME> — <SITE_TAGLINE>"
+ */
+export const SITE_TAGLINE =
+  "Notion を CMS として使う Astro 静的サイトジェネレーター";
+
+/** Text strings for the 404 error page. */
+export const PAGE_NOT_FOUND = {
+  title: "ページが見つかりません",
+  description: "お探しのページは存在しないか、移動した可能性があります。",
+  backToHome: "トップページへ戻る",
+};
+
 // ---------------------------------------------------------------------------
 // Social links
 // ---------------------------------------------------------------------------
