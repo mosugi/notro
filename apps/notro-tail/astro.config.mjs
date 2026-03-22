@@ -4,6 +4,11 @@ import tailwindcss from "@tailwindcss/vite";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
 import { notro } from "notro/integration";
 
+// To enable SSR, install the adapter for your platform and uncomment the relevant lines:
+// - Vercel:     npm i @astrojs/vercel     → import vercel from "@astrojs/vercel";
+// - Netlify:    npm i @astrojs/netlify    → import netlify from "@astrojs/netlify";
+// - Cloudflare: npm i @astrojs/cloudflare → import cloudflare from "@astrojs/cloudflare";
+
 // Apply HTTPS proxy for corporate networks or CI environments.
 // Node.js does not honor the system https_proxy env var by default; undici
 // (the HTTP client used by @notionhq/client under the hood) requires explicit
@@ -19,9 +24,8 @@ if (httpsProxy) {
 export default defineConfig({
   site: "https://notrotail.mosugi.com",
 
-  redirects: {
-    "/contact/": "/docs/",
-  },
+  // output: "server",   // Uncomment to enable SSR
+  // adapter: vercel(),  // Match your platform (vercel / netlify / cloudflare)
 
   image: {
     service: notionImageServiceConfig(),

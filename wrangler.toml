@@ -1,0 +1,7 @@
+name = "notro-tail"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "apps/notro-tail/dist"
+
+# Environment variables (set via Cloudflare Pages dashboard instead of here)
+# NOTION_TOKEN and NOTION_DATASOURCE_ID must be set as environment variables
+# in the Cloudflare Pages project settings.
