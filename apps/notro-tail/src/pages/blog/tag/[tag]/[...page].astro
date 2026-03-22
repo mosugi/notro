@@ -5,7 +5,7 @@ import { getMultiSelect, hasTag } from "notro";
 import BlogList from "../../../../components/blog/BlogList.astro";
 import Layout from "../../../../layouts/Layout.astro";
 import Pagination from "../../../../components/blog/Pagination.astro";
-import { INTERNAL_TAGS, BLOG_POSTS_PER_PAGE, SITE_NAME } from "../../../../config";
+import { INTERNAL_TAGS, BLOG_POSTS_PER_PAGE, SITE_NAME, UI_TEXT } from "../../../../config";
 
 export async function getStaticPaths({
   paginate,
@@ -40,13 +40,13 @@ const { tag } = Astro.params;
 const data = page.data.map(({ data }) => data);
 ---
 
-<Layout title={`タグ: ${tag} — ${SITE_NAME}`} description={`「${tag}」タグの記事一覧`}>
+<Layout title={`${UI_TEXT.tagPageTitle(tag)} — ${SITE_NAME}`} description={UI_TEXT.tagPageDescription(tag)}>
   <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8">
     <div class="mb-8">
       <a href="/blog/" class="mb-3 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-900">
-        ← ブログ一覧
+        {UI_TEXT.tagPageBackLink}
       </a>
-      <h1 class="text-3xl font-bold text-gray-900">タグ: {tag}</h1>
+      <h1 class="text-3xl font-bold text-gray-900">{UI_TEXT.tagPageTitle(tag)}</h1>
     </div>
     <BlogList posts={data} />
     <Pagination

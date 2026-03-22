@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import PostCard from "./PostCard.astro";
+import { UI_TEXT } from "../../config";
 
 interface Props {
   posts: CollectionEntry<"posts">["data"][];
@@ -19,6 +20,6 @@ const { posts } = Astro.props;
       ))}
     </ul>
   ) : (
-    <p class="text-center text-sm text-gray-500 py-12">記事はまだありません。</p>
+    <p class="text-center text-sm text-gray-500 py-12">{UI_TEXT.blogEmptyState}</p>
   )
 }

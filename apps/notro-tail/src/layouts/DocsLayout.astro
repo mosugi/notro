@@ -5,16 +5,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import SeoHead from "../components/SeoHead.astro";
 import { isActive } from "../lib/nav";
-
-interface NavItem {
-  label: string;
-  href: string;
-}
-
-interface NavGroup {
-  title: string;
-  items: NavItem[];
-}
+import { DOCS_NAV, UI_TEXT } from "../config";
 
 interface Props {
   title: string;
@@ -26,36 +17,6 @@ interface Props {
 const { title, description, heading } = Astro.props;
 const pathname = Astro.url.pathname;
 const canonicalUrl = new URL(pathname, Astro.site ?? Astro.url.origin).toString();
-
-const navGroups: NavGroup[] = [
-  {
-    title: "はじめに",
-    items: [
-      { label: "概要・クイックスタート", href: "/docs/" },
-    ],
-  },
-  {
-    title: "セットアップ",
-    items: [
-      { label: "Notion セットアップ", href: "/docs/notion-setup/" },
-      { label: "カスタマイズ", href: "/docs/customization/" },
-      { label: "デプロイガイド", href: "/docs/deploy/" },
-    ],
-  },
-  {
-    title: "リファレンス",
-    items: [
-      { label: "API リファレンス", href: "/docs/api-reference/" },
-      { label: "アーキテクチャ", href: "/docs/architecture/" },
-    ],
-  },
-  {
-    title: "レンダリング検証",
-    items: [
-      { label: "ブロックタイプ一覧", href: "/docs/rendering/" },
-    ],
-  },
-];
 
 // Bind isActive to the current pathname
 const active = (href: string) => isActive(pathname, href);
@@ -83,13 +44,13 @@ const active = (href: string) => isActive(pathname, href);
             <line x1="3" y1="12" x2="21" y2="12"/>
             <line x1="3" y1="18" x2="21" y2="18"/>
           </svg>
-          ドキュメントメニュー
+          {UI_TEXT.docsMenuButton}
         </button>
         <div
           id="docs-sidebar-mobile"
           class="hidden mt-3 mb-4 rounded-lg border border-[rgba(55,53,47,0.09)] p-4 dark:border-white/8"
         >
-          {navGroups.map((group) => (
+          {DOCS_NAV.map((group) => (
             <div class="mb-4 last:mb-0">
               <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-[rgba(55,53,47,0.45)] dark:text-slate-500">
                 {group.title}
@@ -123,7 +84,7 @@ const active = (href: string) => isActive(pathname, href);
         <!-- Desktop sidebar (hidden on mobile) -->
         <aside class="hidden lg:block w-56 shrink-0">
           <nav class="sticky top-20" aria-label="ドキュメントナビゲーション">
-            {navGroups.map((group) => (
+            {DOCS_NAV.map((group) => (
               <div class="mb-6">
                 <p class="mb-1.5 text-xs font-semibold uppercase tracking-wider text-[rgba(55,53,47,0.45)] dark:text-slate-500">
                   {group.title}

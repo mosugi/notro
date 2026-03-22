@@ -1,9 +1,7 @@
 ---
 import GitHubIcon from "./GitHubIcon.astro";
 import { isActive } from "../lib/nav";
-import { SITE_NAME, NAV_LINKS } from "../config";
-
-const GITHUB_URL = "https://github.com/mosugi/notro-tail";
+import { SITE_NAME, NAV_LINKS, GITHUB_URL, UI_TEXT } from "../config";
 
 const pathname = Astro.url.pathname;
 
@@ -13,7 +11,7 @@ const active = (href: string) => isActive(pathname, href);
 
 <!-- Skip navigation link for keyboard and screen reader users -->
 <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:rounded">
-  コンテンツへスキップ
+  {UI_TEXT.skipToContent}
 </a>
 
 <header class="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-[rgba(55,53,47,0.07)] dark:bg-slate-800 dark:border-white/8">
@@ -22,7 +20,7 @@ const active = (href: string) => isActive(pathname, href);
     <a href="/" class="font-bold text-base tracking-[-0.02em] text-[#37352f] no-underline transition-opacity hover:opacity-70 dark:text-slate-200">{SITE_NAME}</a>
 
     <!-- Desktop nav -->
-    <nav aria-label="メインナビゲーション">
+    <nav aria-label={UI_TEXT.mainNav}>
       <ul class="hidden sm:flex items-center gap-1">
         {NAV_LINKS.map(({ href, label }) => (
           <li>
@@ -57,7 +55,7 @@ const active = (href: string) => isActive(pathname, href);
       <button
         id="menu-toggle"
         class="flex sm:hidden items-center justify-center w-8 h-8 text-[rgba(55,53,47,0.6)] bg-transparent border-0 cursor-pointer p-0 rounded-[4px] transition-[color,background] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.05)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5"
-        aria-label="メニューを開く"
+        aria-label={UI_TEXT.openMenu}
         aria-expanded="false"
         aria-controls="mobile-menu"
       >
@@ -82,7 +80,7 @@ const active = (href: string) => isActive(pathname, href);
     class="hidden border-t border-[rgba(55,53,47,0.07)] bg-white/97 py-3 pb-4 dark:bg-slate-800 dark:border-white/8"
     aria-hidden="true"
   >
-    <nav aria-label="モバイルナビゲーション">
+    <nav aria-label={UI_TEXT.mobileNav}>
       {NAV_LINKS.map(({ href, label }) => (
         <a
           href={href}

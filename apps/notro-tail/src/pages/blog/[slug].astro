@@ -4,7 +4,7 @@ import { getCollection } from "astro:content";
 import { NotionMarkdownRenderer, buildLinkToPages, getPlainText, getMultiSelect, hasTag } from "notro";
 import Layout from "../../layouts/Layout.astro";
 import Callout from "../../components/notion/Callout.astro";
-import { INTERNAL_TAGS, SITE_NAME } from "../../config";
+import { INTERNAL_TAGS, SITE_NAME, UI_TEXT } from "../../config";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -132,7 +132,7 @@ const tags = getMultiSelect(entry.data.properties.Tags).filter(
 
       {entry.data.truncated && (
         <div class="mt-8 rounded-md border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-400">
-          このページのコンテンツは Notion API の制限により一部省略されています。
+          {UI_TEXT.blogPostTruncated}
         </div>
       )}
 
@@ -145,7 +145,7 @@ const tags = getMultiSelect(entry.data.properties.Tags).filter(
                 href={`/blog/${prevNav.slug}/`}
                 class="flex h-full flex-col gap-1 rounded-md p-4 border border-[rgba(55,53,47,0.09)] no-underline text-inherit transition-colors hover:bg-[rgba(55,53,47,0.03)] dark:border-white/8 dark:hover:bg-white/3"
               >
-                <span class="text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500">← 新しい記事</span>
+                <span class="text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500">{UI_TEXT.blogPostNewer}</span>
                 <span class="font-medium line-clamp-2 text-[#37352f] dark:text-slate-200">{prevNav.title}</span>
               </a>
             )}
@@ -157,7 +157,7 @@ const tags = getMultiSelect(entry.data.properties.Tags).filter(
                 href={`/blog/${nextNav.slug}/`}
                 class="flex h-full flex-col items-end gap-1 rounded-md p-4 text-right border border-[rgba(55,53,47,0.09)] no-underline text-inherit transition-colors hover:bg-[rgba(55,53,47,0.03)] dark:border-white/8 dark:hover:bg-white/3"
               >
-                <span class="text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500">古い記事 →</span>
+                <span class="text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500">{UI_TEXT.blogPostOlder}</span>
                 <span class="font-medium line-clamp-2 text-[#37352f] dark:text-slate-200">{nextNav.title}</span>
               </a>
             )}
