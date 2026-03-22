@@ -145,7 +145,9 @@ NotroTail uses Astro's static output mode — no SSR adapter required. Config fi
 
 ### Cloudflare Pages
 
-1. Go to **Workers & Pages → Create → Pages → Connect to Git** in the [Cloudflare dashboard](https://dash.cloudflare.com)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/mosugi/notro-tail)
+
+1. Click the button above, or go to **Workers & Pages → Create → Pages → Connect to Git** in the [Cloudflare dashboard](https://dash.cloudflare.com)
 2. Select the repository and enter the following build settings:
    ```
    Build command:    npm run build
