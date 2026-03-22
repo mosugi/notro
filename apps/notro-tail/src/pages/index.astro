@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { SITE_NAME, SITE_DESCRIPTION, SITE_TAGLINE } from "../config";
+import { SITE_NAME, SITE_DESCRIPTION } from "../config";
 import Hero from "../components/widgets/Hero.astro";
 import UseCases from "../components/widgets/UseCases.astro";
 import HowItWorks from "../components/widgets/HowItWorks.astro";
@@ -10,7 +10,7 @@ import CTA from "../components/widgets/CTA.astro";
 ---
 
 <Layout
-  title={`${SITE_NAME} — ${SITE_TAGLINE}`}
+  title={`${SITE_NAME} — Notion を CMS として使う Astro 静的サイトジェネレーター`}
   description={SITE_DESCRIPTION}
 >
   <main id="main-content" class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
