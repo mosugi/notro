@@ -1,6 +1,31 @@
 ---
 import GitHubIcon from "./GitHubIcon.astro";
-import { SITE_NAME, SITE_DESCRIPTION, FOOTER_LINKS } from "../config";
+import { SITE_NAME, SITE_DESCRIPTION } from "../config";
+
+// Edit these links for your site footer
+const FOOTER_LINKS: {
+  heading: string;
+  links: { href: string; label: string; external?: boolean }[];
+}[] = [
+  {
+    heading: "コンテンツ",
+    links: [
+      { href: "/blog/", label: "ブログ" },
+      { href: "/blog/about/", label: "About" },
+    ],
+  },
+  {
+    heading: "ドキュメント",
+    links: [
+      { href: "/docs/", label: "Docs" },
+      { href: "https://www.npmjs.com/package/notro", label: "npm", external: true },
+    ],
+  },
+  {
+    heading: "法的情報",
+    links: [{ href: "/blog/privacy/", label: "プライバシーポリシー" }],
+  },
+];
 
 const GITHUB_URL = "https://github.com/mosugi/notro-tail";
 const NPM_URL = "https://www.npmjs.com/package/notro";
