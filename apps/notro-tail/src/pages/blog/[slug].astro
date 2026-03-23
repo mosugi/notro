@@ -99,6 +99,7 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
       <NotionMarkdownRenderer
         markdown={markdown}
         linkToPages={linkToPages}
+        class="nt-markdown-content"
       />
 
       {entry.data.truncated && (

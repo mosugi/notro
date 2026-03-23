@@ -37,6 +37,6 @@ const Content = await compileMdxCached(markdown, { linkToPages });
 const mergedComponents = resolveComponents(notionComponents, classMap, customComponents);
 ---
 
-<div class:list={["nt-markdown-content", className]}>
+<div class:list={[className]}>
   <Content components={mergedComponents} />
 </div>
