@@ -8,7 +8,7 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
   description="サイト設定・コンポーネント差し替え・スタイル調整など、NotroTail のカスタマイズ方法を解説します。"
   heading="カスタマイズ"
 >
-  <p class="mb-8 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+  <p class="mb-8 nt-text-65 dark:text-slate-400 leading-7">
     NotroTail は <strong>Astro ファイルを直接編集する</strong>テンプレートです。
     サイト名・ナビゲーション・フッターは各コンポーネントに直書きされているので、該当箇所を編集するだけです。
     さらにコンポーネントを差し替えたり、スタイルをカスタマイズしたりすることも可能です。
@@ -16,15 +16,15 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
   <!-- 1: config.ts -->
   <section class="mb-12" id="config">
-    <h2 class="mb-4 text-xl font-semibold text-[#37352f] dark:text-slate-100">1. サイト設定（config.ts）</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <h2 class="mb-4 text-xl font-semibold nt-text dark:text-slate-100">1. サイト設定（config.ts）</h2>
+    <p class="mb-4 nt-text-75 dark:text-slate-300 leading-7">
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">src/config.ts</code>
       にはブログのページネーション数とシステムタグのみ定義されています。
       サイト名や説明文は各コンポーネントに直接記述します。
     </p>
 
-    <div class="mb-6 rounded-md border border-[rgba(55,53,47,0.09)] overflow-hidden dark:border-white/8">
-      <div class="bg-[rgba(55,53,47,0.04)] px-4 py-2 text-xs font-mono text-[rgba(55,53,47,0.5)] dark:bg-white/4 dark:text-slate-500">src/config.ts</div>
+    <div class="mb-6 rounded-md border nt-border overflow-hidden dark:border-white/8">
+      <div class="nt-bg-04 px-4 py-2 text-xs font-mono nt-text-50 dark:bg-white/4 dark:text-slate-500">src/config.ts</div>
       <pre class="overflow-x-auto p-4 text-sm font-mono bg-white dark:bg-[#0f172a]"><code>{`// 1ページあたりの記事数
 export const BLOG_POSTS_PER_PAGE = 10;
 
@@ -35,15 +35,15 @@ export const INTERNAL_TAGS = ["page", "pinned"];`}</code></pre>
 
   <!-- 2: astro.config.mjs -->
   <section class="mb-12" id="astro-config">
-    <h2 class="mb-4 text-xl font-semibold text-[#37352f] dark:text-slate-100">2. ビルド設定（astro.config.mjs）</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <h2 class="mb-4 text-xl font-semibold nt-text dark:text-slate-100">2. ビルド設定（astro.config.mjs）</h2>
+    <p class="mb-4 nt-text-75 dark:text-slate-300 leading-7">
       サイトの canonical URL は
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">astro.config.mjs</code>
       の <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">site</code>
       オプションで設定します。<code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">SeoHead.astro</code> 内の <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">SITE_URL</code> と合わせてください。
     </p>
-    <div class="rounded-md border border-[rgba(55,53,47,0.09)] overflow-hidden dark:border-white/8">
-      <div class="bg-[rgba(55,53,47,0.04)] px-4 py-2 text-xs font-mono text-[rgba(55,53,47,0.5)] dark:bg-white/4 dark:text-slate-500">astro.config.mjs（抜粋）</div>
+    <div class="rounded-md border nt-border overflow-hidden dark:border-white/8">
+      <div class="nt-bg-04 px-4 py-2 text-xs font-mono nt-text-50 dark:bg-white/4 dark:text-slate-500">astro.config.mjs（抜粋）</div>
       <pre class="overflow-x-auto p-4 text-sm font-mono bg-white dark:bg-[#0f172a]"><code>{`export default defineConfig({
   site: "https://example.com",
   // ...
@@ -53,14 +53,14 @@ export const INTERNAL_TAGS = ["page", "pinned"];`}</code></pre>
 
   <!-- 3: Widgets -->
   <section class="mb-12" id="widgets">
-    <h2 class="mb-4 text-xl font-semibold text-[#37352f] dark:text-slate-100">3. トップページのカスタマイズ（widgets/）</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <h2 class="mb-4 text-xl font-semibold nt-text dark:text-slate-100">3. トップページのカスタマイズ（widgets/）</h2>
+    <p class="mb-4 nt-text-75 dark:text-slate-300 leading-7">
       トップページ（<code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">src/pages/index.astro</code>）
       は以下の Widget コンポーネントに分割されています。
       不要なセクションは削除し、必要なセクションを追加するだけです。
     </p>
-    <div class="rounded-md border border-[rgba(55,53,47,0.09)] overflow-hidden dark:border-white/8">
-      <div class="bg-[rgba(55,53,47,0.04)] px-4 py-2 text-xs font-mono text-[rgba(55,53,47,0.5)] dark:bg-white/4 dark:text-slate-500">src/pages/index.astro</div>
+    <div class="rounded-md border nt-border overflow-hidden dark:border-white/8">
+      <div class="nt-bg-04 px-4 py-2 text-xs font-mono nt-text-50 dark:bg-white/4 dark:text-slate-500">src/pages/index.astro</div>
       <pre class="overflow-x-auto p-4 text-sm font-mono bg-white dark:bg-[#0f172a]"><code>{`---
 import Hero from "../components/widgets/Hero.astro";
 import Features from "../components/widgets/Features.astro";
@@ -76,7 +76,7 @@ import CTA from "../components/widgets/CTA.astro";
   </main>
 </Layout>`}</code></pre>
     </div>
-    <p class="mt-4 text-sm text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <p class="mt-4 text-sm nt-text-65 dark:text-slate-400 leading-7">
       各 Widget は <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">props</code> でデフォルト値を上書きできます。
       例えば <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">{'<Hero tagline="私のブログへようこそ" />'}</code>
       のように渡すだけでキャッチフレーズを変更できます。
@@ -85,16 +85,16 @@ import CTA from "../components/widgets/CTA.astro";
 
   <!-- 4: Components -->
   <section class="mb-12" id="components">
-    <h2 class="mb-4 text-xl font-semibold text-[#37352f] dark:text-slate-100">4. ブログコンポーネントのカスタマイズ</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <h2 class="mb-4 text-xl font-semibold nt-text dark:text-slate-100">4. ブログコンポーネントのカスタマイズ</h2>
+    <p class="mb-4 nt-text-75 dark:text-slate-300 leading-7">
       ブログ関連のコンポーネントは <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">src/components/blog/</code> にまとめられています。
     </p>
     <div class="overflow-x-auto">
       <table class="w-full text-sm border-collapse">
         <thead>
-          <tr class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4">
-            <th class="px-4 py-2.5 text-left font-semibold text-[#37352f] dark:text-slate-200">ファイル</th>
-            <th class="px-4 py-2.5 text-left font-semibold text-[#37352f] dark:text-slate-200">役割</th>
+          <tr class="nt-bg-04 dark:bg-white/4">
+            <th class="px-4 py-2.5 text-left font-semibold nt-text">ファイル</th>
+            <th class="px-4 py-2.5 text-left font-semibold nt-text">役割</th>
           </tr>
         </thead>
         <tbody>
@@ -104,9 +104,9 @@ import CTA from "../components/widgets/CTA.astro";
             ["blog/Pagination.astro", "前へ / 次へ ページネーション"],
             ["notion/Callout.astro", "Notion コールアウトブロックの表示"],
           ].map(([file, desc]) => (
-            <tr class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-              <td class="px-4 py-2.5 font-mono text-xs text-[rgba(55,53,47,0.75)] dark:text-slate-300">{file}</td>
-              <td class="px-4 py-2.5 text-[rgba(55,53,47,0.75)] dark:text-slate-300">{desc}</td>
+            <tr class="border-t nt-border-06 dark:border-white/6">
+              <td class="px-4 py-2.5 font-mono text-xs nt-text-75 dark:text-slate-300">{file}</td>
+              <td class="px-4 py-2.5 nt-text-75 dark:text-slate-300">{desc}</td>
             </tr>
           ))}
         </tbody>
@@ -116,22 +116,22 @@ import CTA from "../components/widgets/CTA.astro";
 
   <!-- 5: Styles -->
   <section class="mb-12" id="styles">
-    <h2 class="mb-4 text-xl font-semibold text-[#37352f] dark:text-slate-100">5. スタイルのカスタマイズ</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <h2 class="mb-4 text-xl font-semibold nt-text dark:text-slate-100">5. スタイルのカスタマイズ</h2>
+    <p class="mb-4 nt-text-75 dark:text-slate-300 leading-7">
       スタイリングは <strong>TailwindCSS 4 のユーティリティクラスのみ</strong>で行います。
       Notion ブロック固有のスタイルは
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">src/styles/global.css</code>
       の <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">nt-*</code> クラスとして定義されています。
     </p>
 
-    <h3 class="mb-2 text-base font-semibold text-[#37352f] dark:text-slate-200">classMap で記事スタイルを調整する</h3>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <h3 class="mb-2 text-base font-semibold nt-text">classMap で記事スタイルを調整する</h3>
+    <p class="mb-4 text-sm nt-text-65 dark:text-slate-400 leading-7">
       Notion コンポーネントのスタイルは
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NotionMarkdownRenderer</code>
       の <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">classMap</code> prop で上書きできます（コンポーネント自体を差し替えずにスタイルだけ変更できます）。
     </p>
-    <div class="rounded-md border border-[rgba(55,53,47,0.09)] overflow-hidden dark:border-white/8">
-      <div class="bg-[rgba(55,53,47,0.04)] px-4 py-2 text-xs font-mono text-[rgba(55,53,47,0.5)] dark:bg-white/4 dark:text-slate-500">blog/[slug].astro（抜粋）</div>
+    <div class="rounded-md border nt-border overflow-hidden dark:border-white/8">
+      <div class="nt-bg-04 px-4 py-2 text-xs font-mono nt-text-50 dark:bg-white/4 dark:text-slate-500">blog/[slug].astro（抜粋）</div>
       <pre class="overflow-x-auto p-4 text-sm font-mono bg-white dark:bg-[#0f172a]"><code>{`<NotionMarkdownRenderer
   markdown={markdown}
   classMap={{
@@ -143,13 +143,13 @@ import CTA from "../components/widgets/CTA.astro";
 />`}</code></pre>
     </div>
 
-    <h3 class="mt-6 mb-2 text-base font-semibold text-[#37352f] dark:text-slate-200">コンポーネントを完全に差し替える</h3>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <h3 class="mt-6 mb-2 text-base font-semibold nt-text">コンポーネントを完全に差し替える</h3>
+    <p class="mb-4 text-sm nt-text-65 dark:text-slate-400 leading-7">
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">components</code> prop でコンポーネント自体を置き換えることもできます。
       例えばコールアウトのデザインを完全に変えたい場合：
     </p>
-    <div class="rounded-md border border-[rgba(55,53,47,0.09)] overflow-hidden dark:border-white/8">
-      <div class="bg-[rgba(55,53,47,0.04)] px-4 py-2 text-xs font-mono text-[rgba(55,53,47,0.5)] dark:bg-white/4 dark:text-slate-500">blog/[slug].astro（抜粋）</div>
+    <div class="rounded-md border nt-border overflow-hidden dark:border-white/8">
+      <div class="nt-bg-04 px-4 py-2 text-xs font-mono nt-text-50 dark:bg-white/4 dark:text-slate-500">blog/[slug].astro（抜粋）</div>
       <pre class="overflow-x-auto p-4 text-sm font-mono bg-white dark:bg-[#0f172a]"><code>{`import MyCallout from "../../components/MyCallout.astro";
 
 <NotionMarkdownRenderer
@@ -157,7 +157,7 @@ import CTA from "../components/widgets/CTA.astro";
   components={{ callout: MyCallout }}
 />`}</code></pre>
     </div>
-    <p class="mt-3 text-sm text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+    <p class="mt-3 text-sm nt-text-65 dark:text-slate-400">
       利用可能なすべての override キーは
       <a href="/docs/api-reference/#renderer" class="text-[#2383e2] underline underline-offset-2 hover:opacity-70">API リファレンス</a>
       を参照してください。
@@ -166,21 +166,21 @@ import CTA from "../components/widgets/CTA.astro";
 
   <!-- 6: Navigation -->
   <section class="mb-12" id="navigation">
-    <h2 class="mb-4 text-xl font-semibold text-[#37352f] dark:text-slate-100">6. ナビゲーションのカスタマイズ</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <h2 class="mb-4 text-xl font-semibold nt-text dark:text-slate-100">6. ナビゲーションのカスタマイズ</h2>
+    <p class="mb-4 nt-text-75 dark:text-slate-300 leading-7">
       ヘッダーナビは <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">src/components/Header.astro</code>、
       フッターリンクは <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">src/components/Footer.astro</code>
       のフロントマターを直接編集します。
     </p>
-    <div class="rounded-md border border-[rgba(55,53,47,0.09)] overflow-hidden dark:border-white/8">
-      <div class="bg-[rgba(55,53,47,0.04)] px-4 py-2 text-xs font-mono text-[rgba(55,53,47,0.5)] dark:bg-white/4 dark:text-slate-500">src/components/Header.astro（抜粋）</div>
+    <div class="rounded-md border nt-border overflow-hidden dark:border-white/8">
+      <div class="nt-bg-04 px-4 py-2 text-xs font-mono nt-text-50 dark:bg-white/4 dark:text-slate-500">src/components/Header.astro（抜粋）</div>
       <pre class="overflow-x-auto p-4 text-sm font-mono bg-white dark:bg-[#0f172a]"><code>{`const NAV_LINKS = [
   { href: "/blog/", label: "ブログ" },
   { href: "/docs/", label: "Docs" },
   { href: "/about/", label: "About" }, // ← 追加するだけ
 ];`}</code></pre>
     </div>
-    <p class="mt-4 text-sm text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <p class="mt-4 text-sm nt-text-65 dark:text-slate-400 leading-7">
       Notion の固定ページ（<code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">page</code> タグ付き）を
       About や Privacy として使う場合は、Notion 上でその記事の Slug を設定し、
       対応する URL（<code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">/blog/about/</code> など）を

@@ -14,10 +14,10 @@ const active = (href: string) => isActive(pathname, href);
   コンテンツへスキップ
 </a>
 
-<header class="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-[rgba(55,53,47,0.07)] dark:bg-slate-800 dark:border-white/8">
+<header class="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b nt-border-07 dark:bg-slate-800 dark:border-white/8">
   <div class="mx-auto flex h-14 max-w-screen-xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-    <a href="/" class="font-bold text-base tracking-[-0.02em] text-[#37352f] no-underline transition-opacity hover:opacity-70 dark:text-slate-200">{config.site.name}</a>
+    <a href="/" class="font-bold text-base tracking-[-0.02em] nt-text no-underline transition-opacity hover:opacity-70">{config.site.name}</a>
 
     <!-- Desktop nav -->
     <nav aria-label="メインナビゲーション">
@@ -29,8 +29,8 @@ const active = (href: string) => isActive(pathname, href);
               class:list={[
                 "relative text-sm no-underline px-2.5 py-1.5 rounded-md transition-[color,background]",
                 active(href)
-                  ? "text-[#37352f] font-medium after:content-[''] after:absolute after:bottom-[-1px] after:left-2.5 after:right-2.5 after:h-0.5 after:bg-[#2383e2] after:rounded-t-sm dark:text-slate-200 dark:after:bg-blue-400"
-                  : "text-[rgba(55,53,47,0.6)] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.05)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5",
+                  ? "nt-text font-medium after:content-[''] after:absolute after:bottom-[-1px] after:left-2.5 after:right-2.5 after:h-0.5 after:bg-[#2383e2] after:rounded-t-sm dark:text-slate-200 dark:after:bg-blue-400"
+                  : "nt-text-60 hover:nt-text hover:nt-bg-05 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5",
               ]}
               aria-current={active(href) ? "page" : undefined}
             >{label}</a>
@@ -45,7 +45,7 @@ const active = (href: string) => isActive(pathname, href);
         href={config.navigation.social.github}
         target="_blank"
         rel="noopener noreferrer"
-        class="hidden sm:inline-flex items-center gap-1.5 text-[0.8125rem] font-medium text-[rgba(55,53,47,0.65)] no-underline px-3 py-1.5 border border-[rgba(55,53,47,0.15)] rounded-md transition-[color,border-color,background] hover:text-[#37352f] hover:border-[rgba(55,53,47,0.3)] hover:bg-[rgba(55,53,47,0.03)] dark:text-slate-400 dark:border-white/15 dark:hover:text-slate-200 dark:hover:border-white/30 dark:hover:bg-white/3"
+        class="hidden sm:inline-flex items-center gap-1.5 text-[0.8125rem] font-medium nt-text-65 no-underline px-3 py-1.5 border nt-border-15 rounded-md transition-[color,border-color,background] hover:nt-text hover:nt-border-30 hover:nt-bg-03 dark:text-slate-400 dark:border-white/15 dark:hover:text-slate-200 dark:hover:border-white/30 dark:hover:bg-white/3"
         aria-label="GitHub"
       >
         <GitHubIcon />
@@ -54,7 +54,7 @@ const active = (href: string) => isActive(pathname, href);
 
       <button
         id="menu-toggle"
-        class="flex sm:hidden items-center justify-center w-8 h-8 text-[rgba(55,53,47,0.6)] bg-transparent border-0 cursor-pointer p-0 rounded-[4px] transition-[color,background] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.05)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5"
+        class="flex sm:hidden items-center justify-center w-8 h-8 nt-text-60 bg-transparent border-0 cursor-pointer p-0 rounded-[4px] transition-[color,background] hover:nt-text hover:nt-bg-05 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5"
         aria-label="メニューを開く"
         aria-expanded="false"
         aria-controls="mobile-menu"
@@ -77,7 +77,7 @@ const active = (href: string) => isActive(pathname, href);
   <!-- Mobile menu drawer -->
   <div
     id="mobile-menu"
-    class="hidden border-t border-[rgba(55,53,47,0.07)] bg-white/97 py-3 pb-4 dark:bg-slate-800 dark:border-white/8"
+    class="hidden border-t nt-border-07 bg-white/97 py-3 pb-4 dark:bg-slate-800 dark:border-white/8"
     aria-hidden="true"
   >
     <nav aria-label="モバイルナビゲーション">
@@ -87,8 +87,8 @@ const active = (href: string) => isActive(pathname, href);
           class:list={[
             "flex items-center gap-2 text-[0.9375rem] no-underline px-4 py-2.5 transition-[color,background]",
             active(href)
-              ? "text-[#37352f] font-medium dark:text-slate-200"
-              : "text-[rgba(55,53,47,0.65)] hover:text-[#37352f] hover:bg-[rgba(55,53,47,0.04)] dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/4",
+              ? "nt-text font-medium dark:text-slate-200"
+              : "nt-text-65 hover:nt-text hover:nt-bg-04 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/4",
           ]}
           aria-current={active(href) ? "page" : undefined}
         >{label}</a>
@@ -97,7 +97,7 @@ const active = (href: string) => isActive(pathname, href);
         href={config.navigation.social.github}
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center gap-2 text-[0.9375rem] text-[rgba(55,53,47,0.65)] no-underline px-4 py-2.5 transition-colors hover:text-[#37352f] mt-1 border-t border-[rgba(55,53,47,0.07)] dark:text-slate-400 dark:hover:text-slate-200 dark:border-white/8"
+        class="flex items-center gap-2 text-[0.9375rem] nt-text-65 no-underline px-4 py-2.5 transition-colors hover:nt-text mt-1 border-t nt-border-07 dark:text-slate-400 dark:hover:text-slate-200 dark:border-white/8"
       >
         <GitHubIcon />
         GitHub

@@ -51,16 +51,16 @@ const defaultFeatures: Feature[] = [
 const { features = defaultFeatures } = Astro.props;
 ---
 
-<section class="py-16 border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
+<section class="py-16 border-b nt-border">
   <p class="text-xs font-semibold tracking-[0.08em] uppercase text-[#2383e2] mb-3 dark:text-blue-400">機能</p>
-  <h2 class="text-[clamp(1.375rem,2.5vw,1.75rem)] font-bold text-[#37352f] tracking-tight mb-2 dark:text-slate-200">必要なものがすべて揃っている</h2>
-  <p class="text-[0.9375rem] text-[rgba(55,53,47,0.55)] mb-10 dark:text-slate-300/55">Notion をヘッドレス CMS として使うためのフルスタック構成</p>
-  <div class="grid gap-px bg-[rgba(55,53,47,0.09)] border border-[rgba(55,53,47,0.09)] rounded-lg overflow-hidden sm:grid-cols-2 lg:grid-cols-3 dark:bg-white/6 dark:border-white/8">
+  <h2 class="text-[clamp(1.375rem,2.5vw,1.75rem)] font-bold nt-text tracking-tight mb-2">必要なものがすべて揃っている</h2>
+  <p class="text-[0.9375rem] nt-text-55 mb-10 dark:text-slate-300/55">Notion をヘッドレス CMS として使うためのフルスタック構成</p>
+  <div class="grid gap-px nt-bg-09 border nt-border rounded-lg overflow-hidden sm:grid-cols-2 lg:grid-cols-3 dark:bg-white/6">
     {features.map(({ icon, title, description }) => (
       <div class="bg-white p-6 dark:bg-[#0f172a]">
-        <div class="w-8 h-8 rounded-md flex items-center justify-center text-base mb-3 bg-[rgba(55,53,47,0.04)] dark:bg-white/6">{icon}</div>
-        <p class="text-[0.9375rem] font-semibold text-[#37352f] mb-1.5 dark:text-slate-200">{title}</p>
-        <p class="text-[0.8125rem] leading-[1.6] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">{description}</p>
+        <div class="w-8 h-8 rounded-md flex items-center justify-center text-base mb-3 nt-bg-04 dark:bg-white/6">{icon}</div>
+        <p class="text-[0.9375rem] font-semibold nt-text mb-1.5">{title}</p>
+        <p class="text-[0.8125rem] leading-[1.6] nt-text-60 dark:text-slate-300/60">{description}</p>
       </div>
     ))}
   </div>
