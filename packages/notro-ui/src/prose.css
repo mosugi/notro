@@ -173,15 +173,19 @@
   /* ── Callout block ─────────────────────────────────────────────────────── */
 
   .nt-markdown-content [data-callout] {
+    /* Component-level CSS variables — override to customize */
+    --nt-callout-bg:      var(--nt-color-gray-bg);
+    --nt-callout-padding: 1rem;
+    --nt-callout-gap:     0.75rem;
+    --nt-callout-radius:  0.375rem;
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: var(--nt-callout-gap);
     margin-top: 1rem;
     margin-bottom: 1rem;
-    border-radius: 0.375rem;
-    padding: 1rem;
-    /* Default: gray background; overridden by data-color below */
-    background-color: var(--nt-color-gray-bg);
+    border-radius: var(--nt-callout-radius);
+    padding: var(--nt-callout-padding);
+    background-color: var(--nt-callout-bg);
   }
 
   [data-callout-icon] {
@@ -515,13 +519,25 @@
   .nt-markdown-content [data-color="pink"]   { color: var(--nt-color-pink); }
   .nt-markdown-content [data-color="red"]    { color: var(--nt-color-red); }
 
-  .nt-markdown-content [data-color="gray_background"]   { background-color: var(--nt-color-gray-bg); }
-  .nt-markdown-content [data-color="brown_background"]  { background-color: var(--nt-color-brown-bg); }
-  .nt-markdown-content [data-color="orange_background"] { background-color: var(--nt-color-orange-bg); }
-  .nt-markdown-content [data-color="yellow_background"] { background-color: var(--nt-color-yellow-bg); }
-  .nt-markdown-content [data-color="green_background"]  { background-color: var(--nt-color-green-bg); }
-  .nt-markdown-content [data-color="blue_background"]   { background-color: var(--nt-color-blue-bg); }
-  .nt-markdown-content [data-color="purple_background"] { background-color: var(--nt-color-purple-bg); }
-  .nt-markdown-content [data-color="pink_background"]   { background-color: var(--nt-color-pink-bg); }
-  .nt-markdown-content [data-color="red_background"]    { background-color: var(--nt-color-red-bg); }
+  /* [data-callout] uses --nt-callout-bg component variable for color overrides */
+  .nt-markdown-content [data-callout][data-color="gray_background"]   { --nt-callout-bg: var(--nt-color-gray-bg); }
+  .nt-markdown-content [data-callout][data-color="brown_background"]  { --nt-callout-bg: var(--nt-color-brown-bg); }
+  .nt-markdown-content [data-callout][data-color="orange_background"] { --nt-callout-bg: var(--nt-color-orange-bg); }
+  .nt-markdown-content [data-callout][data-color="yellow_background"] { --nt-callout-bg: var(--nt-color-yellow-bg); }
+  .nt-markdown-content [data-callout][data-color="green_background"]  { --nt-callout-bg: var(--nt-color-green-bg); }
+  .nt-markdown-content [data-callout][data-color="blue_background"]   { --nt-callout-bg: var(--nt-color-blue-bg); }
+  .nt-markdown-content [data-callout][data-color="purple_background"] { --nt-callout-bg: var(--nt-color-purple-bg); }
+  .nt-markdown-content [data-callout][data-color="pink_background"]   { --nt-callout-bg: var(--nt-color-pink-bg); }
+  .nt-markdown-content [data-callout][data-color="red_background"]    { --nt-callout-bg: var(--nt-color-red-bg); }
+
+  /* Non-callout background colors (headings, paragraphs, etc.) */
+  .nt-markdown-content :not([data-callout])[data-color="gray_background"]   { background-color: var(--nt-color-gray-bg); }
+  .nt-markdown-content :not([data-callout])[data-color="brown_background"]  { background-color: var(--nt-color-brown-bg); }
+  .nt-markdown-content :not([data-callout])[data-color="orange_background"] { background-color: var(--nt-color-orange-bg); }
+  .nt-markdown-content :not([data-callout])[data-color="yellow_background"] { background-color: var(--nt-color-yellow-bg); }
+  .nt-markdown-content :not([data-callout])[data-color="green_background"]  { background-color: var(--nt-color-green-bg); }
+  .nt-markdown-content :not([data-callout])[data-color="blue_background"]   { background-color: var(--nt-color-blue-bg); }
+  .nt-markdown-content :not([data-callout])[data-color="purple_background"] { background-color: var(--nt-color-purple-bg); }
+  .nt-markdown-content :not([data-callout])[data-color="pink_background"]   { background-color: var(--nt-color-pink-bg); }
+  .nt-markdown-content :not([data-callout])[data-color="red_background"]    { background-color: var(--nt-color-red-bg); }
 }

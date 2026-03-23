@@ -10,13 +10,15 @@
     "url": "git+https://github.com/mosugi/NotroTail.git",
     "directory": "packages/notro-ui"
   },
-  "main": "index.css",
+  "main": "index.js",
   "exports": {
-    ".": "./index.css",
+    ".": { "style": "./index.css", "default": "./index.js" },
+    "./css": "./index.css",
     "./src/*": "./src/*"
   },
   "files": [
     "index.css",
+    "index.js",
     "src/"
   ]
 }
