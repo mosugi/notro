@@ -8,8 +8,10 @@
  * Mapped to MDX `components.details`.
  * Used together with ToggleTitle.astro (components.summary).
  */
+import type { NotionColor } from "./colors.ts";
+
 interface Props {
-	color?: string;
+	color?: NotionColor;
 	class?: string;
 }
 

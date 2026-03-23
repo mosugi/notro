@@ -1,6 +1,7 @@
 ---
 /** <video src="URL" color="Color">Caption</video> */
-interface Props { src: string; color?: string; class?: string; }
+import type { NotionColor } from "./colors.ts";
+interface Props { src: string; color?: NotionColor; class?: string; }
 const { src, color, class: className } = Astro.props;
 ---
 <figure data-media-type="video" data-color={color || undefined} class:list={[className]}>

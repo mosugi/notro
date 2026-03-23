@@ -4,7 +4,8 @@
  *
  * Link to a Notion page.
  */
-interface Props { url: string; color?: string; class?: string; }
+import type { NotionColor } from "./colors.ts";
+interface Props { url: string; color?: NotionColor; class?: string; }
 const { url, color, class: className } = Astro.props;
 ---
 <a href={url} data-pageref data-color={color || undefined} class:list={[className]}>

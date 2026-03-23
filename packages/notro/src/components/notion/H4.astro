@@ -1,5 +1,6 @@
 ---
-interface Props { color?: string; id?: string; class?: string; }
+import type { NotionColor } from "./colors.ts";
+interface Props { color?: NotionColor; id?: string; class?: string; }
 const { color, id, class: className } = Astro.props;
 ---
 <h4 {id} data-color={color || undefined} class:list={[className]}><slot /></h4>

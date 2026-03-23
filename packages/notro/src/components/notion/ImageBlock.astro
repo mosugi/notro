@@ -4,7 +4,8 @@
  *
  * Notion image block. Mapped to MDX `components.img`.
  */
-interface Props { src: string; alt?: string; caption?: string; color?: string; class?: string; }
+import type { NotionColor } from "./colors.ts";
+interface Props { src: string; alt?: string; caption?: string; color?: NotionColor; class?: string; }
 const { src, alt, caption, color, class: className } = Astro.props;
 ---
 <figure data-image-block data-color={color || undefined} class:list={[className]}>

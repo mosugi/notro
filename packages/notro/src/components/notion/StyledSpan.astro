@@ -7,8 +7,10 @@
  * Supports inline text color, underline, and an optional extra class.
  * Also passes through arbitrary `style` (e.g. Shiki syntax-highlight colors).
  */
+import type { NotionColor } from "./colors.ts";
+
 interface Props {
-	color?: string;
+	color?: NotionColor;
 	underline?: string;
 	class?: string;
 	// style may be a CSS string or a React-style object (e.g. from Shiki tokens)

@@ -4,7 +4,8 @@
  *
  * Link to a Notion database.
  */
-interface Props { url: string; inline?: string; icon?: string; color?: string; class?: string; }
+import type { NotionColor } from "./colors.ts";
+interface Props { url: string; inline?: string; icon?: string; color?: NotionColor; class?: string; }
 const { url, inline = 'false', icon = '🗄️', color, class: className } = Astro.props;
 ---
 <a

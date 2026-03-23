@@ -4,7 +4,8 @@
  *
  * Table of contents block. Populated at compile time by rehypeTocPlugin.
  */
-interface Props { color?: string; class?: string; }
+import type { NotionColor } from "./colors.ts";
+interface Props { color?: NotionColor; class?: string; }
 const { color, class: className } = Astro.props;
 ---
 
