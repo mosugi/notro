@@ -13,7 +13,7 @@ import { colorToClass } from './colors';
 interface Props { src: string; alt?: string; caption?: string; color?: string; class?: string; }
 const { src, alt, caption, color, class: className } = Astro.props;
 ---
-<figure class:list={["nt-image-block", colorToClass(color), className]}>
-	<img src={src} alt={alt ?? ''} loading="lazy" decoding="async" class="nt-image-block__img h-auto max-w-full" />
-	{caption && <figcaption class="nt-image-block__caption">{caption}</figcaption>}
+<figure class:list={[colorToClass(color), className]}>
+	<img src={src} alt={alt ?? ''} loading="lazy" decoding="async" data-image-img />
+	{caption && <figcaption data-image-caption>{caption}</figcaption>}
 </figure>

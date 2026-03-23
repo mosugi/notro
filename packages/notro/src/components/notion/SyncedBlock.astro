@@ -20,6 +20,6 @@ const { url, class: className } = Astro.props;
 const hasSource = url != null && url.length > 0;
 ---
 
-<div class:list={["nt-synced-block", className]} data-has-source={hasSource || undefined}>
+<div class:list={[className]} data-has-source={hasSource || undefined}>
 	<slot />
 </div>

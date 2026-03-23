@@ -74,7 +74,7 @@ const active = (href: string) => isActive(pathname, href);
       <div class="lg:hidden pt-6 pb-2">
         <button
           id="docs-sidebar-toggle"
-          class="flex items-center gap-2 text-sm text-[rgba(55,53,47,0.65)] border border-[rgba(55,53,47,0.15)] rounded-md px-3 py-1.5 transition-[color,background] hover:bg-[rgba(55,53,47,0.05)] dark:text-slate-400 dark:border-white/15 dark:hover:bg-white/5"
+          class="flex items-center gap-2 text-sm nt-text-65 border nt-border-15 rounded-md px-3 py-1.5 transition-[color,background] hover:nt-bg-05 dark:text-slate-400 dark:border-white/15 dark:hover:bg-white/5"
           aria-expanded="false"
           aria-controls="docs-sidebar-mobile"
         >
@@ -87,11 +87,11 @@ const active = (href: string) => isActive(pathname, href);
         </button>
         <div
           id="docs-sidebar-mobile"
-          class="hidden mt-3 mb-4 rounded-lg border border-[rgba(55,53,47,0.09)] p-4 dark:border-white/8"
+          class="hidden mt-3 mb-4 rounded-lg border nt-border p-4 dark:border-white/8"
         >
           {navGroups.map((group) => (
             <div class="mb-4 last:mb-0">
-              <p class="mb-1 text-xs font-semibold uppercase tracking-wider text-[rgba(55,53,47,0.45)] dark:text-slate-500">
+              <p class="mb-1 text-xs font-semibold uppercase tracking-wider nt-text-45 dark:text-slate-500">
                 {group.title}
               </p>
               <ul class="space-y-0.5">
@@ -103,7 +103,7 @@ const active = (href: string) => isActive(pathname, href);
                         "block rounded-[5px] px-2 py-1 text-sm no-underline transition-[color,background]",
                         active(item.href)
                           ? "font-medium text-[#2383e2] dark:text-blue-400"
-                          : "text-[rgba(55,53,47,0.7)] hover:text-[#37352f] dark:text-slate-400 dark:hover:text-slate-200",
+                          : "nt-text-70 hover:nt-text dark:text-slate-400 dark:hover:text-slate-200",
                       ]}
                       aria-current={active(item.href) ? "page" : undefined}
                     >
@@ -125,7 +125,7 @@ const active = (href: string) => isActive(pathname, href);
           <nav class="sticky top-20" aria-label="ドキュメントナビゲーション">
             {navGroups.map((group) => (
               <div class="mb-6">
-                <p class="mb-1.5 text-xs font-semibold uppercase tracking-wider text-[rgba(55,53,47,0.45)] dark:text-slate-500">
+                <p class="mb-1.5 text-xs font-semibold uppercase tracking-wider nt-text-45 dark:text-slate-500">
                   {group.title}
                 </p>
                 <ul class="space-y-0.5">
@@ -137,7 +137,7 @@ const active = (href: string) => isActive(pathname, href);
                           "block rounded-[5px] px-2.5 py-1.5 text-sm no-underline transition-[color,background]",
                           active(item.href)
                             ? "bg-[rgba(35,131,226,0.08)] font-medium text-[#2383e2] dark:bg-blue-950 dark:text-blue-400"
-                            : "text-[rgba(55,53,47,0.7)] hover:bg-[rgba(55,53,47,0.05)] hover:text-[#37352f] dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-200",
+                            : "nt-text-70 hover:nt-bg-05 hover:nt-text dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-200",
                         ]}
                         aria-current={active(item.href) ? "page" : undefined}
                       >
@@ -153,7 +153,7 @@ const active = (href: string) => isActive(pathname, href);
 
         <!-- Main content -->
         <main id="main-content" class="min-w-0 flex-1">
-          <h1 class="mb-2 text-3xl font-bold tracking-tight text-[#37352f] dark:text-slate-100">{heading}</h1>
+          <h1 class="mb-2 text-3xl font-bold tracking-tight nt-text dark:text-slate-100">{heading}</h1>
           <slot />
         </main>
 

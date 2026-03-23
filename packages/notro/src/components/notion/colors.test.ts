@@ -57,32 +57,6 @@ describe("colorToClass: plain text colors", () => {
   });
 });
 
-describe("colorToClass: _bg suffix (background colors)", () => {
-  it("gray_bg → nt-color-gray_bg", () => {
-    expect(colorToClass("gray_bg")).toBe("nt-color-gray_bg");
-  });
-
-  it("blue_bg → nt-color-blue_bg", () => {
-    expect(colorToClass("blue_bg")).toBe("nt-color-blue_bg");
-  });
-
-  it("red_bg → nt-color-red_bg", () => {
-    expect(colorToClass("red_bg")).toBe("nt-color-red_bg");
-  });
-
-  it("green_bg → nt-color-green_bg", () => {
-    expect(colorToClass("green_bg")).toBe("nt-color-green_bg");
-  });
-
-  it("yellow_bg → nt-color-yellow_bg", () => {
-    expect(colorToClass("yellow_bg")).toBe("nt-color-yellow_bg");
-  });
-
-  it("purple_bg → nt-color-purple_bg", () => {
-    expect(colorToClass("purple_bg")).toBe("nt-color-purple_bg");
-  });
-});
-
 describe("colorToClass: _background suffix (Notion API form)", () => {
   it("gray_background → nt-color-gray_background", () => {
     expect(colorToClass("gray_background")).toBe("nt-color-gray_background");
@@ -108,10 +82,6 @@ describe("colorToClass: _background suffix (Notion API form)", () => {
 describe("colorToClass: unknown color values", () => {
   it("returns empty string for completely unknown color name", () => {
     expect(colorToClass("magenta")).toBe("");
-  });
-
-  it("returns empty string for unknown color with _bg suffix", () => {
-    expect(colorToClass("magenta_bg")).toBe("");
   });
 });
 

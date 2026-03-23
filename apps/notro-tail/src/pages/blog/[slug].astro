@@ -71,12 +71,12 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
 <Layout title={`${title} — ${config.site.name}`} description={description} type={isEmbeddedPage ? "website" : "article"} bodyClass={bodyClass} datePublished={date}>
   <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
     <article class="mx-auto max-w-[720px]">
-      <header class="mb-10 pb-6 border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
-        <h1 class="mb-3 text-[2rem] font-bold tracking-tight leading-tight text-[#37352f] dark:text-slate-200">{title}</h1>
-        {description && <p class="mb-4 text-base leading-relaxed text-[rgba(55,53,47,0.65)] dark:text-slate-400">{description}</p>}
+      <header class="mb-10 pb-6 border-b nt-border dark:border-white/8">
+        <h1 class="mb-3 text-[2rem] font-bold tracking-tight leading-tight nt-text">{title}</h1>
+        {description && <p class="mb-4 text-base leading-relaxed nt-text-65 dark:text-slate-400">{description}</p>}
         {!isEmbeddedPage && (
           <div class="flex flex-wrap items-center gap-3">
-            {date && <time datetime={date} class="text-sm text-[rgba(55,53,47,0.45)] dark:text-slate-500">{date}</time>}
+            {date && <time datetime={date} class="text-sm nt-text-45 dark:text-slate-500">{date}</time>}
             {
               tags.length > 0 && (
                 <ul class="flex list-none flex-wrap gap-1.5">
@@ -84,7 +84,7 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
                     <li>
                       <a
                         href={`/blog/tag/${tag.name}/`}
-                        class="text-xs bg-[rgba(55,53,47,0.06)] text-[rgba(55,53,47,0.65)] rounded-[3px] px-2 py-0.5 no-underline transition-colors hover:bg-[rgba(55,53,47,0.1)] dark:bg-white/6 dark:text-slate-400"
+                        class="text-xs nt-bg-06 nt-text-65 rounded-[3px] px-2 py-0.5 no-underline transition-colors hover:nt-bg-10 dark:bg-white/6 dark:text-slate-400"
                       >
                         {tag.name}
                       </a>
@@ -107,7 +107,7 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
           toggleTitle: "cursor-pointer select-none py-1 font-medium",
           columns:     "grid grid-cols-1 gap-8 my-4 md:grid-cols-2",
           column:      "min-w-0",
-          quote:       "my-4 border-l-[3px] pl-4 italic",
+          quote:       "my-4 border-l-[3px] pl-4 italic [&>p:first-child]:mt-0 [&>p:last-child]:mb-0",
           h1:          "mb-3 mt-10 text-[1.875rem] font-bold tracking-tight",
           h2:          "mb-2 mt-8 text-2xl font-semibold tracking-tight",
           h3:          "mb-2 mt-6 text-xl font-semibold",
@@ -116,7 +116,7 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
           tableWrapper:"my-4 w-full overflow-x-auto",
           table:       "w-full border-collapse text-sm",
           tableCell:   "px-3 py-2 text-sm",
-          toc:         "my-4 rounded-md p-4 text-sm",
+          toc:         "my-4 rounded-md border border-gray-200 bg-gray-50 p-4 text-sm",
           // ── Standard HTML block elements ─────────────────────
           p:           "mb-4 leading-7",
           ul:          "mb-4 list-disc pl-6 space-y-1",
@@ -131,6 +131,23 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
           del:         "line-through",
           // ── Table header cell ─────────────────────────────────
           th:          "px-3 py-2 text-left text-sm font-semibold",
+          // ── Table row ─────────────────────────────────────────
+          tableRow:    "",
+          // ── Media blocks ──────────────────────────────────────
+          audio:       "my-4",
+          video:       "my-4",
+          // ── File & PDF ────────────────────────────────────────
+          file:        "my-2",
+          pdf:         "my-4",
+          // ── Page / database references ────────────────────────
+          pageRef:     "inline-flex items-center gap-1 underline underline-offset-2",
+          databaseRef: "inline-flex items-center gap-1 underline underline-offset-2",
+          // ── Structural blocks ─────────────────────────────────
+          syncedBlock: "",
+          emptyBlock:  "my-2",
+          // ── Inline elements ───────────────────────────────────
+          mention:        "underline underline-offset-2",
+          "mention-date": "font-mono text-sm",
         }}
         components={{ callout: Callout }}
       />
@@ -142,16 +159,16 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
       )}
 
       {!isEmbeddedPage && (prevNav || nextNav) && (
-        <nav class="mt-12 flex items-stretch gap-4 pt-8 text-sm border-t border-[rgba(55,53,47,0.09)] dark:border-white/8">
+        <nav class="mt-12 flex items-stretch gap-4 pt-8 text-sm border-t nt-border dark:border-white/8">
           {/* prevNav = newer post (lower index in desc sort) */}
           <div class="flex-1">
             {prevNav && (
               <a
                 href={`/blog/${prevNav.slug}/`}
-                class="flex h-full flex-col gap-1 rounded-md p-4 border border-[rgba(55,53,47,0.09)] no-underline text-inherit transition-colors hover:bg-[rgba(55,53,47,0.03)] dark:border-white/8 dark:hover:bg-white/3"
+                class="flex h-full flex-col gap-1 rounded-md p-4 border nt-border no-underline text-inherit transition-colors hover:nt-bg-03 dark:border-white/8 dark:hover:bg-white/3"
               >
-                <span class="text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500">← 新しい記事</span>
-                <span class="font-medium line-clamp-2 text-[#37352f] dark:text-slate-200">{prevNav.title}</span>
+                <span class="text-xs nt-text-45 dark:text-slate-500">← 新しい記事</span>
+                <span class="font-medium line-clamp-2 nt-text">{prevNav.title}</span>
               </a>
             )}
           </div>
@@ -160,10 +177,10 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
             {nextNav && (
               <a
                 href={`/blog/${nextNav.slug}/`}
-                class="flex h-full flex-col items-end gap-1 rounded-md p-4 text-right border border-[rgba(55,53,47,0.09)] no-underline text-inherit transition-colors hover:bg-[rgba(55,53,47,0.03)] dark:border-white/8 dark:hover:bg-white/3"
+                class="flex h-full flex-col items-end gap-1 rounded-md p-4 text-right border nt-border no-underline text-inherit transition-colors hover:nt-bg-03 dark:border-white/8 dark:hover:bg-white/3"
               >
-                <span class="text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500">古い記事 →</span>
-                <span class="font-medium line-clamp-2 text-[#37352f] dark:text-slate-200">{nextNav.title}</span>
+                <span class="text-xs nt-text-45 dark:text-slate-500">古い記事 →</span>
+                <span class="font-medium line-clamp-2 nt-text">{nextNav.title}</span>
               </a>
             )}
           </div>

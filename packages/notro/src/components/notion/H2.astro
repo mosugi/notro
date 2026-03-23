@@ -3,4 +3,4 @@ import { colorToClass } from './colors';
 interface Props { color?: string; id?: string; class?: string; }
 const { color, id, class: className } = Astro.props;
 ---
-<h2 {id} class:list={["nt-header-block", colorToClass(color), className]}><slot /></h2>
+<h2 {id} class:list={[colorToClass(color), className]}><slot /></h2>

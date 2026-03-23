@@ -14,21 +14,21 @@ const {
 } = Astro.props;
 ---
 
-<section class="py-20 text-center border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
+<section class="py-20 text-center border-b nt-border dark:border-white/8">
   <div class="inline-flex items-center gap-1.5 text-xs font-medium text-[#2383e2] bg-[rgba(35,131,226,0.08)] border border-[rgba(35,131,226,0.2)] rounded-full px-3 py-1 mb-6 dark:text-blue-400 dark:bg-blue-400/8 dark:border-blue-400/20">
     <span>⚡</span>
     <span>Notion × Astro × TailwindCSS 4</span>
   </div>
-  <h1 class="text-[clamp(2rem,5vw,3.25rem)] font-bold tracking-[-0.03em] leading-[1.15] text-[#37352f] mb-5 dark:text-slate-200">
+  <h1 class="text-[clamp(2rem,5vw,3.25rem)] font-bold tracking-[-0.03em] leading-[1.15] nt-text mb-5">
     {headline}<br />
     <span class="text-[#2383e2] dark:text-blue-400">{subHeadline}</span>
   </h1>
-  <p class="text-[1.0625rem] leading-[1.7] text-[rgba(55,53,47,0.65)] max-w-[560px] mx-auto mb-8 dark:text-slate-300/65">
+  <p class="text-[1.0625rem] leading-[1.7] nt-text-65 max-w-[560px] mx-auto mb-8 dark:text-slate-300/65">
     {description}
   </p>
   <div class="flex flex-wrap justify-center gap-3 mb-8">
     <a href="/docs/" class="inline-flex items-center gap-1.5 bg-[#2383e2] text-white text-sm font-medium px-5 py-2.5 rounded-[5px] no-underline transition-opacity hover:opacity-85 dark:bg-blue-500">Docs を見る →</a>
-    <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-[#37352f] text-sm font-medium px-5 py-2.5 rounded-[5px] border border-[rgba(55,53,47,0.18)] bg-white no-underline transition-[background,border-color] hover:bg-[rgba(55,53,47,0.03)] hover:border-[rgba(55,53,47,0.3)] dark:text-slate-200 dark:border-white/15 dark:bg-slate-800 dark:hover:bg-white/6 dark:hover:border-white/25">
+    <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 nt-text text-sm font-medium px-5 py-2.5 rounded-[5px] border nt-border-18 bg-white no-underline transition-[background,border-color] hover:nt-bg-03 hover:nt-border-30 dark:border-white/15 dark:bg-slate-800 dark:hover:bg-white/6 dark:hover:border-white/25">
       GitHub で見る
     </a>
   </div>

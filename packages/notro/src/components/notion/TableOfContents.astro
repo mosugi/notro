@@ -12,7 +12,7 @@ interface Props { color?: string; class?: string; }
 const { color, class: className } = Astro.props;
 ---
 
-<nav class:list={["nt-toc-block", colorToClass(color), className]} aria-label="目次">
-	<p class="nt-toc-block__label">📋 目次</p>
+<nav class:list={[colorToClass(color), className]} aria-label="目次">
+	<p data-toc-label>📋 目次</p>
 	<slot />
 </nav>

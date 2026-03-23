@@ -239,7 +239,7 @@ const BG_COLORS = [
   description="NotionMarkdownRenderer で Notion の全ブロックタイプをレンダリングした実例。"
   heading="レンダリング検証"
 >
-  <p class="mb-8 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+  <p class="mb-8 nt-text-65 dark:text-slate-400 leading-7">
     Notion の各ブロックタイプを <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NotionMarkdownRenderer</code>
     で実際にレンダリングした例です。
     各セクションにはレンダリング結果とソースの Markdown を並べて表示しています。
@@ -247,205 +247,205 @@ const BG_COLORS = [
 
   <!-- Heading blocks -->
   <section class="mb-12" id="headings">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">見出し（Heading）</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">H1・H2・H3・H4 の4階層に対応</p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">見出し（Heading）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">H1・H2・H3・H4 の4階層に対応</p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
         <NotionMarkdownRenderer markdown={mdHeadings} classMap={classMap} />
       </div>
-      <details class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
           Markdown ソースを表示
         </summary>
-        <pre class="m-0 border-t border-[rgba(55,53,47,0.06)] dark:border-white/6 bg-[rgba(55,53,47,0.03)] dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto text-[rgba(55,53,47,0.7)] dark:text-slate-400">{mdHeadings}</pre>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{mdHeadings}</pre>
       </details>
     </div>
   </section>
 
   <!-- Paragraph and inline styles -->
   <section class="mb-12" id="text">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">テキスト・インラインスタイル</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">太字・斜体・取り消し線・インラインコード・リンク</p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">テキスト・インラインスタイル</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">太字・斜体・取り消し線・インラインコード・リンク</p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
         <NotionMarkdownRenderer markdown={mdText} classMap={classMap} />
       </div>
-      <details class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
           Markdown ソースを表示
         </summary>
-        <pre class="m-0 border-t border-[rgba(55,53,47,0.06)] dark:border-white/6 bg-[rgba(55,53,47,0.03)] dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto text-[rgba(55,53,47,0.7)] dark:text-slate-400">{mdText}</pre>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{mdText}</pre>
       </details>
     </div>
   </section>
 
   <!-- Lists -->
   <section class="mb-12" id="lists">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">リスト（Lists）</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">箇条書き・番号付き・タスクリスト（ネスト対応）</p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">リスト（Lists）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">箇条書き・番号付き・タスクリスト（ネスト対応）</p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
         <NotionMarkdownRenderer markdown={mdLists} classMap={classMap} />
       </div>
-      <details class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
           Markdown ソースを表示
         </summary>
-        <pre class="m-0 border-t border-[rgba(55,53,47,0.06)] dark:border-white/6 bg-[rgba(55,53,47,0.03)] dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto text-[rgba(55,53,47,0.7)] dark:text-slate-400">{mdLists}</pre>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{mdLists}</pre>
       </details>
     </div>
   </section>
 
   <!-- Callout -->
   <section class="mb-12" id="callout">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">コールアウト（Callout）</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">色付きコールアウトブロック。<code class="font-mono text-[#eb5757] text-[85%]">:::callout{"{color=\"...\"}"}</code> ディレクティブ構文</p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">コールアウト（Callout）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">色付きコールアウトブロック。<code class="font-mono text-[#eb5757] text-[85%]">:::callout{"{color=\"...\"}"}</code> ディレクティブ構文</p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
         <NotionMarkdownRenderer markdown={mdCallout} classMap={classMap} components={{ callout: Callout }} />
       </div>
-      <details class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
           Markdown ソースを表示
         </summary>
-        <pre class="m-0 border-t border-[rgba(55,53,47,0.06)] dark:border-white/6 bg-[rgba(55,53,47,0.03)] dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto text-[rgba(55,53,47,0.7)] dark:text-slate-400">{mdCallout}</pre>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{mdCallout}</pre>
       </details>
     </div>
   </section>
 
   <!-- Toggle -->
   <section class="mb-12" id="toggle">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">トグル（Toggle）</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">折りたたみ可能なブロック。<code class="font-mono text-[#eb5757] text-[85%]">&lt;details&gt;</code> + CSS アニメーション</p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">トグル（Toggle）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">折りたたみ可能なブロック。<code class="font-mono text-[#eb5757] text-[85%]">&lt;details&gt;</code> + CSS アニメーション</p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
         <NotionMarkdownRenderer markdown={mdToggle} classMap={classMap} />
       </div>
-      <details class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
           Markdown ソースを表示
         </summary>
-        <pre class="m-0 border-t border-[rgba(55,53,47,0.06)] dark:border-white/6 bg-[rgba(55,53,47,0.03)] dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto text-[rgba(55,53,47,0.7)] dark:text-slate-400">{mdToggle}</pre>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{mdToggle}</pre>
       </details>
     </div>
   </section>
 
   <!-- Quote -->
   <section class="mb-12" id="quote">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">引用（Quote）</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">Notion の Quote ブロック → <code class="font-mono text-[#eb5757] text-[85%]">&lt;blockquote&gt;</code></p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">引用（Quote）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">Notion の Quote ブロック → <code class="font-mono text-[#eb5757] text-[85%]">&lt;blockquote&gt;</code></p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
         <NotionMarkdownRenderer markdown={mdQuote} classMap={classMap} />
       </div>
-      <details class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
           Markdown ソースを表示
         </summary>
-        <pre class="m-0 border-t border-[rgba(55,53,47,0.06)] dark:border-white/6 bg-[rgba(55,53,47,0.03)] dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto text-[rgba(55,53,47,0.7)] dark:text-slate-400">{mdQuote}</pre>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{mdQuote}</pre>
       </details>
     </div>
   </section>
 
   <!-- Code blocks -->
   <section class="mb-12" id="code">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">コードブロック（Code）</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">Shiki によるシンタックスハイライト。JavaScript・TypeScript・Bash など多数の言語に対応</p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">コードブロック（Code）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">Shiki によるシンタックスハイライト。JavaScript・TypeScript・Bash など多数の言語に対応</p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
         <NotionMarkdownRenderer markdown={mdCode} classMap={classMap} />
       </div>
-      <details class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
           Markdown ソースを表示
         </summary>
-        <pre class="m-0 border-t border-[rgba(55,53,47,0.06)] dark:border-white/6 bg-[rgba(55,53,47,0.03)] dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto text-[rgba(55,53,47,0.7)] dark:text-slate-400">{mdCode}</pre>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{mdCode}</pre>
       </details>
     </div>
   </section>
 
   <!-- Table -->
   <section class="mb-12" id="table">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">テーブル（Table）</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">GFM テーブル記法。ヘッダー行・罫線スタイル付き</p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">テーブル（Table）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">GFM テーブル記法。ヘッダー行・罫線スタイル付き</p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
         <NotionMarkdownRenderer markdown={mdTable} classMap={classMap} />
       </div>
-      <details class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
           Markdown ソースを表示
         </summary>
-        <pre class="m-0 border-t border-[rgba(55,53,47,0.06)] dark:border-white/6 bg-[rgba(55,53,47,0.03)] dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto text-[rgba(55,53,47,0.7)] dark:text-slate-400">{mdTable}</pre>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{mdTable}</pre>
       </details>
     </div>
   </section>
 
   <!-- Math -->
   <section class="mb-12" id="math">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">数式（Math / KaTeX）</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">インライン <code class="font-mono text-[#eb5757] text-[85%]">$...$</code> とブロック <code class="font-mono text-[#eb5757] text-[85%]">$$...$$</code> 数式を KaTeX でレンダリング</p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">数式（Math / KaTeX）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">インライン <code class="font-mono text-[#eb5757] text-[85%]">$...$</code> とブロック <code class="font-mono text-[#eb5757] text-[85%]">$$...$$</code> 数式を KaTeX でレンダリング</p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
         <NotionMarkdownRenderer markdown={mdMath} classMap={classMap} />
       </div>
-      <details class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
           Markdown ソースを表示
         </summary>
-        <pre class="m-0 border-t border-[rgba(55,53,47,0.06)] dark:border-white/6 bg-[rgba(55,53,47,0.03)] dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto text-[rgba(55,53,47,0.7)] dark:text-slate-400">{mdMath}</pre>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{mdMath}</pre>
       </details>
     </div>
   </section>
 
   <!-- Divider -->
   <section class="mb-12" id="divider">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">区切り線（Divider）</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">Notion の Divider ブロック → <code class="font-mono text-[#eb5757] text-[85%]">&lt;hr&gt;</code></p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">区切り線（Divider）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">Notion の Divider ブロック → <code class="font-mono text-[#eb5757] text-[85%]">&lt;hr&gt;</code></p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
         <NotionMarkdownRenderer markdown={mdHr} classMap={classMap} />
       </div>
-      <details class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
           Markdown ソースを表示
         </summary>
-        <pre class="m-0 border-t border-[rgba(55,53,47,0.06)] dark:border-white/6 bg-[rgba(55,53,47,0.03)] dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto text-[rgba(55,53,47,0.7)] dark:text-slate-400">{mdHr}</pre>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{mdHr}</pre>
       </details>
     </div>
   </section>
 
   <!-- Columns -->
   <section class="mb-12" id="columns">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">カラムレイアウト（Columns）</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">2カラムレイアウト。モバイルでは縦積み</p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">カラムレイアウト（Columns）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">2カラムレイアウト。モバイルでは縦積み</p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
         <NotionMarkdownRenderer markdown={mdColumns} classMap={classMap} />
       </div>
-      <details class="border-t border-[rgba(55,53,47,0.06)] dark:border-white/6">
-        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
           Markdown ソースを表示
         </summary>
-        <pre class="m-0 border-t border-[rgba(55,53,47,0.06)] dark:border-white/6 bg-[rgba(55,53,47,0.03)] dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto text-[rgba(55,53,47,0.7)] dark:text-slate-400">{mdColumns}</pre>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{mdColumns}</pre>
       </details>
     </div>
   </section>
 
   <!-- Color annotations -->
   <section class="mb-12" id="colors">
-    <h2 class="mb-1 text-lg font-semibold text-[#37352f] dark:text-slate-100">カラーアノテーション（Color Annotations）</h2>
-    <p class="mb-4 text-sm text-[rgba(55,53,47,0.55)] dark:text-slate-400">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">カラーアノテーション（Color Annotations）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">
       Notion の色アノテーションは <code class="font-mono text-[#eb5757] text-[85%]">.nt-color-*</code> CSS クラスで実装。
       テキストカラーは <code class="font-mono text-[#eb5757] text-[85%]">StyledSpan.astro</code>、
       見出しカラーは <code class="font-mono text-[#eb5757] text-[85%]">H1〜H4.astro</code> が <code class="font-mono text-[#eb5757] text-[85%]">colorToClass()</code> で適用。
     </p>
-    <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 overflow-hidden">
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-5 space-y-5">
 
         <!-- Text colors -->
         <div>
-          <p class="mb-2 text-xs font-semibold text-[rgba(55,53,47,0.45)] dark:text-slate-500 uppercase tracking-wider">テキストカラー</p>
+          <p class="mb-2 text-xs font-semibold nt-text-45 dark:text-slate-500 uppercase tracking-wider">テキストカラー</p>
           <div class="flex flex-wrap gap-2">
             {TEXT_COLORS.map(({ name, cls }) => (
               <span class:list={["text-sm font-medium", cls]}>{name}</span>
@@ -455,7 +455,7 @@ const BG_COLORS = [
 
         <!-- Background colors -->
         <div>
-          <p class="mb-2 text-xs font-semibold text-[rgba(55,53,47,0.45)] dark:text-slate-500 uppercase tracking-wider">バックグラウンドカラー</p>
+          <p class="mb-2 text-xs font-semibold nt-text-45 dark:text-slate-500 uppercase tracking-wider">バックグラウンドカラー</p>
           <div class="flex flex-wrap gap-2">
             {BG_COLORS.map(({ name, cls }) => (
               <span class:list={["text-sm px-2 py-0.5 rounded", cls]}>{name}</span>
@@ -465,19 +465,19 @@ const BG_COLORS = [
 
         <!-- CSS class table -->
         <details>
-          <summary class="cursor-pointer select-none text-xs font-medium text-[rgba(55,53,47,0.5)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.8)] dark:hover:text-slate-300 transition-colors">
+          <summary class="cursor-pointer select-none text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
             CSS クラス一覧を表示
           </summary>
-          <div class="mt-3 overflow-x-auto rounded border border-[rgba(55,53,47,0.06)] dark:border-white/6">
+          <div class="mt-3 overflow-x-auto rounded border nt-border-06 dark:border-white/6">
             <table class="w-full text-xs">
-              <thead class="bg-[rgba(55,53,47,0.03)] dark:bg-white/3 text-left text-[rgba(55,53,47,0.55)] dark:text-slate-500">
+              <thead class="nt-bg-03 dark:bg-white/3 text-left nt-text-55 dark:text-slate-500">
                 <tr>
                   <th class="px-3 py-2 font-semibold">CSS クラス</th>
                   <th class="px-3 py-2 font-semibold">CSS 変数</th>
                   <th class="px-3 py-2 font-semibold">適用先</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-[rgba(55,53,47,0.04)] dark:divide-white/4 text-[rgba(55,53,47,0.7)] dark:text-slate-400">
+              <tbody class="divide-y divide-[rgba(55,53,47,0.04)] dark:divide-white/4 nt-text-70 dark:text-slate-400">
                 {TEXT_COLORS.map(({ name, cls }) => (
                   <tr>
                     <td class="px-3 py-1.5"><code class="font-mono">.{cls}</code></td>
@@ -502,8 +502,8 @@ const BG_COLORS = [
 
   <!-- Mermaid diagrams -->
   <section class="mb-10" id="mermaid">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">Mermaid ダイアグラム</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <h2 class="mb-3 text-xl font-semibold nt-text dark:text-slate-100">Mermaid ダイアグラム</h2>
+    <p class="mb-4 nt-text-65 dark:text-slate-400 leading-7">
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">```mermaid</code>
       コードブロックは <a href="https://github.com/lukilabs/beautiful-mermaid" target="_blank" rel="noopener noreferrer" class="text-[#2383e2] underline underline-offset-2 hover:opacity-70">beautiful-mermaid</a>
       を使ってビルド時に SVG へ変換されます。DOM・ブラウザ不要のサーバーサイドレンダリングです。
@@ -511,8 +511,8 @@ const BG_COLORS = [
     <div class="space-y-8">
       <!-- Flowchart -->
       <div>
-        <p class="mb-3 text-sm font-medium text-[rgba(55,53,47,0.65)] dark:text-slate-400">フローチャート (graph LR)</p>
-        <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 p-4 bg-[rgba(55,53,47,0.02)] dark:bg-white/2">
+        <p class="mb-3 text-sm font-medium nt-text-65 dark:text-slate-400">フローチャート (graph LR)</p>
+        <div class="rounded-lg border nt-border dark:border-white/8 p-4 nt-bg-02 dark:bg-white/2">
           <NotionMarkdownRenderer
             markdown={`\`\`\`mermaid
 graph LR
@@ -524,8 +524,8 @@ graph LR
           />
         </div>
         <details class="mt-2">
-          <summary class="cursor-pointer text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.7)] dark:hover:text-slate-400">Markdown ソースを表示</summary>
-          <pre class="mt-2 overflow-x-auto rounded bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 p-3 text-xs font-mono text-[rgba(55,53,47,0.7)] dark:text-slate-300 whitespace-pre">{`\`\`\`mermaid
+          <summary class="cursor-pointer text-xs nt-text-45 dark:text-slate-500 hover:nt-text-70 dark:hover:text-slate-400">Markdown ソースを表示</summary>
+          <pre class="mt-2 overflow-x-auto rounded nt-bg-04 dark:bg-slate-800 p-3 text-xs font-mono nt-text-70 dark:text-slate-300 whitespace-pre">{`\`\`\`mermaid
 graph LR
   A[Notion API] --> B[loader]
   B --> C[MDX コンパイル]
@@ -536,8 +536,8 @@ graph LR
 
       <!-- Sequence diagram -->
       <div>
-        <p class="mb-3 text-sm font-medium text-[rgba(55,53,47,0.65)] dark:text-slate-400">シーケンス図 (sequenceDiagram)</p>
-        <div class="rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8 p-4 bg-[rgba(55,53,47,0.02)] dark:bg-white/2">
+        <p class="mb-3 text-sm font-medium nt-text-65 dark:text-slate-400">シーケンス図 (sequenceDiagram)</p>
+        <div class="rounded-lg border nt-border dark:border-white/8 p-4 nt-bg-02 dark:bg-white/2">
           <NotionMarkdownRenderer
             markdown={`\`\`\`mermaid
 sequenceDiagram
@@ -554,8 +554,8 @@ sequenceDiagram
           />
         </div>
         <details class="mt-2">
-          <summary class="cursor-pointer text-xs text-[rgba(55,53,47,0.45)] dark:text-slate-500 hover:text-[rgba(55,53,47,0.7)] dark:hover:text-slate-400">Markdown ソースを表示</summary>
-          <pre class="mt-2 overflow-x-auto rounded bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 p-3 text-xs font-mono text-[rgba(55,53,47,0.7)] dark:text-slate-300 whitespace-pre">{`\`\`\`mermaid
+          <summary class="cursor-pointer text-xs nt-text-45 dark:text-slate-500 hover:nt-text-70 dark:hover:text-slate-400">Markdown ソースを表示</summary>
+          <pre class="mt-2 overflow-x-auto rounded nt-bg-04 dark:bg-slate-800 p-3 text-xs font-mono nt-text-70 dark:text-slate-300 whitespace-pre">{`\`\`\`mermaid
 sequenceDiagram
   participant B as Browser
   participant A as Astro

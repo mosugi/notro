@@ -17,4 +17,4 @@ interface Props {
 const { url, class: className } = Astro.props;
 ---
 
-<a href={url} class:list={["nt-mention", className]}>@<slot /></a>
+<a href={url} class:list={[className]}>@<slot /></a>

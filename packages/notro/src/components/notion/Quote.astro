@@ -15,6 +15,6 @@ interface Props {
 const { color, class: className } = Astro.props;
 ---
 
-<blockquote class:list={["nt-quote-block", colorToClass(color), className]}>
+<blockquote class:list={[colorToClass(color), className]}>
 	<slot />
 </blockquote>

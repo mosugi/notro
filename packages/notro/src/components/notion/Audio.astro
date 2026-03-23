@@ -5,7 +5,7 @@ import { colorToClass } from './colors';
 interface Props { src: string; color?: string; class?: string; }
 const { src, color, class: className } = Astro.props;
 ---
-<figure class:list={["nt-media-block nt-media-block--audio", colorToClass(color), className]}>
-	<audio controls src={src} class="nt-media-block__player"></audio>
-	{Astro.slots.has('default') && <figcaption class="nt-media-block__caption"><slot /></figcaption>}
+<figure class:list={[colorToClass(color), className]} data-media-type="audio">
+	<audio controls src={src} data-media-player></audio>
+	{Astro.slots.has('default') && <figcaption data-media-caption><slot /></figcaption>}
 </figure>

@@ -8,23 +8,23 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
   description="notro パッケージの loader()・NotionMarkdownRenderer・remark-nfm の API リファレンス。"
   heading="API リファレンス"
 >
-  <p class="mb-8 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+  <p class="mb-8 nt-text-65 leading-7">
     <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">notro</code>
     パッケージのエントリーポイント・各 API の詳細リファレンスです。
   </p>
 
   <!-- Entry points -->
   <section class="mb-10" id="entry-points">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">エントリーポイント</h2>
-    <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
+    <h2 class="mb-3 text-xl font-semibold nt-text">エントリーポイント</h2>
+    <div class="overflow-x-auto rounded-lg border nt-border dark:border-white/8">
       <table class="w-full text-sm">
-        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+        <thead class="nt-bg-04 text-left nt-text-65">
           <tr>
             <th class="px-4 py-3 font-semibold">エントリーポイント</th>
             <th class="px-4 py-3 font-semibold">用途</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+        <tbody class="divide-y divide-black/[0.06] dark:divide-white/6 nt-text-75">
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">notro</code></td>
             <td class="px-4 py-3">Astroコンポーネント・ローダー・スキーマ。<code class="font-mono text-xs">astro.config.mjs</code> では使用不可。</td>
@@ -44,15 +44,15 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
   <!-- notro() integration -->
   <section class="mb-10" id="integration">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100"><code class="font-mono">notro()</code> インテグレーション</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <h2 class="mb-3 text-xl font-semibold nt-text"><code class="font-mono">notro()</code> インテグレーション</h2>
+    <p class="mb-4 nt-text-65 leading-7">
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">notro()</code>
       は <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">@astrojs/mdx</code>
       を notro のプラグインスイートで登録する Astro インテグレーションです。
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NotionMarkdownRenderer</code>
       が動作するために必須です。
     </p>
-    <pre class="bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto"><span class="text-[rgba(55,53,47,0.45)] dark:text-slate-500">// astro.config.mjs</span>
+    <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto"><span class="nt-text-45">// astro.config.mjs</span>
 import {"{ notro }"} from "notro/integration";
 
 export default defineConfig({"{"})
@@ -62,11 +62,11 @@ export default defineConfig({"{"})
 
   <!-- loader() -->
   <section class="mb-10" id="loader">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100"><code class="font-mono">loader()</code></h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <h2 class="mb-3 text-xl font-semibold nt-text"><code class="font-mono">loader()</code></h2>
+    <p class="mb-4 nt-text-65 leading-7">
       Notion データベースからコンテンツを取得する Astro Content Loader 実装です。
     </p>
-    <pre class="bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto"><span class="text-[rgba(55,53,47,0.45)] dark:text-slate-500">// content.config.ts</span>
+    <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto"><span class="nt-text-45">// content.config.ts</span>
 import {"{ loader }"} from "notro";
 import {"{ defineCollection }"} from "astro:content";
 
@@ -75,16 +75,16 @@ const posts = defineCollection({"{"})
     dataSourceId: import.meta.env.NOTION_DATASOURCE_ID,
   {"}"}),
 {"}"});</pre>
-    <div class="mt-4 overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
+    <div class="mt-4 overflow-x-auto rounded-lg border nt-border dark:border-white/8">
       <table class="w-full text-sm">
-        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+        <thead class="nt-bg-04 text-left nt-text-65">
           <tr>
             <th class="px-4 py-3 font-semibold">オプション</th>
             <th class="px-4 py-3 font-semibold">型</th>
             <th class="px-4 py-3 font-semibold">説明</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+        <tbody class="divide-y divide-black/[0.06] dark:divide-white/6 nt-text-75">
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">dataSourceId</code></td>
             <td class="px-4 py-3"><code class="font-mono text-xs">string</code></td>
@@ -97,11 +97,11 @@ const posts = defineCollection({"{"})
 
   <!-- NotionMarkdownRenderer -->
   <section class="mb-10" id="notion-markdown-renderer">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100"><code class="font-mono">NotionMarkdownRenderer</code></h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <h2 class="mb-3 text-xl font-semibold nt-text"><code class="font-mono">NotionMarkdownRenderer</code></h2>
+    <p class="mb-4 nt-text-65 leading-7">
       ローダーが取得した Markdown を MDX にコンパイルし、Notion ブロックを Astro コンポーネントとしてレンダリングするコンポーネントです。
     </p>
-    <pre class="bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto">import {"{ NotionMarkdownRenderer }"} from "notro";
+    <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto">import {"{ NotionMarkdownRenderer }"} from "notro";
 
 &lt;NotionMarkdownRenderer
   markdown={"{markdown}"}
@@ -109,10 +109,10 @@ const posts = defineCollection({"{"})
   classMap={"{{"} callout: "border-l-4 border-blue-500 pl-4" {"}}"}
 /&gt;</pre>
 
-    <h3 class="mb-2 mt-6 text-base font-semibold text-[#37352f] dark:text-slate-100">Props</h3>
-    <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
+    <h3 class="mb-2 mt-6 text-base font-semibold nt-text">Props</h3>
+    <div class="overflow-x-auto rounded-lg border nt-border dark:border-white/8">
       <table class="w-full text-sm">
-        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+        <thead class="nt-bg-04 text-left nt-text-65">
           <tr>
             <th class="px-4 py-3 font-semibold">Prop</th>
             <th class="px-4 py-3 font-semibold">型</th>
@@ -120,7 +120,7 @@ const posts = defineCollection({"{"})
             <th class="px-4 py-3 font-semibold">説明</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+        <tbody class="divide-y divide-black/[0.06] dark:divide-white/6 nt-text-75">
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">markdown</code></td>
             <td class="px-4 py-3"><code class="font-mono text-xs">string</code></td>
@@ -130,69 +130,69 @@ const posts = defineCollection({"{"})
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">linkToPages</code></td>
             <td class="px-4 py-3"><code class="font-mono text-xs">Record&lt;string, {"{ url; title }"}gt;</code></td>
-            <td class="px-4 py-3 text-[rgba(55,53,47,0.35)] dark:text-slate-500">—</td>
+            <td class="px-4 py-3 nt-text-35">—</td>
             <td class="px-4 py-3">Notion 内部リンクの解決マップ（<code class="font-mono text-xs">buildLinkToPages()</code> で生成）</td>
           </tr>
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">classMap</code></td>
             <td class="px-4 py-3"><code class="font-mono text-xs">Partial&lt;Record&lt;ClassMapKeys, string&gt;&gt;</code></td>
-            <td class="px-4 py-3 text-[rgba(55,53,47,0.35)] dark:text-slate-500">—</td>
+            <td class="px-4 py-3 nt-text-35">—</td>
             <td class="px-4 py-3">デフォルトコンポーネントに Tailwind クラスを注入（コンポーネントは置き換えない）</td>
           </tr>
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">components</code></td>
             <td class="px-4 py-3"><code class="font-mono text-xs">Partial&lt;NotionComponents&gt;</code></td>
-            <td class="px-4 py-3 text-[rgba(55,53,47,0.35)] dark:text-slate-500">—</td>
+            <td class="px-4 py-3 nt-text-35">—</td>
             <td class="px-4 py-3">コンポーネントを完全に上書き（例: <code class="font-mono text-xs">{"{ callout: MyCallout }"}</code>）</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <h3 class="mb-2 mt-6 text-base font-semibold text-[#37352f] dark:text-slate-100"><code class="font-mono">classMap</code> で使用可能なキー</h3>
-    <pre class="bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto"><span class="text-[rgba(55,53,47,0.45)] dark:text-slate-500">// Notion-specific blocks</span>
+    <h3 class="mb-2 mt-6 text-base font-semibold nt-text"><code class="font-mono">classMap</code> で使用可能なキー</h3>
+    <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto"><span class="nt-text-45">// Notion-specific blocks</span>
 callout, toggle, toggleTitle, quote, image, tableWrapper, table,
 tableRow, tableCell, audio, video, file, pdf, pageRef, databaseRef,
 toc, syncedBlock, column, columns, emptyBlock, mention, mention-date
 
-<span class="text-[rgba(55,53,47,0.45)] dark:text-slate-500">// Standard HTML block elements</span>
+<span class="nt-text-45">// Standard HTML block elements</span>
 h1, h2, h3, h4, p, ul, ol, li, pre, hr
 
-<span class="text-[rgba(55,53,47,0.45)] dark:text-slate-500">// Standard HTML inline elements</span>
+<span class="nt-text-45">// Standard HTML inline elements</span>
 a, strong, em, del, th</pre>
   </section>
 
   <!-- Utility functions -->
   <section class="mb-10" id="utils">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">ユーティリティ関数（<code class="font-mono text-xl">notro/utils</code>）</h2>
+    <h2 class="mb-3 text-xl font-semibold nt-text">ユーティリティ関数（<code class="font-mono text-xl">notro/utils</code>）</h2>
     <div class="space-y-4">
-      <div class="rounded-lg border border-[rgba(55,53,47,0.09)] p-4 dark:border-white/8">
+      <div class="rounded-lg border nt-border p-4 dark:border-white/8">
         <code class="font-mono text-sm text-[#eb5757]">getPlainText(richText)</code>
-        <p class="mt-1 text-sm text-[rgba(55,53,47,0.7)] dark:text-slate-400">
+        <p class="mt-1 text-sm nt-text-70">
           Notion Rich Text 配列からプレーンテキストを抽出します。
         </p>
       </div>
-      <div class="rounded-lg border border-[rgba(55,53,47,0.09)] p-4 dark:border-white/8">
+      <div class="rounded-lg border nt-border p-4 dark:border-white/8">
         <code class="font-mono text-sm text-[#eb5757]">buildLinkToPages(entries, opts)</code>
-        <p class="mt-1 text-sm text-[rgba(55,53,47,0.7)] dark:text-slate-400">
+        <p class="mt-1 text-sm nt-text-70">
           Content Collection のエントリーから Notion 内部リンク解決マップを生成します。
         </p>
       </div>
-      <div class="rounded-lg border border-[rgba(55,53,47,0.09)] p-4 dark:border-white/8">
+      <div class="rounded-lg border nt-border p-4 dark:border-white/8">
         <code class="font-mono text-sm text-[#eb5757]">hasTag(tagsProperty, tagName)</code>
-        <p class="mt-1 text-sm text-[rgba(55,53,47,0.7)] dark:text-slate-400">
+        <p class="mt-1 text-sm nt-text-70">
           エントリーが特定のタグを持つか判定します。
         </p>
       </div>
-      <div class="rounded-lg border border-[rgba(55,53,47,0.09)] p-4 dark:border-white/8">
+      <div class="rounded-lg border nt-border p-4 dark:border-white/8">
         <code class="font-mono text-sm text-[#eb5757]">getMultiSelect(property)</code>
-        <p class="mt-1 text-sm text-[rgba(55,53,47,0.7)] dark:text-slate-400">
+        <p class="mt-1 text-sm nt-text-70">
           multi_select プロパティからタグ配列を取得します。
         </p>
       </div>
-      <div class="rounded-lg border border-[rgba(55,53,47,0.09)] p-4 dark:border-white/8">
+      <div class="rounded-lg border nt-border p-4 dark:border-white/8">
         <code class="font-mono text-sm text-[#eb5757]">normalizeNotionPresignedUrl(url)</code>
-        <p class="mt-1 text-sm text-[rgba(55,53,47,0.7)] dark:text-slate-400">
+        <p class="mt-1 text-sm nt-text-70">
           Notion S3 プリサイン URL から期限切れパラメーター（<code class="font-mono text-xs">X-Amz-*</code>）を除去し、キャッシュキーを正規化します。
         </p>
       </div>
@@ -201,15 +201,15 @@ a, strong, em, del, th</pre>
 
   <!-- remark-nfm -->
   <section class="mb-10" id="remark-nfm">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">remark-nfm スタンドアロン</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <h2 class="mb-3 text-xl font-semibold nt-text">remark-nfm スタンドアロン</h2>
+    <p class="mb-4 nt-text-65 leading-7">
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">remark-nfm</code>
       は Astro なしで単独利用可能な純粋 remark プラグインです。
       Notion API の Markdown 出力の構造的な問題を修正し、
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">:::callout</code>
       ディレクティブ構文をサポートします。
     </p>
-    <pre class="bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto">import {"{ unified }"} from "unified";
+    <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto">import {"{ unified }"} from "unified";
 import remarkParse from "remark-parse";
 import {"{ remarkNfm }"} from "remark-nfm";
 
@@ -218,16 +218,16 @@ const result = await unified()
   .use(remarkNfm)
   .process(notionMarkdown);</pre>
 
-    <h3 class="mb-2 mt-6 text-base font-semibold text-[#37352f] dark:text-slate-100">前処理フィックス一覧（<code class="font-mono text-sm">preprocessNotionMarkdown</code>）</h3>
-    <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
+    <h3 class="mb-2 mt-6 text-base font-semibold nt-text">前処理フィックス一覧（<code class="font-mono text-sm">preprocessNotionMarkdown</code>）</h3>
+    <div class="overflow-x-auto rounded-lg border nt-border dark:border-white/8">
       <table class="w-full text-sm">
-        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+        <thead class="nt-bg-04 text-left nt-text-65">
           <tr>
             <th class="px-4 py-3 font-semibold">Fix</th>
             <th class="px-4 py-3 font-semibold">修正内容</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+        <tbody class="divide-y divide-black/[0.06] dark:divide-white/6 nt-text-75">
           <tr><td class="px-4 py-3">0</td><td class="px-4 py-3">旧前処理のエスケープ済みインライン数式 <code class="font-mono text-xs">\$…\$</code> を <code class="font-mono text-xs">$…$</code> に戻す</td></tr>
           <tr><td class="px-4 py-3">1</td><td class="px-4 py-3"><code class="font-mono text-xs">---</code> 区切り線が setext H2 見出しとして誤認識される問題を修正</td></tr>
           <tr><td class="px-4 py-3">2</td><td class="px-4 py-3">コールアウトディレクティブ構文の正規化とタブインデントの除去</td></tr>

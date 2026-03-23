@@ -29,17 +29,17 @@ const defaultSteps: Step[] = [
 const { steps = defaultSteps } = Astro.props;
 ---
 
-<section class="py-16 border-b border-[rgba(55,53,47,0.09)] dark:border-white/8">
+<section class="py-16 border-b nt-border">
   <p class="text-xs font-semibold tracking-[0.08em] uppercase text-[#2383e2] mb-3 dark:text-blue-400">使い方</p>
-  <h2 class="text-[clamp(1.375rem,2.5vw,1.75rem)] font-bold text-[#37352f] tracking-tight mb-2 dark:text-slate-200">3 ステップで始められる</h2>
-  <p class="text-[0.9375rem] text-[rgba(55,53,47,0.55)] mb-10 dark:text-slate-300/55">Notion にコンテンツを書いて、コマンド一つでデプロイ</p>
+  <h2 class="text-[clamp(1.375rem,2.5vw,1.75rem)] font-bold nt-text tracking-tight mb-2">3 ステップで始められる</h2>
+  <p class="text-[0.9375rem] nt-text-55 mb-10 dark:text-slate-300/55">Notion にコンテンツを書いて、コマンド一つでデプロイ</p>
 
   <div class="grid gap-6 md:grid-cols-3">
     {steps.map(({ title, description }, i) => (
       <div class="flex flex-col gap-3">
         <div class="w-8 h-8 rounded-full bg-[rgba(35,131,226,0.1)] text-[#2383e2] text-sm font-bold flex items-center justify-center flex-shrink-0 dark:bg-blue-400/12 dark:text-blue-400">{i + 1}</div>
-        <p class="text-base font-semibold text-[#37352f] dark:text-slate-200">{title}</p>
-        <p class="text-sm leading-[1.65] text-[rgba(55,53,47,0.6)] dark:text-slate-300/60">{description}</p>
+        <p class="text-base font-semibold nt-text">{title}</p>
+        <p class="text-sm leading-[1.65] nt-text-60 dark:text-slate-300/60">{description}</p>
       </div>
     ))}
   </div>

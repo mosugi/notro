@@ -5,7 +5,7 @@ import { colorToClass } from './colors';
 interface Props { src: string; color?: string; class?: string; }
 const { src, color, class: className } = Astro.props;
 ---
-<figure class:list={["nt-pdf-block", colorToClass(color), className]}>
-	<iframe src={src} class="nt-pdf-block__frame" title="PDF" loading="lazy"></iframe>
-	{Astro.slots.has('default') && <figcaption class="nt-pdf-block__caption"><slot /></figcaption>}
+<figure class:list={[colorToClass(color), className]}>
+	<iframe src={src} data-pdf-frame title="PDF" loading="lazy"></iframe>
+	{Astro.slots.has('default') && <figcaption data-pdf-caption><slot /></figcaption>}
 </figure>

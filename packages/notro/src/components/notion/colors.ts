@@ -16,13 +16,8 @@ const BG_COLORS = new Set([
 /** Convert a Notion color name to a CSS class name (nt-color-*) */
 export function colorToClass(color: string | undefined): string {
 	if (!color || color === 'default') return '';
-	// Support both "_background" (Notion API) and "_bg" (legacy) suffixes
 	if (color.endsWith('_background')) {
 		const base = color.slice(0, -'_background'.length);
-		if (BG_COLORS.has(base)) return `nt-color-${color}`;
-	}
-	if (color.endsWith('_bg')) {
-		const base = color.slice(0, -3);
 		if (BG_COLORS.has(base)) return `nt-color-${color}`;
 	}
 	if (TEXT_COLORS.has(color)) return `nt-color-${color}`;

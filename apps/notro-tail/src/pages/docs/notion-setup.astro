@@ -8,15 +8,15 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
   description="Notion インテグレーションの作成・データベースの設定・環境変数の設定方法。"
   heading="Notion セットアップ"
 >
-  <p class="mb-8 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+  <p class="mb-8 nt-text-65 leading-7">
     NotroTail は Notion の Internal Integration Token とデータソース（データベース）ID を使って
     コンテンツを取得します。以下の手順でセットアップしてください。
   </p>
 
   <!-- Step 1: Integration -->
   <section class="mb-10" id="integration">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">1. Notion インテグレーションの作成</h2>
-    <ol class="ml-4 list-decimal space-y-3 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <h2 class="mb-3 text-xl font-semibold nt-text">1. Notion インテグレーションの作成</h2>
+    <ol class="ml-4 list-decimal space-y-3 nt-text-75 leading-7">
       <li>
         <a href="https://www.notion.so/my-integrations" target="_blank" rel="noopener noreferrer" class="text-[#2383e2] underline underline-offset-2 hover:opacity-70">notion.so/my-integrations</a>
         にアクセスし「New integration」をクリック
@@ -35,15 +35,15 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
   <!-- Step 2: Database -->
   <section class="mb-10" id="database">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">2. データベースの作成と共有</h2>
-    <ol class="ml-4 list-decimal space-y-3 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <h2 class="mb-3 text-xl font-semibold nt-text">2. データベースの作成と共有</h2>
+    <ol class="ml-4 list-decimal space-y-3 nt-text-75 leading-7">
       <li>Notion でデータベース（Full-page database）を作成</li>
       <li>
         データベース右上の「…」→「Connections」→ 作成したインテグレーションを選択して共有
       </li>
       <li>
         データベースの URL から ID を取得。URL 形式:
-        <pre class="mt-2 bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">https://www.notion.so/your-workspace/<strong>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</strong>?v=...</pre>
+        <pre class="mt-2 nt-bg-04 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">https://www.notion.so/your-workspace/<strong>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</strong>?v=...</pre>
         太字部分（32文字）が <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NOTION_DATASOURCE_ID</code>
       </li>
     </ol>
@@ -51,14 +51,14 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
   <!-- Step 3: Database schema -->
   <section class="mb-10" id="schema">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">3. データベーススキーマ</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <h2 class="mb-3 text-xl font-semibold nt-text">3. データベーススキーマ</h2>
+    <p class="mb-4 nt-text-65 leading-7">
       以下のプロパティをデータベースに追加してください。
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">Name</code>（title 型）はデフォルトで存在します。
     </p>
-    <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
+    <div class="overflow-x-auto rounded-lg border nt-border dark:border-white/8">
       <table class="w-full text-sm">
-        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+        <thead class="nt-bg-04 text-left nt-text-65">
           <tr>
             <th class="px-4 py-3 font-semibold">プロパティ名</th>
             <th class="px-4 py-3 font-semibold">型</th>
@@ -66,7 +66,7 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
             <th class="px-4 py-3 font-semibold">説明</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+        <tbody class="divide-y divide-black/[0.06] dark:divide-white/6 nt-text-75">
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">Name</code></td>
             <td class="px-4 py-3">title</td>
@@ -88,25 +88,25 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">Description</code></td>
             <td class="px-4 py-3">rich_text</td>
-            <td class="px-4 py-3 text-[rgba(55,53,47,0.35)] dark:text-slate-500">—</td>
+            <td class="px-4 py-3 nt-text-35">—</td>
             <td class="px-4 py-3">説明文・meta description・OGP 説明</td>
           </tr>
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">Tags</code></td>
             <td class="px-4 py-3">multi_select</td>
-            <td class="px-4 py-3 text-[rgba(55,53,47,0.35)] dark:text-slate-500">—</td>
+            <td class="px-4 py-3 nt-text-35">—</td>
             <td class="px-4 py-3">タグ（<code class="font-mono text-xs">page</code>・<code class="font-mono text-xs">pinned</code> は内部マーカー）</td>
           </tr>
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">Date</code></td>
             <td class="px-4 py-3">date</td>
-            <td class="px-4 py-3 text-[rgba(55,53,47,0.35)] dark:text-slate-500">—</td>
+            <td class="px-4 py-3 nt-text-35">—</td>
             <td class="px-4 py-3">公開日（ブログ一覧の並び順に使用）</td>
           </tr>
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">Category</code></td>
             <td class="px-4 py-3">select</td>
-            <td class="px-4 py-3 text-[rgba(55,53,47,0.35)] dark:text-slate-500">—</td>
+            <td class="px-4 py-3 nt-text-35">—</td>
             <td class="px-4 py-3">カテゴリ</td>
           </tr>
         </tbody>
@@ -116,24 +116,24 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
   <!-- Step 4: Internal tags -->
   <section class="mb-10" id="internal-tags">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">4. 内部タグの仕様</h2>
+    <h2 class="mb-3 text-xl font-semibold nt-text">4. 内部タグの仕様</h2>
     <div class="space-y-4">
-      <div class="rounded-lg border border-[rgba(55,53,47,0.09)] p-4 dark:border-white/8">
+      <div class="rounded-lg border nt-border p-4 dark:border-white/8">
         <code class="font-mono text-sm text-[#eb5757]">page</code>
-        <p class="mt-1 text-sm text-[rgba(55,53,47,0.7)] dark:text-slate-400 leading-6">
+        <p class="mt-1 text-sm nt-text-70 leading-6">
           ブログ一覧・タグページから非表示。日付・タグリンク・前後ナビなし。
           固定ページ（About、Privacy Policy 等）に使用。URL は <code class="font-mono text-xs">/blog/slug/</code> のまま。
         </p>
       </div>
-      <div class="rounded-lg border border-[rgba(55,53,47,0.09)] p-4 dark:border-white/8">
+      <div class="rounded-lg border nt-border p-4 dark:border-white/8">
         <code class="font-mono text-sm text-[#eb5757]">pinned</code>
-        <p class="mt-1 text-sm text-[rgba(55,53,47,0.7)] dark:text-slate-400 leading-6">
+        <p class="mt-1 text-sm nt-text-70 leading-6">
           ブログ一覧1ページ目の「ピン留め」セクションに表示。通常リストからは除外。
         </p>
       </div>
-      <div class="rounded-lg border border-[rgba(55,53,47,0.09)] p-4 dark:border-white/8">
+      <div class="rounded-lg border nt-border p-4 dark:border-white/8">
         <code class="font-mono text-sm text-[#eb5757]">入門</code>
-        <p class="mt-1 text-sm text-[rgba(55,53,47,0.7)] dark:text-slate-400 leading-6">
+        <p class="mt-1 text-sm nt-text-70 leading-6">
           入門者向けコンテンツ。ブログ一覧で「入門」セクションとして優先表示される。
         </p>
       </div>
@@ -142,23 +142,23 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
   <!-- Step 5: Environment variables -->
   <section class="mb-10" id="env-vars">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">5. 環境変数の設定</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <h2 class="mb-3 text-xl font-semibold nt-text">5. 環境変数の設定</h2>
+    <p class="mb-4 nt-text-65 leading-7">
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">apps/notro-tail/.env</code>
       ファイルを作成して以下を設定してください。このファイルは <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">.gitignore</code> で除外済みです。
     </p>
-    <pre class="bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto">NOTION_TOKEN=secret_xxxx
+    <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto">NOTION_TOKEN=secret_xxxx
 NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
-    <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] mt-4 dark:border-white/8">
+    <div class="overflow-x-auto rounded-lg border nt-border mt-4 dark:border-white/8">
       <table class="w-full text-sm">
-        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+        <thead class="nt-bg-04 text-left nt-text-65">
           <tr>
             <th class="px-4 py-3 font-semibold">変数</th>
             <th class="px-4 py-3 font-semibold">必須</th>
             <th class="px-4 py-3 font-semibold">説明</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+        <tbody class="divide-y divide-black/[0.06] dark:divide-white/6 nt-text-75">
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">NOTION_TOKEN</code></td>
             <td class="px-4 py-3 text-green-600 dark:text-green-400">✓</td>

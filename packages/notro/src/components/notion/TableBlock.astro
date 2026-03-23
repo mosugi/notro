@@ -25,19 +25,13 @@ const {
 ---
 
 <div
-	class:list={[
-		'nt-table-wrapper',
-		tableWrapperClass,
-		{ 'nt-table-wrapper--full': fitPageWidth === 'true' },
-	]}
+	class:list={[tableWrapperClass]}
+	data-fit-page-width={fitPageWidth === 'true' ? '' : undefined}
 >
 	<table
-		class:list={[
-			'nt-table',
-			className,
-			{ 'nt-table--header-row': headerRow === 'true' },
-			{ 'nt-table--header-col': headerColumn === 'true' },
-		]}
+		class:list={[className]}
+		data-header-row={headerRow === 'true' ? '' : undefined}
+		data-header-col={headerColumn === 'true' ? '' : undefined}
 	>
 		<slot />
 	</table>

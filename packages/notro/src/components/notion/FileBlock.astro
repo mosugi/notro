@@ -5,9 +5,9 @@ import { colorToClass } from './colors';
 interface Props { src: string; color?: string; class?: string; }
 const { src, color, class: className } = Astro.props;
 ---
-<div class:list={["nt-file-block", colorToClass(color), className]}>
-	<a href={src} target="_blank" rel="noopener noreferrer" class="nt-file-block__link">
-		<span class="nt-file-block__icon">📎</span>
+<div class:list={[colorToClass(color), className]}>
+	<a href={src} target="_blank" rel="noopener noreferrer" data-file-link>
+		<span data-file-icon aria-hidden="true">📎</span>
 		<slot />
 	</a>
 </div>

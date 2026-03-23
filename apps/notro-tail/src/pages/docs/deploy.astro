@@ -8,14 +8,14 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
   description="NotroTail を Vercel・Netlify・Cloudflare Pages にデプロイする手順。"
   heading="デプロイガイド"
 >
-  <p class="mb-8 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+  <p class="mb-8 nt-text-65 leading-7">
     NotroTail は Astro の静的出力モードを使用しています。アダプター不要で
     Vercel・Netlify・Cloudflare Pages にデプロイできます。
   </p>
 
   <!-- Vercel -->
   <section class="mb-10" id="vercel">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">Vercel へのデプロイ</h2>
+    <h2 class="mb-3 text-xl font-semibold nt-text">Vercel へのデプロイ</h2>
     <div class="mb-4">
       <a
         href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail"
@@ -25,7 +25,7 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
         <img src="https://vercel.com/button" alt="Deploy with Vercel" class="h-8" />
       </a>
     </div>
-    <ol class="ml-4 list-decimal space-y-3 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <ol class="ml-4 list-decimal space-y-3 nt-text-75 leading-7">
       <li>
         上の「Deploy with Vercel」ボタンをクリック、または
         <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" class="text-[#2383e2] underline underline-offset-2 hover:opacity-70">vercel.com</a>
@@ -33,7 +33,7 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
       </li>
       <li>
         Environment Variables に以下を追加:
-        <pre class="mt-2 bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">NOTION_TOKEN=secret_xxxx
+        <pre class="mt-2 nt-bg-04 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">NOTION_TOKEN=secret_xxxx
 NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
       </li>
       <li>「Deploy」をクリック — ビルド設定は <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">vercel.json</code> が自動で処理</li>
@@ -46,7 +46,7 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
 
   <!-- Cloudflare Pages -->
   <section class="mb-10" id="cloudflare">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">Cloudflare Pages へのデプロイ</h2>
+    <h2 class="mb-3 text-xl font-semibold nt-text">Cloudflare Pages へのデプロイ</h2>
     <div class="mb-4">
       <a
         href="https://deploy.workers.cloudflare.com/?url=https://github.com/mosugi/notro-tail"
@@ -56,7 +56,7 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
         <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare" class="h-8" />
       </a>
     </div>
-    <ol class="ml-4 list-decimal space-y-3 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <ol class="ml-4 list-decimal space-y-3 nt-text-75 leading-7">
       <li>
         上の「Deploy to Cloudflare」ボタンをクリック、または
         <a href="https://dash.cloudflare.com" target="_blank" rel="noopener noreferrer" class="text-[#2383e2] underline underline-offset-2 hover:opacity-70">Cloudflare ダッシュボード</a>
@@ -64,14 +64,14 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
       </li>
       <li>
         リポジトリを選択し、以下のビルド設定を入力:
-        <pre class="mt-2 bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">Framework preset:  None
+        <pre class="mt-2 nt-bg-04 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">Framework preset:  None
 Build command:     npm run build
 Build output dir:  apps/notro-tail/dist
 Root directory:    (空欄のまま)</pre>
       </li>
       <li>
         「Environment variables」に以下を追加:
-        <pre class="mt-2 bg-[rgba(55,53,47,0.04)] dark:bg-slate-800 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">NOTION_TOKEN=secret_xxxx
+        <pre class="mt-2 nt-bg-04 rounded-lg px-4 py-3 text-sm font-mono overflow-x-auto">NOTION_TOKEN=secret_xxxx
 NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
       </li>
       <li>「Save and Deploy」をクリック</li>
@@ -85,7 +85,7 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
 
   <!-- Netlify -->
   <section class="mb-10" id="netlify">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">Netlify へのデプロイ</h2>
+    <h2 class="mb-3 text-xl font-semibold nt-text">Netlify へのデプロイ</h2>
     <div class="mb-4">
       <a
         href="https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail"
@@ -95,7 +95,7 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
         <img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" class="h-8" />
       </a>
     </div>
-    <ol class="ml-4 list-decimal space-y-3 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <ol class="ml-4 list-decimal space-y-3 nt-text-75 leading-7">
       <li>
         上の「Deploy to Netlify」ボタンをクリック、または
         <a href="https://app.netlify.com" target="_blank" rel="noopener noreferrer" class="text-[#2383e2] underline underline-offset-2 hover:opacity-70">Netlify</a>
@@ -118,16 +118,16 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
 
   <!-- Build commands -->
   <section class="mb-10" id="build-commands">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">ビルドコマンド</h2>
-    <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
+    <h2 class="mb-3 text-xl font-semibold nt-text">ビルドコマンド</h2>
+    <div class="overflow-x-auto rounded-lg border nt-border dark:border-white/8">
       <table class="w-full text-sm">
-        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+        <thead class="nt-bg-04 text-left nt-text-65">
           <tr>
             <th class="px-4 py-3 font-semibold">コマンド</th>
             <th class="px-4 py-3 font-semibold">説明</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+        <tbody class="divide-y divide-black/[0.06] dark:divide-white/6 nt-text-75">
           <tr>
             <td class="px-4 py-3"><code class="font-mono text-sm">npm run build</code></td>
             <td class="px-4 py-3">型チェック + ビルド（ルートから実行、CI 推奨）</td>
@@ -147,8 +147,8 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
 
   <!-- SSR -->
   <section class="mb-10" id="ssr">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">SSR を有効にする（オプション）</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <h2 class="mb-3 text-xl font-semibold nt-text">SSR を有効にする（オプション）</h2>
+    <p class="mb-4 nt-text-65 leading-7">
       デフォルトは静的出力（SSG）です。オンデマンドレンダリングが必要な場合は、
       プラットフォームのアダプターをインストールして
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">astro.config.mjs</code>
@@ -157,15 +157,15 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
       notro-tail の独自 image service（<code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">notionImageService</code>）
       との兼ね合いに注意してください。
     </p>
-    <div class="overflow-x-auto rounded-lg border border-[rgba(55,53,47,0.09)] dark:border-white/8">
+    <div class="overflow-x-auto rounded-lg border nt-border dark:border-white/8">
       <table class="w-full text-sm">
-        <thead class="bg-[rgba(55,53,47,0.04)] dark:bg-white/4 text-left text-[rgba(55,53,47,0.65)] dark:text-slate-400">
+        <thead class="nt-bg-04 text-left nt-text-65">
           <tr>
             <th class="px-4 py-3 font-semibold">プラットフォーム</th>
             <th class="px-4 py-3 font-semibold">インストール</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-[rgba(55,53,47,0.06)] dark:divide-white/6 text-[rgba(55,53,47,0.75)] dark:text-slate-300">
+        <tbody class="divide-y divide-black/[0.06] dark:divide-white/6 nt-text-75">
           <tr>
             <td class="px-4 py-3">Vercel</td>
             <td class="px-4 py-3"><code class="font-mono text-sm">npm i @astrojs/vercel</code></td>
@@ -185,14 +185,14 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</pre>
 
   <!-- Incremental builds -->
   <section class="mb-10" id="incremental-builds">
-    <h2 class="mb-3 text-xl font-semibold text-[#37352f] dark:text-slate-100">増分ビルドについて</h2>
-    <p class="mb-4 text-[rgba(55,53,47,0.65)] dark:text-slate-400 leading-7">
+    <h2 class="mb-3 text-xl font-semibold nt-text">増分ビルドについて</h2>
+    <p class="mb-4 nt-text-65 leading-7">
       notro の <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">loader()</code> は
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">last_edited_time</code>
       でキャッシュし、変更されたページのみ再取得します。
       Notion のプリサイン S3 URL の有効期限切れも自動検出して再取得します。
     </p>
-    <ul class="ml-4 list-disc space-y-2 text-[rgba(55,53,47,0.75)] dark:text-slate-300 leading-7">
+    <ul class="ml-4 list-disc space-y-2 nt-text-75 leading-7">
       <li>初回ビルド: 全ページを取得</li>
       <li>2回目以降: 変更・追加・削除されたページのみ差分取得</li>
       <li>S3 URL が期限切れのページは自動的に再取得</li>

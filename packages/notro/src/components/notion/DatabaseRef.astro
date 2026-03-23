@@ -10,8 +10,9 @@ const { url, inline = 'false', icon = '🗄️', color, class: className } = Ast
 ---
 <a
 	href={url}
-	class:list={['nt-database-ref', colorToClass(color), className, { 'nt-database-ref--inline': inline === 'true' }]}
+	class:list={[colorToClass(color), className]}
+	data-inline={inline === 'true' ? '' : undefined}
 >
-	<span class="nt-database-ref__icon" aria-hidden="true">{icon}</span>
+	<span data-databaseref-icon aria-hidden="true">{icon}</span>
 	<slot />
 </a>

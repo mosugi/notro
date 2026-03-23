@@ -8,7 +8,7 @@ import { colorToClass } from './colors';
 interface Props { url: string; color?: string; class?: string; }
 const { url, color, class: className } = Astro.props;
 ---
-<a href={url} class:list={["nt-page-ref", colorToClass(color), className]}>
-	<span class="nt-page-ref__icon" aria-hidden="true">📄</span>
+<a href={url} class:list={[colorToClass(color), className]}>
+	<span data-pageref-icon aria-hidden="true">📄</span>
 	<slot />
 </a>
