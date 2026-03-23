@@ -24,12 +24,9 @@ const {
 } = Astro.props;
 ---
 
-<div
-	class:list={[tableWrapperClass]}
-	data-fit-page-width={fitPageWidth === 'true' ? '' : undefined}
->
+<div class:list={[tableWrapperClass, fitPageWidth === 'true' && 'w-full']}>
 	<table
-		class:list={[className]}
+		class:list={[className, 'border nt-border']}
 		data-header-row={headerRow === 'true' ? '' : undefined}
 		data-header-col={headerColumn === 'true' ? '' : undefined}
 	>

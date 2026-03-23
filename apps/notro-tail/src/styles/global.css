@@ -75,31 +75,6 @@
     @apply font-mono bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] py-[0.2em] px-[0.4em] text-[85%] dark:bg-white/10 dark:text-red-400;
   }
 
-  /* Toggle (details/summary) — smooth open/close transition for the disclosure triangle */
-  .nt-toggle-block__title {
-    @apply cursor-pointer list-none transition-colors duration-150;
-  }
-
-  .nt-toggle-block__title:hover {
-    color: rgb(var(--nt-text-rgb) / 0.70);
-  }
-
-  /* Hide default browser triangle marker */
-  .nt-toggle-block__title::marker,
-  .nt-toggle-block__title::-webkit-details-marker {
-    @apply hidden;
-  }
-
-  /* Custom disclosure triangle with rotation transition */
-  .nt-toggle-block__title::before {
-    content: "▶";
-    @apply inline-block mr-[0.4em] text-[0.65em] transition-transform duration-200 origin-center;
-  }
-
-  details[open] > .nt-toggle-block__title::before {
-    @apply rotate-90;
-  }
-
   /* Toggle block — smooth indicator rotation on open/close */
   .nt-toggle-block > summary,
   .nt-markdown-content details > summary {
@@ -168,37 +143,6 @@
     @apply block;
   }
 
-  /* Image block sub-elements */
-  [data-image-img] {
-    @apply h-auto max-w-full;
-  }
-  [data-image-caption] {
-    @apply text-sm text-gray-500 mt-1.5 text-center dark:text-slate-400;
-  }
-
-  /* Media blocks (audio / video) */
-  [data-media-caption] {
-    @apply text-sm text-gray-500 mt-1.5 dark:text-slate-400;
-  }
-
-  /* File block sub-elements */
-  [data-file-link] {
-    @apply inline-flex items-center gap-1.5 text-gray-700 underline underline-offset-2 dark:text-slate-300;
-  }
-
-  /* PDF block sub-elements */
-  [data-pdf-frame] {
-    @apply w-full min-h-[500px] border-0;
-  }
-  [data-pdf-caption] {
-    @apply text-sm text-gray-500 mt-1.5 dark:text-slate-400;
-  }
-
-  /* TOC label */
-  [data-toc-label] {
-    @apply font-semibold text-sm text-gray-700 mb-2 dark:text-slate-300;
-  }
-
   /* Table structural variants (injection-impossible via classMap) */
   [data-header-row] tr:first-child td,
   [data-header-row] tr:first-child th {
@@ -211,26 +155,7 @@
     background-color: rgb(var(--nt-text-rgb) / 0.04);
   }
 
-  /* Table cell borders (injection-impossible: td/th need parent context) */
-  .nt-markdown-content table td,
-  .nt-markdown-content table th {
-    @apply px-3 py-1.5 text-left align-top border;
-    border-color: rgb(var(--nt-text-rgb) / 0.09);
-  }
-  .nt-markdown-content table {
-    @apply border;
-    border-color: rgb(var(--nt-text-rgb) / 0.09);
-  }
-
-  /* Callout icon/body */
-  [data-callout-icon] {
-    @apply shrink-0 text-xl leading-none;
-  }
-  [data-callout-body] {
-    @apply min-w-0 flex-1;
-  }
-  [data-callout-body] > :first-child { @apply mt-0; }
-  [data-callout-body] > :last-child  { @apply mb-0; }
+  /* Table cell borders (injection-impossible: td/th need parent context for header variants) */
 }
 
 @layer utilities {
@@ -300,14 +225,6 @@
   .nt-border-18 { border-color: rgb(var(--nt-text-rgb) / 0.18); }
   .nt-border-30 { border-color: rgb(var(--nt-text-rgb) / 0.30); }
 
-  /* Single-purpose data-attribute utilities */
-  [data-fit-page-width]       { @apply w-full; }
-  [data-media-player]         { @apply w-full; }
-  [data-file-link]:hover      { @apply opacity-70; }
-  [data-file-icon]            { @apply text-base; }
-  [data-pageref-icon],
-  [data-databaseref-icon]     { @apply text-[0.9em]; }
-  a[data-inline]              { @apply inline; }
 }
 
 /* ── Dark mode ───────────────────────────────────────────────────────────── */

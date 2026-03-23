@@ -41,4 +41,4 @@ export const EmEl            = makeHtmlElement('em');
 export const DelEl           = makeHtmlElement('del');
 
 // ── Table header cell ──────────────────────────────────────────
-export const ThEl            = makeHtmlElement('th');
+export const ThEl            = makeHtmlElement('th', 'px-3 py-1.5 text-left align-top border nt-border');

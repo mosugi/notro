@@ -3,4 +3,4 @@ import { colorToClass } from './colors';
 interface Props { color?: string; class?: string; }
 const { color, class: className } = Astro.props;
 ---
-<td class:list={[colorToClass(color), className]}><slot /></td>
+<td class:list={[colorToClass(color), className, 'px-3 py-1.5 text-left align-top border nt-border']}><slot /></td>

@@ -14,6 +14,6 @@ interface Props { src: string; alt?: string; caption?: string; color?: string; c
 const { src, alt, caption, color, class: className } = Astro.props;
 ---
 <figure class:list={[colorToClass(color), className]}>
-	<img src={src} alt={alt ?? ''} loading="lazy" decoding="async" data-image-img />
-	{caption && <figcaption data-image-caption>{caption}</figcaption>}
+	<img src={src} alt={alt ?? ''} loading="lazy" decoding="async" class="h-auto max-w-full" data-image-img />
+	{caption && <figcaption class="text-sm text-gray-500 mt-1.5 text-center dark:text-slate-400" data-image-caption>{caption}</figcaption>}
 </figure>

@@ -6,6 +6,6 @@ interface Props { src: string; color?: string; class?: string; }
 const { src, color, class: className } = Astro.props;
 ---
 <figure class:list={[colorToClass(color), className]}>
-	<iframe src={src} data-pdf-frame title="PDF" loading="lazy"></iframe>
-	{Astro.slots.has('default') && <figcaption data-pdf-caption><slot /></figcaption>}
+	<iframe src={src} class="w-full min-h-[500px] border-0" data-pdf-frame title="PDF" loading="lazy"></iframe>
+	{Astro.slots.has('default') && <figcaption class="text-sm text-gray-500 mt-1.5 dark:text-slate-400" data-pdf-caption><slot /></figcaption>}
 </figure>

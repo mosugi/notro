@@ -10,9 +10,8 @@ const { url, inline = 'false', icon = '🗄️', color, class: className } = Ast
 ---
 <a
 	href={url}
-	class:list={[colorToClass(color), className]}
-	data-inline={inline === 'true' ? '' : undefined}
+	class:list={[colorToClass(color), className, inline === 'true' && 'inline']}
 >
-	<span data-databaseref-icon aria-hidden="true">{icon}</span>
+	<span class="text-[0.9em]" data-databaseref-icon aria-hidden="true">{icon}</span>
 	<slot />
 </a>

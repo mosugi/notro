@@ -6,6 +6,6 @@ interface Props { src: string; color?: string; class?: string; }
 const { src, color, class: className } = Astro.props;
 ---
 <figure class:list={[colorToClass(color), className]} data-media-type="video">
-	<video controls src={src} data-media-player></video>
-	{Astro.slots.has('default') && <figcaption data-media-caption><slot /></figcaption>}
+	<video controls src={src} class="w-full" data-media-player></video>
+	{Astro.slots.has('default') && <figcaption class="text-sm text-gray-500 mt-1.5 dark:text-slate-400" data-media-caption><slot /></figcaption>}
 </figure>

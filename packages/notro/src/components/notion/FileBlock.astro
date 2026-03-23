@@ -6,8 +6,8 @@ interface Props { src: string; color?: string; class?: string; }
 const { src, color, class: className } = Astro.props;
 ---
 <div class:list={[colorToClass(color), className]}>
-	<a href={src} target="_blank" rel="noopener noreferrer" data-file-link>
-		<span data-file-icon aria-hidden="true">📎</span>
+	<a href={src} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-gray-700 underline underline-offset-2 dark:text-slate-300 hover:opacity-70" data-file-link>
+		<span class="text-base" data-file-icon aria-hidden="true">📎</span>
 		<slot />
 	</a>
 </div>
