@@ -17,6 +17,45 @@
 - クライアント側 `<script>` 内でも `element.style.*` でスタイルを直接操作しないこと
 - 表示/非表示の制御は `element.classList.toggle("hidden")` など **クラス操作** で行うこと（`element.style.display` は使わない）
 
+#### スタイリングの適用単位
+
+**Notion ブロック（コンポーネント単位）**
+
+Notion ブロックのスタイルカスタマイズは `classMap` または `components` 差し替えを使う。`global.css` に新規クラスを追加しない。
+
+```astro
+<!-- classMap: デフォルトコンポーネントを維持しつつ Tailwind クラスだけ上書き -->
+<NotionMarkdownRenderer
+  markdown={markdown}
+  classMap={{ callout: "border-l-4 border-blue-500 pl-4" }}
+/>
+
+<!-- components: コンポーネントごと差し替える -->
+<NotionMarkdownRenderer
+  markdown={markdown}
+  components={{ callout: MyCallout }}
+/>
+```
+
+**ページ・セクション単位**
+
+`global.css` にページ固有のスタイルを追加しない。代わりに **ラッパーコンポーネント**（`src/components/` 配下の `.astro` ファイル）を定義し、Tailwind クラスをそこに集約する。
+
+```astro
+<!-- Good: ラッパーコンポーネントでページ固有スタイルを管理 -->
+<!-- src/components/AboutPageLayout.astro -->
+<div class="max-w-2xl mx-auto px-4 border-t-4 border-blue-500">
+  <slot />
+</div>
+
+<!-- Bad: global.css に .page-about { ... } を追加する -->
+```
+
+`global.css` に追記してよいのは以下のみ：
+- `nt-*` プレフィックスの Notion ブロック汎用クラス（既存規約）
+- CSS カスタムプロパティ（`@theme` / `--color-*` など TailwindCSS 4 のテーマ拡張）
+- フォントや `@font-face` など全体共通のベーススタイル
+
 ### ビルド確認・レイアウト確認
 
 コードを変更したら必ず以下の手順で確認すること：
