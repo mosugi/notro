@@ -2,37 +2,6 @@
 // Rendering verification page: showcases all Notion block types rendered via NotionMarkdownRenderer.
 import DocsLayout from "../../layouts/DocsLayout.astro";
 import { NotionMarkdownRenderer } from "notro";
-import Callout from "../../components/notion/Callout.astro";
-
-// Shared classMap matching the blog post renderer
-const classMap = {
-  callout:     "flex items-start gap-3 my-4 rounded-md p-4",
-  toggle:      "my-1",
-  toggleTitle: "cursor-pointer select-none py-1 font-medium",
-  columns:     "grid grid-cols-1 gap-8 my-4 md:grid-cols-2",
-  column:      "min-w-0",
-  quote:       "my-4 border-l-[3px] pl-4 italic",
-  h1:          "mb-3 mt-10 text-[1.875rem] font-bold tracking-tight",
-  h2:          "mb-2 mt-8 text-2xl font-semibold tracking-tight",
-  h3:          "mb-2 mt-6 text-xl font-semibold",
-  h4:          "mb-1 mt-4 text-base font-semibold",
-  image:       "my-4",
-  tableWrapper:"my-4 w-full overflow-x-auto",
-  table:       "w-full border-collapse text-sm",
-  tableCell:   "px-3 py-2 text-sm",
-  toc:         "my-4 rounded-md p-4 text-sm",
-  p:           "mb-4 leading-7",
-  ul:          "mb-4 list-disc pl-6 space-y-1",
-  ol:          "mb-4 list-decimal pl-6 space-y-1",
-  li:          "leading-7",
-  pre:         "my-4 overflow-x-auto rounded-md p-4 font-mono text-sm",
-  hr:          "my-8",
-  a:           "underline underline-offset-2 hover:opacity-70",
-  strong:      "font-semibold",
-  em:          "italic",
-  del:         "line-through",
-  th:          "px-3 py-2 text-left text-sm font-semibold",
-} as const;
 
 // --- Markdown samples for each block type ---
 
@@ -251,7 +220,7 @@ const BG_COLORS = [
     <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">H1・H2・H3・H4 の4階層に対応</p>
     <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
-        <NotionMarkdownRenderer markdown={mdHeadings} classMap={classMap} />
+        <NotionMarkdownRenderer markdown={mdHeadings} />
       </div>
       <details class="border-t nt-border-06 dark:border-white/6">
         <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
@@ -268,7 +237,7 @@ const BG_COLORS = [
     <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">太字・斜体・取り消し線・インラインコード・リンク</p>
     <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
-        <NotionMarkdownRenderer markdown={mdText} classMap={classMap} />
+        <NotionMarkdownRenderer markdown={mdText} />
       </div>
       <details class="border-t nt-border-06 dark:border-white/6">
         <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
@@ -285,7 +254,7 @@ const BG_COLORS = [
     <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">箇条書き・番号付き・タスクリスト（ネスト対応）</p>
     <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
-        <NotionMarkdownRenderer markdown={mdLists} classMap={classMap} />
+        <NotionMarkdownRenderer markdown={mdLists} />
       </div>
       <details class="border-t nt-border-06 dark:border-white/6">
         <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
@@ -302,7 +271,7 @@ const BG_COLORS = [
     <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">色付きコールアウトブロック。<code class="font-mono text-[#eb5757] text-[85%]">:::callout{"{color=\"...\"}"}</code> ディレクティブ構文</p>
     <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
-        <NotionMarkdownRenderer markdown={mdCallout} classMap={classMap} components={{ callout: Callout }} />
+        <NotionMarkdownRenderer markdown={mdCallout} />
       </div>
       <details class="border-t nt-border-06 dark:border-white/6">
         <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
@@ -319,7 +288,7 @@ const BG_COLORS = [
     <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">折りたたみ可能なブロック。<code class="font-mono text-[#eb5757] text-[85%]">&lt;details&gt;</code> + CSS アニメーション</p>
     <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
-        <NotionMarkdownRenderer markdown={mdToggle} classMap={classMap} />
+        <NotionMarkdownRenderer markdown={mdToggle} />
       </div>
       <details class="border-t nt-border-06 dark:border-white/6">
         <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
@@ -336,7 +305,7 @@ const BG_COLORS = [
     <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">Notion の Quote ブロック → <code class="font-mono text-[#eb5757] text-[85%]">&lt;blockquote&gt;</code></p>
     <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
-        <NotionMarkdownRenderer markdown={mdQuote} classMap={classMap} />
+        <NotionMarkdownRenderer markdown={mdQuote} />
       </div>
       <details class="border-t nt-border-06 dark:border-white/6">
         <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
@@ -353,7 +322,7 @@ const BG_COLORS = [
     <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">Shiki によるシンタックスハイライト。JavaScript・TypeScript・Bash など多数の言語に対応</p>
     <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
-        <NotionMarkdownRenderer markdown={mdCode} classMap={classMap} />
+        <NotionMarkdownRenderer markdown={mdCode} />
       </div>
       <details class="border-t nt-border-06 dark:border-white/6">
         <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
@@ -370,7 +339,7 @@ const BG_COLORS = [
     <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">GFM テーブル記法。ヘッダー行・罫線スタイル付き</p>
     <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
-        <NotionMarkdownRenderer markdown={mdTable} classMap={classMap} />
+        <NotionMarkdownRenderer markdown={mdTable} />
       </div>
       <details class="border-t nt-border-06 dark:border-white/6">
         <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
@@ -387,7 +356,7 @@ const BG_COLORS = [
     <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">インライン <code class="font-mono text-[#eb5757] text-[85%]">$...$</code> とブロック <code class="font-mono text-[#eb5757] text-[85%]">$$...$$</code> 数式を KaTeX でレンダリング</p>
     <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
-        <NotionMarkdownRenderer markdown={mdMath} classMap={classMap} />
+        <NotionMarkdownRenderer markdown={mdMath} />
       </div>
       <details class="border-t nt-border-06 dark:border-white/6">
         <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
@@ -404,7 +373,7 @@ const BG_COLORS = [
     <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">Notion の Divider ブロック → <code class="font-mono text-[#eb5757] text-[85%]">&lt;hr&gt;</code></p>
     <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
-        <NotionMarkdownRenderer markdown={mdHr} classMap={classMap} />
+        <NotionMarkdownRenderer markdown={mdHr} />
       </div>
       <details class="border-t nt-border-06 dark:border-white/6">
         <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
@@ -421,7 +390,7 @@ const BG_COLORS = [
     <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">2カラムレイアウト。モバイルでは縦積み</p>
     <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
       <div class="px-5 py-4 nt-markdown-content">
-        <NotionMarkdownRenderer markdown={mdColumns} classMap={classMap} />
+        <NotionMarkdownRenderer markdown={mdColumns} />
       </div>
       <details class="border-t nt-border-06 dark:border-white/6">
         <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
@@ -520,7 +489,7 @@ graph LR
   B --> C[MDX コンパイル]
   C --> D[HTML 出力]
 \`\`\``}
-            classMap={classMap}
+           
           />
         </div>
         <details class="mt-2">
@@ -550,7 +519,7 @@ sequenceDiagram
   A->>A: compileMdx()
   A-->>B: HTML
 \`\`\``}
-            classMap={classMap}
+           
           />
         </div>
         <details class="mt-2">

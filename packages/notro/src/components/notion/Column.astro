@@ -13,6 +13,6 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<div class:list={[className]}>
+<div data-column class:list={[className]}>
 	<slot />
 </div>

@@ -2,7 +2,10 @@
  * Notion color system
  * https://developers.notion.com/reference/block#color
  *
- * CSS classes are defined in apps/notro-tail/src/styles/global.css as .nt-color-*
+ * notro components use data-color attributes for color annotations.
+ * Styling is handled by notro-ui's .nt-markdown-content [data-color="*"] selectors.
+ *
+ * colorToClass() is kept as a utility for user-land code that needs CSS class names.
  */
 
 const TEXT_COLORS = new Set([

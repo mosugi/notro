@@ -1,11 +1,9 @@
 ---
 /** <pdf src="URL" color="Color">Caption</pdf> */
-import { colorToClass } from './colors';
-
 interface Props { src: string; color?: string; class?: string; }
 const { src, color, class: className } = Astro.props;
 ---
-<figure class:list={[colorToClass(color), className]}>
+<figure data-pdf-block data-color={color || undefined} class:list={[className]}>
 	<iframe src={src} data-pdf-frame title="PDF" loading="lazy"></iframe>
 	{Astro.slots.has('default') && <figcaption data-pdf-caption><slot /></figcaption>}
 </figure>

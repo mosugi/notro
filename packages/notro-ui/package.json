@@ -1,0 +1,22 @@
+{
+  "name": "notro-ui",
+  "description": "Notion block CSS library for notro — style Notion content by wrapping it in .nt-markdown-content",
+  "version": "0.0.1",
+  "type": "module",
+  "author": "mosugi <mosugeek@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mosugi/NotroTail.git",
+    "directory": "packages/notro-ui"
+  },
+  "main": "index.css",
+  "exports": {
+    ".": "./index.css",
+    "./src/*": "./src/*"
+  },
+  "files": [
+    "index.css",
+    "src/"
+  ]
+}

@@ -8,8 +8,6 @@
  * Mapped to MDX `components.details`.
  * Used together with ToggleTitle.astro (components.summary).
  */
-import { colorToClass } from './colors';
-
 interface Props {
 	color?: string;
 	class?: string;
@@ -18,6 +16,6 @@ interface Props {
 const { color, class: className } = Astro.props;
 ---
 
-<details class:list={[colorToClass(color), className]}>
+<details data-color={color || undefined} class:list={[className]}>
 	<slot />
 </details>

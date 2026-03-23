@@ -22,6 +22,7 @@
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^6.0.4",
     "notro": "^0.0.1",
+    "notro-ui": "*",
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {

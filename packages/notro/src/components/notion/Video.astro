@@ -1,11 +1,9 @@
 ---
 /** <video src="URL" color="Color">Caption</video> */
-import { colorToClass } from './colors';
-
 interface Props { src: string; color?: string; class?: string; }
 const { src, color, class: className } = Astro.props;
 ---
-<figure class:list={[colorToClass(color), className]} data-media-type="video">
+<figure data-media-type="video" data-color={color || undefined} class:list={[className]}>
 	<video controls src={src} data-media-player></video>
 	{Astro.slots.has('default') && <figcaption data-media-caption><slot /></figcaption>}
 </figure>

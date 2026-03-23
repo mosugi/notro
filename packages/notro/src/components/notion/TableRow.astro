@@ -1,6 +1,5 @@
 ---
-import { colorToClass } from './colors';
 interface Props { color?: string; class?: string; }
 const { color, class: className } = Astro.props;
 ---
-<tr class:list={[colorToClass(color), className]}><slot /></tr>
+<tr data-color={color || undefined} class:list={[className]}><slot /></tr>

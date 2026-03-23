@@ -1,0 +1,15 @@
+/*
+ * notro-ui — Notion block CSS library
+ *
+ * Usage in global.css:
+ *   @import "tailwindcss";
+ *   @import "notro-ui";
+ *
+ * Themes are opt-in:
+ *   @import "notro-ui/src/themes/bordered.css";
+ *   @import "notro-ui/src/themes/compact.css";
+ */
+
+@import "./src/tokens.css";
+@import "./src/utilities.css";
+@import "./src/prose.css";

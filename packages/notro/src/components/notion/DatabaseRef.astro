@@ -4,14 +4,15 @@
  *
  * Link to a Notion database.
  */
-import { colorToClass } from './colors';
 interface Props { url: string; inline?: string; icon?: string; color?: string; class?: string; }
 const { url, inline = 'false', icon = '🗄️', color, class: className } = Astro.props;
 ---
 <a
 	href={url}
-	class:list={[colorToClass(color), className]}
+	data-databaseref
+	data-color={color || undefined}
 	data-inline={inline === 'true' ? '' : undefined}
+	class:list={[className]}
 >
 	<span data-databaseref-icon aria-hidden="true">{icon}</span>
 	<slot />

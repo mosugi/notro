@@ -1,30 +1,25 @@
 ---
 /**
- * Custom Callout component for NotroTail.
- * Overrides notro's base Callout with TailwindCSS styling.
+ * Sample custom Callout component for NotroTail.
  *
- * This is a sample showing how to fully override a notro component
- * via the `components` prop on <NotionMarkdownRenderer />.
+ * Demonstrates how to fully override a notro component via the `components`
+ * prop on <NotionMarkdownRenderer />.
  *
- * Usage in [slug].astro:
- *   import Callout from "../../components/notion/Callout.astro";
- *   <NotionMarkdownRenderer components={{ callout: Callout }} ... />
+ * This variant adds a visible border to all callouts, supplementing the
+ * color background applied by notro-ui's [data-callout][data-color] selectors.
  */
-import { colorToClass } from "notro";
-
 interface Props {
 	icon?: string;
 	color?: string;
+	class?: string;
 }
 
-const { icon, color } = Astro.props;
+const { icon, color, class: className } = Astro.props;
 ---
 
-<div
-	class:list={["nt-callout-block flex items-start gap-3 my-4 rounded-lg border border-gray-200 bg-gray-50 p-4", colorToClass(color)]}
->
-	{icon && <span class="text-xl leading-none shrink-0">{icon}</span>}
-	<div class="min-w-0 flex-1 [&>:first-child]:mt-0 [&>:last-child]:mb-0">
+<div data-callout data-color={color || 'gray_background'} class:list={["border border-current/20", className]}>
+	{icon && <span data-callout-icon aria-hidden="true">{icon}</span>}
+	<div data-callout-body>
 		<slot />
 	</div>
 </div>

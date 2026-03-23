@@ -1,11 +1,9 @@
 ---
 /** <file src="URL" color="Color">Caption</file> */
-import { colorToClass } from './colors';
-
 interface Props { src: string; color?: string; class?: string; }
 const { src, color, class: className } = Astro.props;
 ---
-<div class:list={[colorToClass(color), className]}>
+<div data-file-block data-color={color || undefined} class:list={[className]}>
 	<a href={src} target="_blank" rel="noopener noreferrer" data-file-link>
 		<span data-file-icon aria-hidden="true">📎</span>
 		<slot />

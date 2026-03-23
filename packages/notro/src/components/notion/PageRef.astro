@@ -4,11 +4,10 @@
  *
  * Link to a Notion page.
  */
-import { colorToClass } from './colors';
 interface Props { url: string; color?: string; class?: string; }
 const { url, color, class: className } = Astro.props;
 ---
-<a href={url} class:list={[colorToClass(color), className]}>
+<a href={url} data-pageref data-color={color || undefined} class:list={[className]}>
 	<span data-pageref-icon aria-hidden="true">📄</span>
 	<slot />
 </a>

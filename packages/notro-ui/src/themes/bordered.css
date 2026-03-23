@@ -1,0 +1,32 @@
+/*
+ * .nt-theme-bordered
+ *
+ * Apply to a wrapper element to give callouts a left-border style
+ * instead of the default filled background.
+ *
+ * Usage:
+ *   <div class="nt-theme-bordered">
+ *     <NotionMarkdownRenderer ... />
+ *   </div>
+ */
+
+@layer components {
+  .nt-theme-bordered .nt-markdown-content [data-callout],
+  .nt-theme-bordered[data-callout] {
+    background-color: transparent;
+    border-left: 3px solid rgb(var(--nt-text-rgb) / 0.30);
+    border-radius: 0;
+    padding-left: 1rem;
+  }
+
+  /* Per-color border colors */
+  .nt-theme-bordered [data-callout][data-color="blue_background"]   { border-color: var(--nt-color-blue); }
+  .nt-theme-bordered [data-callout][data-color="red_background"]    { border-color: var(--nt-color-red); }
+  .nt-theme-bordered [data-callout][data-color="green_background"]  { border-color: var(--nt-color-green); }
+  .nt-theme-bordered [data-callout][data-color="yellow_background"] { border-color: var(--nt-color-yellow); }
+  .nt-theme-bordered [data-callout][data-color="orange_background"] { border-color: var(--nt-color-orange); }
+  .nt-theme-bordered [data-callout][data-color="purple_background"] { border-color: var(--nt-color-purple); }
+  .nt-theme-bordered [data-callout][data-color="pink_background"]   { border-color: var(--nt-color-pink); }
+  .nt-theme-bordered [data-callout][data-color="brown_background"]  { border-color: var(--nt-color-brown); }
+  .nt-theme-bordered [data-callout][data-color="gray_background"]   { border-color: var(--nt-color-gray); }
+}

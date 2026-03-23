@@ -4,12 +4,9 @@
  * <span underline="true">text</span>
  *
  * Mapped to MDX `components.span`.
- * Supports inline text color, underline, and an optional extra class
- * (e.g. injected via classMap.span).
+ * Supports inline text color, underline, and an optional extra class.
  * Also passes through arbitrary `style` (e.g. Shiki syntax-highlight colors).
  */
-import { colorToClass } from './colors';
-
 interface Props {
 	color?: string;
 	underline?: string;
@@ -31,4 +28,4 @@ if (underline === 'true') styleObj['text-decoration'] = 'underline';
 const style = Object.keys(styleObj).length > 0 ? styleObj : undefined;
 ---
 
-<span class:list={[colorToClass(color), className]} style={style}><slot /></span>
+<span data-color={color || undefined} class:list={[className]} style={style}><slot /></span>

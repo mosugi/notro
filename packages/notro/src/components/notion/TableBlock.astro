@@ -5,7 +5,6 @@
  * </table>
  *
  * Mapped to MDX `components.table`.
- * Color priority (high → low): cell > row > column
  */
 interface Props {
 	'fit-page-width'?: string;
@@ -25,6 +24,7 @@ const {
 ---
 
 <div
+	data-table-wrapper
 	class:list={[tableWrapperClass]}
 	data-fit-page-width={fitPageWidth === 'true' ? '' : undefined}
 >
