@@ -32,21 +32,27 @@
   --nt-color-red-bg:    #FDEBEC;
 }
 
+/* Fade-in animation for toggle content when opened */
+@keyframes nt-toggle-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 @layer base {
   body {
-    @apply font-sans text-[#37352f] bg-white antialiased;
+    @apply font-sans text-[#37352f] bg-white antialiased dark:text-slate-200 dark:bg-slate-950;
   }
 }
 
-@layer utilities {
+@layer components {
   /* Base wrapper style for Notion markdown content */
   .nt-markdown-content {
-    @apply text-base leading-relaxed text-[#37352f];
+    @apply text-base leading-relaxed text-[#37352f] dark:text-slate-200;
   }
 
   /* Code blocks — styled by @shikijs/rehype (colors injected inline) */
   .nt-markdown-content pre {
-    @apply rounded-md py-4 px-5 overflow-x-auto text-sm leading-[1.7] my-5;
+    @apply rounded-md py-4 px-5 overflow-x-auto text-sm leading-[1.7] my-5 dark:bg-slate-800 dark:text-slate-200;
   }
 
   .nt-markdown-content pre > code {
@@ -55,49 +61,20 @@
   }
 
   /*
-   * Notion color classes
-   * All values reference CSS custom properties defined on :root above.
+   * Inline code — global CSS for :not(pre) > code selector
+   * (classMap cannot express this nesting distinction)
    */
-  .nt-color-gray              { @apply text-[var(--nt-color-gray)]; }
-  .nt-color-brown             { @apply text-[var(--nt-color-brown)]; }
-  .nt-color-orange            { @apply text-[var(--nt-color-orange)]; }
-  .nt-color-yellow            { @apply text-[var(--nt-color-yellow)]; }
-  .nt-color-green             { @apply text-[var(--nt-color-green)]; }
-  .nt-color-blue              { @apply text-[var(--nt-color-blue)]; }
-  .nt-color-purple            { @apply text-[var(--nt-color-purple)]; }
-  .nt-color-pink              { @apply text-[var(--nt-color-pink)]; }
-  .nt-color-red               { @apply text-[var(--nt-color-red)]; }
+  .nt-markdown-content :not(pre) > code {
+    @apply font-mono bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] py-[0.2em] px-[0.4em] text-[85%] dark:bg-white/10 dark:text-red-400;
+  }
 
-  .nt-color-gray_background   { @apply bg-[var(--nt-color-gray-bg)]; }
-  .nt-color-brown_background  { @apply bg-[var(--nt-color-brown-bg)]; }
-  .nt-color-orange_background { @apply bg-[var(--nt-color-orange-bg)]; }
-  .nt-color-yellow_background { @apply bg-[var(--nt-color-yellow-bg)]; }
-  .nt-color-green_background  { @apply bg-[var(--nt-color-green-bg)]; }
-  .nt-color-blue_background   { @apply bg-[var(--nt-color-blue-bg)]; }
-  .nt-color-purple_background { @apply bg-[var(--nt-color-purple-bg)]; }
-  .nt-color-pink_background   { @apply bg-[var(--nt-color-pink-bg)]; }
-  .nt-color-red_background    { @apply bg-[var(--nt-color-red-bg)]; }
-
-  /* Legacy _bg suffix aliases — same variables as _background */
-  .nt-color-gray_bg           { @apply bg-[var(--nt-color-gray-bg)]; }
-  .nt-color-brown_bg          { @apply bg-[var(--nt-color-brown-bg)]; }
-  .nt-color-orange_bg         { @apply bg-[var(--nt-color-orange-bg)]; }
-  .nt-color-yellow_bg         { @apply bg-[var(--nt-color-yellow-bg)]; }
-  .nt-color-green_bg          { @apply bg-[var(--nt-color-green-bg)]; }
-  .nt-color-blue_bg           { @apply bg-[var(--nt-color-blue-bg)]; }
-  .nt-color-purple_bg         { @apply bg-[var(--nt-color-purple-bg)]; }
-  .nt-color-pink_bg           { @apply bg-[var(--nt-color-pink-bg)]; }
-  .nt-color-red_bg            { @apply bg-[var(--nt-color-red-bg)]; }
-
-  /*
-   * Toggle (details/summary) — smooth open/close transition for the disclosure triangle
-   */
+  /* Toggle (details/summary) — smooth open/close transition for the disclosure triangle */
   .nt-toggle-block__title {
     @apply cursor-pointer list-none transition-colors duration-150;
   }
 
   .nt-toggle-block__title:hover {
-    @apply text-[rgba(55,53,47,0.7)];
+    @apply text-[rgba(55,53,47,0.7)] dark:text-slate-200/70;
   }
 
   /* Hide default browser triangle marker */
@@ -114,14 +91,6 @@
 
   details[open] > .nt-toggle-block__title::before {
     @apply rotate-90;
-  }
-
-  /*
-   * Inline code — global CSS for :not(pre) > code selector
-   * (classMap cannot express this nesting distinction)
-   */
-  .nt-markdown-content :not(pre) > code {
-    @apply font-mono bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] py-[0.2em] px-[0.4em] text-[85%];
   }
 
   /* Toggle block — smooth indicator rotation on open/close */
@@ -148,14 +117,10 @@
   .nt-markdown-content details > :not(summary) {
     animation: nt-toggle-fadein 0.15s ease;
   }
-  @keyframes nt-toggle-fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
 
   /* N-07: hr visual styles */
   .nt-markdown-content hr {
-    @apply my-8 border-0 border-t border-solid border-gray-200;
+    @apply my-8 border-0 border-t border-solid border-gray-200 dark:border-white/[0.12];
   }
 
   /* N-11: task list checkbox styles for remark-gfm output */
@@ -182,11 +147,6 @@
   .nt-toc-item a:hover {
     @apply text-blue-600 underline;
   }
-  /* Indent by heading level (h1=0, h2=1rem, h3=2rem, h4=3rem) */
-  .nt-toc-level-1 { @apply pl-0; }
-  .nt-toc-level-2 { @apply pl-4; }
-  .nt-toc-level-3 { @apply pl-8; }
-  .nt-toc-level-4 { @apply pl-12; }
 
   /* N-18: mermaid diagram block */
   .nt-mermaid-block {
@@ -205,26 +165,17 @@
     @apply h-auto max-w-full;
   }
   [data-image-caption] {
-    @apply text-sm text-gray-500 mt-1.5 text-center;
+    @apply text-sm text-gray-500 mt-1.5 text-center dark:text-slate-400;
   }
 
   /* Media blocks (audio / video) */
-  [data-media-player] {
-    @apply w-full;
-  }
   [data-media-caption] {
-    @apply text-sm text-gray-500 mt-1.5;
+    @apply text-sm text-gray-500 mt-1.5 dark:text-slate-400;
   }
 
   /* File block sub-elements */
   [data-file-link] {
-    @apply inline-flex items-center gap-1.5 text-gray-700 underline underline-offset-2;
-  }
-  [data-file-link]:hover {
-    @apply opacity-70;
-  }
-  [data-file-icon] {
-    @apply text-base;
+    @apply inline-flex items-center gap-1.5 text-gray-700 underline underline-offset-2 dark:text-slate-300;
   }
 
   /* PDF block sub-elements */
@@ -232,45 +183,31 @@
     @apply w-full min-h-[500px] border-0;
   }
   [data-pdf-caption] {
-    @apply text-sm text-gray-500 mt-1.5;
-  }
-
-  /* Page / database reference icons */
-  [data-pageref-icon],
-  [data-databaseref-icon] {
-    @apply text-[0.9em];
+    @apply text-sm text-gray-500 mt-1.5 dark:text-slate-400;
   }
 
   /* TOC label */
   [data-toc-label] {
-    @apply font-semibold text-sm text-gray-700 mb-2;
+    @apply font-semibold text-sm text-gray-700 mb-2 dark:text-slate-300;
   }
 
   /* Table structural variants (injection-impossible via classMap) */
-  [data-fit-page-width] {
-    @apply w-full;
-  }
   [data-header-row] tr:first-child td,
   [data-header-row] tr:first-child th {
-    @apply font-semibold bg-[rgba(55,53,47,0.04)];
+    @apply font-semibold bg-[rgba(55,53,47,0.04)] dark:bg-white/5;
   }
   [data-header-col] td:first-child,
   [data-header-col] th:first-child {
-    @apply font-semibold bg-[rgba(55,53,47,0.04)];
+    @apply font-semibold bg-[rgba(55,53,47,0.04)] dark:bg-white/5;
   }
 
   /* Table cell borders (injection-impossible: td/th need parent context) */
   .nt-markdown-content table td,
   .nt-markdown-content table th {
-    @apply px-3 py-1.5 text-left align-top border border-[rgba(55,53,47,0.09)];
+    @apply px-3 py-1.5 text-left align-top border border-[rgba(55,53,47,0.09)] dark:border-white/10;
   }
   .nt-markdown-content table {
-    @apply border border-[rgba(55,53,47,0.09)];
-  }
-
-  /* DatabaseRef inline variant */
-  a[data-inline] {
-    @apply inline;
+    @apply border border-[rgba(55,53,47,0.09)] dark:border-white/10;
   }
 
   /* Callout icon/body */
@@ -282,6 +219,48 @@
   }
   [data-callout-body] > :first-child { @apply mt-0; }
   [data-callout-body] > :last-child  { @apply mb-0; }
+}
+
+@layer utilities {
+  /*
+   * Notion color classes
+   * All values reference CSS custom properties defined on :root above.
+   */
+  .nt-color-gray              { @apply text-[var(--nt-color-gray)]; }
+  .nt-color-brown             { @apply text-[var(--nt-color-brown)]; }
+  .nt-color-orange            { @apply text-[var(--nt-color-orange)]; }
+  .nt-color-yellow            { @apply text-[var(--nt-color-yellow)]; }
+  .nt-color-green             { @apply text-[var(--nt-color-green)]; }
+  .nt-color-blue              { @apply text-[var(--nt-color-blue)]; }
+  .nt-color-purple            { @apply text-[var(--nt-color-purple)]; }
+  .nt-color-pink              { @apply text-[var(--nt-color-pink)]; }
+  .nt-color-red               { @apply text-[var(--nt-color-red)]; }
+
+  /* Notion background color classes (_background = Notion API form) */
+  .nt-color-gray_background   { @apply bg-[var(--nt-color-gray-bg)]; }
+  .nt-color-brown_background  { @apply bg-[var(--nt-color-brown-bg)]; }
+  .nt-color-orange_background { @apply bg-[var(--nt-color-orange-bg)]; }
+  .nt-color-yellow_background { @apply bg-[var(--nt-color-yellow-bg)]; }
+  .nt-color-green_background  { @apply bg-[var(--nt-color-green-bg)]; }
+  .nt-color-blue_background   { @apply bg-[var(--nt-color-blue-bg)]; }
+  .nt-color-purple_background { @apply bg-[var(--nt-color-purple-bg)]; }
+  .nt-color-pink_background   { @apply bg-[var(--nt-color-pink-bg)]; }
+  .nt-color-red_background    { @apply bg-[var(--nt-color-red-bg)]; }
+
+  /* Indent by heading level (h1=0, h2=1rem, h3=2rem, h4=3rem) */
+  .nt-toc-level-1 { @apply pl-0; }
+  .nt-toc-level-2 { @apply pl-4; }
+  .nt-toc-level-3 { @apply pl-8; }
+  .nt-toc-level-4 { @apply pl-12; }
+
+  /* Single-purpose data-attribute utilities */
+  [data-fit-page-width]       { @apply w-full; }
+  [data-media-player]         { @apply w-full; }
+  [data-file-link]:hover      { @apply opacity-70; }
+  [data-file-icon]            { @apply text-base; }
+  [data-pageref-icon],
+  [data-databaseref-icon]     { @apply text-[0.9em]; }
+  a[data-inline]              { @apply inline; }
 }
 
 /* ── Dark mode ───────────────────────────────────────────────────────────── */
@@ -310,68 +289,5 @@
     --nt-color-purple-bg: #21192d;
     --nt-color-pink-bg:   #2d1425;
     --nt-color-red-bg:    #2d1314;
-  }
-
-  @layer base {
-    body {
-      @apply text-slate-200 bg-slate-950;
-    }
-  }
-
-  /* Notion markdown content */
-  .nt-markdown-content {
-    @apply text-slate-200;
-  }
-
-  /* Inline code */
-  .nt-markdown-content :not(pre) > code {
-    @apply bg-white/10 text-red-400;
-  }
-
-  /* Code blocks (pre) */
-  .nt-markdown-content pre {
-    @apply bg-slate-800 text-slate-200;
-  }
-
-  /* Toggle */
-  .nt-toggle-block__title:hover {
-    @apply text-slate-200/70;
-  }
-
-  /* N-07: hr dark mode */
-  .nt-markdown-content hr {
-    @apply border-white/[0.12];
-  }
-
-  /* Image / media / file captions */
-  [data-image-caption],
-  [data-media-caption],
-  [data-pdf-caption] {
-    @apply text-slate-400;
-  }
-
-  /* File link */
-  [data-file-link] {
-    @apply text-slate-300;
-  }
-
-  /* TOC label */
-  [data-toc-label] {
-    @apply text-slate-300;
-  }
-
-  /* Table structural */
-  [data-header-row] tr:first-child td,
-  [data-header-row] tr:first-child th,
-  [data-header-col] td:first-child,
-  [data-header-col] th:first-child {
-    @apply bg-white/5;
-  }
-  .nt-markdown-content table td,
-  .nt-markdown-content table th {
-    @apply border-white/10;
-  }
-  .nt-markdown-content table {
-    @apply border-white/10;
   }
 }
