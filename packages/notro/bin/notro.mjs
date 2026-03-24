@@ -261,10 +261,10 @@ function cmdInit() {
 
   console.log(`\n${C.bold}CSS setup${C.reset}\n`);
   console.log(
-    `  Add the following import to your global CSS file:\n`,
+    `  Add the following to your global CSS file:\n`,
   );
   console.log(`  ${C.gray}/* src/styles/global.css */${C.reset}`);
-  console.log(`  ${C.cyan}@import "notro-theme";${C.reset}\n`);
+  console.log(`  ${C.cyan}@plugin "notro-theme";${C.reset}\n`);
 
   console.log(
     `${C.bold}Done!${C.reset} ` +
