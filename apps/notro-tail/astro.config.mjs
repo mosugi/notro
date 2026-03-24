@@ -1,4 +1,5 @@
 import { defineConfig } from "astro/config";
+import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import partytown from "@astrojs/partytown";
 import tailwindcss from "@tailwindcss/vite";
@@ -42,6 +43,7 @@ export default defineConfig({
 
   integrations: [
     notro(),
+    react(),
     sitemap(),
     // Offloads third-party scripts (Google Analytics) to a web worker via Partytown.
     // "dataLayer.push" must be forwarded so gtag() calls reach the worker.

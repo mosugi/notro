@@ -17,11 +17,15 @@
   },
   "dependencies": {
     "@astrojs/partytown": "^2.1.5",
+    "@astrojs/react": "^5.0.1",
     "@astrojs/rss": "^4.0.17",
     "@astrojs/sitemap": "^3.7.1",
+    "@headlessui/react": "^2.2.9",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^6.0.4",
     "notro": "^0.0.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {

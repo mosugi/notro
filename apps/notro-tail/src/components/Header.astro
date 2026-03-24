@@ -1,5 +1,6 @@
 ---
 import GitHubIcon from "./GitHubIcon.astro";
+import MobileMenu from "./MobileMenu";
 import { isActive } from "../lib/nav";
 import config from "../config";
 
@@ -52,72 +53,14 @@ const active = (href: string) => isActive(pathname, href);
         GitHub
       </a>
 
-      <button
-        id="menu-toggle"
-        class="flex sm:hidden items-center justify-center w-8 h-8 nt-text-60 bg-transparent border-0 cursor-pointer p-0 rounded-[4px] transition-[color,background] hover:nt-text hover:nt-bg-05 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5"
-        aria-label="メニューを開く"
-        aria-expanded="false"
-        aria-controls="mobile-menu"
-      >
-        <!-- Hamburger icon (shown when closed) -->
-        <svg id="icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-          <line x1="3" y1="6" x2="21" y2="6"/>
-          <line x1="3" y1="12" x2="21" y2="12"/>
-          <line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-        <!-- Close icon (shown when open) -->
-        <svg id="icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" class="hidden">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
+      <!-- Mobile menu React island: focus trapping, Escape-to-close, click-outside via Headless UI -->
+      <MobileMenu
+        client:load
+        navItems={config.navigation.nav}
+        githubUrl={config.navigation.social.github}
+        pathname={pathname}
+      />
     </div>
   </div>
 
-  <!-- Mobile menu drawer -->
-  <div
-    id="mobile-menu"
-    class="hidden border-t nt-border-07 bg-white/97 py-3 pb-4 dark:bg-slate-800 dark:border-white/8"
-    aria-hidden="true"
-  >
-    <nav aria-label="モバイルナビゲーション">
-      {config.navigation.nav.map(({ href, label }) => (
-        <a
-          href={href}
-          class:list={[
-            "flex items-center gap-2 text-[0.9375rem] no-underline px-4 py-2.5 transition-[color,background]",
-            active(href)
-              ? "nt-text font-medium dark:text-slate-200"
-              : "nt-text-65 hover:nt-text hover:nt-bg-04 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/4",
-          ]}
-          aria-current={active(href) ? "page" : undefined}
-        >{label}</a>
-      ))}
-      <a
-        href={config.navigation.social.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="flex items-center gap-2 text-[0.9375rem] nt-text-65 no-underline px-4 py-2.5 transition-colors hover:nt-text mt-1 border-t nt-border-07 dark:text-slate-400 dark:hover:text-slate-200 dark:border-white/8"
-      >
-        <GitHubIcon />
-        GitHub
-      </a>
-    </nav>
-  </div>
 </header>
-
-<script>
-  const btn = document.getElementById("menu-toggle");
-  const menu = document.getElementById("mobile-menu");
-  const iconOpen = document.getElementById("icon-open");
-  const iconClose = document.getElementById("icon-close");
-
-  btn?.addEventListener("click", () => {
-    menu?.classList.toggle("hidden");
-    const isOpen = !menu?.classList.contains("hidden");
-    btn.setAttribute("aria-expanded", String(isOpen));
-    menu?.setAttribute("aria-hidden", String(!isOpen));
-    if (iconOpen) iconOpen.classList.toggle("hidden", isOpen);
-    if (iconClose) iconClose.classList.toggle("hidden", !isOpen);
-  });
-</script>
