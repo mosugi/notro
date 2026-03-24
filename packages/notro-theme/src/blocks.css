@@ -1,0 +1,182 @@
+@layer components {
+  /* Base wrapper style for Notion markdown content */
+  .nt-markdown-content {
+    @apply text-base leading-relaxed;
+    color: rgb(var(--nt-text-rgb));
+  }
+
+  /* Code blocks — styled by @shikijs/rehype (colors injected inline) */
+  .nt-markdown-content pre {
+    @apply rounded-md py-4 px-5 overflow-x-auto text-sm leading-[1.7] my-5 dark:bg-slate-800 dark:text-slate-200;
+  }
+
+  .nt-markdown-content pre > code {
+    @apply font-mono bg-transparent p-0 text-inherit;
+    font-size: inherit;
+  }
+
+  /*
+   * Inline code — global CSS for :not(pre) > code selector
+   * (classMap cannot express this nesting distinction)
+   */
+  .nt-markdown-content :not(pre) > code {
+    @apply font-mono bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] py-[0.2em] px-[0.4em] text-[85%] dark:bg-white/10 dark:text-red-400;
+  }
+
+  /* Toggle (details/summary) — smooth open/close transition for the disclosure triangle */
+  .nt-toggle-block__title {
+    @apply cursor-pointer list-none transition-colors duration-150;
+  }
+
+  .nt-toggle-block__title:hover {
+    color: rgb(var(--nt-text-rgb) / 0.70);
+  }
+
+  /* Hide default browser triangle marker */
+  .nt-toggle-block__title::marker,
+  .nt-toggle-block__title::-webkit-details-marker {
+    @apply hidden;
+  }
+
+  /* Custom disclosure triangle with rotation transition */
+  .nt-toggle-block__title::before {
+    content: "▶";
+    @apply inline-block mr-[0.4em] text-[0.65em] transition-transform duration-200 origin-center;
+  }
+
+  details[open] > .nt-toggle-block__title::before {
+    @apply rotate-90;
+  }
+
+  /* Toggle block — smooth indicator rotation on open/close */
+  .nt-toggle-block > summary,
+  .nt-markdown-content details > summary {
+    @apply list-none cursor-pointer;
+  }
+  .nt-toggle-block > summary::-webkit-details-marker,
+  .nt-markdown-content details > summary::-webkit-details-marker {
+    @apply hidden;
+  }
+  /* Animated disclosure triangle via ::before pseudo-element */
+  .nt-toggle-block > summary::before,
+  .nt-markdown-content details > summary::before {
+    content: "▶";
+    @apply inline-block text-[0.6em] mr-[0.5em] transition-transform duration-200 origin-center align-middle;
+    color: rgb(var(--nt-text-rgb) / 0.45);
+  }
+  .nt-toggle-block[open] > summary::before,
+  .nt-markdown-content details[open] > summary::before {
+    @apply rotate-90;
+  }
+  /* Fade-in for toggle content when opened */
+  .nt-toggle-block > :not(summary),
+  .nt-markdown-content details > :not(summary) {
+    animation: nt-toggle-fadein 0.15s ease;
+  }
+
+  /* hr visual styles */
+  .nt-markdown-content hr {
+    @apply my-8 border-0 border-t border-solid border-gray-200 dark:border-white/[0.12];
+  }
+
+  /* Task list checkbox styles for remark-gfm output */
+  .nt-markdown-content .contains-task-list {
+    @apply list-none pl-0;
+  }
+  .nt-markdown-content .task-list-item {
+    @apply flex items-start gap-2 pl-0;
+  }
+  .nt-markdown-content .task-list-item input[type="checkbox"] {
+    @apply mt-1 shrink-0 cursor-default;
+  }
+
+  /* Table of contents block styles */
+  .nt-toc-block__list {
+    @apply list-none m-0 p-0;
+  }
+  .nt-toc-item {
+    @apply leading-[1.6];
+  }
+  .nt-toc-item a {
+    @apply text-gray-700 no-underline text-sm;
+  }
+  .nt-toc-item a:hover {
+    @apply text-blue-600 underline;
+  }
+
+  /* Mermaid diagram block */
+  .nt-mermaid-block {
+    @apply my-6 overflow-x-auto rounded-lg;
+  }
+  /* SVG keeps its natural pixel dimensions from beautiful-mermaid.
+     When wider than the container, overflow-x:auto on the parent shows a scrollbar.
+     Forcing width:100% causes SVG-internal content outside the viewBox to be hard-clipped
+     by the scroll container boundary even with overflow:visible on the SVG. */
+  .nt-mermaid-block svg {
+    @apply block;
+  }
+
+  /* Image block sub-elements */
+  [data-image-img] {
+    @apply h-auto max-w-full;
+  }
+  [data-image-caption] {
+    @apply text-sm text-gray-500 mt-1.5 text-center dark:text-slate-400;
+  }
+
+  /* Media blocks (audio / video) */
+  [data-media-caption] {
+    @apply text-sm text-gray-500 mt-1.5 dark:text-slate-400;
+  }
+
+  /* File block sub-elements */
+  [data-file-link] {
+    @apply inline-flex items-center gap-1.5 text-gray-700 underline underline-offset-2 dark:text-slate-300;
+  }
+
+  /* PDF block sub-elements */
+  [data-pdf-frame] {
+    @apply w-full min-h-[500px] border-0;
+  }
+  [data-pdf-caption] {
+    @apply text-sm text-gray-500 mt-1.5 dark:text-slate-400;
+  }
+
+  /* TOC label */
+  [data-toc-label] {
+    @apply font-semibold text-sm text-gray-700 mb-2 dark:text-slate-300;
+  }
+
+  /* Table structural variants (injection-impossible via classMap) */
+  [data-header-row] tr:first-child td,
+  [data-header-row] tr:first-child th {
+    @apply font-semibold;
+    background-color: rgb(var(--nt-text-rgb) / 0.04);
+  }
+  [data-header-col] td:first-child,
+  [data-header-col] th:first-child {
+    @apply font-semibold;
+    background-color: rgb(var(--nt-text-rgb) / 0.04);
+  }
+
+  /* Table cell borders (injection-impossible: td/th need parent context) */
+  .nt-markdown-content table td,
+  .nt-markdown-content table th {
+    @apply px-3 py-1.5 text-left align-top border;
+    border-color: rgb(var(--nt-text-rgb) / 0.09);
+  }
+  .nt-markdown-content table {
+    @apply border;
+    border-color: rgb(var(--nt-text-rgb) / 0.09);
+  }
+
+  /* Callout icon/body */
+  [data-callout-icon] {
+    @apply shrink-0 text-xl leading-none;
+  }
+  [data-callout-body] {
+    @apply min-w-0 flex-1;
+  }
+  [data-callout-body] > :first-child { @apply mt-0; }
+  [data-callout-body] > :last-child  { @apply mb-0; }
+}

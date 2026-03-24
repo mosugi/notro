@@ -1,0 +1,76 @@
+@layer utilities {
+  /*
+   * Notion color classes
+   * All values reference CSS custom properties defined in variables.css.
+   */
+  .nt-color-gray              { @apply text-[var(--nt-color-gray)]; }
+  .nt-color-brown             { @apply text-[var(--nt-color-brown)]; }
+  .nt-color-orange            { @apply text-[var(--nt-color-orange)]; }
+  .nt-color-yellow            { @apply text-[var(--nt-color-yellow)]; }
+  .nt-color-green             { @apply text-[var(--nt-color-green)]; }
+  .nt-color-blue              { @apply text-[var(--nt-color-blue)]; }
+  .nt-color-purple            { @apply text-[var(--nt-color-purple)]; }
+  .nt-color-pink              { @apply text-[var(--nt-color-pink)]; }
+  .nt-color-red               { @apply text-[var(--nt-color-red)]; }
+
+  /* Notion background color classes (_background = Notion API form) */
+  .nt-color-gray_background   { @apply bg-[var(--nt-color-gray-bg)]; }
+  .nt-color-brown_background  { @apply bg-[var(--nt-color-brown-bg)]; }
+  .nt-color-orange_background { @apply bg-[var(--nt-color-orange-bg)]; }
+  .nt-color-yellow_background { @apply bg-[var(--nt-color-yellow-bg)]; }
+  .nt-color-green_background  { @apply bg-[var(--nt-color-green-bg)]; }
+  .nt-color-blue_background   { @apply bg-[var(--nt-color-blue-bg)]; }
+  .nt-color-purple_background { @apply bg-[var(--nt-color-purple-bg)]; }
+  .nt-color-pink_background   { @apply bg-[var(--nt-color-pink-bg)]; }
+  .nt-color-red_background    { @apply bg-[var(--nt-color-red-bg)]; }
+
+  /* Indent by heading level (h1=0, h2=1rem, h3=2rem, h4=3rem) */
+  .nt-toc-level-1 { @apply pl-0; }
+  .nt-toc-level-2 { @apply pl-4; }
+  .nt-toc-level-3 { @apply pl-8; }
+  .nt-toc-level-4 { @apply pl-12; }
+
+  /* ── Notion base text / bg / border color scale ──────────────────────────
+   * All classes derive from --nt-text-rgb which switches in dark mode.
+   * Usage: nt-text, nt-text-65, nt-bg-04, nt-border — all auto dark-mode.
+   */
+  .nt-text    { color: rgb(var(--nt-text-rgb)); }
+  .nt-text-80 { color: rgb(var(--nt-text-rgb) / 0.80); }
+  .nt-text-75 { color: rgb(var(--nt-text-rgb) / 0.75); }
+  .nt-text-70 { color: rgb(var(--nt-text-rgb) / 0.70); }
+  .nt-text-65 { color: rgb(var(--nt-text-rgb) / 0.65); }
+  .nt-text-60 { color: rgb(var(--nt-text-rgb) / 0.60); }
+  .nt-text-55 { color: rgb(var(--nt-text-rgb) / 0.55); }
+  .nt-text-50 { color: rgb(var(--nt-text-rgb) / 0.50); }
+  .nt-text-45 { color: rgb(var(--nt-text-rgb) / 0.45); }
+  .nt-text-40 { color: rgb(var(--nt-text-rgb) / 0.40); }
+  .nt-text-35 { color: rgb(var(--nt-text-rgb) / 0.35); }
+  .nt-text-30 { color: rgb(var(--nt-text-rgb) / 0.30); }
+  .nt-bg-02   { background-color: rgb(var(--nt-text-rgb) / 0.02); }
+  .nt-bg-03   { background-color: rgb(var(--nt-text-rgb) / 0.03); }
+  .nt-bg-04   { background-color: rgb(var(--nt-text-rgb) / 0.04); }
+  .nt-bg-05   { background-color: rgb(var(--nt-text-rgb) / 0.05); }
+  .nt-bg-06   { background-color: rgb(var(--nt-text-rgb) / 0.06); }
+  .nt-bg-07   { background-color: rgb(var(--nt-text-rgb) / 0.07); }
+  .nt-bg-09   { background-color: rgb(var(--nt-text-rgb) / 0.09); }
+  .nt-bg-10   { background-color: rgb(var(--nt-text-rgb) / 0.10); }
+  .nt-bg-12   { background-color: rgb(var(--nt-text-rgb) / 0.12); }
+  .nt-bg-15   { background-color: rgb(var(--nt-text-rgb) / 0.15); }
+  .nt-bg-18   { background-color: rgb(var(--nt-text-rgb) / 0.18); }
+  .nt-border    { border-color: rgb(var(--nt-text-rgb) / 0.09); }
+  .nt-border-06 { border-color: rgb(var(--nt-text-rgb) / 0.06); }
+  .nt-border-07 { border-color: rgb(var(--nt-text-rgb) / 0.07); }
+  .nt-border-12 { border-color: rgb(var(--nt-text-rgb) / 0.12); }
+  .nt-border-15 { border-color: rgb(var(--nt-text-rgb) / 0.15); }
+  .nt-border-18 { border-color: rgb(var(--nt-text-rgb) / 0.18); }
+  .nt-border-30 { border-color: rgb(var(--nt-text-rgb) / 0.30); }
+
+  /* Single-purpose data-attribute utilities */
+  [data-fit-page-width]       { @apply w-full; }
+  [data-media-player]         { @apply w-full; }
+  [data-file-link]:hover      { @apply opacity-70; }
+  [data-file-icon]            { @apply text-base; }
+  [data-pageref-icon],
+  [data-databaseref-icon]     { @apply text-[0.9em]; }
+  a[data-inline]              { @apply inline; }
+}

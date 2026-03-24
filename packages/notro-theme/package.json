@@ -1,0 +1,37 @@
+{
+  "name": "notro-theme",
+  "description": "TailwindCSS 4 CSS library for Notion block styles — default nt-* classes with CSS variable overrides",
+  "version": "0.0.1",
+  "type": "module",
+  "author": "mosugi <mosugeek@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mosugi/NotroTail.git",
+    "directory": "packages/notro-theme"
+  },
+  "keywords": [
+    "tailwindcss",
+    "notion",
+    "css",
+    "theme"
+  ],
+  "bugs": {
+    "url": "https://github.com/mosugi/NotroTail/issues"
+  },
+  "homepage": "https://notrotail.mosugi.com",
+  "exports": {
+    ".": "./index.css"
+  },
+  "files": [
+    "index.css",
+    "src/"
+  ],
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
+  "publishConfig": {
+    "provenance": true
+  }
+}
