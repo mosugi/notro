@@ -264,7 +264,7 @@ function cmdInit() {
     `  Add the following to your global CSS file:\n`,
   );
   console.log(`  ${C.gray}/* src/styles/global.css */${C.reset}`);
-  console.log(`  ${C.cyan}@plugin "notro-theme";${C.reset}\n`);
+  console.log(`  ${C.cyan}@plugin "notro-ui";${C.reset}\n`);
 
   console.log(
     `${C.bold}Done!${C.reset} ` +

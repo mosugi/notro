@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@plugin "notro-theme";
+@plugin "notro-ui";
 
 /*
  * App-level base styles.
