@@ -1,277 +1,404 @@
 #!/usr/bin/env node
 /**
- * notro CLI
- *
- * shadcn-style component manager for Notion Astro components.
+ * notro CLI — shadcn-style Notion Astro component manager
  *
  * Usage:
+ *   npx notro init              Initialize notro in your project
  *   npx notro list              List all available components
- *   npx notro add <name...>     Copy component(s) to your project
+ *   npx notro add <name...>     Add component(s) to your project
+ *   npx notro update <name...>  Update component(s) to the latest version
+ *   npx notro remove <name...>  Remove component(s) from your project
  */
 
-import { copyFileSync, mkdirSync, existsSync } from 'node:fs';
+import {
+  mkdirSync,
+  existsSync,
+  writeFileSync,
+  readFileSync,
+  rmSync,
+} from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const COMPONENTS_SRC = join(__dirname, '../src/components/notion');
+const { version: VERSION } = JSON.parse(
+  readFileSync(join(__dirname, '../package.json'), 'utf-8'),
+);
 
-// ── Component registry ──────────────────────────────────────────────────────
-// Each entry declares:
-//   files  - component .astro files to copy (relative to src/components/notion)
-//   deps   - other registry entries that must also be copied (optional)
-//   key    - the key used in NotionMarkdownRenderer's `components` prop
+// ── Registry ─────────────────────────────────────────────────────────────────
+//
+// Each entry describes one addable component unit:
+//
+//   name        CLI identifier used in `notro add <name>`
+//   description Human-readable description shown in `notro list`
+//   dir         Subdirectory created under src/components/notion/
+//   files       Source .astro files to copy (relative to src/components/notion/)
+//   exports     { ExportName: 'FileName.astro' } — generates index.ts named exports
+//   components  { key: ExportName }              — NotionMarkdownRenderer components prop map
+//
 const registry = [
   {
     name: 'callout',
-    description: 'Callout block with colored background and icon',
+    description: 'Callout block — colored background, icon, role="note"',
+    dir: 'callout',
     files: ['Callout.astro'],
-    key: 'callout',
+    exports: { Callout: 'Callout.astro' },
+    components: { callout: 'Callout' },
   },
   {
     name: 'toggle',
     description: 'Collapsible toggle block (details/summary)',
+    dir: 'toggle',
     files: ['Toggle.astro', 'ToggleTitle.astro'],
-    key: 'details',
-    extraKeys: ['summary'],
+    exports: { Toggle: 'Toggle.astro', ToggleTitle: 'ToggleTitle.astro' },
+    components: { details: 'Toggle', summary: 'ToggleTitle' },
   },
   {
     name: 'image',
-    description: 'Image block with caption and accessible alt text',
+    description: 'Image block — caption, accessible alt fallback, decorative support',
+    dir: 'image',
     files: ['ImageBlock.astro'],
-    key: 'img',
+    exports: { ImageBlock: 'ImageBlock.astro' },
+    components: { img: 'ImageBlock' },
   },
   {
     name: 'table',
-    description: 'Table with header row/column support',
+    description: 'Table block — header row/column support',
+    dir: 'table',
     files: ['TableBlock.astro', 'TableRow.astro', 'TableCell.astro'],
-    key: 'table',
-    extraKeys: ['tr', 'td'],
+    exports: {
+      TableBlock: 'TableBlock.astro',
+      TableRow: 'TableRow.astro',
+      TableCell: 'TableCell.astro',
+    },
+    components: { table: 'TableBlock', tr: 'TableRow', td: 'TableCell' },
   },
   {
     name: 'columns',
-    description: 'Multi-column layout block',
+    description: 'Multi-column layout — role="group"',
+    dir: 'columns',
     files: ['Columns.astro', 'Column.astro'],
-    key: 'columns',
-    extraKeys: ['column'],
+    exports: { Columns: 'Columns.astro', Column: 'Column.astro' },
+    components: { columns: 'Columns', column: 'Column' },
   },
   {
-    name: 'h1',
-    description: 'Heading 1 with Notion color attribute support',
-    files: ['H1.astro'],
-    key: 'h1',
-  },
-  {
-    name: 'h2',
-    description: 'Heading 2 with Notion color attribute support',
-    files: ['H2.astro'],
-    key: 'h2',
-  },
-  {
-    name: 'h3',
-    description: 'Heading 3 with Notion color attribute support',
-    files: ['H3.astro'],
-    key: 'h3',
-  },
-  {
-    name: 'h4',
-    description: 'Heading 4 with Notion color attribute support',
-    files: ['H4.astro'],
-    key: 'h4',
+    name: 'headings',
+    description: 'H1–H4 headings with Notion color attribute support',
+    dir: 'headings',
+    files: ['H1.astro', 'H2.astro', 'H3.astro', 'H4.astro'],
+    exports: { H1: 'H1.astro', H2: 'H2.astro', H3: 'H3.astro', H4: 'H4.astro' },
+    components: { h1: 'H1', h2: 'H2', h3: 'H3', h4: 'H4' },
   },
   {
     name: 'quote',
     description: 'Blockquote block',
+    dir: 'quote',
     files: ['Quote.astro'],
-    key: 'blockquote',
+    exports: { Quote: 'Quote.astro' },
+    components: { blockquote: 'Quote' },
   },
   {
     name: 'file',
     description: 'File download block',
+    dir: 'file',
     files: ['FileBlock.astro'],
-    key: 'file',
+    exports: { FileBlock: 'FileBlock.astro' },
+    components: { file: 'FileBlock' },
   },
   {
     name: 'pdf',
     description: 'PDF embed block',
+    dir: 'pdf',
     files: ['PdfBlock.astro'],
-    key: 'pdf',
+    exports: { PdfBlock: 'PdfBlock.astro' },
+    components: { pdf: 'PdfBlock' },
   },
   {
     name: 'audio',
     description: 'Audio player block',
+    dir: 'audio',
     files: ['Audio.astro'],
-    key: 'audio',
+    exports: { Audio: 'Audio.astro' },
+    components: { audio: 'Audio' },
   },
   {
     name: 'video',
     description: 'Video player block',
+    dir: 'video',
     files: ['Video.astro'],
-    key: 'video',
+    exports: { Video: 'Video.astro' },
+    components: { video: 'Video' },
   },
   {
     name: 'page-ref',
     description: 'Notion page reference link',
+    dir: 'page-ref',
     files: ['PageRef.astro'],
-    key: 'page',
+    exports: { PageRef: 'PageRef.astro' },
+    components: { page: 'PageRef' },
   },
   {
     name: 'database-ref',
     description: 'Notion database reference link',
+    dir: 'database-ref',
     files: ['DatabaseRef.astro'],
-    key: 'database',
+    exports: { DatabaseRef: 'DatabaseRef.astro' },
+    components: { database: 'DatabaseRef' },
   },
   {
     name: 'toc',
     description: 'Table of contents block',
+    dir: 'toc',
     files: ['TableOfContents.astro'],
-    key: 'table_of_contents',
+    exports: { TableOfContents: 'TableOfContents.astro' },
+    components: { table_of_contents: 'TableOfContents' },
   },
 ];
 
-// ── Helpers ─────────────────────────────────────────────────────────────────
+// ── Terminal colors ───────────────────────────────────────────────────────────
+const C = {
+  reset:  '\x1b[0m',
+  bold:   '\x1b[1m',
+  dim:    '\x1b[2m',
+  green:  '\x1b[32m',
+  cyan:   '\x1b[36m',
+  yellow: '\x1b[33m',
+  red:    '\x1b[31m',
+  gray:   '\x1b[90m',
+};
 
-const RESET  = '\x1b[0m';
-const GREEN  = '\x1b[32m';
-const CYAN   = '\x1b[36m';
-const YELLOW = '\x1b[33m';
-const DIM    = '\x1b[2m';
-const BOLD   = '\x1b[1m';
+const ok   = (msg) => console.log(`  ${C.green}✓${C.reset} ${msg}`);
+const info = (msg) => console.log(`  ${C.cyan}→${C.reset} ${msg}`);
+const warn = (msg) => console.warn(`  ${C.yellow}!${C.reset} ${msg}`);
+const fail = (msg) => { console.error(`  ${C.red}✗${C.reset} ${msg}`); process.exit(1); };
 
-function ok(msg)   { console.log(`${GREEN}✓${RESET} ${msg}`); }
-function warn(msg) { console.warn(`${YELLOW}!${RESET} ${msg}`); }
-function err(msg)  { console.error(`\x1b[31m✗${RESET} ${msg}`); }
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 /**
- * Rewrite relative local imports to use the notro package
- * so copied files work without requiring the full source tree.
+ * Rewrite local relative imports so copied files work without the full source
+ * tree.
  *
- * ./colors  →  notro/utils  (colorToClass is exported from notro/utils)
+ *   import ... from './colors'  →  import ... from 'notro/utils'
+ *   (colorToClass is exported from the notro/utils entry point)
  */
 function rewriteImports(source) {
-  return source.replace(
-    /from\s+['"]\.\/colors['"]/g,
-    "from 'notro/utils'",
+  return source.replace(/from\s+['"]\.\/colors['"]/g, "from 'notro/utils'");
+}
+
+/**
+ * Generate an index.ts that re-exports each .astro file as a named export.
+ *
+ * Example output:
+ *   export { default as Callout } from './Callout.astro';
+ */
+function generateIndex(exportsMap) {
+  return Object.entries(exportsMap)
+    .map(([name, file]) => `export { default as ${name} } from './${file}';`)
+    .join('\n') + '\n';
+}
+
+/** Resolve the absolute destination directory for a component. */
+function componentDir(cwd, dirName) {
+  return join(cwd, 'src/components/notion', dirName);
+}
+
+/** Lookup a component entry or exit with a helpful error. */
+function findComponent(name) {
+  const c = registry.find((r) => r.name === name);
+  if (!c) {
+    fail(
+      `Unknown component: "${name}"\n` +
+      `  Run ${C.cyan}notro list${C.reset} to see available components.`,
+    );
+  }
+  return c;
+}
+
+// ── Commands ──────────────────────────────────────────────────────────────────
+
+function cmdVersion() {
+  console.log(`notro v${VERSION}`);
+}
+
+// ─────────────────────────────────────────────────────
+//  notro list
+// ─────────────────────────────────────────────────────
+function cmdList() {
+  console.log(`\n${C.bold}notro components${C.reset}\n`);
+  const pad = Math.max(...registry.map((c) => c.name.length));
+  for (const c of registry) {
+    console.log(
+      `  ${C.cyan}${c.name.padEnd(pad + 2)}${C.reset}${C.dim}${c.description}${C.reset}`,
+    );
+  }
+  console.log(
+    `\n${C.gray}Run: npx notro add <component>${C.reset}\n`,
   );
 }
 
-// ── Commands ─────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────
+//  notro init
+// ─────────────────────────────────────────────────────
+function cmdInit() {
+  const cwd = process.cwd();
+  console.log(`\n${C.bold}Initializing notro${C.reset}\n`);
 
-function cmdList() {
-  console.log(`\n${BOLD}Available notro components${RESET}\n`);
-  const maxLen = Math.max(...registry.map(c => c.name.length));
-  for (const c of registry) {
-    console.log(`  ${CYAN}${c.name.padEnd(maxLen + 2)}${RESET}${DIM}${c.description}${RESET}`);
+  const isAstro =
+    existsSync(join(cwd, 'astro.config.mjs')) ||
+    existsSync(join(cwd, 'astro.config.ts'));
+  if (!isAstro) {
+    warn('No astro.config.mjs found — make sure you are in an Astro project root.');
+  }
+
+  const base = join(cwd, 'src/components/notion');
+  if (!existsSync(base)) {
+    mkdirSync(base, { recursive: true });
+    ok('Created src/components/notion/');
+  } else {
+    info('src/components/notion/ already exists');
+  }
+
+  console.log(`\n${C.bold}CSS setup${C.reset}\n`);
+  console.log(
+    `  Add the following import to your global CSS file:\n`,
+  );
+  console.log(`  ${C.gray}/* src/styles/global.css */${C.reset}`);
+  console.log(`  ${C.cyan}@import "notro-theme";${C.reset}\n`);
+
+  console.log(
+    `${C.bold}Done!${C.reset} ` +
+    `Run ${C.cyan}npx notro add <component>${C.reset} to add your first component.\n`,
+  );
+}
+
+// ─────────────────────────────────────────────────────
+//  notro add / update
+// ─────────────────────────────────────────────────────
+function cmdAdd(names, { update = false } = {}) {
+  if (names.length === 0) {
+    fail(
+      `Usage: notro ${update ? 'update' : 'add'} <component> [component...]\n` +
+      `  Run ${C.cyan}notro list${C.reset} to see available components.`,
+    );
+  }
+
+  const cwd = process.cwd();
+  const components = names.map(findComponent);
+  const verb = update ? 'Updating' : 'Adding';
+
+  console.log(`\n${C.bold}${verb} ${components.length} component(s)${C.reset}\n`);
+
+  for (const c of components) {
+    const dir = componentDir(cwd, c.dir);
+    mkdirSync(dir, { recursive: true });
+
+    for (const file of c.files) {
+      const srcPath = join(COMPONENTS_SRC, file);
+      if (!existsSync(srcPath)) {
+        fail(`Source file not found: ${srcPath}`);
+      }
+
+      const destPath = join(dir, file);
+      if (!update && existsSync(destPath)) {
+        warn(`${c.dir}/${file} already exists — skipping (use ${C.cyan}update${C.reset} to overwrite)`);
+        continue;
+      }
+
+      const source = readFileSync(srcPath, 'utf-8');
+      writeFileSync(destPath, rewriteImports(source), 'utf-8');
+      ok(`${C.dim}src/components/notion/${C.reset}${c.dir}/${file}`);
+    }
+
+    // Always (re)write index.ts so named exports stay up to date
+    const indexPath = join(dir, 'index.ts');
+    writeFileSync(indexPath, generateIndex(c.exports), 'utf-8');
+    ok(`${C.dim}src/components/notion/${C.reset}${c.dir}/index.ts ${C.dim}(named exports)${C.reset}`);
+  }
+
+  // ── Usage snippet ─────────────────────────────────
+  console.log(`\n${C.bold}Usage${C.reset}\n`);
+
+  const importLines = components.map(
+    (c) =>
+      `import { ${Object.keys(c.exports).join(', ')} } from "@/components/notion/${c.dir}";`,
+  );
+
+  const componentEntries = components.flatMap((c) =>
+    Object.entries(c.components).map(([k, v]) => `    ${k}: ${v}`),
+  );
+
+  for (const line of importLines) {
+    console.log(`  ${C.cyan}${line}${C.reset}`);
+  }
+  console.log();
+  console.log(`  <NotionMarkdownRenderer`);
+  console.log(`    markdown={markdown}`);
+  console.log(`    components={{`);
+  for (const entry of componentEntries) {
+    console.log(`  ${entry}`);
+  }
+  console.log(`    }}`);
+  console.log(`  />\n`);
+}
+
+// ─────────────────────────────────────────────────────
+//  notro remove
+// ─────────────────────────────────────────────────────
+function cmdRemove(names) {
+  if (names.length === 0) {
+    fail('Usage: notro remove <component> [component...]');
+  }
+
+  const cwd = process.cwd();
+  const components = names.map(findComponent);
+
+  console.log(`\n${C.bold}Removing ${components.length} component(s)${C.reset}\n`);
+
+  for (const c of components) {
+    const dir = componentDir(cwd, c.dir);
+    if (!existsSync(dir)) {
+      warn(`${c.dir}/ not found — skipping`);
+      continue;
+    }
+    rmSync(dir, { recursive: true, force: true });
+    ok(`Removed ${C.dim}src/components/notion/${C.reset}${c.dir}/`);
   }
   console.log();
 }
 
-async function cmdAdd(names) {
-  if (names.length === 0) {
-    err('Usage: notro add <component> [component...]');
-    err('Run "notro list" to see available components.');
-    process.exit(1);
-  }
+// ── Entry ─────────────────────────────────────────────────────────────────────
 
-  const { readFileSync } = await import('node:fs');
-  const cwd = process.cwd();
-  const destDir = join(cwd, 'src/components/notion');
+const [cmd, ...rest] = process.argv.slice(2);
 
-  // Validate all names first
-  const components = [];
-  for (const name of names) {
-    const c = registry.find(r => r.name === name);
-    if (!c) {
-      err(`Unknown component: "${name}". Run "notro list" to see available components.`);
-      process.exit(1);
-    }
-    components.push(c);
-  }
-
-  // Create destination directory if needed
-  if (!existsSync(destDir)) {
-    mkdirSync(destDir, { recursive: true });
-    ok(`Created ${destDir}`);
-  }
-
-  // Copy files
-  const copiedFiles = [];
-  for (const c of components) {
-    for (const file of c.files) {
-      const srcPath = join(COMPONENTS_SRC, file);
-      const destPath = join(destDir, file);
-
-      if (!existsSync(srcPath)) {
-        err(`Source file not found: ${srcPath}`);
-        process.exit(1);
-      }
-
-      // Rewrite relative imports before writing
-      const source = readFileSync(srcPath, 'utf-8');
-      const rewritten = rewriteImports(source);
-
-      const { writeFileSync } = await import('node:fs');
-      if (existsSync(destPath)) {
-        warn(`Overwriting existing file: src/components/notion/${file}`);
-      }
-      writeFileSync(destPath, rewritten, 'utf-8');
-      ok(`${file} → src/components/notion/${file}`);
-      copiedFiles.push({ component: c, file });
-    }
-  }
-
-  // Print usage instructions
-  console.log(`\n${BOLD}Next steps${RESET}\n`);
-  console.log('Import your customized components and pass them to NotionMarkdownRenderer:\n');
-
-  const imports = components.flatMap(c =>
-    c.files.map(f => {
-      const name = f.replace('.astro', '');
-      return `import ${name} from "@/components/notion/${f}";`;
-    })
-  );
-
-  const componentMap = components.flatMap(c => {
-    const mainFile = c.files[0].replace('.astro', '');
-    const entries = [[c.key, mainFile]];
-    if (c.extraKeys) {
-      c.extraKeys.forEach((k, i) => {
-        const file = (c.files[i + 1] ?? c.files[0]).replace('.astro', '');
-        entries.push([k, file]);
-      });
-    }
-    return entries;
-  });
-
-  const importBlock = imports.join('\n');
-  const propsBlock = componentMap.map(([k, v]) => `    ${k}: ${v}`).join(',\n');
-
-  console.log(`${DIM}---${RESET}`);
-  console.log(importBlock);
-  console.log(`\n<NotionMarkdownRenderer`);
-  console.log(`  markdown={markdown}`);
-  console.log(`  components={{`);
-  console.log(propsBlock);
-  console.log(`  }}`);
-  console.log(`/>`);
-  console.log(`${DIM}---${RESET}\n`);
-}
-
-// ── Entry ────────────────────────────────────────────────────────────────────
-
-const args = process.argv.slice(2);
-const command = args[0];
-
-if (command === 'list') {
-  cmdList();
-} else if (command === 'add') {
-  await cmdAdd(args.slice(1));
-} else {
-  console.log(`\n${BOLD}notro${RESET} — Notion Astro component manager\n`);
-  console.log('Usage:');
-  console.log(`  ${CYAN}notro list${RESET}          List all available components`);
-  console.log(`  ${CYAN}notro add <name>${RESET}    Copy a component to your project\n`);
-  console.log('Examples:');
-  console.log(`  ${DIM}npx notro add callout${RESET}`);
-  console.log(`  ${DIM}npx notro add callout toggle image${RESET}\n`);
+switch (cmd) {
+  case '--version':
+  case '-v':
+    cmdVersion();
+    break;
+  case 'list':
+    cmdList();
+    break;
+  case 'init':
+    cmdInit();
+    break;
+  case 'add':
+    cmdAdd(rest);
+    break;
+  case 'update':
+    cmdAdd(rest, { update: true });
+    break;
+  case 'remove':
+    cmdRemove(rest);
+    break;
+  default:
+    console.log(`\n${C.bold}notro${C.reset} v${VERSION}`);
+    console.log(`${C.dim}Notion Astro component manager${C.reset}\n`);
+    console.log('Usage:\n');
+    console.log(`  ${C.cyan}notro init${C.reset}             Initialize notro in your project`);
+    console.log(`  ${C.cyan}notro list${C.reset}             List available components`);
+    console.log(`  ${C.cyan}notro add${C.reset} ${C.dim}<name...>${C.reset}    Add component(s) to your project`);
+    console.log(`  ${C.cyan}notro update${C.reset} ${C.dim}<name...>${C.reset} Update component(s) to latest`);
+    console.log(`  ${C.cyan}notro remove${C.reset} ${C.dim}<name...>${C.reset} Remove component(s)`);
+    console.log(`\n  ${C.gray}Example: npx notro@latest add callout toggle image${C.reset}\n`);
 }
