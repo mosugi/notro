@@ -21,12 +21,16 @@
     "url": "https://github.com/mosugi/NotroTail/issues"
   },
   "homepage": "https://notrotail.mosugi.com",
+  "bin": {
+    "notro": "./bin/notro.mjs"
+  },
   "exports": {
     ".": "./index.ts",
     "./utils": "./utils.ts",
     "./integration": "./integration.ts"
   },
   "files": [
+    "bin",
     "index.ts",
     "integration.ts",
     "utils.ts",

@@ -5,15 +5,31 @@
  * Notion image block. Mapped to MDX `components.img`.
  *
  * - `alt` is always set on the <img> element for screen readers.
- * - `caption` is a separate prop for visible caption text rendered in <figcaption>.
- *   If `caption` is not provided, no <figcaption> is rendered.
+ * - When `alt` is empty and `caption` exists, `caption` is used as `aria-label`
+ *   so screen readers have a meaningful description.
+ * - When both are empty, `role="presentation"` marks the image as decorative.
+ * - `caption` renders as a visible <figcaption> when provided.
  */
 import { colorToClass } from './colors';
 
 interface Props { src: string; alt?: string; caption?: string; color?: string; class?: string; }
 const { src, alt, caption, color, class: className } = Astro.props;
+
+// Resolve accessible label: explicit alt → caption fallback → decorative
+const hasAlt = alt && alt.length > 0;
+const imgAlt = hasAlt ? alt : '';
+const ariaLabel = !hasAlt && caption ? caption : undefined;
+const isDecorative = !hasAlt && !caption;
 ---
 <figure class:list={[colorToClass(color), className]}>
-	<img src={src} alt={alt ?? ''} loading="lazy" decoding="async" data-image-img />
+	<img
+		src={src}
+		alt={imgAlt}
+		aria-label={ariaLabel}
+		role={isDecorative ? 'presentation' : undefined}
+		loading="lazy"
+		decoding="async"
+		data-image-img
+	/>
 	{caption && <figcaption data-image-caption>{caption}</figcaption>}
 </figure>

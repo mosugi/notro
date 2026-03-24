@@ -12,6 +12,6 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<div class:list={[className]}>
+<div role="group" class:list={[className]}>
 	<slot />
 </div>

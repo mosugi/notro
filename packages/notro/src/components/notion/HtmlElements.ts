@@ -17,10 +17,16 @@
 import { jsx } from 'astro/jsx-runtime';
 import { __astro_tag_component__ } from 'astro/runtime/server/index.js';
 
-export function makeHtmlElement(tag: string, cls?: string) {
+export function makeHtmlElement(
+	tag: string,
+	cls?: string,
+	defaultAttrs?: Record<string, string>,
+) {
 	function HtmlElement({ class: className, ...rest }: Record<string, unknown>) {
 		const combined = [cls, className].filter(Boolean).join(' ') || undefined;
-		return jsx(tag, combined !== undefined ? { ...rest, class: combined } : rest);
+		// Caller-supplied props override defaultAttrs (e.g. explicit scope overrides default)
+		const attrs = defaultAttrs ? { ...defaultAttrs, ...rest } : rest;
+		return jsx(tag, combined !== undefined ? { ...attrs, class: combined } : attrs);
 	}
 	__astro_tag_component__(HtmlElement, 'astro:jsx');
 	return HtmlElement;
@@ -41,4 +47,6 @@ export const EmEl            = makeHtmlElement('em');
 export const DelEl           = makeHtmlElement('del');
 
 // ── Table header cell ──────────────────────────────────────────
-export const ThEl            = makeHtmlElement('th');
+// scope="col" is the correct default for GFM tables where <th> elements
+// always appear in <thead> as column headers. Callers may override with scope="row".
+export const ThEl            = makeHtmlElement('th', undefined, { scope: 'col' });
