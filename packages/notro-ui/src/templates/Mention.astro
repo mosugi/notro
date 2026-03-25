@@ -2,12 +2,14 @@
 /**
  * Inline mention (user / page / database / data source / agent).
  */
-interface Props {
-  url: string;
-  class?: string;
-}
+import { tv } from 'tailwind-variants';
 
+export const mention = tv({
+  base: 'underline underline-offset-2 hover:opacity-70',
+});
+
+interface Props { url: string; class?: string; }
 const { url, class: className } = Astro.props;
 ---
 
-<a href={url} class:list={["underline underline-offset-2 hover:opacity-70", className]}>@<slot /></a>
+<a href={url} class={mention({ class: className })}>@<slot /></a>

@@ -2,6 +2,10 @@
 /**
  * Inline date mention.
  */
+import { tv } from 'tailwind-variants';
+
+export const mentionDate = tv({ base: 'font-mono text-sm' });
+
 interface Props {
   start: string;
   end?: string;
@@ -19,4 +23,4 @@ if (timeZone) parts.push(`(${timeZone})`);
 const display = parts.join(' ');
 ---
 
-<time class:list={["font-mono text-sm", className]} datetime={start}>{display}</time>
+<time class={mentionDate({ class: className })} datetime={start}>{display}</time>

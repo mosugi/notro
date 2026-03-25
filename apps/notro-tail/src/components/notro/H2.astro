@@ -1,8 +1,17 @@
 ---
-import { colorToClass } from './colors';
-interface Props { color?: string; id?: string; class?: string; }
+import { tv, type VariantProps } from 'tailwind-variants';
+import { notroColorVariants } from './colors';
+
+export const h2 = tv({
+  base: 'mb-2 mt-8 text-2xl font-semibold tracking-tight',
+  variants: { color: notroColorVariants },
+});
+
+interface Props extends VariantProps<typeof h2> {
+  id?: string;
+  class?: string;
+}
+
 const { color, id, class: className } = Astro.props;
 ---
-<h2 {id} class:list={["mb-2 mt-8 text-2xl font-semibold tracking-tight", colorToClass(color), className]}>
-  <slot />
-</h2>
+<h2 {id} class={h2({ color, class: className })}><slot /></h2>

@@ -1,13 +1,13 @@
 ---
 /**
  * Explicit empty line spacer.
- * Notion strips plain empty lines, so a dedicated element is used.
  */
-interface Props {
-  class?: string;
-}
+import { tv } from 'tailwind-variants';
 
+export const emptyBlock = tv({ base: 'my-2' });
+
+interface Props { class?: string; }
 const { class: className } = Astro.props;
 ---
 
-<div class:list={["my-2", className]} aria-hidden="true"></div>
+<div class={emptyBlock({ class: className })} aria-hidden="true"></div>

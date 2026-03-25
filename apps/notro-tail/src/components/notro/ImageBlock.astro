@@ -2,20 +2,21 @@
 /**
  * Notion image block — renders as <figure> with optional caption.
  */
-import { colorToClass } from './colors';
+import { tv } from 'tailwind-variants';
+
+export const imageBlock = tv({ base: 'my-4' });
 
 interface Props {
   src: string;
   alt?: string;
   caption?: string;
-  color?: string;
   class?: string;
 }
 
-const { src, alt, caption, color, class: className } = Astro.props;
+const { src, alt, caption, class: className } = Astro.props;
 ---
 
-<figure class:list={["my-4", colorToClass(color), className]}>
+<figure class={imageBlock({ class: className })}>
   <img src={src} alt={alt ?? ''} loading="lazy" decoding="async" class="h-auto max-w-full" />
   {caption && (
     <figcaption class="text-sm text-[var(--notro-text-muted)] mt-1.5 text-center">

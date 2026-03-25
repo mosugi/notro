@@ -1,5 +1,9 @@
 ---
+import { tv } from 'tailwind-variants';
+
+export const tableCol = tv({ base: '' });
+
 interface Props { class?: string; }
 const { class: className } = Astro.props;
 ---
-<col class:list={[className]} />
+<col class={tableCol({ class: className })} />

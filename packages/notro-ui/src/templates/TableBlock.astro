@@ -1,8 +1,17 @@
 ---
 /**
  * Notion table block.
- * `.notro-table-wrapper` and `.notro-table` are styled in notro-theme.css.
+ * `.notro-table-wrapper` and `.notro-table` selectors are styled in notro-theme.css.
  */
+import { tv } from 'tailwind-variants';
+
+export const tableWrapper = tv({
+  base: 'notro-table-wrapper my-4 overflow-x-auto',
+  variants: { fitPageWidth: { true: 'w-full', false: '' } },
+});
+
+export const table = tv({ base: 'notro-table w-full border-collapse text-sm' });
+
 interface Props {
   'fit-page-width'?: string;
   'header-row'?: string;
@@ -20,15 +29,9 @@ const {
 } = Astro.props;
 ---
 
-<div
-  class:list={[
-    "notro-table-wrapper my-4 overflow-x-auto",
-    fitPageWidth === 'true' && 'w-full',
-    tableWrapperClass,
-  ]}
->
+<div class={tableWrapper({ fitPageWidth: fitPageWidth === 'true', class: tableWrapperClass })}>
   <table
-    class:list={["notro-table w-full border-collapse text-sm", className]}
+    class={table({ class: className })}
     data-header-row={headerRow === 'true' ? '' : undefined}
     data-header-col={headerColumn === 'true' ? '' : undefined}
   >
