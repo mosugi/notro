@@ -1,11 +1,9 @@
 ---
-/**
- * Mapped to MDX `components.colgroup`.
- * Accepts an optional class prop.
- */
-interface Props {
-	class?: string;
-}
+import { tv } from 'tailwind-variants';
+
+export const tableColgroup = tv({ base: '' });
+
+interface Props { class?: string; }
 const { class: className } = Astro.props;
 ---
-<colgroup class:list={[className]}><slot /></colgroup>
+<colgroup class={tableColgroup({ class: className })}><slot /></colgroup>

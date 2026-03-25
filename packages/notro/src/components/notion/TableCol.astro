@@ -1,14 +1,9 @@
 ---
-/**
- * <col color="Color">
- *
- * Applies background color to a column.
- * Color priority: cell > row > column.
- * Mapped to MDX `components.col`.
- * Accepts an optional class prop.
- */
-import { colorToClass } from './colors';
-interface Props { color?: string; class?: string; }
-const { color, class: className } = Astro.props;
+import { tv } from 'tailwind-variants';
+
+export const tableCol = tv({ base: '' });
+
+interface Props { class?: string; }
+const { class: className } = Astro.props;
 ---
-<col class:list={[colorToClass(color), className]} />
+<col class={tableCol({ class: className })} />

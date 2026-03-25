@@ -1,18 +1,25 @@
 ---
 /**
- * <table_of_contents color="Color"/>
- *
- * Table of contents block. Populated at compile time by rehypeTocPlugin
- * (mdx-pipeline.ts), which injects <ul class="nt-toc-block__list"> children
- * containing anchor links to every h1–h4 in the document (IDs added by
- * rehype-slug). The <slot /> renders those children inside the <nav>.
+ * Notion table of contents block.
+ * List items are injected by rehypeTocPlugin with `.notro-toc-item` and `.notro-toc-level-*`.
+ * List and item styles are defined in notro-theme.css.
  */
-import { colorToClass } from './colors';
-interface Props { color?: string; class?: string; }
+import { tv, type VariantProps } from 'tailwind-variants';
+import { notroColorVariants } from './colors';
+
+export const tableOfContents = tv({
+  base: 'my-4 rounded-lg border border-[var(--notro-border)] bg-[var(--notro-bg-subtle)] p-4 text-sm',
+  variants: { color: notroColorVariants },
+});
+
+interface Props extends VariantProps<typeof tableOfContents> {
+  class?: string;
+}
+
 const { color, class: className } = Astro.props;
 ---
 
-<nav class:list={[colorToClass(color), className]} aria-label="目次">
-	<p data-toc-label>📋 目次</p>
-	<slot />
+<nav class={tableOfContents({ color, class: className })} aria-label="目次">
+  <p class="font-semibold text-sm text-[var(--notro-text-muted)] mb-2">📋 目次</p>
+  <slot />
 </nav>

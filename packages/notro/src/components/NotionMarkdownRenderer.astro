@@ -1,29 +1,52 @@
 ---
 /**
- * Headless Notion markdown renderer.
+ * Notion markdown renderer with default styled components.
  *
  * Compiles preprocessed Notion markdown via compileMdxCached() and renders it
- * with the default (unstyled) notionComponents mapping.
+ * with the default notionComponents mapping.
  *
- * For a fully-styled renderer, install notro-ui:
- *   npx notro-ui init
- * Then import the local renderer from src/components/notro/NotionMarkdownRenderer.astro.
+ * Pass `components` to override individual components:
+ *   <NotionMarkdownRenderer markdown={md} components={{ callout: MyCallout }} />
  */
 import { compileMdxCached } from '../utils/compile-mdx.ts';
 import { notionComponents } from './notion/index.ts';
+import { makeHtmlElement } from './notion/HtmlElements.ts';
 import type { LinkToPages } from '../types.ts';
+import type { NotionComponents } from './notion/index.ts';
 
 interface Props {
   markdown: string;
   linkToPages?: LinkToPages;
+  components?: Partial<NotionComponents>;
   class?: string;
 }
 
-const { markdown, linkToPages, class: className } = Astro.props;
+const { markdown, linkToPages, components: overrides, class: className } = Astro.props;
 
 const Content = await compileMdxCached(markdown, { linkToPages });
+
+const components = {
+  ...notionComponents,
+
+  // ── Standard HTML block elements ───────────────────────────────────────
+  th:     makeHtmlElement('th',     'px-3 py-2 text-left text-sm font-semibold'),
+  p:      makeHtmlElement('p',      'mb-4 leading-7'),
+  ul:     makeHtmlElement('ul',     'mb-4 list-disc pl-6 space-y-1'),
+  ol:     makeHtmlElement('ol',     'mb-4 list-decimal pl-6 space-y-1'),
+  li:     makeHtmlElement('li',     'leading-7'),
+  pre:    makeHtmlElement('pre'),   // visual style handled by .notro-markdown pre in notro-theme.css
+  hr:     makeHtmlElement('hr',     'my-8 border-t border-[var(--notro-border)]'),
+
+  // ── Standard HTML inline elements ──────────────────────────────────────
+  a:      makeHtmlElement('a',      'underline underline-offset-2 hover:opacity-70'),
+  strong: makeHtmlElement('strong', 'font-semibold'),
+  em:     makeHtmlElement('em',     'italic'),
+  del:    makeHtmlElement('del',    'line-through'),
+
+  ...overrides,
+};
 ---
 
-<div class:list={[className]}>
-  <Content components={notionComponents} />
+<div class:list={["notro-markdown", className]}>
+  <Content components={components} />
 </div>

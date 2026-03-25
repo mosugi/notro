@@ -1,20 +1,15 @@
 ---
 /**
- * <mention-user url="URL">User name</mention-user>
- * <mention-page url="URL">Page title</mention-page>
- * <mention-database url="URL">Database name</mention-database>
- * <mention-data-source url="URL">Data source name</mention-data-source>
- * <mention-agent url="URL">Agent name</mention-agent>
- *
- * Mapped to MDX `components['mention-user']` etc.
- * All mention types render as inline links.
+ * Inline mention (user / page / database / data source / agent).
  */
-interface Props {
-	url: string;
-	class?: string;
-}
+import { tv } from 'tailwind-variants';
 
+export const mention = tv({
+  base: 'underline underline-offset-2 hover:opacity-70',
+});
+
+interface Props { url: string; class?: string; }
 const { url, class: className } = Astro.props;
 ---
 
-<a href={url} class:list={[className]}>@<slot /></a>
+<a href={url} class={mention({ class: className })}>@<slot /></a>

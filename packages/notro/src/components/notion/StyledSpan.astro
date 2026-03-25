@@ -1,34 +1,37 @@
 ---
 /**
- * <span color="Color">text</span>
- * <span underline="true">text</span>
- *
- * Mapped to MDX `components.span`.
- * Supports inline text color, underline, and an optional extra class
- *.
- * Also passes through arbitrary `style` (e.g. Shiki syntax-highlight colors).
+ * Inline styled span — handles Notion text colors, underline, and Shiki syntax colors.
  */
-import { colorToClass } from './colors';
+import { tv, type VariantProps } from 'tailwind-variants';
+import { notroColorVariants } from './colors';
 
-interface Props {
-	color?: string;
-	underline?: string;
-	class?: string;
-	// style may be a CSS string or a React-style object (e.g. from Shiki tokens)
-	style?: string | Record<string, string>;
+export const styledSpan = tv({
+  base: '',
+  variants: { color: notroColorVariants },
+});
+
+interface Props extends VariantProps<typeof styledSpan> {
+  underline?: string;
+  class?: string;
+  style?: string | Record<string, string>;
 }
 
 const { color, underline, class: className, style: styleProp } = Astro.props;
-// styleProp may be a React-style object (e.g. { color: '#xxx' } from Shiki) or a string.
-// Merge with underline if present.
+
+// styleProp may be a React-style object from Shiki or a CSS string.
 const styleObj: Record<string, string> =
-	typeof styleProp === 'object' && styleProp !== null
-		? { ...(styleProp as Record<string, string>) }
-		: typeof styleProp === 'string' && styleProp
-			? Object.fromEntries(styleProp.split(';').filter(Boolean).map((p) => p.split(':').map((s) => s.trim()) as [string, string]))
-			: {};
+  typeof styleProp === 'object' && styleProp !== null
+    ? { ...(styleProp as Record<string, string>) }
+    : typeof styleProp === 'string' && styleProp
+      ? Object.fromEntries(
+          styleProp
+            .split(';')
+            .filter(Boolean)
+            .map((p) => p.split(':').map((s) => s.trim()) as [string, string]),
+        )
+      : {};
 if (underline === 'true') styleObj['text-decoration'] = 'underline';
 const style = Object.keys(styleObj).length > 0 ? styleObj : undefined;
 ---
 
-<span class:list={[colorToClass(color), className]} style={style}><slot /></span>
+<span class={styledSpan({ color, class: className })} style={style}><slot /></span>

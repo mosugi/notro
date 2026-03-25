@@ -1,11 +1,20 @@
 ---
-/** <audio src="URL" color="Color">Caption</audio> */
-import { colorToClass } from './colors';
+/**
+ * Notion audio embed block.
+ */
+import { tv } from 'tailwind-variants';
 
-interface Props { src: string; color?: string; class?: string; }
-const { src, color, class: className } = Astro.props;
+export const audio = tv({ base: 'my-4' });
+
+interface Props { src: string; class?: string; }
+const { src, class: className } = Astro.props;
 ---
-<figure class:list={[colorToClass(color), className]} data-media-type="audio">
-	<audio controls src={src} data-media-player></audio>
-	{Astro.slots.has('default') && <figcaption data-media-caption><slot /></figcaption>}
+
+<figure class={audio({ class: className })}>
+  <audio controls src={src} class="w-full"></audio>
+  {Astro.slots.has('default') && (
+    <figcaption class="text-sm text-[var(--notro-text-muted)] mt-1.5">
+      <slot />
+    </figcaption>
+  )}
 </figure>

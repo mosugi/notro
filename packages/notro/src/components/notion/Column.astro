@@ -1,18 +1,15 @@
 ---
 /**
- * <column>
- *   Children
- * </column>
- *
- * Placed directly inside Columns.astro.
+ * Single column inside a Columns layout.
  */
-interface Props {
-	class?: string;
-}
+import { tv } from 'tailwind-variants';
 
+export const column = tv({ base: 'min-w-0' });
+
+interface Props { class?: string; }
 const { class: className } = Astro.props;
 ---
 
-<div class:list={[className]}>
-	<slot />
+<div class={column({ class: className })}>
+  <slot />
 </div>

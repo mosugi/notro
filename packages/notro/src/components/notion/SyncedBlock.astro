@@ -1,25 +1,16 @@
 ---
 /**
- * <synced_block url="URL">Children</synced_block>
- * <synced_block_reference url="URL">Children</synced_block_reference>
- *
- * Synced block — renders child content as-is.
- * Mapped to MDX `components.synced_block` / `components.synced_block_reference`.
- *
- * Note: the `url` prop contains an internal Notion page URL and is intentionally
- * NOT forwarded to the DOM to prevent leaking internal page IDs publicly.
- * A safe `data-has-source` boolean attribute is used instead.
+ * Synced block — passes children through as-is.
  */
-interface Props {
-	url?: string;
-	class?: string;
-}
+import { tv } from 'tailwind-variants';
 
+export const syncedBlock = tv({ base: '' });
+
+interface Props { url?: string; class?: string; }
 const { url, class: className } = Astro.props;
-// Derive a safe boolean indicator without exposing the internal Notion URL.
 const hasSource = url != null && url.length > 0;
 ---
 
-<div class:list={[className]} data-has-source={hasSource || undefined}>
-	<slot />
+<div class={syncedBlock({ class: className })} data-has-source={hasSource || undefined}>
+  <slot />
 </div>

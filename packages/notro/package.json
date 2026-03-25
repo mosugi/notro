@@ -43,7 +43,8 @@
     "npm": ">=10.0.0"
   },
   "peerDependencies": {
-    "astro": ">=6.0.0"
+    "astro": ">=6.0.0",
+    "tailwind-variants": ">=0.3.0"
   },
   "devDependencies": {
     "astro": "^6.0.4",

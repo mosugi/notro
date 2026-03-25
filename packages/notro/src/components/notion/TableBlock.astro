@@ -1,38 +1,40 @@
 ---
 /**
- * <table fit-page-width="true|false" header-row="true|false" header-column="true|false">
- *   ...
- * </table>
- *
- * Mapped to MDX `components.table`.
- * Color priority (high → low): cell > row > column
+ * Notion table block.
+ * `.notro-table-wrapper` and `.notro-table` selectors are styled in notro-theme.css.
  */
+import { tv } from 'tailwind-variants';
+
+export const tableWrapper = tv({
+  base: 'notro-table-wrapper my-4 overflow-x-auto',
+  variants: { fitPageWidth: { true: 'w-full', false: '' } },
+});
+
+export const table = tv({ base: 'notro-table w-full border-collapse text-sm' });
+
 interface Props {
-	'fit-page-width'?: string;
-	'header-row'?: string;
-	'header-column'?: string;
-	class?: string;
-	tableWrapperClass?: string;
+  'fit-page-width'?: string;
+  'header-row'?: string;
+  'header-column'?: string;
+  class?: string;
+  tableWrapperClass?: string;
 }
 
 const {
-	'fit-page-width': fitPageWidth = 'false',
-	'header-row': headerRow = 'false',
-	'header-column': headerColumn = 'false',
-	class: className,
-	tableWrapperClass,
+  'fit-page-width': fitPageWidth = 'false',
+  'header-row': headerRow = 'false',
+  'header-column': headerColumn = 'false',
+  class: className,
+  tableWrapperClass,
 } = Astro.props;
 ---
 
-<div
-	class:list={[tableWrapperClass]}
-	data-fit-page-width={fitPageWidth === 'true' ? '' : undefined}
->
-	<table
-		class:list={[className]}
-		data-header-row={headerRow === 'true' ? '' : undefined}
-		data-header-col={headerColumn === 'true' ? '' : undefined}
-	>
-		<slot />
-	</table>
+<div class={tableWrapper({ fitPageWidth: fitPageWidth === 'true', class: tableWrapperClass })}>
+  <table
+    class={table({ class: className })}
+    data-header-row={headerRow === 'true' ? '' : undefined}
+    data-header-col={headerColumn === 'true' ? '' : undefined}
+  >
+    <slot />
+  </table>
 </div>

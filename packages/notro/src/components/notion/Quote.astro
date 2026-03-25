@@ -1,20 +1,22 @@
 ---
 /**
- * > Rich text {color="Color"}
- *   Children
- *
- * Mapped to MDX `components.blockquote`.
+ * Notion quote block — renders as <blockquote>.
  */
-import { colorToClass } from './colors';
+import { tv, type VariantProps } from 'tailwind-variants';
+import { notroColorVariants } from './colors';
 
-interface Props {
-	color?: string;
-	class?: string;
+export const quote = tv({
+  base: 'my-4 border-l-[3px] border-[var(--notro-border)] pl-4 italic [&>p:first-child]:mt-0 [&>p:last-child]:mb-0',
+  variants: { color: notroColorVariants },
+});
+
+interface Props extends VariantProps<typeof quote> {
+  class?: string;
 }
 
 const { color, class: className } = Astro.props;
 ---
 
-<blockquote class:list={[colorToClass(color), className]}>
-	<slot />
+<blockquote class={quote({ color, class: className })}>
+  <slot />
 </blockquote>
