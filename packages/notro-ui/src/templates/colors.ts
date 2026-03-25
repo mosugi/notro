@@ -1,23 +1,21 @@
 /**
- * Notion color → CSS class mapping for notro-ui components.
+ * Notion color names → CSS class mapping for tailwind-variants.
  *
- * Returns `notro-text-*` or `notro-bg-*` class names defined in notro-theme.css.
- * Edit this file and notro-theme.css to customize colors.
+ * These classes are defined in notro-theme.css.
+ * Edit notro-theme.css to change the actual color values.
  */
 
-const TEXT_COLOR_MAP: Record<string, string> = {
-  gray:   'notro-text-gray',
-  brown:  'notro-text-brown',
-  orange: 'notro-text-orange',
-  yellow: 'notro-text-yellow',
-  green:  'notro-text-green',
-  blue:   'notro-text-blue',
-  purple: 'notro-text-purple',
-  pink:   'notro-text-pink',
-  red:    'notro-text-red',
-};
-
-const BG_COLOR_MAP: Record<string, string> = {
+export const notroColorVariants = {
+  default:           '',
+  gray:              'notro-text-gray',
+  brown:             'notro-text-brown',
+  orange:            'notro-text-orange',
+  yellow:            'notro-text-yellow',
+  green:             'notro-text-green',
+  blue:              'notro-text-blue',
+  purple:            'notro-text-purple',
+  pink:              'notro-text-pink',
+  red:               'notro-text-red',
   gray_background:   'notro-bg-gray',
   brown_background:  'notro-bg-brown',
   orange_background: 'notro-bg-orange',
@@ -27,10 +25,6 @@ const BG_COLOR_MAP: Record<string, string> = {
   purple_background: 'notro-bg-purple',
   pink_background:   'notro-bg-pink',
   red_background:    'notro-bg-red',
-};
+} as const;
 
-/** Convert a Notion color name to a notro-ui CSS class. */
-export function colorToClass(color: string | undefined): string {
-  if (!color || color === 'default') return '';
-  return TEXT_COLOR_MAP[color] ?? BG_COLOR_MAP[color] ?? '';
-}
+export type NotroColor = keyof typeof notroColorVariants;
