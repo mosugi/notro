@@ -12,6 +12,9 @@ export { colorToClass } from "./src/components/notion/colors.ts";
 // Low-level MDX compile API — for use in custom .astro renderers (e.g. notro-ui).
 export { compileMdxCached } from "./src/utils/compile-mdx.ts";
 
+// Astro JSX component factory — wrap any HTML tag with optional default classes.
+export { makeHtmlElement } from "./src/components/notion/HtmlElements.ts";
+
 export * from "./src/loader/loader";
 export * from "./src/loader/live-loader";
 export * from "./src/loader/schema";

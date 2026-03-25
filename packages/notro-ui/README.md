@@ -139,8 +139,7 @@ Color tokens (`notro-bg-gray`, `notro-text-blue`, etc.) are CSS variables define
 | `SyncedBlock` | Synced block |
 | `EmptyBlock` | Empty line spacer |
 | `TableRow` / `TableCell` / `TableCol` / `TableColgroup` | Table internals |
-| `HtmlElements.ts` | `<p>`, `<ul>`, `<ol>`, `<li>`, `<a>`, etc. |
-| `NotionMarkdownRenderer.astro` | Entry point — maps all components |
+| `NotionMarkdownRenderer.astro` | Entry point — maps all components; edit `makeHtmlElement(...)` calls to style `<p>`, `<ul>`, `<a>`, etc. |
 | `colors.ts` | Color variant map for `tv()` |
 | `notro-theme.css` | CSS variables + complex selectors |
 
