@@ -101,12 +101,11 @@ const posts = defineCollection({"{"})
     <p class="mb-4 nt-text-65 leading-7">
       ローダーが取得した Markdown を MDX にコンパイルし、Notion ブロックを Astro コンポーネントとしてレンダリングするコンポーネントです。
     </p>
-    <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto">import {"{ NotionMarkdownRenderer }"} from "notro";
+    <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto">import NotionMarkdownRenderer from "../../components/notro/NotionMarkdownRenderer.astro";
 
 &lt;NotionMarkdownRenderer
   markdown={"{markdown}"}
   linkToPages={"{linkToPages}"}
-  classMap={"{{"} callout: "border-l-4 border-blue-500 pl-4" {"}}"}
 /&gt;</pre>
 
     <h3 class="mb-2 mt-6 text-base font-semibold nt-text">Props</h3>
@@ -134,32 +133,19 @@ const posts = defineCollection({"{"})
             <td class="px-4 py-3">Notion 内部リンクの解決マップ（<code class="font-mono text-xs">buildLinkToPages()</code> で生成）</td>
           </tr>
           <tr>
-            <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">classMap</code></td>
-            <td class="px-4 py-3"><code class="font-mono text-xs">Partial&lt;Record&lt;ClassMapKeys, string&gt;&gt;</code></td>
+            <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">class</code></td>
+            <td class="px-4 py-3"><code class="font-mono text-xs">string</code></td>
             <td class="px-4 py-3 nt-text-35">—</td>
-            <td class="px-4 py-3">デフォルトコンポーネントに Tailwind クラスを注入（コンポーネントは置き換えない）</td>
-          </tr>
-          <tr>
-            <td class="px-4 py-3"><code class="font-mono text-[#eb5757]">components</code></td>
-            <td class="px-4 py-3"><code class="font-mono text-xs">Partial&lt;NotionComponents&gt;</code></td>
-            <td class="px-4 py-3 nt-text-35">—</td>
-            <td class="px-4 py-3">コンポーネントを完全に上書き（例: <code class="font-mono text-xs">{"{ callout: MyCallout }"}</code>）</td>
+            <td class="px-4 py-3">ルート要素に追加する CSS クラス</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <h3 class="mb-2 mt-6 text-base font-semibold nt-text"><code class="font-mono">classMap</code> で使用可能なキー</h3>
-    <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto"><span class="nt-text-45">// Notion-specific blocks</span>
-callout, toggle, toggleTitle, quote, image, tableWrapper, table,
-tableRow, tableCell, audio, video, file, pdf, pageRef, databaseRef,
-toc, syncedBlock, column, columns, emptyBlock, mention, mention-date
-
-<span class="nt-text-45">// Standard HTML block elements</span>
-h1, h2, h3, h4, p, ul, ol, li, pre, hr
-
-<span class="nt-text-45">// Standard HTML inline elements</span>
-a, strong, em, del, th</pre>
+    <p class="mt-4 nt-text-65 text-sm leading-7">
+      コンポーネントのスタイルをカスタマイズするには、<code class="font-mono text-xs text-[#eb5757]">npx notro-ui init</code> でインストールした
+      <code class="font-mono text-xs text-[#eb5757]">src/components/notro/</code> 内のファイルを直接編集してください。
+    </p>
   </section>
 
   <!-- Utility functions -->

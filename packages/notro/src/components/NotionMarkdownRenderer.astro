@@ -1,42 +1,29 @@
 ---
+/**
+ * Headless Notion markdown renderer.
+ *
+ * Compiles preprocessed Notion markdown via compileMdxCached() and renders it
+ * with the default (unstyled) notionComponents mapping.
+ *
+ * For a fully-styled renderer, install notro-ui:
+ *   npx notro-ui init
+ * Then import the local renderer from src/components/notro/NotionMarkdownRenderer.astro.
+ */
 import { compileMdxCached } from '../utils/compile-mdx.ts';
-import { resolveComponents } from '../utils/component-resolver.ts';
 import { notionComponents } from './notion/index.ts';
-import type { NotionComponents } from './notion/index.ts';
 import type { LinkToPages } from '../types.ts';
-import type { ClassMapKeys } from '../types.ts';
 
 interface Props {
   markdown: string;
   linkToPages?: LinkToPages;
   class?: string;
-  /**
-   * CSS class strings keyed by Notion component name.
-   * See `ClassMapKeys` for all valid keys.
-   *
-   * @example
-   * ```astro
-   * <NotionMarkdownRenderer
-   *   markdown={markdown}
-   *   classMap={{
-   *     callout: "flex gap-3 p-4 rounded border",
-   *     toggle: "my-2",
-   *     h2: "text-2xl font-bold mt-8 mb-4",
-   *   }}
-   * />
-   * ```
-   */
-  classMap?: Partial<Record<ClassMapKeys, string>>;
-  /** Full component overrides (e.g. { callout: MyCallout }) */
-  components?: Partial<NotionComponents & Record<string, unknown>>;
 }
 
-const { markdown, linkToPages, class: className, classMap, components: customComponents } = Astro.props;
+const { markdown, linkToPages, class: className } = Astro.props;
 
 const Content = await compileMdxCached(markdown, { linkToPages });
-const mergedComponents = resolveComponents(notionComponents, classMap, customComponents);
 ---
 
-<div class:list={["nt-markdown-content", className]}>
-  <Content components={mergedComponents} />
+<div class:list={[className]}>
+  <Content components={notionComponents} />
 </div>

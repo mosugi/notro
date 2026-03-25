@@ -1,0 +1,8 @@
+---
+import { colorToClass } from './colors';
+interface Props { color?: string; id?: string; class?: string; }
+const { color, id, class: className } = Astro.props;
+---
+<h3 {id} class:list={["mb-2 mt-6 text-xl font-semibold", colorToClass(color), className]}>
+  <slot />
+</h3>

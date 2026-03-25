@@ -1,0 +1,15 @@
+---
+/**
+ * Toggle block title — renders as <summary> inside Toggle.astro (<details>).
+ * Styling is handled by `.notro-toggle > summary` in notro-theme.css.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<summary class:list={["font-medium py-0.5", className]}>
+  <slot />
+</summary>

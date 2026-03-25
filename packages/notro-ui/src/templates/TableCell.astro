@@ -1,0 +1,6 @@
+---
+import { colorToClass } from './colors';
+interface Props { color?: string; class?: string; }
+const { color, class: className } = Astro.props;
+---
+<td class:list={["px-3 py-1.5 text-sm", colorToClass(color), className]}><slot /></td>

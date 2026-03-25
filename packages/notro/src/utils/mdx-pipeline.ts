@@ -139,12 +139,12 @@ const rehypeMermaid: Plugin<[], Root> = () => {
 			try {
 				const svg = renderMermaidSVG(code, THEMES['github-dark']);
 				// Keep the SVG's natural pixel dimensions (width/height attributes).
-				// The .nt-mermaid-block container has overflow-x:auto, so diagrams wider than
+				// The .notro-mermaid container has overflow-x:auto, so diagrams wider than
 				// the viewport scroll horizontally rather than being clipped or scaled down.
 				// Scaling via width:100% causes content outside the viewBox to be clipped by
 				// the scroll container even with overflow:visible on the SVG element.
 				const fragment = fromHtmlIsomorphic(
-					`<div class="nt-mermaid-block">${svg}</div>`,
+					`<div class="notro-mermaid">${svg}</div>`,
 					{ fragment: true },
 				);
 				parent.children.splice(index, 1, ...fragment.children);
@@ -190,7 +190,7 @@ const rehypeTocPlugin: Plugin<[], Root> = () => {
 		const listItems: ElementContent[] = headings.map((h) => ({
 			type: 'element',
 			tagName: 'li',
-			properties: { className: [`nt-toc-item`, `nt-toc-level-${h.level}`] },
+			properties: { className: [`notro-toc-item`, `notro-toc-level-${h.level}`] },
 			children: [
 				{
 					type: 'element',
@@ -207,7 +207,7 @@ const rehypeTocPlugin: Plugin<[], Root> = () => {
 				{
 					type: 'element',
 					tagName: 'ul',
-					properties: { className: ['nt-toc-block__list'] },
+					properties: { className: ['notro-toc-list'] },
 					children: listItems,
 				},
 			];

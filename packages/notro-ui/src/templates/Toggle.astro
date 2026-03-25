@@ -1,0 +1,18 @@
+---
+/**
+ * Notion toggle (collapsible) block — renders as <details>.
+ * Animation is handled by `.notro-toggle` in notro-theme.css.
+ */
+import { colorToClass } from './colors';
+
+interface Props {
+  color?: string;
+  class?: string;
+}
+
+const { color, class: className } = Astro.props;
+---
+
+<details class:list={["notro-toggle my-1.5", colorToClass(color), className]}>
+  <slot />
+</details>

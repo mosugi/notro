@@ -1,0 +1,17 @@
+---
+/**
+ * Synced block — passes children through as-is.
+ * The source URL is not forwarded to the DOM to avoid leaking internal Notion page IDs.
+ */
+interface Props {
+  url?: string;
+  class?: string;
+}
+
+const { url, class: className } = Astro.props;
+const hasSource = url != null && url.length > 0;
+---
+
+<div class:list={[className]} data-has-source={hasSource || undefined}>
+  <slot />
+</div>

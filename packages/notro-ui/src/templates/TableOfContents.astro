@@ -1,0 +1,22 @@
+---
+/**
+ * Notion table of contents block.
+ * The list items are injected by rehypeTocPlugin with `.notro-toc-item` and `.notro-toc-level-*` classes.
+ * List and item styles are defined in notro-theme.css.
+ */
+import { colorToClass } from './colors';
+interface Props { color?: string; class?: string; }
+const { color, class: className } = Astro.props;
+---
+
+<nav
+  class:list={[
+    "my-4 rounded-lg border border-[var(--notro-border)] bg-[var(--notro-bg-subtle)] p-4 text-sm",
+    colorToClass(color),
+    className,
+  ]}
+  aria-label="目次"
+>
+  <p class="font-semibold text-sm text-[var(--notro-text-muted)] mb-2">📋 目次</p>
+  <slot />
+</nav>

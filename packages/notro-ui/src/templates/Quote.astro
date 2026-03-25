@@ -1,0 +1,23 @@
+---
+/**
+ * Notion quote block — renders as <blockquote>.
+ */
+import { colorToClass } from './colors';
+
+interface Props {
+  color?: string;
+  class?: string;
+}
+
+const { color, class: className } = Astro.props;
+---
+
+<blockquote
+  class:list={[
+    "my-4 border-l-[3px] border-[var(--notro-border)] pl-4 italic [&>p:first-child]:mt-0 [&>p:last-child]:mb-0",
+    colorToClass(color),
+    className,
+  ]}
+>
+  <slot />
+</blockquote>

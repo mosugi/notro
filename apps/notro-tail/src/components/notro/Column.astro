@@ -1,0 +1,14 @@
+---
+/**
+ * Single column inside a Columns layout.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={["min-w-0", className]}>
+  <slot />
+</div>

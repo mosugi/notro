@@ -1,0 +1,20 @@
+---
+/**
+ * Notion database reference link.
+ */
+import { colorToClass } from './colors';
+interface Props { url: string; inline?: string; icon?: string; color?: string; class?: string; }
+const { url, inline = 'false', icon = '🗄️', color, class: className } = Astro.props;
+---
+<a
+  href={url}
+  class:list={[
+    "inline-flex items-center gap-1 underline underline-offset-2 hover:opacity-70",
+    inline === 'true' && 'inline',
+    colorToClass(color),
+    className,
+  ]}
+>
+  <span class="text-[0.9em]" aria-hidden="true">{icon}</span>
+  <slot />
+</a>

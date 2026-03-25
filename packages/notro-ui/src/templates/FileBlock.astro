@@ -1,0 +1,21 @@
+---
+/**
+ * Notion file attachment block.
+ */
+import { colorToClass } from './colors';
+
+interface Props { src: string; color?: string; class?: string; }
+const { src, color, class: className } = Astro.props;
+---
+
+<div class:list={["my-2", colorToClass(color), className]}>
+  <a
+    href={src}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="inline-flex items-center gap-1.5 text-[var(--notro-text)] underline underline-offset-2 hover:opacity-70"
+  >
+    <span class="text-base" aria-hidden="true">📎</span>
+    <slot />
+  </a>
+</div>

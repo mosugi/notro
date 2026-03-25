@@ -1,0 +1,28 @@
+---
+/**
+ * Notion callout block.
+ * Edit the classes below to customize callout appearance.
+ */
+import { colorToClass } from './colors';
+
+interface Props {
+  icon?: string;
+  color?: string;
+  class?: string;
+}
+
+const { icon, color, class: className } = Astro.props;
+---
+
+<div
+  class:list={[
+    "flex items-start gap-3 my-4 rounded-lg border border-[var(--notro-border)] p-4",
+    colorToClass(color) || 'notro-bg-gray',
+    className,
+  ]}
+>
+  {icon && <span class="text-xl leading-none shrink-0" aria-hidden="true">{icon}</span>}
+  <div class="min-w-0 flex-1 [&>:first-child]:mt-0 [&>:last-child]:mb-0">
+    <slot />
+  </div>
+</div>
