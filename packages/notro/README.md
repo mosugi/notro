@@ -55,11 +55,18 @@ export const collections = { posts };
 ### 2. ページコンポーネント
 
 `NotionMarkdownRenderer` でマークダウンをレンダリングし、`getPlainText` でプロパティからテキストを取得します。
+コンポーネントのスタイリングには [notro-ui](https://github.com/mosugi/notro-tail/tree/main/packages/notro-ui) を使用してください。
+
+```sh
+# notro-ui のコンポーネントを src/components/notro/ にコピー
+npx notro-ui init
+```
 
 ```astro
 ---
 import { getCollection } from "astro:content";
-import { NotionMarkdownRenderer, getPlainText } from "notro";
+import { getPlainText } from "notro";
+import NotionMarkdownRenderer from "../../components/notro/NotionMarkdownRenderer.astro";
 
 const posts = await getCollection("posts");
 const { entry } = Astro.props;
@@ -68,153 +75,10 @@ const title = getPlainText(entry.data.properties.Name);
 const markdown = entry.data.markdown;
 ---
 
-<NotionMarkdownRenderer
-  markdown={markdown}
-  classMap={{
-    h1:      "mb-3 mt-10 text-3xl font-bold text-gray-900",
-    h2:      "mb-2 mt-8 text-2xl font-semibold text-gray-900",
-    callout: "flex items-start gap-3 my-4 rounded-lg border p-4",
-    toggle:  "my-1 rounded-md",
-    columns: "grid grid-cols-1 gap-6 my-4 md:grid-cols-2",
-    quote:   "my-4 border-l-4 border-gray-200 pl-4 italic text-gray-600",
-  }}
-/>
+<NotionMarkdownRenderer markdown={markdown} />
 ```
 
-`components` prop でコンポーネントをフルオーバーライドすることもできます。
-
-```astro
----
-import MyCallout from "./MyCallout.astro";
----
-
-<NotionMarkdownRenderer
-  markdown={markdown}
-  components={{ callout: MyCallout }}
-/>
-```
-
-## スタイリング方式の比較
-
-`NotionMarkdownRenderer` のスタイリングには 2 つの方式があります。
-
-### 方式 A: `classMap` prop（推奨）
-
-`classMap` でブロックごとに Tailwind クラスを直接指定する方式です。
-`p`, `ul`, `li`, `a` 等の**標準 HTML 要素も含む**ほぼすべての要素を対象にできます。
-
-```astro
-<NotionMarkdownRenderer
-  markdown={markdown}
-  classMap={{
-    // Notion 固有ブロック
-    h1:      "mb-3 mt-10 text-3xl font-bold text-gray-900",
-    callout: "flex items-start gap-3 my-4 rounded-lg border p-4",
-    toggle:  "my-1 rounded-md",
-    // 標準 HTML 要素
-    p:       "mb-3 leading-7",
-    ul:      "mb-3 list-disc pl-6",
-    li:      "mb-1 leading-7",
-    a:       "text-sky-600 underline underline-offset-2 hover:text-sky-700",
-    strong:  "font-bold",
-    pre:     "my-4 overflow-x-auto rounded-md bg-gray-50 p-4 font-mono text-sm",
-  }}
-/>
-```
-
-**classMap が対応する要素**
-
-| キー | 要素 | 備考 |
-|---|---|---|
-| `h1`〜`h4` | `<h1>`〜`<h4>` | Notion 固有の color 属性も保持 |
-| `callout` | Callout ブロック | icon 属性付き |
-| `toggle` / `toggleTitle` | `<details>` / `<summary>` | |
-| `columns` / `column` | カラムレイアウト | |
-| `quote` | `<blockquote>` | |
-| `image` | `<figure>` (画像ブロック) | |
-| `tableWrapper` / `table` | テーブル外側 `<div>` / `<table>` | |
-| `tableCell` / `tableRow` | `<td>` / `<tr>` | |
-| `toc` | 目次ブロック | |
-| `p` | `<p>` | |
-| `ul` / `ol` / `li` | リスト | |
-| `pre` | コードブロック外枠 | |
-| `hr` | 水平線 | |
-| `a` | リンク | |
-| `strong` / `em` / `del` | 太字 / 斜体 / 取り消し線 | |
-| `th` | テーブルヘッダーセル | |
-
-> **`code`（インラインコード）について**
->
-> `<code>` は `pre > code`（コードブロック内）とインラインコードで同じ要素を共有します。
-> `classMap.code` は両方に同じクラスを適用するため、インライン/ブロックの外観を分けたい場合は
-> グローバル CSS の `:not(pre) > code` セレクタが適しています（方式 B）。
-
-**メリット**
-- スタイルの定義がレンダリング箇所と同じファイルに集約され、見通しがよい
-- コンポーネントごとに異なる `classMap` を渡すことで、**ページやセクションごとに異なるスタイル**を適用できる
-- Tailwind の [Content Detection](https://tailwindcss.com/docs/content-configuration) がクラス名をスキャンできるため、不要なクラスが生成されない（CSS バンドルが最小）
-- ブロックに `notion-*` クラスが残るため、CSS で個別に調整することも引き続き可能
-
-**デメリット**
-- 同じ `classMap` を複数ページで使う場合、定義を定数として切り出して共有する必要がある
-- インラインコード（`code`）のインライン/ブロック区別は classMap のみでは表現できない（→ グローバル CSS で補う）
-
----
-
-### 方式 B: グローバル CSS の `@apply`
-
-`global.css` でノーションブロックを表す `notion-*` クラスや `.nt-markdown-content` 子孫セレクタにスタイルを当てる方式です。
-
-```css
-/* global.css */
-.nt-markdown-content h1 { @apply mb-3 mt-10 text-3xl font-bold text-gray-900; }
-.nt-markdown-content p  { @apply mb-3 leading-7; }
-
-/* インラインコードのみ区別する場合 */
-.nt-markdown-content :not(pre) > code {
-  @apply rounded bg-gray-100 px-1 py-0.5 font-mono text-sm;
-}
-```
-
-**メリット**
-- `:not(pre) > code` のような**子孫セレクタが必要なケース**に対応できる
-- Tailwind を使わず生の CSS で書く場合や、既存の CSS スタイルシートに組み込む場合に馴染みやすい
-- サイト全体に一律のスタイルを適用したい場合はシンプル
-
-**デメリット**
-- スタイルとコンポーネントの定義が離れるため、どのクラスがどのブロックに対応するかを把握しにくい
-- Tailwind の Content Detection が `@apply` 内のクラスをスキャンするためには `global.css` 自体がスキャン対象である必要がある（設定によっては CSS バンドルが肥大化することも）
-- ページごとに見た目を変えたい場合は `bodyClass` 等の追加の仕組みが必要になる
-
----
-
-### NotroTail での実装例
-
-`classMap` のみでほぼすべてを管理し、インラインコードの区別のみグローバル CSS で補うパターンです。
-
-```css
-/* global.css — インラインコードの区別のみ（オプション） */
-.nt-markdown-content :not(pre) > code {
-  @apply rounded bg-gray-100 px-1 py-0.5 font-mono text-sm text-gray-800;
-}
-```
-
-```astro
-<!-- [slug].astro — すべての要素を classMap で管理 -->
-<NotionMarkdownRenderer
-  markdown={markdown}
-  classMap={{
-    h1: "mb-3 mt-10 text-3xl font-bold text-gray-900",
-    p:  "mb-3 leading-7",
-    ul: "mb-3 list-disc pl-6",
-    li: "mb-1 leading-7",
-    a:  "text-sky-600 underline underline-offset-2 hover:text-sky-700",
-    pre:"my-4 overflow-x-auto rounded-md bg-gray-50 p-4 font-mono text-sm",
-    callout: "flex items-start gap-3 my-4 rounded-lg border p-4",
-    // ... その他のブロック
-  }}
-/>
-```
+コンポーネントは `src/components/notro/` に配置されるため、直接編集してスタイルをカスタマイズできます。
 
 ## Markdown 処理（remark-nfm）
 
@@ -303,11 +167,11 @@ Notion API がページ内容を切り詰めて返す場合（`markdownResponse.
 
 #### ~~3. `classRegistry` の SSR 安全性~~ ✅ 解決済み
 
-`classRegistry`（モジュールレベルの可変状態）を廃止し、`NotionMarkdownRenderer` が `classMap` を受け取って `withClass()` クロージャで各コンポーネントに直接クラスを注入する方式に変更した。グローバル状態ゼロ、リクエスト間の干渉なし。
+グローバル状態を廃止し、コンポーネントスタイリングは `notro-ui` でユーザープロジェクトにコピーされたファイルに移行した。
 
-#### ~~4. `<code>` 要素のインライン/ブロック区別~~ ✅ 対応不要（設計方針）
+#### ~~4. `<code>` 要素のインライン/ブロック区別~~ ✅ 解決済み
 
-コードハイライトは別ライブラリ（Shiki など）で対応するため、`classMap` での `code` キー対応は不要と判断。グローバル CSS の `:not(pre) > code` セレクタによるインラインコードへのスタイル適用を正式な設計とする。
+`notro-ui` の `notro-theme.css` の `.notro-markdown :not(pre) > code` セレクタで対応する設計とした。
 
 #### 5. Notion ページ URL 解析の堅牢化（`compile-mdx.ts`）
 
@@ -355,12 +219,6 @@ const pages = await Array.fromAsync(iteratePaginatedAPI(...))
 
 **対応方針**: `iteratePaginatedAPI` をストリーミングで処理し、ページを一定数ずつバッチ処理する。
 
-#### 10. `classMap` 定数の共有ユーティリティ
-
-`classMap` を複数ページで使い回す場合、現状はユーザーが手動で定数ファイルに切り出す必要がある。
-
-**対応方針**: `defineClassMap(map)` のようなヘルパー関数（型補完付き）を公式 API として提供し、`notionComponents` のキー一覧を型から自動導出する。
-
 ---
 
 ### 🔵 設計上のトレードオフ（方針検討が必要）
@@ -396,9 +254,10 @@ Astro Content Loader。`queryParameters` には Notion API の `dataSources.quer
 
 | コンポーネント | 説明 |
 |---|---|
-| `NotionMarkdownRenderer` | Notion マークダウンを HTML にレンダリング |
+| `NotionMarkdownRenderer` | Notion マークダウンを HTML にレンダリング（スタイルなし）。スタイル付き版は `notro-ui` を参照 |
 | `OptimizedDatabaseCover` | Notion カバー画像を最適化表示 |
 | `DatabaseProperty` | Notion プロパティを型に応じてレンダリング |
+| `compileMdxCached` | MDX コンパイル低レベル API。独自の `NotionMarkdownRenderer` を作成する場合に使用 |
 
 ### `notroProperties`
 
@@ -430,21 +289,6 @@ import { notroProperties } from "notro";
 // notroProperties.lastEditedBy   → lastEditedByPropertyPageObjectResponseSchema
 // notroProperties.button      → buttonPropertyPageObjectResponseSchema
 // notroProperties.verification → verificationPropertyPageObjectResponseSchema
-```
-
-### `ClassMapKeys` 型
-
-`classMap` prop に渡せる有効なキーの型定義。`"notro"` からインポートして `classMap` の型を明示的に指定できます。
-
-```typescript
-import type { ClassMapKeys } from "notro";
-
-// 複数ページで共有する classMap を型安全に定義する
-const sharedClassMap: Partial<Record<ClassMapKeys, string>> = {
-  callout: "flex items-start gap-3 my-4 rounded-lg border p-4",
-  h2: "mb-2 mt-8 text-2xl font-semibold text-gray-900",
-  p: "mb-3 leading-7",
-};
 ```
 
 ### ユーティリティ

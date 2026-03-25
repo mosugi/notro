@@ -5,14 +5,13 @@
  * an optional class string without requiring individual .astro files.
  *
  * makeHtmlElement(tag, cls?) bakes the class in at creation time.
- * NotionMarkdownRenderer calls this per-render when classMap has an entry
- * for the element, so each render gets its own fresh component instance.
+ * The headless notro package uses this with no default classes;
+ * notro-ui's NotionMarkdownRenderer passes Tailwind classes at creation time.
  *
  * Note on <code>:
- *   The `code` key is intentionally omitted here. Both inline `code` and
+ *   The `code` element is intentionally omitted here. Both inline `code` and
  *   code-block `pre > code` share the same element, so distinguishing them
- *   requires the `:not(pre) > code` CSS selector — which global CSS handles
- *   more precisely than a flat classMap entry can.
+ *   requires the `:not(pre) > code` CSS selector — handled in notro-theme.css.
  */
 import { jsx } from 'astro/jsx-runtime';
 import { __astro_tag_component__ } from 'astro/runtime/server/index.js';
