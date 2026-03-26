@@ -2,28 +2,73 @@
 /**
  * Headless Notion markdown renderer.
  *
- * Compiles preprocessed Notion markdown via compileMdxCached() and renders it
- * with the default (unstyled) notionComponents mapping.
+ * Compiles preprocessed Notion markdown via compileMdxCached() and maps
+ * all Notion block types to semantic HTML elements using makeHtmlElement().
+ * No .astro component dependencies — outputs plain, unstyled HTML.
  *
- * For a fully-styled renderer, install notro-ui:
+ * For styled rendering, install notro-ui:
  *   npx notro-ui init
  * Then import the local renderer from src/components/notro/NotionMarkdownRenderer.astro.
  */
 import { compileMdxCached } from '../utils/compile-mdx.ts';
-import { notionComponents } from './notion/index.ts';
+import { makeHtmlElement } from './notion/HtmlElements.ts';
 import type { LinkToPages } from '../types.ts';
 
 interface Props {
   markdown: string;
   linkToPages?: LinkToPages;
+  components?: Record<string, unknown>;
   class?: string;
 }
 
-const { markdown, linkToPages, class: className } = Astro.props;
+const { markdown, linkToPages, components: overrides, class: className } = Astro.props;
 
 const Content = await compileMdxCached(markdown, { linkToPages });
+
+// Minimal semantic HTML mapping — no Tailwind classes, no .astro components.
+// Every Notion block type maps to its closest semantic HTML equivalent.
+const components = {
+  // ── Notion block types → semantic HTML ───────────────────────────────────
+  callout:              makeHtmlElement('aside'),
+  details:              makeHtmlElement('details'),
+  summary:              makeHtmlElement('summary'),
+  columns:              makeHtmlElement('div'),
+  column:               makeHtmlElement('div'),
+  audio:                makeHtmlElement('figure'),
+  video:                makeHtmlElement('figure'),
+  file:                 makeHtmlElement('div'),
+  pdf:                  makeHtmlElement('figure'),
+  page:                 makeHtmlElement('a'),
+  database:             makeHtmlElement('a'),
+  table_of_contents:    makeHtmlElement('nav'),
+  synced_block:         makeHtmlElement('div'),
+  synced_block_reference: makeHtmlElement('div'),
+  'empty-block':        makeHtmlElement('div'),
+  'mention-user':       makeHtmlElement('span'),
+  'mention-page':       makeHtmlElement('span'),
+  'mention-database':   makeHtmlElement('span'),
+  'mention-data-source': makeHtmlElement('span'),
+  'mention-agent':      makeHtmlElement('span'),
+  'mention-date':       makeHtmlElement('time'),
+
+  // ── Standard HTML element pass-throughs ──────────────────────────────────
+  span:   makeHtmlElement('span'),
+  p:      makeHtmlElement('p'),
+  ul:     makeHtmlElement('ul'),
+  ol:     makeHtmlElement('ol'),
+  li:     makeHtmlElement('li'),
+  pre:    makeHtmlElement('pre'),
+  hr:     makeHtmlElement('hr'),
+  th:     makeHtmlElement('th'),
+  a:      makeHtmlElement('a'),
+  strong: makeHtmlElement('strong'),
+  em:     makeHtmlElement('em'),
+  del:    makeHtmlElement('del'),
+
+  ...overrides,
+};
 ---
 
 <div class:list={[className]}>
-  <Content components={notionComponents} />
+  <Content components={components} />
 </div>
