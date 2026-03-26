@@ -6,6 +6,7 @@ import BlogList from "../../components/blog/BlogList.astro";
 import Layout from "../../layouts/Layout.astro";
 import Pagination from "../../components/blog/Pagination.astro";
 import config from "../../config";
+import { getSortedBlogPosts, getPinnedPosts, getBeginnerPosts } from "../../lib/blog.ts";
 
 export async function getStaticPaths({
   paginate,
@@ -13,17 +14,9 @@ export async function getStaticPaths({
   paginate: PaginateFunction;
 }) {
   const allPosts = await getCollection("posts");
-
-  // Posts tagged "page" are fixed pages, excluded from blog listing
-  const blogPosts = allPosts.filter((entry) => !hasTag(entry.data.properties.Tags, "page"));
-
-  // Posts tagged "pinned" are shown at the top of page 1 only
-  const pinnedPosts = blogPosts.filter((entry) => hasTag(entry.data.properties.Tags, "pinned"));
-
-  // Posts tagged "入門" are shown as beginner guides on page 1 only
-  const beginnerPosts = blogPosts.filter(
-    (entry) => hasTag(entry.data.properties.Tags, "入門") && !hasTag(entry.data.properties.Tags, "pinned")
-  );
+  const blogPosts = getSortedBlogPosts(allPosts);
+  const pinnedPosts = getPinnedPosts(blogPosts);
+  const beginnerPosts = getBeginnerPosts(blogPosts);
 
   // Paginate all blogPosts so that total count includes pinned posts.
   // Pinned posts are filtered out from page.data before rendering to avoid duplication.

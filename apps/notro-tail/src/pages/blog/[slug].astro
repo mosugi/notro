@@ -1,56 +1,38 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-import { buildLinkToPages, getPlainText, getMultiSelect, hasTag, NotroContents } from "notro";
+import { buildLinkToPages, getPlainText, hasTag, NotroContent } from "notro";
 import Layout from "../../layouts/Layout.astro";
 import { notroComponents } from "../../components/notro";
 import config from "../../config";
-const { internalTags } = config.blog;
+import {
+  getSortedBlogPosts,
+  getAdjacentPosts,
+  getPublicTags,
+} from "../../lib/blog.ts";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
 
-  // Build linkToPages map so NotroContents can resolve inter-page links
+  // Build linkToPages map so NotroContent can resolve inter-page links
   const linkToPages = buildLinkToPages(posts, {
     url: (e) => `blog/${getPlainText(e.data.properties.Slug) || e.id}/`,
     title: (e) => getPlainText(e.data.properties.Name) ?? e.id,
   });
 
-  // Sorted blog posts (excluding "page"-tagged fixed pages) for prev/next nav
-  const blogPosts = posts
-    .filter((entry) => !hasTag(entry.data.properties.Tags, "page"))
-    .sort((a, b) => {
-      const dateA = a.data.properties.Date.date?.start ?? "";
-      const dateB = b.data.properties.Date.date?.start ?? "";
-      return dateB.localeCompare(dateA); // newest first
-    });
+  const blogPosts = getSortedBlogPosts(posts);
 
   return posts.map((entry) => {
     const slug = getPlainText(entry.data.properties.Slug) || entry.id;
-    const idx = blogPosts.findIndex((p) => p.id === entry.id);
-
-    // In descending date order: idx-1 = newer, idx+1 = older
-    const makeNav = (e: CollectionEntry<"posts"> | undefined) =>
-      e
-        ? {
-            slug: getPlainText(e.data.properties.Slug) || e.id,
-            title: getPlainText(e.data.properties.Name) ?? e.id,
-          }
-        : undefined;
-
+    const { prevNav, nextNav } = getAdjacentPosts(blogPosts, entry.id);
     return {
       params: { slug },
-      props: {
-        entry,
-        linkToPages,
-        prevNav: makeNav(idx > 0 ? blogPosts[idx - 1] : undefined),         // newer
-        nextNav: makeNav(idx >= 0 && idx < blogPosts.length - 1 ? blogPosts[idx + 1] : undefined), // older
-      },
+      props: { entry, linkToPages, prevNav, nextNav },
     };
   });
 }
 
 const { entry, linkToPages, prevNav, nextNav } = Astro.props;
+const { internalTags } = config.blog;
 
 const title = getPlainText(entry.data.properties.Name) ?? entry.id;
 const description = getPlainText(entry.data.properties.Description);
@@ -59,9 +41,7 @@ const markdown = entry.data.markdown;
 
 // "page" = embedded fixed page (no article header)
 const isEmbeddedPage = hasTag(entry.data.properties.Tags, "page");
-const tags = getMultiSelect(entry.data.properties.Tags).filter(
-  (t) => !internalTags.includes(t.name),
-);
+const tags = getPublicTags(entry.data.properties.Tags, internalTags);
 
 // Look up per-page bodyClass from navPages config (for fixed pages only)
 const slug = getPlainText(entry.data.properties.Slug) || entry.id;
@@ -97,7 +77,7 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
         )}
       </header>
 
-      <NotroContents
+      <NotroContent
         markdown={markdown}
         linkToPages={linkToPages}
         components={notroComponents}

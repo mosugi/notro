@@ -54,7 +54,7 @@ export const collections = { posts };
 
 ### 2. ページコンポーネント
 
-`NotroContents` でマークダウンをレンダリングし、`getPlainText` でプロパティからテキストを取得します。
+`NotroContent` でマークダウンをレンダリングし、`getPlainText` でプロパティからテキストを取得します。
 コンポーネントのスタイリングには [notro-ui](https://github.com/mosugi/notro-tail/tree/main/packages/notro-ui) を使用してください。
 
 ```sh
@@ -66,7 +66,7 @@ npx notro-ui init
 ---
 import { getCollection } from "astro:content";
 import { getPlainText } from "notro";
-import NotroContents from "../../components/notro/NotroContents.astro";
+import NotroContent from "../../components/notro/NotroContent.astro";
 
 const posts = await getCollection("posts");
 const { entry } = Astro.props;
@@ -75,7 +75,7 @@ const title = getPlainText(entry.data.properties.Name);
 const markdown = entry.data.markdown;
 ---
 
-<NotroContents markdown={markdown} />
+<NotroContent markdown={markdown} />
 ```
 
 コンポーネントは `src/components/notro/` に配置されるため、直接編集してスタイルをカスタマイズできます。
@@ -84,7 +84,7 @@ const markdown = entry.data.markdown;
 
 `notro` は Notion Markdown の前処理とディレクティブ構文のサポートを [`remark-nfm`](https://www.npmjs.com/package/remark-nfm) パッケージに委譲しています。
 
-`remark-nfm` は `notro` の内部の MDX コンパイルパイプラインで使用されており、`NotroContents` を使う場合は自動的に適用されます。
+`remark-nfm` は `notro` の内部の MDX コンパイルパイプラインで使用されており、`NotroContent` を使う場合は自動的に適用されます。
 
 `remark-nfm` を直接使いたい場合（カスタム unified パイプラインや `@mdx-js/mdx` の `evaluate()` など）は、`notro` から取得するのではなく、`remark-nfm` パッケージから直接インポートしてください。
 
@@ -254,10 +254,10 @@ Astro Content Loader。`queryParameters` には Notion API の `dataSources.quer
 
 | コンポーネント | 説明 |
 |---|---|
-| `NotroContents` | Notion マークダウンを HTML にレンダリング（スタイルなし）。スタイル付き版は `notro-ui` を参照 |
+| `NotroContent` | Notion マークダウンを HTML にレンダリング（スタイルなし）。スタイル付き版は `notro-ui` を参照 |
 | `OptimizedDatabaseCover` | Notion カバー画像を最適化表示 |
 | `DatabaseProperty` | Notion プロパティを型に応じてレンダリング |
-| `compileMdxCached` | MDX コンパイル低レベル API。独自の `NotroContents` を作成する場合に使用 |
+| `compileMdxCached` | MDX コンパイル低レベル API。独自の `NotroContent` を作成する場合に使用 |
 
 ### `notroProperties`
 
@@ -298,5 +298,5 @@ import { notroProperties } from "notro";
 | `getPlainText(property)` | Title, Rich Text, Select, Multi-select, Number, URL, Email, Phone, Date, Unique ID プロパティからプレーンテキストを取得 |
 | `getMultiSelect(property)` | Multi-select プロパティのオプション配列を返す。対象外の型や `undefined` には空配列を返すため型ガード不要 |
 | `hasTag(property, tagName)` | Multi-select プロパティに指定名のタグが含まれるか判定する。型ガード不要で安全に使用可能 |
-| `buildLinkToPages(entries, options)` | コレクションエントリから `linkToPages` マップを構築する。`NotroContents` に渡す Notion ページ間リンク解決用 |
+| `buildLinkToPages(entries, options)` | コレクションエントリから `linkToPages` マップを構築する。`NotroContent` に渡す Notion ページ間リンク解決用 |
 | `colorToCSS(color)` | Notion カラー名をインライン CSS スタイル文字列に変換（カスタムコンポーネント内で利用） |

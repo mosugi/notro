@@ -5,7 +5,7 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
 
 <DocsLayout
   title="API リファレンス — Docs — NotroTail"
-  description="notro パッケージの loader()・NotroContents・remark-nfm の API リファレンス。"
+  description="notro パッケージの loader()・NotroContent・remark-nfm の API リファレンス。"
   heading="API リファレンス"
 >
   <p class="mb-8 nt-text-65 leading-7">
@@ -49,7 +49,7 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">notro()</code>
       は <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">@astrojs/mdx</code>
       を notro のプラグインスイートで登録する Astro インテグレーションです。
-      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NotroContents</code>
+      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NotroContent</code>
       が動作するために必須です。
     </p>
     <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto"><span class="nt-text-45">// astro.config.mjs</span>
@@ -95,15 +95,15 @@ const posts = defineCollection({"{"})
     </div>
   </section>
 
-  <!-- NotroContents -->
+  <!-- NotroContent -->
   <section class="mb-10" id="notion-markdown-renderer">
-    <h2 class="mb-3 text-xl font-semibold nt-text"><code class="font-mono">NotroContents</code></h2>
+    <h2 class="mb-3 text-xl font-semibold nt-text"><code class="font-mono">NotroContent</code></h2>
     <p class="mb-4 nt-text-65 leading-7">
       ローダーが取得した Markdown を MDX にコンパイルし、Notion ブロックを Astro コンポーネントとしてレンダリングするコンポーネントです。
     </p>
-    <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto">import NotroContents from "../../components/notro/NotroContents.astro";
+    <pre class="nt-bg-04 rounded-lg px-4 py-4 text-sm font-mono overflow-x-auto">import NotroContent from "../../components/notro/NotroContent.astro";
 
-&lt;NotroContents
+&lt;NotroContent
   markdown={"{markdown}"}
   linkToPages={"{linkToPages}"}
 /&gt;</pre>

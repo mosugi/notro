@@ -97,11 +97,11 @@ Next steps:
        @import "./notro-theme.css";
 
   2. Import in your page:
-       import { NotroContents } from 'notro';
+       import { NotroContent } from 'notro';
        import { notroComponents } from '../components/notro';
 
   3. Use it:
-       <NotroContents markdown={markdown} {linkToPages} components={notroComponents} />
+       <NotroContent markdown={markdown} {linkToPages} components={notroComponents} />
 
   To override a component:
        components={{ ...notroComponents, callout: MyCallout }}

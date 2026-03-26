@@ -1,12 +1,12 @@
 /**
  * Component registry — maps all Notion block types to your installed components.
  *
- * Pass this to NotroContents via the components prop:
+ * Pass this to NotroContent via the components prop:
  *
- *   import { NotroContents } from 'notro';
+ *   import { NotroContent } from 'notro';
  *   import { notroComponents } from '@/components/notro';
  *
- *   <NotroContents markdown={md} {linkToPages} components={notroComponents} />
+ *   <NotroContent markdown={md} {linkToPages} components={notroComponents} />
  *
  * To override individual components, spread this object:
  *

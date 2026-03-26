@@ -109,7 +109,7 @@
 - [ ] **`notro` パッケージ API リファレンス**セクション
   - 3つのエントリーポイント（`notro`, `notro/utils`, `notro/integration`）
   - `loader()` オプション（`queryParameters`, `clientOptions`）
-  - `NotroContents` props（`markdown`, `linkToPages`, `classMap`, `components`）
+  - `NotroContent` props（`markdown`, `linkToPages`, `classMap`, `components`）
   - `classMap` キー一覧（callout, toggle, h1–h4, p, ul, ol, li, a, pre, table, etc.）
 
 - [ ] **`remark-nfm` スタンドアロン利用**セクション

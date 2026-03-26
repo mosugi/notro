@@ -202,7 +202,7 @@ notro-tail/
 │   └── notro/               # npm library ("notro" package)
 │       ├── index.ts         # Public API exports
 │       ├── src/
-│       │   ├── components/  # Astro components (NotroContents, OptimizedDatabaseCover, DatabaseProperty)
+│       │   ├── components/  # Astro components (NotroContent, OptimizedDatabaseCover, DatabaseProperty)
 │       │   │   └── notion/  # Per-block-type Astro components (Callout, Toggle, H1–H4, TableBlock, etc.)
 │       │   ├── loader/
 │       │   │   ├── loader.ts    # Astro Content Loader implementation
@@ -229,7 +229,7 @@ The `notro` package exposes three entry points, each designed for a specific imp
 
 | Entry point | Import | Use case |
 |---|---|---|
-| `notro` | `import { NotroContents, loader, ... } from "notro"` | Astro components and the Content Loader. **Cannot** be used in `astro.config.mjs` because Astro config is evaluated before the JSX renderer is registered. |
+| `notro` | `import { NotroContent, loader, ... } from "notro"` | Astro components and the Content Loader. **Cannot** be used in `astro.config.mjs` because Astro config is evaluated before the JSX renderer is registered. |
 | `notro/utils` | `import { getPlainText, normalizeNotionPresignedUrl, ... } from "notro/utils"` | Pure TypeScript helpers with no Astro component imports. Safe to use anywhere: config files, Node scripts, image services. |
 | `notro/integration` | `import { notro } from "notro/integration"` | The `notro()` Astro integration. Used in `astro.config.mjs` to inject `@astrojs/mdx` with the correct plugin pipeline. |
 
@@ -237,7 +237,7 @@ The `notro` package exposes three entry points, each designed for a specific imp
 
 `notro()` is an Astro integration that registers `@astrojs/mdx` with notro's plugin suite (remarkNfm, remarkGfm, remarkMath, rehypeKatex). It is required for two reasons:
 
-1. **`astro:jsx` renderer** — `@astrojs/mdx` registers the `astro:jsx` renderer that `@mdx-js/mdx`'s `evaluate()` depends on to produce Astro VNodes. Without it, `NotroContents` fails at runtime.
+1. **`astro:jsx` renderer** — `@astrojs/mdx` registers the `astro:jsx` renderer that `@mdx-js/mdx`'s `evaluate()` depends on to produce Astro VNodes. Without it, `NotroContent` fails at runtime.
 2. **Static `.mdx` files** — if the project uses `.mdx` files alongside Notion content, `notro()` ensures they are processed with the same plugin pipeline as dynamically compiled Notion markdown.
 
 Usage in `astro.config.mjs`:
@@ -251,11 +251,11 @@ export default defineConfig({ integrations: [notro(), sitemap()] });
 1. **Astro Content Collections** (`content.config.ts`) defines the `posts` collection (the template app; extend as needed for additional collections).
 2. Each collection uses the `loader()` from `notro`, which calls the Notion Public API (`dataSources.query` + `pages.retrieveMarkdown`).
 3. The loader caches pages by `last_edited_time` digest, and invalidates cache entries that are deleted, edited, or contain expired Notion pre-signed S3 URLs.
-4. Each page's preprocessed Markdown is stored in the Content Collection store. Pages render it via `NotroContents`, which calls `compileMdxCached()` to compile the markdown into an Astro component via `@mdx-js/mdx`'s `evaluate()`, then renders it with `<Content components={notionComponents} />`.
+4. Each page's preprocessed Markdown is stored in the Content Collection store. Pages render it via `NotroContent`, which calls `compileMdxCached()` to compile the markdown into an Astro component via `@mdx-js/mdx`'s `evaluate()`, then renders it with `<Content components={notionComponents} />`.
 
 ### MDX Compile Pipeline
 
-Defined in `packages/notro/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evaluate()`. No `astro.config.mjs` configuration is required — the pipeline runs entirely at render time inside `NotroContents`.
+Defined in `packages/notro/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evaluate()`. No `astro.config.mjs` configuration is required — the pipeline runs entirely at render time inside `NotroContent`.
 
 **Remark plugins** (parse Markdown → mdast):
 - `remarkNfm` (from `remark-nfm`) — bundles pre-parse normalization (`preprocessNotionMarkdown`), directive syntax support, and callout conversion in one plugin
@@ -268,7 +268,7 @@ Defined in `packages/notro/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evalua
 
 **Component mapping** (HTML elements → Astro components):
 - After `evaluate()`, `<Content components={notionComponents} />` maps every Notion block type (callout, toggle, columns, images, table, TOC, etc.) and standard HTML element to an Astro component from `src/components/notion/`
-- Custom overrides can be passed via the `components` prop on `NotroContents`
+- Custom overrides can be passed via the `components` prop on `NotroContent`
 - CSS class overrides can be passed via the `classMap` prop without replacing the component
 
 ### Image Handling
@@ -277,16 +277,16 @@ Defined in `packages/notro/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evalua
 
 ### Markdown Rendering
 
-Pages render Notion markdown via the `NotroContents` component from `notro`. It accepts preprocessed markdown stored by the loader, compiles it via `compileMdxCached()`, and renders it with component mapping:
+Pages render Notion markdown via the `NotroContent` component from `notro`. It accepts preprocessed markdown stored by the loader, compiles it via `compileMdxCached()`, and renders it with component mapping:
 
 ```astro
 ---
-import { NotroContents } from "notro";
+import { NotroContent } from "notro";
 const markdown = entry.data.markdown;
 ---
 
 <div class="nt-markdown-content">
-  <NotroContents markdown={markdown} />
+  <NotroContent markdown={markdown} />
 </div>
 ```
 

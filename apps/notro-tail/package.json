@@ -9,7 +9,8 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'"
+    "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'",
+    "test": "vitest run"
   },
   "engines": {
     "node": ">=22.0.0",
@@ -30,6 +31,7 @@
     "@astrojs/check": "^0.9.7",
     "typescript": "^5.9.3",
     "undici": "^7.24.5",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "vitest": "^3.0.0"
   }
 }
