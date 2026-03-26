@@ -1,0 +1,21 @@
+{
+  "name": "notro-ui",
+  "description": "Copy-and-own Notion block components for notro — styled with TailwindCSS 4",
+  "version": "0.0.1",
+  "type": "module",
+  "author": "mosugi <mosugeek@gmail.com>",
+  "license": "MIT",
+  "bin": {
+    "notro-ui": "./bin/notro-ui.js"
+  },
+  "files": [
+    "bin",
+    "src/templates"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "peerDependencies": {
+    "tailwind-variants": ">=0.3.0"
+  }
+}

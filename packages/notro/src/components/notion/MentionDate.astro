@@ -1,17 +1,17 @@
 ---
 /**
- * Inline date mention.
+ * <mention-date start="YYYY-MM-DD" end="YYYY-MM-DD"/>
+ * <mention-date start="YYYY-MM-DD" startTime="HH:mm" timeZone="IANA_TIMEZONE"/>
+ *
+ * Mapped to MDX `components['mention-date']`.
+ * Accepts an optional class prop.
  */
-import { tv } from 'tailwind-variants';
-
-export const mentionDate = tv({ base: 'font-mono text-sm' });
-
 interface Props {
-  start: string;
-  end?: string;
-  startTime?: string;
-  timeZone?: string;
-  class?: string;
+	start: string;
+	end?: string;
+	startTime?: string;
+	timeZone?: string;
+	class?: string;
 }
 
 const { start, end, startTime, timeZone, class: className } = Astro.props;
@@ -23,4 +23,4 @@ if (timeZone) parts.push(`(${timeZone})`);
 const display = parts.join(' ');
 ---
 
-<time class={mentionDate({ class: className })} datetime={start}>{display}</time>
+<time class:list={[className]} datetime={start}>{display}</time>

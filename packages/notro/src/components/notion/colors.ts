@@ -2,39 +2,25 @@
  * Notion color system
  * https://developers.notion.com/reference/block#color
  *
- * CSS classes are defined in notro-theme.css.
- * Edit notro-theme.css to change the actual color values.
+ * CSS classes are defined in apps/notro-tail/src/styles/global.css as .nt-color-*
  */
 
-export const notroColorVariants = {
-	default:           '',
-	gray:              'notro-text-gray',
-	brown:             'notro-text-brown',
-	orange:            'notro-text-orange',
-	yellow:            'notro-text-yellow',
-	green:             'notro-text-green',
-	blue:              'notro-text-blue',
-	purple:            'notro-text-purple',
-	pink:              'notro-text-pink',
-	red:               'notro-text-red',
-	gray_background:   'notro-bg-gray',
-	brown_background:  'notro-bg-brown',
-	orange_background: 'notro-bg-orange',
-	yellow_background: 'notro-bg-yellow',
-	green_background:  'notro-bg-green',
-	blue_background:   'notro-bg-blue',
-	purple_background: 'notro-bg-purple',
-	pink_background:   'notro-bg-pink',
-	red_background:    'notro-bg-red',
-} as const;
+const TEXT_COLORS = new Set([
+	'gray', 'brown', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'red',
+]);
 
-export type NotroColor = keyof typeof notroColorVariants;
+const BG_COLORS = new Set([
+	'gray', 'brown', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'red',
+]);
 
-/** @deprecated Use notroColorVariants with tailwind-variants instead */
+/** Convert a Notion color name to a CSS class name (nt-color-*) */
 export function colorToClass(color: string | undefined): string {
 	if (!color || color === 'default') return '';
-	if (color in notroColorVariants) {
-		return notroColorVariants[color as NotroColor];
+	if (color.endsWith('_background')) {
+		const base = color.slice(0, -'_background'.length);
+		if (BG_COLORS.has(base)) return `nt-color-${color}`;
 	}
+	if (TEXT_COLORS.has(color)) return `nt-color-${color}`;
 	return '';
 }
+

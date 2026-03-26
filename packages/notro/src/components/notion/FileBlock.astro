@@ -1,23 +1,13 @@
 ---
-/**
- * Notion file attachment block.
- */
-import { tv } from 'tailwind-variants';
+/** <file src="URL" color="Color">Caption</file> */
+import { colorToClass } from './colors';
 
-export const fileBlock = tv({ base: 'my-2' });
-
-interface Props { src: string; class?: string; }
-const { src, class: className } = Astro.props;
+interface Props { src: string; color?: string; class?: string; }
+const { src, color, class: className } = Astro.props;
 ---
-
-<div class={fileBlock({ class: className })}>
-  <a
-    href={src}
-    target="_blank"
-    rel="noopener noreferrer"
-    class="inline-flex items-center gap-1.5 text-[var(--notro-text)] underline underline-offset-2 hover:opacity-70"
-  >
-    <span class="text-base" aria-hidden="true">📎</span>
-    <slot />
-  </a>
+<div class:list={[colorToClass(color), className]}>
+	<a href={src} target="_blank" rel="noopener noreferrer" data-file-link>
+		<span data-file-icon aria-hidden="true">📎</span>
+		<slot />
+	</a>
 </div>

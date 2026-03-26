@@ -1,0 +1,16 @@
+---
+/**
+ * Toggle block title — renders as <summary> inside Toggle (<details>).
+ * Cursor and marker styles are set by `.notro-toggle > summary` in notro-theme.css.
+ */
+import { tv } from 'tailwind-variants';
+
+export const toggleTitle = tv({ base: 'font-medium py-0.5' });
+
+interface Props { class?: string; }
+const { class: className } = Astro.props;
+---
+
+<summary class={toggleTitle({ class: className })}>
+  <slot />
+</summary>

@@ -1,20 +1,11 @@
 ---
-/**
- * Notion PDF embed block.
- */
-import { tv } from 'tailwind-variants';
+/** <pdf src="URL" color="Color">Caption</pdf> */
+import { colorToClass } from './colors';
 
-export const pdfBlock = tv({ base: 'my-4' });
-
-interface Props { src: string; class?: string; }
-const { src, class: className } = Astro.props;
+interface Props { src: string; color?: string; class?: string; }
+const { src, color, class: className } = Astro.props;
 ---
-
-<figure class={pdfBlock({ class: className })}>
-  <iframe src={src} class="w-full min-h-[500px] border-0" title="PDF" loading="lazy"></iframe>
-  {Astro.slots.has('default') && (
-    <figcaption class="text-sm text-[var(--notro-text-muted)] mt-1.5">
-      <slot />
-    </figcaption>
-  )}
+<figure class:list={[colorToClass(color), className]}>
+	<iframe src={src} data-pdf-frame title="PDF" loading="lazy"></iframe>
+	{Astro.slots.has('default') && <figcaption data-pdf-caption><slot /></figcaption>}
 </figure>

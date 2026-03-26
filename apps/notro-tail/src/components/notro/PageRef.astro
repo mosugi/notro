@@ -1,0 +1,17 @@
+---
+/**
+ * Notion page reference link.
+ */
+import { tv } from 'tailwind-variants';
+
+export const pageRef = tv({
+  base: 'inline-flex items-center gap-1 underline underline-offset-2 hover:opacity-70',
+});
+
+interface Props { url: string; class?: string; }
+const { url, class: className } = Astro.props;
+---
+<a href={url} class={pageRef({ class: className })}>
+  <span class="text-[0.9em]" aria-hidden="true">📄</span>
+  <slot />
+</a>

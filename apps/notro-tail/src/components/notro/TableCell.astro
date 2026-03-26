@@ -1,0 +1,16 @@
+---
+import { tv, type VariantProps } from 'tailwind-variants';
+import { notroColorVariants } from './colors';
+
+export const tableCell = tv({
+  base: 'px-3 py-1.5 text-sm',
+  variants: { color: notroColorVariants },
+});
+
+interface Props extends VariantProps<typeof tableCell> {
+  class?: string;
+}
+
+const { color, class: className } = Astro.props;
+---
+<td class={tableCell({ color, class: className })}><slot /></td>

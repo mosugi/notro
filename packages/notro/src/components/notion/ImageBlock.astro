@@ -1,26 +1,19 @@
 ---
 /**
- * Notion image block — renders as <figure> with optional caption.
+ * ![Caption](URL) {color="Color"}
+ *
+ * Notion image block. Mapped to MDX `components.img`.
+ *
+ * - `alt` is always set on the <img> element for screen readers.
+ * - `caption` is a separate prop for visible caption text rendered in <figcaption>.
+ *   If `caption` is not provided, no <figcaption> is rendered.
  */
-import { tv } from 'tailwind-variants';
+import { colorToClass } from './colors';
 
-export const imageBlock = tv({ base: 'my-4' });
-
-interface Props {
-  src: string;
-  alt?: string;
-  caption?: string;
-  class?: string;
-}
-
-const { src, alt, caption, class: className } = Astro.props;
+interface Props { src: string; alt?: string; caption?: string; color?: string; class?: string; }
+const { src, alt, caption, color, class: className } = Astro.props;
 ---
-
-<figure class={imageBlock({ class: className })}>
-  <img src={src} alt={alt ?? ''} loading="lazy" decoding="async" class="h-auto max-w-full" />
-  {caption && (
-    <figcaption class="text-sm text-[var(--notro-text-muted)] mt-1.5 text-center">
-      {caption}
-    </figcaption>
-  )}
+<figure class:list={[colorToClass(color), className]}>
+	<img src={src} alt={alt ?? ''} loading="lazy" decoding="async" data-image-img />
+	{caption && <figcaption data-image-caption>{caption}</figcaption>}
 </figure>
