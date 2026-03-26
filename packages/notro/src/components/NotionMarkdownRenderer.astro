@@ -2,13 +2,18 @@
 /**
  * Headless Notion markdown renderer.
  *
- * Compiles preprocessed Notion markdown via compileMdxCached() and maps
- * all Notion block types to semantic HTML elements using makeHtmlElement().
- * No .astro component dependencies — outputs plain, unstyled HTML.
+ * Works standalone — no notro-ui required. Outputs plain semantic HTML
+ * with no Tailwind classes or .astro component dependencies.
  *
- * For styled rendering, install notro-ui:
- *   npx notro-ui init
- * Then import the local renderer from src/components/notro/NotionMarkdownRenderer.astro.
+ * Usage (headless, no styling):
+ *   <NotionMarkdownRenderer markdown={markdown} />
+ *
+ * Usage (with notro-ui styled components):
+ *   import { notroComponents } from '../components/notro';
+ *   <NotionMarkdownRenderer markdown={markdown} components={notroComponents} />
+ *
+ * Override individual components:
+ *   <NotionMarkdownRenderer markdown={markdown} components={{ ...notroComponents, callout: MyCallout }} />
  */
 import { compileMdxCached } from '../utils/compile-mdx.ts';
 import { makeHtmlElement } from './notion/HtmlElements.ts';
