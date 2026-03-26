@@ -97,11 +97,11 @@ Next steps:
        @import "./notro-theme.css";
 
   2. Import in your page:
-       import { NotionMarkdownRenderer } from 'notro';
+       import { NotroContents } from 'notro';
        import { notroComponents } from '../components/notro';
 
   3. Use it:
-       <NotionMarkdownRenderer markdown={markdown} {linkToPages} components={notroComponents} />
+       <NotroContents markdown={markdown} {linkToPages} components={notroComponents} />
 
   To override a component:
        components={{ ...notroComponents, callout: MyCallout }}

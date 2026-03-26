@@ -62,24 +62,24 @@ And `notro-theme.css` imported in your global CSS (`src/styles/global.css`):
 
 ## Using the installed components
 
-After `init`, wire up the local `NotionMarkdownRenderer` in your page:
+After `init`, wire up the local `NotroContents` in your page:
 
 ```astro
 ---
 // src/pages/blog/[slug].astro
 import { buildLinkToPages, getPlainText } from "notro";
-import NotionMarkdownRenderer from "../../components/notro/NotionMarkdownRenderer.astro";
+import NotroContents from "../../components/notro/NotroContents.astro";
 
 const { entry } = Astro.props;
 ---
 
-<NotionMarkdownRenderer
+<NotroContents
   markdown={entry.data.markdown}
   linkToPages={linkToPages}
 />
 ```
 
-The local `NotionMarkdownRenderer.astro` (in `src/components/notro/`) imports all your installed components and maps them to Notion block types. This file is yours — add, remove, or swap components by editing it directly.
+The local `NotroContents.astro` (in `src/components/notro/`) imports all your installed components and maps them to Notion block types. This file is yours — add, remove, or swap components by editing it directly.
 
 ---
 
@@ -139,7 +139,7 @@ Color tokens (`notro-bg-gray`, `notro-text-blue`, etc.) are CSS variables define
 | `SyncedBlock` | Synced block |
 | `EmptyBlock` | Empty line spacer |
 | `TableRow` / `TableCell` / `TableCol` / `TableColgroup` | Table internals |
-| `NotionMarkdownRenderer.astro` | Entry point — maps all components; edit `makeHtmlElement(...)` calls to style `<p>`, `<ul>`, `<a>`, etc. |
+| `NotroContents.astro` | Entry point — maps all components; edit `makeHtmlElement(...)` calls to style `<p>`, `<ul>`, `<a>`, etc. |
 | `colors.ts` | Color variant map for `tv()` |
 | `notro-theme.css` | CSS variables + complex selectors |
 
@@ -157,7 +157,7 @@ npx notro-ui list
 | [`notro`](../notro/) | Headless — Content Loader, MDX pipeline, unstyled components |
 | `notro-ui` | Style layer — copy-and-own styled components that sit on top of `notro` |
 
-`notro` provides `compileMdxCached` (the MDX compiler) and the headless component set. `notro-ui`'s `NotionMarkdownRenderer.astro` uses `compileMdxCached` directly and wires in your local styled components.
+`notro` provides `compileMdxCached` (the MDX compiler) and the headless component set. `notro-ui`'s `NotroContents.astro` uses `compileMdxCached` directly and wires in your local styled components.
 
 ---
 
@@ -167,4 +167,4 @@ npx notro-ui list
 
 - `src/components/notro/` — installed components
 - `src/styles/notro-theme.css` — installed theme
-- `src/pages/blog/[slug].astro` — using `NotionMarkdownRenderer`
+- `src/pages/blog/[slug].astro` — using `NotroContents`

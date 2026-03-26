@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-import { buildLinkToPages, getPlainText, getMultiSelect, hasTag, NotionMarkdownRenderer } from "notro";
+import { buildLinkToPages, getPlainText, getMultiSelect, hasTag, NotroContents } from "notro";
 import Layout from "../../layouts/Layout.astro";
 import { notroComponents } from "../../components/notro";
 import config from "../../config";
@@ -10,7 +10,7 @@ const { internalTags } = config.blog;
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
 
-  // Build linkToPages map so NotionMarkdownRenderer can resolve inter-page links
+  // Build linkToPages map so NotroContents can resolve inter-page links
   const linkToPages = buildLinkToPages(posts, {
     url: (e) => `blog/${getPlainText(e.data.properties.Slug) || e.id}/`,
     title: (e) => getPlainText(e.data.properties.Name) ?? e.id,
@@ -97,7 +97,7 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
         )}
       </header>
 
-      <NotionMarkdownRenderer
+      <NotroContents
         markdown={markdown}
         linkToPages={linkToPages}
         components={notroComponents}

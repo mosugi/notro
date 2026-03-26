@@ -2,10 +2,10 @@
  * Component registry — maps all Notion block types to installed components.
  *
  * Usage:
- *   import { NotionMarkdownRenderer } from 'notro';
+ *   import { NotroContents } from 'notro';
  *   import { notroComponents } from '@/components/notro';
  *
- *   <NotionMarkdownRenderer markdown={md} {linkToPages} components={notroComponents} />
+ *   <NotroContents markdown={md} {linkToPages} components={notroComponents} />
  *
  * To override a component for one-off use:
  *   components={{ ...notroComponents, callout: MyCallout }}

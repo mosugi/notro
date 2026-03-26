@@ -752,7 +752,7 @@ styled with TailwindCSS 4.
 1. The \`loader()\` from the \`notro\` package queries the Notion database and fetches each page as Markdown.
 2. Pages are cached by \`last_edited_time\`. Only changed pages are re-fetched on the next build — incremental builds stay fast even with hundreds of posts.
 3. Preprocessed Markdown is stored in Astro's Content Collection store.
-4. At render time, \`NotionMarkdownRenderer\` runs the full remark/rehype plugin pipeline.
+4. At render time, \`NotroContents\` runs the full remark/rehype plugin pipeline.
 
 ## Notion block support
 

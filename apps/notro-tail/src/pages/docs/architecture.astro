@@ -125,7 +125,7 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
         <div class="pt-0.5">
           <p class="text-sm font-medium nt-text dark:text-slate-100">レンダリング時の MDX コンパイル</p>
           <p class="mt-1 text-sm nt-text-65 dark:text-slate-400 leading-6">
-            <code class="font-mono text-xs">NotionMarkdownRenderer</code> が <code class="font-mono text-xs">compileMdxCached()</code> で
+            <code class="font-mono text-xs">NotroContents</code> が <code class="font-mono text-xs">compileMdxCached()</code> で
             <code class="font-mono text-xs">@mdx-js/mdx</code> の <code class="font-mono text-xs">evaluate()</code> を呼び出し、
             <code class="font-mono text-xs">&lt;Content components={"{notionComponents}"} /&gt;</code> でレンダリング。
           </p>
@@ -150,7 +150,7 @@ import DocsLayout from "../../layouts/DocsLayout.astro";
     <p class="mb-4 nt-text-65 dark:text-slate-400 leading-7">
       <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">packages/notro/src/utils/compile-mdx.ts</code>
       内で定義。<code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">astro.config.mjs</code> の設定は不要で、
-      レンダリング時に <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NotionMarkdownRenderer</code> 内で実行されます。
+      レンダリング時に <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NotroContents</code> 内で実行されます。
     </p>
     <div class="space-y-4">
       <div>

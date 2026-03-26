@@ -159,7 +159,7 @@
   }
 
   /*
-   * Markdown content wrapper (.notro-markdown applied by NotionMarkdownRenderer).
+   * Markdown content wrapper (.notro-markdown applied by NotroContents).
    * Scopes pre/code/task-list styles without affecting surrounding page elements.
    */
   .notro-markdown pre {

@@ -1,4 +1,4 @@
-export { default as NotionMarkdownRenderer } from "./src/components/NotionMarkdownRenderer.astro";
+export { default as NotroContents } from "./src/components/NotroContents.astro";
 export type { LinkToPages } from "./src/types.ts";
 export { default as OptimizedDatabaseCover } from "./src/components/OptimizedDatabaseCover.astro";
 
