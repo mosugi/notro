@@ -90,17 +90,21 @@ function initCommand(args) {
   console.log(`  ${themeExisted ? 'Updated' : 'Added  '} ${themeDest}`);
 
   console.log(`
-Done! ${COMPONENT_FILES.length} components installed.
+Done! ${COMPONENT_FILES.length} files installed.
 
 Next steps:
   1. Add to your main CSS file (e.g. src/styles/global.css):
        @import "./notro-theme.css";
 
-  2. Import the local renderer in your page:
-       import NotionMarkdownRenderer from "../components/notro/NotionMarkdownRenderer.astro";
+  2. Import in your page:
+       import { NotionMarkdownRenderer } from 'notro';
+       import { notroComponents } from '../components/notro';
 
   3. Use it:
-       <NotionMarkdownRenderer markdown={markdown} linkToPages={linkToPages} />
+       <NotionMarkdownRenderer markdown={markdown} {linkToPages} components={notroComponents} />
+
+  To override a component:
+       components={{ ...notroComponents, callout: MyCallout }}
 `);
 }
 

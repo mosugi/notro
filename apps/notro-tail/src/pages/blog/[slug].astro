@@ -1,9 +1,9 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-import { buildLinkToPages, getPlainText, getMultiSelect, hasTag } from "notro";
+import { buildLinkToPages, getPlainText, getMultiSelect, hasTag, NotionMarkdownRenderer } from "notro";
 import Layout from "../../layouts/Layout.astro";
-import NotionMarkdownRenderer from "../../components/notro/NotionMarkdownRenderer.astro";
+import { notroComponents } from "../../components/notro";
 import config from "../../config";
 const { internalTags } = config.blog;
 
@@ -100,6 +100,8 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
       <NotionMarkdownRenderer
         markdown={markdown}
         linkToPages={linkToPages}
+        components={notroComponents}
+        class="notro-markdown"
       />
 
       {entry.data.truncated && (
