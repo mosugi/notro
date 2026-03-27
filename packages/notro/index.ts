@@ -1,6 +1,5 @@
-export { default as NotroContent } from "./src/NotroContent.astro";
+export { default as NotroContent } from "./src/components/NotroContent.astro";
 export type { LinkToPages } from "./src/types.ts";
-export { default as OptimizedDatabaseCover } from "./src/OptimizedDatabaseCover.astro";
 
 export * from "./src/utils/notion";
 export { normalizeNotionPresignedUrl, markdownHasPresignedUrls } from "./src/utils/notion-url.ts";

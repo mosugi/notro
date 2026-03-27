@@ -255,7 +255,7 @@ Astro Content Loader。`queryParameters` には Notion API の `dataSources.quer
 | コンポーネント | 説明 |
 |---|---|
 | `NotroContent` | Notion マークダウンを HTML にレンダリング（スタイルなし）。スタイル付き版は `notro-ui` を参照 |
-| `OptimizedDatabaseCover` | Notion カバー画像を最適化表示 |
+| `DatabaseCover` | Notion カバー画像を最適化表示 |
 | `DatabaseProperty` | Notion プロパティを型に応じてレンダリング |
 | `compileMdxCached` | MDX コンパイル低レベル API。独自の `NotroContent` を作成する場合に使用 |
 

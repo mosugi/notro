@@ -202,7 +202,7 @@ notro-tail/
 │   └── notro/               # npm library ("notro" package)
 │       ├── index.ts         # Public API exports
 │       ├── src/
-│       │   ├── components/  # Astro components (NotroContent, OptimizedDatabaseCover, DatabaseProperty)
+│       │   ├── components/  # Astro components (NotroContent, DatabaseCover, DatabaseProperty)
 │       │   │   └── notion/  # Per-block-type Astro components (Callout, Toggle, H1–H4, TableBlock, etc.)
 │       │   ├── loader/
 │       │   │   ├── loader.ts    # Astro Content Loader implementation
