@@ -1,4 +1,4 @@
-import { makeHtmlElement } from "../components/notion/HtmlElements.ts";
+import { makeHtmlElement } from "./HtmlElements.ts";
 
 /**
  * Default headless component map for NotroContent.

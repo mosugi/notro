@@ -1,6 +1,6 @@
-export { default as NotroContent } from "./src/components/NotroContent.astro";
+export { default as NotroContent } from "./src/NotroContent.astro";
 export type { LinkToPages } from "./src/types.ts";
-export { default as OptimizedDatabaseCover } from "./src/components/OptimizedDatabaseCover.astro";
+export { default as OptimizedDatabaseCover } from "./src/OptimizedDatabaseCover.astro";
 
 export * from "./src/utils/notion";
 export { normalizeNotionPresignedUrl, markdownHasPresignedUrls } from "./src/utils/notion-url.ts";
@@ -9,7 +9,7 @@ export { normalizeNotionPresignedUrl, markdownHasPresignedUrls } from "./src/uti
 export { compileMdxCached } from "./src/utils/compile-mdx.ts";
 
 // Astro JSX component factory — wrap any HTML tag with optional default classes.
-export { makeHtmlElement } from "./src/components/notion/HtmlElements.ts";
+export { makeHtmlElement } from "./src/utils/HtmlElements.ts";
 
 // Default headless component map (all Notion block types → semantic HTML, no Tailwind).
 export { defaultComponents } from "./src/utils/default-components.ts";

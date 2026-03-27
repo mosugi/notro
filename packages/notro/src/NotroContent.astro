@@ -15,9 +15,9 @@
  * Override individual components:
  *   <NotroContent markdown={markdown} components={{ ...notroComponents, callout: MyCallout }} />
  */
-import { compileMdxCached } from "../utils/compile-mdx.ts";
-import { defaultComponents } from "../utils/default-components.ts";
-import type { LinkToPages } from "../types.ts";
+import { compileMdxCached } from "./utils/compile-mdx.ts";
+import { defaultComponents } from "./utils/default-components.ts";
+import type { LinkToPages } from "./types.ts";
 
 interface Props {
   markdown: string;
