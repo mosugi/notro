@@ -16,7 +16,6 @@
     "node": ">=22.0.0"
   },
   "peerDependencies": {
-    "notro": "*",
     "tailwind-variants": ">=0.3.0"
   }
 }
