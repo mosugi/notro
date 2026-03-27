@@ -12,8 +12,21 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
 import rehypeShiki from '@shikijs/rehype';
 import { remarkNfm } from 'remark-nfm';
-import { renderMermaidSVG, THEMES } from 'beautiful-mermaid';
 import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic';
+
+// beautiful-mermaid is an optional dependency — gracefully disabled if not installed.
+// Install it in your project to enable mermaid diagram rendering:
+//   npm install beautiful-mermaid
+type MermaidRenderer = (code: string, theme: unknown) => string;
+let _renderMermaid: MermaidRenderer | null = null;
+let _mermaidTheme: unknown = null;
+try {
+	const mod = await import('beautiful-mermaid');
+	_renderMermaid = mod.renderMermaidSVG;
+	_mermaidTheme = mod.THEMES['github-dark'];
+} catch {
+	// beautiful-mermaid not installed; mermaid code blocks render as plain code
+}
 import type { Plugin, PluggableList } from 'unified';
 import type { Root, Element, ElementContent } from 'hast';
 import { visit } from 'unist-util-visit';
@@ -135,9 +148,10 @@ const rehypeMermaid: Plugin<[], Root> = () => {
 			const cls = codeEl.properties?.className;
 			if (!Array.isArray(cls) || !cls.includes('language-mermaid')) return;
 
+			if (!_renderMermaid) return;
 			const code = hastToString(codeEl).trim();
 			try {
-				const svg = renderMermaidSVG(code, THEMES['github-dark']);
+				const svg = _renderMermaid(code, _mermaidTheme);
 				// Keep the SVG's natural pixel dimensions (width/height attributes).
 				// The .notro-mermaid container has overflow-x:auto, so diagrams wider than
 				// the viewport scroll horizontally rather than being clipped or scaled down.
