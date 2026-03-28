@@ -108,6 +108,23 @@
   .notro-toc-level-2 { @apply pl-4; }
   .notro-toc-level-3 { @apply pl-8; }
   .notro-toc-level-4 { @apply pl-12; }
+
+  /*
+   * Task list (remark-gfm output) — placed in utilities layer so these rules
+   * take cascade precedence over the utility classes applied by the <ul>
+   * component (list-disc, pl-6, space-y-1) at the same layer level.
+   * Specificity: .notro-markdown .contains-task-list (0,2,0) beats a single
+   * utility class (0,1,0), so the reset wins.
+   */
+  .notro-markdown .contains-task-list {
+    @apply list-none pl-0;
+  }
+  .notro-markdown .task-list-item {
+    @apply flex items-start gap-2 pl-0;
+  }
+  .notro-markdown .task-list-item input[type="checkbox"] {
+    @apply mt-1 shrink-0 cursor-default;
+  }
 }
 
 /* ── Component-level styles (complex selectors) ──────────────────────────── */
@@ -179,17 +196,6 @@
       background-color: rgb(255 255 255 / 0.10);
       color: #f87171;
     }
-  }
-
-  /* Task list (remark-gfm output) */
-  .notro-markdown .contains-task-list {
-    @apply list-none pl-0;
-  }
-  .notro-markdown .task-list-item {
-    @apply flex items-start gap-2 pl-0;
-  }
-  .notro-markdown .task-list-item input[type="checkbox"] {
-    @apply mt-1 shrink-0 cursor-default;
   }
 
   /* Mermaid diagram wrapper (class injected by rehypeMermaid in mdx-pipeline.ts) */

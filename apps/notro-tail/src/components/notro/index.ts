@@ -13,7 +13,8 @@
 import { makeHtmlElement } from 'notro';
 
 // Site-customized components (differ from notro-ui defaults)
-import Callout         from './Callout.astro';   // rounded-md (vs rounded-lg default)
+import Callout              from './Callout.astro';   // rounded-md (vs rounded-lg default)
+import ColoredParagraph     from './ColoredParagraph.astro';
 import MermaidBlock    from './MermaidBlock.astro';
 import H1              from './H1.astro';         // mt-8 (vs mt-10 default)
 import H2              from './H2.astro';         // mt-6 (vs mt-8 default)
@@ -88,7 +89,7 @@ export const notroComponents = {
 
   // ── Standard HTML elements ─────────────────────────────────────────────
   th:     makeHtmlElement('th',     'px-3 py-2 text-left text-sm font-semibold'),
-  p:      makeHtmlElement('p',      'mb-4 leading-7'),
+  p:      ColoredParagraph,
   ul:     makeHtmlElement('ul',     'mb-4 list-disc pl-6 space-y-1'),
   ol:     makeHtmlElement('ol',     'mb-4 list-decimal pl-6 space-y-1'),
   li:     makeHtmlElement('li',     'leading-7'),
