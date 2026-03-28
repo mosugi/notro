@@ -4,6 +4,9 @@ import partytown from "@astrojs/partytown";
 import tailwindcss from "@tailwindcss/vite";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
 import { notro } from "notro/integration";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import rehypeShiki from "@shikijs/rehype";
 
 // To enable SSR, install the adapter for your platform and uncomment the relevant lines:
 // - Vercel:     npm i @astrojs/vercel     → import vercel from "@astrojs/vercel";
@@ -41,7 +44,13 @@ export default defineConfig({
   },
 
   integrations: [
-    notro(),
+    notro({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [
+        rehypeKatex,
+        [rehypeShiki, { theme: "github-dark" }],
+      ],
+    }),
     sitemap(),
     // Offloads third-party scripts (Google Analytics) to a web worker via Partytown.
     // "dataLayer.push" must be forwarded so gtag() calls reach the worker.

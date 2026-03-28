@@ -1,0 +1,33 @@
+---
+/**
+ * Mermaid diagram block.
+ *
+ * Renders a Mermaid diagram as an inline SVG at build time using beautiful-mermaid.
+ * If beautiful-mermaid is not installed, falls back to displaying the raw Mermaid
+ * code in a <pre><code> block (provided by the fallback children from rehypeExtractMermaid).
+ *
+ * Install beautiful-mermaid to enable SVG rendering:
+ *   npm install beautiful-mermaid
+ */
+interface Props {
+  code?: string;
+  class?: string;
+}
+
+const { code, class: className } = Astro.props;
+
+let svg: string | null = null;
+if (code) {
+  try {
+    const mod = await import('beautiful-mermaid');
+    svg = mod.renderMermaidSVG(decodeURIComponent(code), mod.THEMES['github-dark']);
+  } catch {
+    // beautiful-mermaid not installed or rendering failed — fallback to slot content
+  }
+}
+---
+
+{svg
+  ? <div class:list={['notro-mermaid', className]} set:html={svg} />
+  : <slot />
+}

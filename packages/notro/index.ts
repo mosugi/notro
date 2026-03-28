@@ -13,6 +13,12 @@ export { makeHtmlElement } from "./src/utils/HtmlElements.ts";
 // Default headless component map (all Notion block types → semantic HTML, no Tailwind).
 export { defaultComponents } from "./src/utils/default-components.ts";
 
+// Core remark plugin list — exported for use in custom setups.
+export { NOTION_CORE_REMARK_PLUGINS } from "./src/utils/mdx-pipeline.ts";
+
+// notro() integration options type — mirrors @astrojs/mdx interface.
+export type { NotroOptions } from "./src/integration.ts";
+
 export * from "./src/loader/loader";
 export * from "./src/loader/live-loader";
 export * from "./src/loader/schema";

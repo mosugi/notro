@@ -32,6 +32,9 @@ export const defaultComponents = {
   synced_block:           makeHtmlElement("div"),
   synced_block_reference: makeHtmlElement("div"),
   "empty-block":          makeHtmlElement("div"),
+  // mermaid: fallback renders the inner <pre><code class="language-mermaid"> as-is.
+  // Install notro-ui and add mermaid: MermaidBlock to notroComponents for SVG rendering.
+  mermaid:                makeHtmlElement("div"),
   "mention-user":         makeHtmlElement("span"),
   "mention-page":         makeHtmlElement("span"),
   "mention-database":     makeHtmlElement("span"),
