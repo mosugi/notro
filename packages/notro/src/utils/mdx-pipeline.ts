@@ -16,7 +16,6 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
 import { remarkNfm } from 'remark-nfm';
-import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic';
 import { getNotroPlugins } from './notro-config.ts';
 
 import type { Plugin, PluggableList } from 'unified';
@@ -55,7 +54,6 @@ const NOTION_CUSTOM_ELEMENTS = [
 	'mention-data-source',
 	'mention-agent',
 	'mention-date',
-	'mermaid',
 ];
 
 // ── URL resolution ─────────────────────────────────────────────────────────
@@ -121,49 +119,6 @@ const resolvePageLinksPlugin: Plugin<[ResolveOptions], Root> = (options) => {
 					}
 				}
 			}
-		});
-	};
-};
-
-// ── Mermaid extraction ─────────────────────────────────────────────────────
-
-/**
- * Rehype plugin: extracts ```mermaid code blocks into <mermaid> custom elements.
- *
- * Transforms:
- *   <pre><code class="language-mermaid">CODE</code></pre>
- * Into:
- *   <mermaid code="url-encoded-CODE">
- *     <pre><code class="language-mermaid">CODE</code></pre>
- *   </mermaid>
- *
- * The original <pre><code> is kept as fallback content inside <mermaid>.
- * - With MermaidBlock component (notro-ui): renders SVG, ignores children
- * - With defaultComponents (headless): inner <pre><code> is displayed as-is
- *
- * Rendering is intentionally NOT done here — it belongs to the UI layer
- * (notro-ui's MermaidBlock.astro). This plugin only marks and extracts.
- */
-const rehypeExtractMermaid: Plugin<[], Root> = () => {
-	return (tree) => {
-		visit(tree, 'element', (node: Element, index, parent) => {
-			if (node.tagName !== 'pre' || !parent || index === null) return;
-			const codeEl = node.children[0];
-			if (!codeEl || codeEl.type !== 'element' || codeEl.tagName !== 'code') return;
-			const cls = codeEl.properties?.className;
-			if (!Array.isArray(cls) || !cls.includes('language-mermaid')) return;
-
-			const code = hastToString(codeEl).trim();
-			// Wrap the original <pre><code> as fallback content inside <mermaid>.
-			// MermaidBlock.astro will render SVG and ignore fallback children.
-			// defaultComponents['mermaid'] (makeHtmlElement('div')) will display
-			// the fallback <pre><code> when no MermaidBlock is configured.
-			const mermaidNode = fromHtmlIsomorphic(
-				`<mermaid code="${encodeURIComponent(code)}"></mermaid>`,
-				{ fragment: true },
-			).children[0] as Element;
-			mermaidNode.children = [node]; // keep original <pre><code> as fallback
-			parent.children.splice(index, 1, mermaidNode);
 		});
 	};
 };
@@ -268,11 +223,8 @@ export function buildMdxPlugins(linkToPages: LinkToPages): MdxPlugins {
 			// passThrough preserves Notion-specific custom elements that are not
 			// valid HTML and would otherwise be stripped by the HTML parser.
 			[rehypeRaw, { passThrough: NOTION_CUSTOM_ELEMENTS }],
-			// rehypeExtractMermaid converts ```mermaid blocks to <mermaid code="...">
-			// custom elements before user plugins run (so shiki doesn't highlight them).
-			rehypeExtractMermaid,
-			// User-provided plugins: math rendering, syntax highlighting, etc.
-			// e.g. notro({ rehypePlugins: [rehypeKatex, [rehypeShiki, { theme: 'github-dark' }]] })
+			// User-provided plugins: math, syntax highlighting, mermaid, etc.
+			// e.g. notro({ rehypePlugins: [rehypeKatex, rehypeMermaid, [rehypeShiki, { theme: 'github-dark' }]] })
 			...userRehypePlugins,
 			// rehype-slug adds id attributes to h1–h4 elements.
 			// Must run before rehypeTocPlugin, which reads those ids.

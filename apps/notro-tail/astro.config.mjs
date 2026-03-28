@@ -4,6 +4,7 @@ import partytown from "@astrojs/partytown";
 import tailwindcss from "@tailwindcss/vite";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
 import { notro } from "notro/integration";
+import { rehypeMermaid } from "notro/utils";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeShiki from "@shikijs/rehype";
@@ -47,6 +48,9 @@ export default defineConfig({
     notro({
       remarkPlugins: [remarkMath],
       rehypePlugins: [
+        // rehypeMermaid must come before rehypeShiki so Shiki doesn't
+        // syntax-highlight mermaid code blocks before they are rendered.
+        [rehypeMermaid, { theme: "github-dark" }],
         rehypeKatex,
         [rehypeShiki, { theme: "github-dark" }],
       ],

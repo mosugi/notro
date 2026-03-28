@@ -13,9 +13,8 @@
 import { makeHtmlElement } from 'notro';
 
 // Site-customized components (differ from notro-ui defaults)
-import Callout              from './Callout.astro';   // rounded-md (vs rounded-lg default)
-import ColoredParagraph     from './ColoredParagraph.astro';
-import MermaidBlock    from './MermaidBlock.astro';
+import Callout          from './Callout.astro';   // rounded-md (vs rounded-lg default)
+import ColoredParagraph from './ColoredParagraph.astro';
 import H1              from './H1.astro';         // mt-8 (vs mt-10 default)
 import H2              from './H2.astro';         // mt-6 (vs mt-8 default)
 import Quote           from './Quote.astro';      // blue left border, muted text
@@ -63,7 +62,6 @@ export const notroComponents = {
   synced_block:         SyncedBlock,
   synced_block_reference: SyncedBlock,
   'empty-block':        EmptyBlock,
-  mermaid:              MermaidBlock,
 
   // ── Inline mentions ────────────────────────────────────────────────────
   'mention-user':       Mention,

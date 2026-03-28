@@ -16,7 +16,6 @@ import { makeHtmlElement } from 'notro';
 
 import Callout              from './Callout.astro';
 import ColoredParagraph     from './ColoredParagraph.astro';
-import MermaidBlock     from './MermaidBlock.astro';
 import Toggle           from './Toggle.astro';
 import ToggleTitle      from './ToggleTitle.astro';
 import Columns          from './Columns.astro';
@@ -62,7 +61,6 @@ export const notroComponents = {
   synced_block:         SyncedBlock,
   synced_block_reference: SyncedBlock,
   'empty-block':        EmptyBlock,
-  mermaid:              MermaidBlock,
 
   // ── Inline mentions ────────────────────────────────────────────────────
   'mention-user':       Mention,

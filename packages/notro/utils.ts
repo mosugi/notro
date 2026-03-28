@@ -9,4 +9,6 @@
 export { normalizeNotionPresignedUrl, markdownHasPresignedUrls } from './src/utils/notion-url.ts';
 export { getPlainText, getMultiSelect, hasTag, buildLinkToPages } from './src/utils/notion.ts';
 export { colorToClass } from './src/utils/colors.ts';
+export { rehypeMermaid } from './src/utils/rehype-mermaid.ts';
+export type { RehypeMermaidOptions } from './src/utils/rehype-mermaid.ts';
 export type { LinkToPages } from './src/types.ts';
