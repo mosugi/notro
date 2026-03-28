@@ -1,6 +1,0 @@
----
-import { colorToClass } from './colors';
-interface Props { color?: string; class?: string; }
-const { color, class: className } = Astro.props;
----
-<td class:list={[colorToClass(color), className]}><slot /></td>

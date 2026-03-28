@@ -1,56 +1,38 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
-import { NotionMarkdownRenderer, buildLinkToPages, getPlainText, getMultiSelect, hasTag } from "notro";
+import { buildLinkToPages, getPlainText, hasTag, NotroContent } from "notro";
 import Layout from "../../layouts/Layout.astro";
-import Callout from "../../components/notion/Callout.astro";
+import { notroComponents } from "../../components/notro";
 import config from "../../config";
-const { internalTags } = config.blog;
+import {
+  getSortedBlogPosts,
+  getAdjacentPosts,
+  getPublicTags,
+} from "../../lib/blog.ts";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
 
-  // Build linkToPages map so NotionMarkdownRenderer can resolve inter-page links
+  // Build linkToPages map so NotroContent can resolve inter-page links
   const linkToPages = buildLinkToPages(posts, {
     url: (e) => `blog/${getPlainText(e.data.properties.Slug) || e.id}/`,
     title: (e) => getPlainText(e.data.properties.Name) ?? e.id,
   });
 
-  // Sorted blog posts (excluding "page"-tagged fixed pages) for prev/next nav
-  const blogPosts = posts
-    .filter((entry) => !hasTag(entry.data.properties.Tags, "page"))
-    .sort((a, b) => {
-      const dateA = a.data.properties.Date.date?.start ?? "";
-      const dateB = b.data.properties.Date.date?.start ?? "";
-      return dateB.localeCompare(dateA); // newest first
-    });
+  const blogPosts = getSortedBlogPosts(posts);
 
   return posts.map((entry) => {
     const slug = getPlainText(entry.data.properties.Slug) || entry.id;
-    const idx = blogPosts.findIndex((p) => p.id === entry.id);
-
-    // In descending date order: idx-1 = newer, idx+1 = older
-    const makeNav = (e: CollectionEntry<"posts"> | undefined) =>
-      e
-        ? {
-            slug: getPlainText(e.data.properties.Slug) || e.id,
-            title: getPlainText(e.data.properties.Name) ?? e.id,
-          }
-        : undefined;
-
+    const { prevNav, nextNav } = getAdjacentPosts(blogPosts, entry.id);
     return {
       params: { slug },
-      props: {
-        entry,
-        linkToPages,
-        prevNav: makeNav(idx > 0 ? blogPosts[idx - 1] : undefined),         // newer
-        nextNav: makeNav(idx >= 0 && idx < blogPosts.length - 1 ? blogPosts[idx + 1] : undefined), // older
-      },
+      props: { entry, linkToPages, prevNav, nextNav },
     };
   });
 }
 
 const { entry, linkToPages, prevNav, nextNav } = Astro.props;
+const { internalTags } = config.blog;
 
 const title = getPlainText(entry.data.properties.Name) ?? entry.id;
 const description = getPlainText(entry.data.properties.Description);
@@ -59,9 +41,7 @@ const markdown = entry.data.markdown;
 
 // "page" = embedded fixed page (no article header)
 const isEmbeddedPage = hasTag(entry.data.properties.Tags, "page");
-const tags = getMultiSelect(entry.data.properties.Tags).filter(
-  (t) => !internalTags.includes(t.name),
-);
+const tags = getPublicTags(entry.data.properties.Tags, internalTags);
 
 // Look up per-page bodyClass from navPages config (for fixed pages only)
 const slug = getPlainText(entry.data.properties.Slug) || entry.id;
@@ -97,59 +77,11 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
         )}
       </header>
 
-      <NotionMarkdownRenderer
+      <NotroContent
         markdown={markdown}
         linkToPages={linkToPages}
-        classMap={{
-          // ── Notion-specific blocks ───────────────────────────
-          callout:     "flex items-start gap-3 my-4 rounded-md p-4",
-          toggle:      "my-1",
-          toggleTitle: "cursor-pointer select-none py-1 font-medium",
-          columns:     "grid grid-cols-1 gap-8 my-4 md:grid-cols-2",
-          column:      "min-w-0",
-          quote:       "my-4 border-l-[3px] pl-4 italic [&>p:first-child]:mt-0 [&>p:last-child]:mb-0",
-          h1:          "mb-3 mt-10 text-[1.875rem] font-bold tracking-tight",
-          h2:          "mb-2 mt-8 text-2xl font-semibold tracking-tight",
-          h3:          "mb-2 mt-6 text-xl font-semibold",
-          h4:          "mb-1 mt-4 text-base font-semibold",
-          image:       "my-4",
-          tableWrapper:"my-4 w-full overflow-x-auto",
-          table:       "w-full border-collapse text-sm",
-          tableCell:   "px-3 py-2 text-sm",
-          toc:         "my-4 rounded-md border border-gray-200 bg-gray-50 p-4 text-sm",
-          // ── Standard HTML block elements ─────────────────────
-          p:           "mb-4 leading-7",
-          ul:          "mb-4 list-disc pl-6 space-y-1",
-          ol:          "mb-4 list-decimal pl-6 space-y-1",
-          li:          "leading-7",
-          pre:         "my-4 overflow-x-auto rounded-md p-4 font-mono text-sm",
-          hr:          "my-8",
-          // ── Standard HTML inline elements ────────────────────
-          a:           "underline underline-offset-2 hover:opacity-70",
-          strong:      "font-semibold",
-          em:          "italic",
-          del:         "line-through",
-          // ── Table header cell ─────────────────────────────────
-          th:          "px-3 py-2 text-left text-sm font-semibold",
-          // ── Table row ─────────────────────────────────────────
-          tableRow:    "",
-          // ── Media blocks ──────────────────────────────────────
-          audio:       "my-4",
-          video:       "my-4",
-          // ── File & PDF ────────────────────────────────────────
-          file:        "my-2",
-          pdf:         "my-4",
-          // ── Page / database references ────────────────────────
-          pageRef:     "inline-flex items-center gap-1 underline underline-offset-2",
-          databaseRef: "inline-flex items-center gap-1 underline underline-offset-2",
-          // ── Structural blocks ─────────────────────────────────
-          syncedBlock: "",
-          emptyBlock:  "my-2",
-          // ── Inline elements ───────────────────────────────────
-          mention:        "underline underline-offset-2",
-          "mention-date": "font-mono text-sm",
-        }}
-        components={{ callout: Callout }}
+        components={notroComponents}
+        class="notro-markdown"
       />
 
       {entry.data.truncated && (

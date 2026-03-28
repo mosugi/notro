@@ -1,0 +1,106 @@
+---
+// Headless rendering demo: NotroContent without components prop vs. with notroComponents.
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import { NotroContent } from "notro";
+import { notroComponents } from "../../components/notro";
+
+const mdSample = `# 見出し H1
+
+## 見出し H2
+
+通常の段落テキスト。**太字**・*斜体*・~~取り消し線~~・\`インラインコード\`。
+
+- リスト項目 A
+- リスト項目 B
+  - ネスト項目
+
+> 引用テキスト
+
+\`\`\`ts
+// コードブロック
+const msg = "hello notro";
+\`\`\`
+
+:::callout{emoji="💡"}
+callout ブロックのサンプル
+:::
+`;
+---
+
+<DocsLayout
+  title="ヘッドレスレンダリング — Docs — NotroTail"
+  description="components を渡さない NotroContent のデフォルト出力（素の semantic HTML）と、notroComponents を渡したスタイル付き出力の比較。"
+  heading="ヘッドレスレンダリング"
+>
+  <p class="mb-8 nt-text-65 dark:text-slate-400 leading-7">
+    <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NotroContent</code>
+    は <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">components</code>
+    を渡さなくても動作します。その場合、Tailwind クラスや <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">.astro</code>
+    コンポーネントに依存しない素の semantic HTML を出力します。
+  </p>
+
+  <!-- Headless (no components) -->
+  <section class="mb-12" id="headless">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">ヘッドレス出力（components なし）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">
+      ブラウザのデフォルトスタイルのみ。notro-ui 不要で動作します。
+    </p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
+      <div class="px-5 py-4">
+        <NotroContent markdown={mdSample} />
+      </div>
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
+          コードを表示
+        </summary>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{`import { NotroContent } from 'notro';
+
+<NotroContent markdown={markdown} />`}</pre>
+      </details>
+    </div>
+  </section>
+
+  <!-- Styled (with notroComponents) -->
+  <section class="mb-12" id="styled">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">スタイル付き出力（notroComponents あり）</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">
+      notro-ui をインストールして <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">components</code> を渡した場合。
+    </p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
+      <div class="px-5 py-4">
+        <NotroContent markdown={mdSample} components={notroComponents} />
+      </div>
+      <details class="border-t nt-border-06 dark:border-white/6">
+        <summary class="cursor-pointer select-none px-5 py-2.5 text-xs font-medium nt-text-50 dark:text-slate-500 hover:nt-text-80 dark:hover:text-slate-300 transition-colors">
+          コードを表示
+        </summary>
+        <pre class="m-0 border-t nt-border-06 dark:border-white/6 nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">{`import { NotroContent } from 'notro';
+import { notroComponents } from '../components/notro';
+
+<NotroContent markdown={markdown} components={notroComponents} />`}</pre>
+      </details>
+    </div>
+  </section>
+
+  <!-- defaultComponents -->
+  <section class="mb-12" id="default-components">
+    <h2 class="mb-1 text-lg font-semibold nt-text dark:text-slate-100">defaultComponents を base に使う</h2>
+    <p class="mb-4 text-sm nt-text-55 dark:text-slate-400">
+      notro が提供する <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">defaultComponents</code>
+      をスプレッドして、特定のブロックだけ差し替えることができます。
+    </p>
+    <div class="rounded-lg border nt-border dark:border-white/8 overflow-hidden">
+      <div class="nt-bg-03 dark:bg-slate-800/50 px-5 py-4 text-xs font-mono overflow-x-auto nt-text-70 dark:text-slate-400">
+        <pre>{`import { NotroContent, defaultComponents, makeHtmlElement } from 'notro';
+
+// callout だけ独自コンポーネントに差し替え、他はデフォルトのまま
+const components = {
+  ...defaultComponents,
+  callout: MyCallout,
+};
+
+<NotroContent markdown={markdown} {components} />`}</pre>
+      </div>
+    </div>
+  </section>
+</DocsLayout>

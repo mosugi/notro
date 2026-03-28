@@ -1,0 +1,37 @@
+---
+/**
+ * Headless Notion markdown renderer.
+ *
+ * Works standalone — no notro-ui required. Outputs plain semantic HTML
+ * with no Tailwind classes or .astro component dependencies.
+ *
+ * Usage (headless, no styling):
+ *   <NotroContent markdown={markdown} />
+ *
+ * Usage (with notro-ui styled components):
+ *   import { notroComponents } from '../components/notro';
+ *   <NotroContent markdown={markdown} components={notroComponents} />
+ *
+ * Override individual components:
+ *   <NotroContent markdown={markdown} components={{ ...notroComponents, callout: MyCallout }} />
+ */
+import { compileMdxCached } from "../utils/compile-mdx.ts";
+import { defaultComponents } from "../utils/default-components.ts";
+import type { LinkToPages } from "../types.ts";
+
+interface Props {
+  markdown: string;
+  linkToPages?: LinkToPages;
+  components?: Record<string, unknown>;
+  class?: string;
+}
+
+const { markdown, linkToPages, components: overrides, class: className } = Astro.props;
+
+const Content = await compileMdxCached(markdown, { linkToPages });
+const components = { ...defaultComponents, ...overrides };
+---
+
+<div class:list={[className]}>
+  <Content components={components} />
+</div>

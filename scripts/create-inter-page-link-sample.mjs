@@ -59,7 +59,7 @@ Notionの「ページメンション」は、ビルド時に同サイト内のUR
 
 ## まとめ
 
-\`NotionMarkdownRenderer\` に \`linkToPages\` プロップを渡すことで、
+\`NotroContent\` に \`linkToPages\` プロップを渡すことで、
 ページID → サイト内パスの解決が自動的に行われます。
 `;
 

@@ -1,0 +1,23 @@
+---
+/**
+ * Notion toggle (collapsible) block — renders as <details>.
+ * Open/close animation is handled by `.notro-toggle` in notro-theme.css.
+ */
+import { tv, type VariantProps } from 'tailwind-variants';
+import { notroColorVariants } from './colors';
+
+export const toggle = tv({
+  base: 'notro-toggle my-1.5',
+  variants: { color: notroColorVariants },
+});
+
+interface Props extends VariantProps<typeof toggle> {
+  class?: string;
+}
+
+const { color, class: className } = Astro.props;
+---
+
+<details class={toggle({ color, class: className })}>
+  <slot />
+</details>

@@ -102,7 +102,7 @@ import CTA from "../components/widgets/CTA.astro";
             ["blog/PostCard.astro", "記事カード（サムネイル・タイトル・日付・タグ）"],
             ["blog/BlogList.astro", "記事カードのグリッドリスト"],
             ["blog/Pagination.astro", "前へ / 次へ ページネーション"],
-            ["notion/Callout.astro", "Notion コールアウトブロックの表示"],
+            ["notro/Callout.astro", "Notion コールアウトブロック（notro-ui）"],
           ].map(([file, desc]) => (
             <tr class="border-t nt-border-06 dark:border-white/6">
               <td class="px-4 py-2.5 font-mono text-xs nt-text-75 dark:text-slate-300">{file}</td>
@@ -118,49 +118,34 @@ import CTA from "../components/widgets/CTA.astro";
   <section class="mb-12" id="styles">
     <h2 class="mb-4 text-xl font-semibold nt-text dark:text-slate-100">5. スタイルのカスタマイズ</h2>
     <p class="mb-4 nt-text-75 dark:text-slate-300 leading-7">
-      スタイリングは <strong>TailwindCSS 4 のユーティリティクラスのみ</strong>で行います。
-      Notion ブロック固有のスタイルは
-      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">src/styles/global.css</code>
-      の <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">nt-*</code> クラスとして定義されています。
+      Notion ブロックコンポーネントのスタイルは <strong>notro-ui</strong> で管理します。
+      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">npx notro-ui init</code>
+      でコピーされたファイルはプロジェクト所有になるので、直接編集してください。
     </p>
 
-    <h3 class="mb-2 text-base font-semibold nt-text">classMap で記事スタイルを調整する</h3>
+    <h3 class="mb-2 text-base font-semibold nt-text">コンポーネントを直接編集する</h3>
     <p class="mb-4 text-sm nt-text-65 dark:text-slate-400 leading-7">
-      Notion コンポーネントのスタイルは
-      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">NotionMarkdownRenderer</code>
-      の <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">classMap</code> prop で上書きできます（コンポーネント自体を差し替えずにスタイルだけ変更できます）。
+      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">src/components/notro/Callout.astro</code>
+      などを直接編集することでスタイルを変更できます。
+      コンポーネントファイルは Tailwind ユーティリティクラスのみで記述されており、自由にカスタマイズできます。
     </p>
     <div class="rounded-md border nt-border overflow-hidden dark:border-white/8">
-      <div class="nt-bg-04 px-4 py-2 text-xs font-mono nt-text-50 dark:bg-white/4 dark:text-slate-500">blog/[slug].astro（抜粋）</div>
-      <pre class="overflow-x-auto p-4 text-sm font-mono bg-white dark:bg-[#0f172a]"><code>{`<NotionMarkdownRenderer
-  markdown={markdown}
-  classMap={{
-    p:    "mb-4 leading-7",
-    h2:   "mb-2 mt-8 text-2xl font-semibold tracking-tight",
-    a:    "underline underline-offset-2 hover:opacity-70",
-    // ...
-  }}
-/>`}</code></pre>
+      <div class="nt-bg-04 px-4 py-2 text-xs font-mono nt-text-50 dark:bg-white/4 dark:text-slate-500">src/components/notro/Callout.astro（抜粋）</div>
+      <pre class="overflow-x-auto p-4 text-sm font-mono bg-white dark:bg-[#0f172a]"><code>{`---
+const { color, class: className } = Astro.props;
+// Edit Tailwind classes here to customize callout appearance
+---
+<div class:list={["flex items-start gap-3 my-4 ...", className]}>
+  <slot />
+</div>`}</code></pre>
     </div>
 
-    <h3 class="mt-6 mb-2 text-base font-semibold nt-text">コンポーネントを完全に差し替える</h3>
+    <h3 class="mt-6 mb-2 text-base font-semibold nt-text">CSS テーマ変数を変更する</h3>
     <p class="mb-4 text-sm nt-text-65 dark:text-slate-400 leading-7">
-      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">components</code> prop でコンポーネント自体を置き換えることもできます。
-      例えばコールアウトのデザインを完全に変えたい場合：
-    </p>
-    <div class="rounded-md border nt-border overflow-hidden dark:border-white/8">
-      <div class="nt-bg-04 px-4 py-2 text-xs font-mono nt-text-50 dark:bg-white/4 dark:text-slate-500">blog/[slug].astro（抜粋）</div>
-      <pre class="overflow-x-auto p-4 text-sm font-mono bg-white dark:bg-[#0f172a]"><code>{`import MyCallout from "../../components/MyCallout.astro";
-
-<NotionMarkdownRenderer
-  markdown={markdown}
-  components={{ callout: MyCallout }}
-/>`}</code></pre>
-    </div>
-    <p class="mt-3 text-sm nt-text-65 dark:text-slate-400">
-      利用可能なすべての override キーは
-      <a href="/docs/api-reference/#renderer" class="text-[#2383e2] underline underline-offset-2 hover:opacity-70">API リファレンス</a>
-      を参照してください。
+      色などのデザイントークンは
+      <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">src/styles/notro-theme.css</code>
+      の <code class="bg-[rgba(135,131,120,0.15)] text-[#eb5757] rounded-[3px] px-1.5 py-0.5 text-[85%] font-mono">--notro-*</code> CSS 変数として定義されています。
+      ここを編集することでテーマ全体の色を変更できます。
     </p>
   </section>
 

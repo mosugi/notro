@@ -1,0 +1,16 @@
+---
+import { tv, type VariantProps } from 'tailwind-variants';
+import { notroColorVariants } from './colors';
+
+export const tableRow = tv({
+  base: '',
+  variants: { color: notroColorVariants },
+});
+
+interface Props extends VariantProps<typeof tableRow> {
+  class?: string;
+}
+
+const { color, class: className } = Astro.props;
+---
+<tr class={tableRow({ color, class: className })}><slot /></tr>

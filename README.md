@@ -161,17 +161,18 @@ NotroTail uses Astro's static output mode — no SSR adapter required. Config fi
 
 ## Repository Structure
 
-This repository is an **npm workspace monorepo** containing three packages:
+This repository is an **npm workspace monorepo** containing four packages:
 
 | Package | Path | Role |
 |---|---|---|
 | [`remark-nfm`](./packages/remark-nfm/) | `packages/remark-nfm/` | Pure remark plugin for Notion-flavored Markdown. Handles pre-parse normalization (10 fixes), `:::callout` directive syntax, and callout conversion. No Astro or Notion API dependencies — independently publishable to npm. |
-| [`notro`](./packages/notro/) | `packages/notro/` | Astro + Notion API integration library. Provides the Content Loader, MDX compile pipeline (uses `remark-nfm` internally), and Astro components for all Notion block types. |
-| `notro-tail` | `apps/notro-tail/` | Deployable Astro template app. A reference implementation that uses `notro` to build a blog/static site from Notion content. |
+| [`notro`](./packages/notro/) | `packages/notro/` | Astro + Notion API integration library. Provides the Content Loader, MDX compile pipeline (uses `remark-nfm` internally), and headless Astro components for all Notion block types. |
+| [`notro-ui`](./packages/notro-ui/) | `packages/notro-ui/` | Copy-and-own styled components for `notro` (shadcn/StarwindUI style). Run `npx notro-ui init` to install components into your project — they become your code, editable directly. |
+| `notro-tail` | `apps/notro-tail/` | Reference implementation. A deployable Astro blog that demonstrates `notro` + `notro-ui` in action with `notro-ui` components installed in `src/components/notro/`. |
 
 **Dependency graph:**
 ```
-remark-nfm  ←  notro  ←  notro-tail
+remark-nfm  ←  notro  ←  notro-ui  ←  notro-tail
 ```
 
 ## Known Limitations

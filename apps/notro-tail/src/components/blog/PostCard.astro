@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import { getPlainText, getMultiSelect, OptimizedDatabaseCover } from "notro";
+import { getPlainText, getMultiSelect } from "notro";
+import DatabaseCover from "./DatabaseCover.astro";
 import config from "../../config";
 
 interface Props {
@@ -22,7 +23,7 @@ const tags = getMultiSelect(data.properties.Tags).filter(
   href={`/blog/${slug}/`}
   class="group block h-full rounded-md border nt-border bg-white overflow-hidden transition-[box-shadow,border-color] no-underline text-inherit hover:nt-border-18 hover:shadow-[rgba(15,15,15,0.06)_0px_2px_8px] dark:bg-slate-800 dark:border-white/8 dark:hover:border-white/15"
 >
-  <OptimizedDatabaseCover
+  <DatabaseCover
     cover={data.cover}
     alt={title}
     class="[&_img]:h-40 [&_img]:w-full [&_img]:object-cover"

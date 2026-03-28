@@ -12,8 +12,21 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
 import rehypeShiki from '@shikijs/rehype';
 import { remarkNfm } from 'remark-nfm';
-import { renderMermaidSVG, THEMES } from 'beautiful-mermaid';
 import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic';
+
+// beautiful-mermaid is an optional dependency — gracefully disabled if not installed.
+// Install it in your project to enable mermaid diagram rendering:
+//   npm install beautiful-mermaid
+type MermaidRenderer = (code: string, theme: unknown) => string;
+let _renderMermaid: MermaidRenderer | null = null;
+let _mermaidTheme: unknown = null;
+try {
+	const mod = await import('beautiful-mermaid');
+	_renderMermaid = mod.renderMermaidSVG;
+	_mermaidTheme = mod.THEMES['github-dark'];
+} catch {
+	// beautiful-mermaid not installed; mermaid code blocks render as plain code
+}
 import type { Plugin, PluggableList } from 'unified';
 import type { Root, Element, ElementContent } from 'hast';
 import { visit } from 'unist-util-visit';
@@ -135,16 +148,17 @@ const rehypeMermaid: Plugin<[], Root> = () => {
 			const cls = codeEl.properties?.className;
 			if (!Array.isArray(cls) || !cls.includes('language-mermaid')) return;
 
+			if (!_renderMermaid) return;
 			const code = hastToString(codeEl).trim();
 			try {
-				const svg = renderMermaidSVG(code, THEMES['github-dark']);
+				const svg = _renderMermaid(code, _mermaidTheme);
 				// Keep the SVG's natural pixel dimensions (width/height attributes).
-				// The .nt-mermaid-block container has overflow-x:auto, so diagrams wider than
+				// The .notro-mermaid container has overflow-x:auto, so diagrams wider than
 				// the viewport scroll horizontally rather than being clipped or scaled down.
 				// Scaling via width:100% causes content outside the viewBox to be clipped by
 				// the scroll container even with overflow:visible on the SVG element.
 				const fragment = fromHtmlIsomorphic(
-					`<div class="nt-mermaid-block">${svg}</div>`,
+					`<div class="notro-mermaid">${svg}</div>`,
 					{ fragment: true },
 				);
 				parent.children.splice(index, 1, ...fragment.children);
@@ -190,7 +204,7 @@ const rehypeTocPlugin: Plugin<[], Root> = () => {
 		const listItems: ElementContent[] = headings.map((h) => ({
 			type: 'element',
 			tagName: 'li',
-			properties: { className: [`nt-toc-item`, `nt-toc-level-${h.level}`] },
+			properties: { className: [`notro-toc-item`, `notro-toc-level-${h.level}`] },
 			children: [
 				{
 					type: 'element',
@@ -207,7 +221,7 @@ const rehypeTocPlugin: Plugin<[], Root> = () => {
 				{
 					type: 'element',
 					tagName: 'ul',
-					properties: { className: ['nt-toc-block__list'] },
+					properties: { className: ['notro-toc-list'] },
 					children: listItems,
 				},
 			];

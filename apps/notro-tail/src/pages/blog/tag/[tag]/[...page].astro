@@ -1,11 +1,12 @@
 ---
 import type { PaginateFunction } from "astro";
 import { getCollection } from "astro:content";
-import { getMultiSelect, hasTag } from "notro";
+import { hasTag } from "notro";
 import BlogList from "../../../../components/blog/BlogList.astro";
 import Layout from "../../../../layouts/Layout.astro";
 import Pagination from "../../../../components/blog/Pagination.astro";
 import config from "../../../../config";
+import { getAllPublicTags } from "../../../../lib/blog.ts";
 
 export async function getStaticPaths({
   paginate,
@@ -13,16 +14,8 @@ export async function getStaticPaths({
   paginate: PaginateFunction;
 }) {
   const posts = await getCollection("posts");
-  // internalTags ("page", "pinned") are system markers, not public tags
-  const tags = [
-    ...new Set(
-      posts.flatMap((entry) =>
-        getMultiSelect(entry.data.properties.Tags)
-          .map((t) => t.name)
-          .filter((name) => !config.blog.internalTags.includes(name)),
-      ),
-    ),
-  ];
+  const tags = getAllPublicTags(posts, config.blog.internalTags);
+
   return tags.flatMap((tag) => {
     const filteredPosts = posts.filter((post) =>
       hasTag(post.data.properties.Tags, tag),
