@@ -1,7 +1,10 @@
 ---
 /**
  * Notion image block — renders as <figure> with optional caption.
+ * Uses Astro's <Image> for optimization (Sharp compression, cache-key
+ * normalization via notionImageService for Notion pre-signed S3 URLs).
  */
+import { Image } from 'astro:assets';
 import { tv } from 'tailwind-variants';
 
 export const imageBlock = tv({ base: 'my-4' });
@@ -17,7 +20,7 @@ const { src, alt, caption, class: className } = Astro.props;
 ---
 
 <figure class={imageBlock({ class: className })}>
-  <img src={src} alt={alt ?? ''} loading="lazy" decoding="async" class="h-auto max-w-full" />
+  <Image src={src} alt={alt ?? ''} inferSize loading="lazy" decoding="async" class="h-auto max-w-full" />
   {caption && (
     <figcaption class="text-sm text-[var(--notro-text-muted)] mt-1.5 text-center">
       {caption}

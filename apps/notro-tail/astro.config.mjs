@@ -34,14 +34,10 @@ export default defineConfig({
 
   image: {
     service: notionImageServiceConfig(),
-    // Restrict to Notion-related S3 domains and notion.so origins.
-    // Notion images are served from AWS S3 (various subdomains) and notion.so CDN.
-    remotePatterns: [
-      { protocol: "https", hostname: "*.amazonaws.com" },
-      { protocol: "https", hostname: "prod-files-secure.s3.us-west-2.amazonaws.com" },
-      { protocol: "https", hostname: "www.notion.so" },
-      { protocol: "https", hostname: "notion.so" },
-    ],
+    // Allow any HTTPS remote image so that Notion content images
+    // (S3 pre-signed URLs, CDN URLs, etc.) can be processed by the
+    // notionImageService and optimized by Sharp.
+    remotePatterns: [{ protocol: "https" }],
   },
 
   integrations: [

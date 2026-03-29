@@ -48,13 +48,23 @@ export const rehypeMermaid: Plugin<[RehypeMermaidOptions?], Root> = (options = {
     if (nodes.length === 0) return;
 
     // Try to load beautiful-mermaid (optional — graceful fallback if absent).
+    //
+    // Use new Function('return import(s)') to escape Vite's module runner.
+    // In Astro's SSG build, rehype transformers run during the prerender phase
+    // (after Vite finishes bundling), when the Vite module runner has already
+    // been closed. A plain `await import('beautiful-mermaid')` would fail with
+    // "Vite module runner has been closed". By constructing the import call
+    // inside a new Function, Vite cannot analyse or intercept it at build time,
+    // so at runtime Node.js resolves it through its own native ESM loader.
     let renderFn: ((code: string) => string) | null = null;
     try {
-      const mod = await import('beautiful-mermaid');
+      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+      const nativeImport = new Function('s', 'return import(s)') as (s: string) => Promise<typeof import('beautiful-mermaid')>;
+      const mod = await nativeImport('beautiful-mermaid');
       const theme = options.theme != null ? mod.THEMES[options.theme] : undefined;
       renderFn = (code: string) => mod.renderMermaidSVG(code, theme);
     } catch {
-      // beautiful-mermaid not installed; leave code blocks unchanged.
+      // beautiful-mermaid not installed or failed to load; leave code blocks unchanged.
       return;
     }
 

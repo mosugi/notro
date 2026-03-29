@@ -103,6 +103,21 @@ export function notro(options: NotroOptions = {}): AstroIntegration {
 					// only accept AstroIntegration[], but @astrojs/mdx returns its own
 					// subtype that is structurally compatible but not assignable.
 					})] as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+
+					vite: {
+						ssr: {
+							// Externalize optional rehype/remark plugin dependencies so that
+							// dynamic import() calls in rehype transformers (e.g. rehypeMermaid
+							// importing beautiful-mermaid) use Node.js's native ESM loader
+							// rather than Vite's module runner.
+							//
+							// Without this, import('beautiful-mermaid') inside a rehype
+							// transformer fails with "Vite module runner has been closed"
+							// because transformers run during Astro's SSG prerender phase,
+							// after the Vite module runner has already been shut down.
+							external: ['beautiful-mermaid'],
+						},
+					},
 				});
 			},
 		},
