@@ -45,9 +45,6 @@
   "peerDependencies": {
     "astro": ">=6.0.0"
   },
-  "optionalDependencies": {
-    "beautiful-mermaid": ">=1.0.0"
-  },
   "devDependencies": {
     "astro": "^6.0.4",
     "typescript": "^5.9.3",
@@ -60,7 +57,6 @@
     "@astrojs/mdx": "^5.0.0",
     "@mdx-js/mdx": "^3.1.0",
     "@notionhq/client": "5.11.1",
-    "hast-util-from-html-isomorphic": "^2.0.0",
     "rehype-raw": "^7.0.0",
     "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.0",

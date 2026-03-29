@@ -8,7 +8,7 @@
  * so downstream plugins (e.g. @shikijs/rehype) can process them as code.
  *
  * Usage in astro.config.mjs:
- *   import { rehypeMermaid } from 'notro/utils';
+ *   import { rehypeMermaid } from 'rehype-mermaid';
  *   notro({
  *     rehypePlugins: [
  *       [rehypeMermaid, { theme: 'github-dark' }],  // must come before @shikijs/rehype

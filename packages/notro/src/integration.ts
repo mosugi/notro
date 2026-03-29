@@ -14,15 +14,19 @@
  * Usage in astro.config.mjs:
  * ```js
  * import { notro } from 'notro/integration';
- * import remarkMath from 'remark-math';
- * import rehypeKatex from 'rehype-katex';
+ * import { remarkMath, rehypeKatex } from 'notro-math';
+ * import { rehypeMermaid } from 'rehype-mermaid';
  * import rehypeShiki from '@shikijs/rehype';
  *
  * export default defineConfig({
  *   integrations: [
  *     notro({
  *       remarkPlugins: [remarkMath],
- *       rehypePlugins: [rehypeKatex, [rehypeShiki, { theme: 'github-dark' }]],
+ *       rehypePlugins: [
+ *         [rehypeMermaid, { theme: 'github-dark' }],
+ *         rehypeKatex,
+ *         [rehypeShiki, { theme: 'github-dark' }],
+ *       ],
  *     }),
  *   ],
  * });
@@ -49,7 +53,7 @@ export interface NotroOptions {
 	 * Same as @astrojs/mdx's remarkPlugins option.
 	 * Applied to both the runtime Notion content path and static .mdx files.
 	 *
-	 * @example [remarkMath]
+	 * @example [remarkMath]  // from 'notro-math'
 	 */
 	remarkPlugins?: PluggableList;
 
@@ -58,7 +62,7 @@ export interface NotroOptions {
 	 * Same as @astrojs/mdx's rehypePlugins option.
 	 * Applied to both the runtime Notion content path and static .mdx files.
 	 *
-	 * @example [rehypeKatex, [rehypeShiki, { theme: 'github-dark' }]]
+	 * @example [[rehypeMermaid, { theme: 'github-dark' }], rehypeKatex, [rehypeShiki, { theme: 'github-dark' }]]
 	 */
 	rehypePlugins?: PluggableList;
 
@@ -106,15 +110,15 @@ export function notro(options: NotroOptions = {}): AstroIntegration {
 
 					vite: {
 						ssr: {
-							// Externalize optional rehype/remark plugin dependencies so that
-							// dynamic import() calls in rehype transformers (e.g. rehypeMermaid
-							// importing beautiful-mermaid) use Node.js's native ESM loader
-							// rather than Vite's module runner.
+							// Externalize optional rehype plugin dependencies so that
+							// dynamic import() calls in rehype transformers use Node.js's
+							// native ESM loader rather than Vite's module runner.
 							//
-							// Without this, import('beautiful-mermaid') inside a rehype
-							// transformer fails with "Vite module runner has been closed"
-							// because transformers run during Astro's SSG prerender phase,
-							// after the Vite module runner has already been shut down.
+							// Without this, a dynamic import inside a rehype transformer
+							// may fail with "Vite module runner has been closed" during
+							// Astro's SSG prerender phase. rehypeMermaid (from rehype-mermaid)
+							// uses new Function('return import(s)') to escape Vite's analysis,
+							// but this external setting provides belt-and-suspenders safety.
 							external: ['beautiful-mermaid'],
 						},
 					},

@@ -4,9 +4,8 @@ import partytown from "@astrojs/partytown";
 import tailwindcss from "@tailwindcss/vite";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
 import { notro } from "notro/integration";
-import { rehypeMermaid } from "notro/utils";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
+import { rehypeMermaid } from "rehype-mermaid";
+import { remarkMath, rehypeKatex } from "notro-math";
 import rehypeShiki from "@shikijs/rehype";
 
 // To enable SSR, install the adapter for your platform and uncomment the relevant lines:
@@ -34,10 +33,14 @@ export default defineConfig({
 
   image: {
     service: notionImageServiceConfig(),
-    // Allow any HTTPS remote image so that Notion content images
-    // (S3 pre-signed URLs, CDN URLs, etc.) can be processed by the
-    // notionImageService and optimized by Sharp.
-    remotePatterns: [{ protocol: "https" }],
+    // Restrict to Notion-related S3 domains and notion.so origins.
+    // Notion images are served from AWS S3 (various subdomains) and notion.so CDN.
+    remotePatterns: [
+      { protocol: "https", hostname: "*.amazonaws.com" },
+      { protocol: "https", hostname: "prod-files-secure.s3.us-west-2.amazonaws.com" },
+      { protocol: "https", hostname: "www.notion.so" },
+      { protocol: "https", hostname: "notion.so" },
+    ],
   },
 
   integrations: [
