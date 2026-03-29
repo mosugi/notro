@@ -22,6 +22,7 @@ import type { Plugin } from 'unified';
 import type { Root, Element, ElementContent } from 'hast';
 import { visit } from 'unist-util-visit';
 import { toString as hastToString } from 'hast-util-to-string';
+import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic';
 
 export interface RehypeMermaidOptions {
   /** beautiful-mermaid theme key (e.g. 'github-dark', 'default'). */
@@ -62,12 +63,14 @@ export const rehypeMermaid: Plugin<[RehypeMermaidOptions?], Root> = (options = {
     for (const { node, index, parent } of nodes.reverse()) {
       const code = hastToString(node.children[0] as Element).trim();
       const svg = renderFn(code);
+      // Parse the SVG string into proper hast nodes so downstream plugins
+      // (e.g. rehype-stringify, MDX hast-to-JSX) can handle them correctly.
+      const svgRoot = fromHtmlIsomorphic(svg, { fragment: true });
       const divNode: Element = {
         type: 'element',
         tagName: 'div',
         properties: { className: ['notro-mermaid'] },
-        // Use a 'raw' node so rehype-raw forwards the SVG string as-is.
-        children: [{ type: 'raw', value: svg } as unknown as ElementContent],
+        children: svgRoot.children as ElementContent[],
       };
       parent.children.splice(index, 1, divNode);
     }
