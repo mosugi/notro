@@ -14,18 +14,18 @@
  * Usage in astro.config.mjs:
  * ```js
  * import { notro } from 'notro/integration';
- * import { remarkMath, rehypeKatex } from 'notro-math';
  * import { rehypeMermaid } from 'rehype-mermaid';
- * import rehypeShiki from '@shikijs/rehype';
+ * import remarkMath from 'remark-math';
+ * import rehypeKatex from 'rehype-katex';
  *
  * export default defineConfig({
  *   integrations: [
  *     notro({
+ *       shikiConfig: { theme: 'github-dark' },
  *       remarkPlugins: [remarkMath],
  *       rehypePlugins: [
  *         [rehypeMermaid, { theme: 'github-dark' }],
  *         rehypeKatex,
- *         [rehypeShiki, { theme: 'github-dark' }],
  *       ],
  *     }),
  *   ],
@@ -40,6 +40,8 @@
 import type { AstroIntegration } from 'astro';
 import type { PluggableList } from 'unified';
 import mdx from '@astrojs/mdx';
+import rehypeShiki from '@shikijs/rehype';
+import type { RehypeShikiOptions } from '@shikijs/rehype';
 import { NOTION_CORE_REMARK_PLUGINS } from './utils/mdx-pipeline.ts';
 import { setNotroPlugins } from './utils/notro-config.ts';
 
@@ -62,9 +64,20 @@ export interface NotroOptions {
 	 * Same as @astrojs/mdx's rehypePlugins option.
 	 * Applied to both the runtime Notion content path and static .mdx files.
 	 *
-	 * @example [[rehypeMermaid, { theme: 'github-dark' }], rehypeKatex, [rehypeShiki, { theme: 'github-dark' }]]
+	 * @example [[rehypeMermaid, { theme: 'github-dark' }], rehypeKatex]
 	 */
 	rehypePlugins?: PluggableList;
+
+	/**
+	 * Shiki syntax highlighting configuration.
+	 * When provided, @shikijs/rehype is automatically injected as the last rehype
+	 * plugin so that other plugins (rehypeMermaid, rehypeKatex) run first.
+	 * Equivalent to appending `[rehypeShiki, shikiConfig]` to rehypePlugins.
+	 *
+	 * @example { theme: 'github-dark' }
+	 * @example { themes: { light: 'github-light', dark: 'github-dark' } }
+	 */
+	shikiConfig?: RehypeShikiOptions;
 
 	/**
 	 * Whether to extend Astro's base markdown config.
@@ -78,8 +91,15 @@ export function notro(options: NotroOptions = {}): AstroIntegration {
 	const {
 		remarkPlugins = [],
 		rehypePlugins = [],
+		shikiConfig,
 		extendMarkdownConfig = false,
 	} = options;
+
+	// When shikiConfig is provided, inject @shikijs/rehype as the last rehype
+	// plugin so diagram/math plugins (rehypeMermaid, rehypeKatex) run first.
+	const allRehypePlugins: PluggableList = shikiConfig != null
+		? [...rehypePlugins, [rehypeShiki, shikiConfig]]
+		: rehypePlugins;
 
 	return {
 		name: 'notro',
@@ -90,7 +110,7 @@ export function notro(options: NotroOptions = {}): AstroIntegration {
 				// Both the static .mdx path (via @astrojs/mdx below) and the runtime
 				// Notion content path (via buildMdxPlugins → getNotroPlugins) will
 				// use the same plugin configuration.
-				setNotroPlugins(remarkPlugins, rehypePlugins);
+				setNotroPlugins(remarkPlugins, allRehypePlugins);
 
 				// Inject @astrojs/mdx by appending to the integrations array via
 				// updateConfig(). Astro's config setup loop re-checks the array length
@@ -100,8 +120,8 @@ export function notro(options: NotroOptions = {}): AstroIntegration {
 					integrations: [mdx({
 						// Combine notro's core Notion remark plugins with user-provided ones.
 						remarkPlugins: [...NOTION_CORE_REMARK_PLUGINS, ...remarkPlugins],
-						// User-provided rehype plugins (math, syntax highlighting, etc.).
-						rehypePlugins,
+						// User and built-in rehype plugins (math, diagrams, shiki, etc.).
+						rehypePlugins: allRehypePlugins,
 						extendMarkdownConfig,
 					// `as any` is needed because Astro's TypeScript types for updateConfig
 					// only accept AstroIntegration[], but @astrojs/mdx returns its own

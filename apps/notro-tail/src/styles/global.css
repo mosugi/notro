@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "./notro-theme.css";
+/* KaTeX CSS for math rendering (used by rehype-katex) */
+@import "katex/dist/katex.min.css";
 
 /*
  * Notion color CSS custom properties (light mode defaults).
