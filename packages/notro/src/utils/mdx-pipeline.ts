@@ -8,7 +8,7 @@
  *   - NOTION_CORE_REMARK_PLUGINS: always active, required for Notion content
  *   - NOTION_CORE_REHYPE_PLUGINS (internal): always active, Notion-specific
  *   - User-provided plugins via notro({ remarkPlugins, rehypePlugins }):
- *       math (remark-math + rehype-katex), diagrams (rehype-mermaid), etc.
+ *       math (remark-math + rehype-katex), diagrams (rehype-beautiful-mermaid), etc.
  *   - Built-in Shiki support via notro({ shikiConfig }): injected last so user
  *       plugins (rehypeMermaid, rehypeKatex) run before syntax highlighting
  */

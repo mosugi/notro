@@ -14,7 +14,7 @@
  * Usage in astro.config.mjs:
  * ```js
  * import { notro } from 'notro/integration';
- * import { rehypeMermaid } from 'rehype-mermaid';
+ * import { rehypeMermaid } from 'rehype-beautiful-mermaid';
  * import remarkMath from 'remark-math';
  * import rehypeKatex from 'rehype-katex';
  *
