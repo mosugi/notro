@@ -4,7 +4,7 @@ import partytown from "@astrojs/partytown";
 import tailwindcss from "@tailwindcss/vite";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
 import { notro } from "notro/integration";
-import { rehypeMermaid } from "rehype-mermaid";
+import { rehypeMermaid } from "rehype-beautiful-mermaid";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 

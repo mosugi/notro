@@ -1,5 +1,5 @@
 {
-  "name": "rehype-mermaid",
+  "name": "rehype-beautiful-mermaid",
   "description": "Rehype plugin that renders Mermaid code blocks to inline SVG at build time",
   "version": "0.0.1",
   "type": "module",
@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mosugi/NotroTail.git",
-    "directory": "packages/rehype-mermaid"
+    "directory": "packages/rehype-beautiful-mermaid"
   },
   "keywords": [
     "rehype",
