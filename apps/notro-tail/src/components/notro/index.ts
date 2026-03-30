@@ -46,24 +46,24 @@ import TableRow        from './TableRow.astro';
 import TableCell       from './TableCell.astro';
 
 export const notroComponents = {
-  // ── Notion-specific blocks ─────────────────────────────────────────────
+  // ── Notion block elements (PascalCase) ────────────────────────────────
+  // Must use PascalCase keys — see defaultComponents for explanation.
+  // callout is lowercase because it comes from a remark plugin, not raw HTML.
   callout:              Callout,
-  details:              Toggle,
-  summary:              ToggleTitle,
-  columns:              Columns,
-  column:               Column,
-  audio:                Audio,
-  video:                Video,
-  file:                 FileBlock,
-  pdf:                  PdfBlock,
-  page:                 PageRef,
-  database:             DatabaseRef,
-  table_of_contents:    TableOfContents,
-  synced_block:         SyncedBlock,
-  synced_block_reference: SyncedBlock,
-  'empty-block':        EmptyBlock,
+  TableOfContents:      TableOfContents,
+  Video:                Video,
+  Audio:                Audio,
+  FileBlock:            FileBlock,
+  PdfBlock:             PdfBlock,
+  Columns:              Columns,
+  Column:               Column,
+  PageRef:              PageRef,
+  DatabaseRef:          DatabaseRef,
+  Details:              Toggle,
+  Summary:              ToggleTitle,
+  EmptyBlock:           EmptyBlock,
 
-  // ── Inline mentions ────────────────────────────────────────────────────
+  // ── Inline mentions (PascalCase) ───────────────────────────────────────
   MentionUser:          Mention,
   MentionPage:          Mention,
   MentionDatabase:      Mention,

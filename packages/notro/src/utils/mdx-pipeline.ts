@@ -191,18 +191,70 @@ const rehypeNotionColorPlugin: Plugin<[], Root> = () => {
 	};
 };
 
-// ── Inline mention element conversion ─────────────────────────────────────
-
-// Notion inline mentions use hyphenated element names (mention-user,
-// mention-date, etc.). MDX/JSX has two component-lookup rules:
-//   - PascalCase names  → component variable: _jsx(MentionUser, ...)
-//   - lowercase names   → HTML string:        _jsx("mention-user", ...)
-// Hyphenated-lowercase names always use the string form — the `components`
-// map is NEVER consulted, so components['mention-user'] has no effect.
+// ── Notion element name → PascalCase component name mapping ──────────────
 //
-// Fix: rename mdxJsxTextElement nodes from hyphenated-lowercase to PascalCase.
-// MDX then generates the component-variable form, enabling substitution via
-// components.MentionUser, components.MentionDate, etc.
+// MDX's component-substitution rule:
+//   - PascalCase names  → component variable: _jsx(Video, ...)  ← components map IS consulted
+//   - lowercase names   → HTML string:        _jsx("video", ...) ← components map is IGNORED
+//
+// This applies to ALL elements in the MDX compile tree, whether they come
+// from the MDX source, remark plugins, or raw HTML processed by rehype-raw.
+// Elements from raw HTML (Notion markdown) end up as `mdxJsxFlowElement`
+// nodes with their original lowercase names. Renaming them to PascalCase here
+// enables the `components` prop to substitute them with Astro components.
+//
+// There are two sets of renames:
+//   1. NOTION_BLOCK_RENAMES  — block-level elements (mdxJsxFlowElement)
+//   2. NOTION_MENTION_RENAMES — inline mention elements (mdxJsxTextElement)
+
+// Block-level Notion elements from raw HTML in markdown.
+// The target PascalCase names must match keys in defaultComponents / notroComponents.
+const NOTION_BLOCK_RENAMES = new Map<string, string>([
+	['table_of_contents',       'TableOfContents'],
+	['video',                   'Video'],
+	['audio',                   'Audio'],
+	['file',                    'FileBlock'],
+	['pdf',                     'PdfBlock'],
+	['columns',                 'Columns'],
+	['column',                  'Column'],
+	['page',                    'PageRef'],
+	['database',                'DatabaseRef'],
+	['details',                 'Details'],
+	['summary',                 'Summary'],
+	['empty-block',             'EmptyBlock'],
+]);
+
+/**
+ * Rehype plugin: renames Notion block-level elements from lowercase to
+ * PascalCase so MDX generates a components-map lookup instead of a
+ * plain HTML string.
+ *
+ * Notion block elements (video, audio, table_of_contents, columns, etc.)
+ * arrive as `mdxJsxFlowElement` nodes — the MDX JSX parser processes all
+ * inline/block HTML as JSX. With lowercase names, MDX compiles them as
+ * `_jsx("video", ...)` (literal string), which bypasses the `components`
+ * prop entirely. Renaming to PascalCase makes MDX emit `_jsx(Video, ...)`,
+ * which looks up `_components.Video` at runtime.
+ *
+ * Must run before rehypeSlug and rehypeTocPlugin. Component keys in
+ * defaultComponents / notroComponents must use the same PascalCase names.
+ */
+const rehypeBlockElementsPlugin: Plugin<[], Root> = () => {
+	return (tree) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		visit(tree, (node: any) => {
+			// Block elements appear as mdxJsxFlowElement at the top level,
+			// but may appear as mdxJsxTextElement when consecutive blocks appear
+			// without blank lines in the Notion markdown (grouped into a <p>).
+			if (node.type !== 'mdxJsxFlowElement' && node.type !== 'mdxJsxTextElement') return;
+			const renamed = NOTION_BLOCK_RENAMES.get(node.name);
+			if (renamed) node.name = renamed;
+		});
+	};
+};
+
+// Inline mention elements from Notion markdown.
+// Hyphenated-lowercase names also compile as plain HTML strings in MDX.
 const NOTION_MENTION_RENAMES = new Map<string, string>([
 	['mention-user',        'MentionUser'],
 	['mention-page',        'MentionPage'],
@@ -297,17 +349,8 @@ function setUrlOnMdxJsx(node: any, href: string): void {
 const resolvePageLinksPlugin: Plugin<[ResolveOptions], Root> = (options) => {
 	const { linkToPages } = options;
 	return (tree) => {
-		// Handle block-level <page> and <database> hast elements.
+		// Handle <a href> hast elements (standard links to Notion pages).
 		visit(tree, 'element', (node: Element) => {
-			if (node.tagName === 'page' || node.tagName === 'database') {
-				const url = getUrlFromElement(node);
-				if (url) {
-					const { href } = resolveNotionUrl(url, linkToPages);
-					node.properties = { ...node.properties, url: href };
-				}
-				return;
-			}
-
 			if (node.tagName === 'a') {
 				const rawHref = node.properties?.href;
 				const href = typeof rawHref === 'string' ? rawHref : undefined;
@@ -320,13 +363,20 @@ const resolvePageLinksPlugin: Plugin<[ResolveOptions], Root> = (options) => {
 			}
 		});
 
-		// Handle inline mention elements that come through as MDX JSX nodes.
-		// By the time this plugin runs, rehypeInlineMentionsPlugin has already
-		// renamed them: mention-page → MentionPage, mention-database → MentionDatabase.
+		// Handle MDX JSX nodes for page/database references and inline mentions.
+		// By the time this plugin runs, rehypeBlockElementsPlugin has renamed:
+		//   page → PageRef, database → DatabaseRef
+		// And rehypeInlineMentionsPlugin has renamed:
+		//   mention-page → MentionPage, mention-database → MentionDatabase
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		visit(tree, (node: any) => {
 			if (node.type !== 'mdxJsxTextElement' && node.type !== 'mdxJsxFlowElement') return;
-			if (node.name !== 'MentionPage' && node.name !== 'MentionDatabase') return;
+			if (
+				node.name !== 'PageRef' &&
+				node.name !== 'DatabaseRef' &&
+				node.name !== 'MentionPage' &&
+				node.name !== 'MentionDatabase'
+			) return;
 			const url = getUrlFromMdxJsx(node);
 			if (url) {
 				const { href } = resolveNotionUrl(url, linkToPages);
@@ -367,7 +417,10 @@ const rehypeTocPlugin: Plugin<[], Root> = () => {
 
 		if (headings.length === 0) return;
 
-		// Pass 2: inject heading links into <table_of_contents> elements
+		// Pass 2: inject heading links into TableOfContents nodes.
+		// After rehypeBlockElementsPlugin runs, <table_of_contents> is renamed to
+		// TableOfContents as a mdxJsxFlowElement. This plugin runs after that rename,
+		// so we look for mdxJsxFlowElement nodes with name 'TableOfContents'.
 		const listItems = headings.map((h) => ({
 			type: 'element' as const,
 			tagName: 'li',
@@ -382,16 +435,20 @@ const rehypeTocPlugin: Plugin<[], Root> = () => {
 			],
 		}));
 
-		visit(tree, 'element', (node: Element) => {
-			if (node.tagName !== 'table_of_contents') return;
-			node.children = [
-				{
-					type: 'element',
-					tagName: 'ul',
-					properties: { className: ['notro-toc-list'] },
-					children: listItems,
-				},
-			];
+		const tocChildren = [
+			{
+				type: 'element' as const,
+				tagName: 'ul',
+				properties: { className: ['notro-toc-list'] },
+				children: listItems,
+			},
+		];
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		visit(tree, (node: any) => {
+			if (node.type !== 'mdxJsxFlowElement') return;
+			if (node.name !== 'TableOfContents') return;
+			node.children = tocChildren;
 		});
 	};
 };
@@ -440,9 +497,13 @@ export function buildMdxPlugins(linkToPages: LinkToPages): MdxPlugins {
 			// MDX component substitution does not apply to HTML elements created by
 			// rehypeRaw, so we apply color classes directly here in the hast tree.
 			rehypeNotionColorPlugin,
-			// Convert mention-* hast elements to mdxJsxTextElement so MDX applies
-			// components['mention-user'] etc. (hyphenated names are otherwise
-			// treated as HTML custom elements and skip component substitution).
+			// Rename Notion block-level elements (video, audio, table_of_contents,
+			// columns, etc.) from lowercase to PascalCase so MDX generates a
+			// components-map lookup (_jsx(Video, ...)) instead of a plain HTML
+			// string literal (_jsx("video", ...)).
+			rehypeBlockElementsPlugin,
+			// Rename Notion inline mention elements (mention-user, mention-date…)
+			// from hyphenated-lowercase to PascalCase for the same reason.
 			rehypeInlineMentionsPlugin,
 			// User-provided plugins: math, diagrams, syntax highlighting, etc.
 			// e.g. notro({ rehypePlugins: [rehypeKatex, [rehypeMermaid, { theme: 'github-dark' }]] })
@@ -451,7 +512,7 @@ export function buildMdxPlugins(linkToPages: LinkToPages): MdxPlugins {
 			// rehype-slug adds id attributes to h1–h4 elements.
 			// Must run before rehypeTocPlugin, which reads those ids.
 			rehypeSlug,
-			// Populates <table_of_contents> with anchor links to all headings.
+			// Populates TableOfContents with anchor links to all headings.
 			rehypeTocPlugin,
 			[resolvePageLinksPlugin, { linkToPages }] as const,
 		],
