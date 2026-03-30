@@ -32,12 +32,15 @@ export const defaultComponents = {
   synced_block:           makeHtmlElement("div"),
   synced_block_reference: makeHtmlElement("div"),
   "empty-block":          makeHtmlElement("div"),
-  "mention-user":         makeHtmlElement("span"),
-  "mention-page":         makeHtmlElement("span"),
-  "mention-database":     makeHtmlElement("span"),
-  "mention-data-source":  makeHtmlElement("span"),
-  "mention-agent":        makeHtmlElement("span"),
-  "mention-date":         makeHtmlElement("time"),
+  // Inline mention components use PascalCase keys because MDX only applies
+  // component substitution for names that start with an uppercase letter.
+  // (Hyphenated-lowercase names are compiled as plain HTML strings by MDX.)
+  MentionUser:        makeHtmlElement("span"),
+  MentionPage:        makeHtmlElement("span"),
+  MentionDatabase:    makeHtmlElement("span"),
+  MentionDataSource:  makeHtmlElement("span"),
+  MentionAgent:       makeHtmlElement("span"),
+  MentionDate:        makeHtmlElement("time"),
 
   // ── Standard HTML element pass-throughs ──────────────────────────────────
   span:   makeHtmlElement("span"),

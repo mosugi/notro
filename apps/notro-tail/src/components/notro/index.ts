@@ -64,12 +64,12 @@ export const notroComponents = {
   'empty-block':        EmptyBlock,
 
   // ── Inline mentions ────────────────────────────────────────────────────
-  'mention-user':       Mention,
-  'mention-page':       Mention,
-  'mention-database':   Mention,
-  'mention-data-source': Mention,
-  'mention-agent':      Mention,
-  'mention-date':       MentionDate,
+  MentionUser:          Mention,
+  MentionPage:          Mention,
+  MentionDatabase:      Mention,
+  MentionDataSource:    Mention,
+  MentionAgent:         Mention,
+  MentionDate:          MentionDate,
 
   // ── HTML element overrides ─────────────────────────────────────────────
   h1: H1,

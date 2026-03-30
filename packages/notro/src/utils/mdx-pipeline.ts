@@ -191,7 +191,51 @@ const rehypeNotionColorPlugin: Plugin<[], Root> = () => {
 	};
 };
 
-// ── URL resolution ─────────────────────────────────────────────────────────
+// ── Inline mention element conversion ─────────────────────────────────────
+
+// Notion inline mentions use hyphenated element names (mention-user,
+// mention-date, etc.). MDX/JSX has two component-lookup rules:
+//   - PascalCase names  → component variable: _jsx(MentionUser, ...)
+//   - lowercase names   → HTML string:        _jsx("mention-user", ...)
+// Hyphenated-lowercase names always use the string form — the `components`
+// map is NEVER consulted, so components['mention-user'] has no effect.
+//
+// Fix: rename mdxJsxTextElement nodes from hyphenated-lowercase to PascalCase.
+// MDX then generates the component-variable form, enabling substitution via
+// components.MentionUser, components.MentionDate, etc.
+const NOTION_MENTION_RENAMES = new Map<string, string>([
+	['mention-user',        'MentionUser'],
+	['mention-page',        'MentionPage'],
+	['mention-database',    'MentionDatabase'],
+	['mention-data-source', 'MentionDataSource'],
+	['mention-agent',       'MentionAgent'],
+	['mention-date',        'MentionDate'],
+]);
+
+/**
+ * Rehype plugin: renames Notion inline mention elements from hyphenated-
+ * lowercase (mention-user, mention-date…) to PascalCase (MentionUser,
+ * MentionDate…) so MDX generates a components-map lookup instead of a
+ * plain HTML string.
+ *
+ * Must run before hast-util-to-estree (i.e. before @mdx-js/mdx compiles
+ * the tree). Component keys in defaultComponents / notroComponents must
+ * use the same PascalCase names.
+ */
+const rehypeInlineMentionsPlugin: Plugin<[], Root> = () => {
+	return (tree) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		visit(tree, (node: any) => {
+			// Notion mentions come through as mdxJsxTextElement nodes because
+			// MDX's JSX parser processes inline HTML like <mention-user url="...">
+			if (node.type !== 'mdxJsxTextElement' && node.type !== 'mdxJsxFlowElement') return;
+			const renamed = NOTION_MENTION_RENAMES.get(node.name);
+			if (renamed) node.name = renamed;
+		});
+	};
+};
+
+
 
 function resolveNotionUrl(
 	url: string,
@@ -215,28 +259,48 @@ function resolveNotionUrl(
 
 type ResolveOptions = { linkToPages: LinkToPages };
 
+/** Read the `url` attribute value from a hast element's properties. */
+function getUrlFromElement(node: Element): string | undefined {
+	const raw = node.properties?.url;
+	return typeof raw === 'string' ? raw : undefined;
+}
+
+/** Read the `url` attribute value from an mdxJsxFlowElement/mdxJsxTextElement. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getUrlFromMdxJsx(node: any): string | undefined {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const attr = node.attributes?.find((a: any) => a.type === 'mdxJsxAttribute' && a.name === 'url');
+	return typeof attr?.value === 'string' ? attr.value : undefined;
+}
+
+/** Set the `url` attribute on an mdxJsxFlowElement/mdxJsxTextElement. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function setUrlOnMdxJsx(node: any, href: string): void {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const attr = node.attributes?.find((a: any) => a.type === 'mdxJsxAttribute' && a.name === 'url');
+	if (attr) {
+		attr.value = href;
+	} else {
+		node.attributes = [...(node.attributes ?? []), { type: 'mdxJsxAttribute', name: 'url', value: href }];
+	}
+}
+
 /**
  * Rehype plugin: resolves Notion page/database URLs in hast elements.
- * Handles <page>, <database>, <mention-page>, <mention-database>, and <a href>.
- * Does not rename elements — component mapping in NotionMarkdownRenderer handles rendering.
+ * Handles <page>, <database>, <MentionPage>, <MentionDatabase>, and <a href>.
+ *
+ * Notion page/database block elements (<page>, <database>) come through as
+ * regular hast `element` nodes. Inline mention elements come through as
+ * mdxJsxTextElement nodes (renamed to MentionPage etc. by
+ * rehypeInlineMentionsPlugin which runs before this plugin).
  */
 const resolvePageLinksPlugin: Plugin<[ResolveOptions], Root> = (options) => {
 	const { linkToPages } = options;
 	return (tree) => {
+		// Handle block-level <page> and <database> hast elements.
 		visit(tree, 'element', (node: Element) => {
 			if (node.tagName === 'page' || node.tagName === 'database') {
-				const raw = node.properties?.url;
-				const url = typeof raw === 'string' ? raw : undefined;
-				if (url) {
-					const { href } = resolveNotionUrl(url, linkToPages);
-					node.properties = { ...node.properties, url: href };
-				}
-				return;
-			}
-
-			if (node.tagName === 'mention-page' || node.tagName === 'mention-database') {
-				const raw = node.properties?.url;
-				const url = typeof raw === 'string' ? raw : undefined;
+				const url = getUrlFromElement(node);
 				if (url) {
 					const { href } = resolveNotionUrl(url, linkToPages);
 					node.properties = { ...node.properties, url: href };
@@ -253,6 +317,20 @@ const resolvePageLinksPlugin: Plugin<[ResolveOptions], Root> = (options) => {
 						node.properties = { ...node.properties, href: resolved };
 					}
 				}
+			}
+		});
+
+		// Handle inline mention elements that come through as MDX JSX nodes.
+		// By the time this plugin runs, rehypeInlineMentionsPlugin has already
+		// renamed them: mention-page → MentionPage, mention-database → MentionDatabase.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		visit(tree, (node: any) => {
+			if (node.type !== 'mdxJsxTextElement' && node.type !== 'mdxJsxFlowElement') return;
+			if (node.name !== 'MentionPage' && node.name !== 'MentionDatabase') return;
+			const url = getUrlFromMdxJsx(node);
+			if (url) {
+				const { href } = resolveNotionUrl(url, linkToPages);
+				setUrlOnMdxJsx(node, href);
 			}
 		});
 	};
@@ -362,6 +440,10 @@ export function buildMdxPlugins(linkToPages: LinkToPages): MdxPlugins {
 			// MDX component substitution does not apply to HTML elements created by
 			// rehypeRaw, so we apply color classes directly here in the hast tree.
 			rehypeNotionColorPlugin,
+			// Convert mention-* hast elements to mdxJsxTextElement so MDX applies
+			// components['mention-user'] etc. (hyphenated names are otherwise
+			// treated as HTML custom elements and skip component substitution).
+			rehypeInlineMentionsPlugin,
 			// User-provided plugins: math, diagrams, syntax highlighting, etc.
 			// e.g. notro({ rehypePlugins: [rehypeKatex, [rehypeMermaid, { theme: 'github-dark' }]] })
 			// notro({ shikiConfig: { theme: 'github-dark' } }) injects @shikijs/rehype automatically.
