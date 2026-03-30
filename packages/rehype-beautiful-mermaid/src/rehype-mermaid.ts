@@ -27,6 +27,15 @@ import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic';
 export interface RehypeMermaidOptions {
   /** beautiful-mermaid theme key (e.g. 'github-dark', 'default'). */
   theme?: string;
+  /**
+   * CSS class name applied to the wrapper <div> around each rendered SVG.
+   * Defaults to 'notro-mermaid' for notro-ecosystem projects.
+   * Override when using this plugin outside of the notro ecosystem.
+   *
+   * @default 'notro-mermaid'
+   * @example 'mermaid-diagram'
+   */
+  className?: string;
 }
 
 export const rehypeMermaid: Plugin<[RehypeMermaidOptions?], Root> = (options = {}) => {
@@ -79,7 +88,7 @@ export const rehypeMermaid: Plugin<[RehypeMermaidOptions?], Root> = (options = {
       const divNode: Element = {
         type: 'element',
         tagName: 'div',
-        properties: { className: ['notro-mermaid'] },
+        properties: { className: [options.className ?? 'notro-mermaid'] },
         children: svgRoot.children as ElementContent[],
       };
       parent.children.splice(index, 1, divNode);

@@ -40,8 +40,6 @@
 import type { AstroIntegration } from 'astro';
 import type { PluggableList } from 'unified';
 import mdx from '@astrojs/mdx';
-import rehypeShiki from '@shikijs/rehype';
-import type { RehypeShikiOptions } from '@shikijs/rehype';
 import { NOTION_CORE_REMARK_PLUGINS } from './utils/mdx-pipeline.ts';
 import { setNotroPlugins } from './utils/notro-config.ts';
 
@@ -74,10 +72,23 @@ export interface NotroOptions {
 	 * plugin so that other plugins (rehypeMermaid, rehypeKatex) run first.
 	 * Equivalent to appending `[rehypeShiki, shikiConfig]` to rehypePlugins.
 	 *
+	 * Requires @shikijs/rehype to be installed (optional dependency):
+	 *   npm install @shikijs/rehype
+	 *
 	 * @example { theme: 'github-dark' }
 	 * @example { themes: { light: 'github-light', dark: 'github-dark' } }
 	 */
-	shikiConfig?: RehypeShikiOptions;
+	shikiConfig?: Record<string, unknown>;
+
+	/**
+	 * Additional packages to add to Vite's ssr.external list.
+	 * Use this when a rehype/remark plugin dynamically imports a package that
+	 * needs to be resolved by Node.js's native ESM loader instead of Vite's
+	 * module runner (e.g. packages that use native binaries or dynamic imports).
+	 *
+	 * @example ['my-native-package']
+	 */
+	viteExternals?: string[];
 
 	/**
 	 * Whether to extend Astro's base markdown config.
@@ -93,18 +104,36 @@ export function notro(options: NotroOptions = {}): AstroIntegration {
 		rehypePlugins = [],
 		shikiConfig,
 		extendMarkdownConfig = false,
+		viteExternals = [],
 	} = options;
-
-	// When shikiConfig is provided, inject @shikijs/rehype as the last rehype
-	// plugin so diagram/math plugins (rehypeMermaid, rehypeKatex) run first.
-	const allRehypePlugins: PluggableList = shikiConfig != null
-		? [...rehypePlugins, [rehypeShiki, shikiConfig]]
-		: rehypePlugins;
 
 	return {
 		name: 'notro',
 		hooks: {
-			'astro:config:setup'({ updateConfig }) {
+			'astro:config:setup': async ({ updateConfig }) => {
+				// When shikiConfig is provided, dynamically load @shikijs/rehype
+				// (optional dependency) and inject it as the last rehype plugin so
+				// that diagram/math plugins (rehypeMermaid, rehypeKatex) run first.
+				let allRehypePlugins: PluggableList = rehypePlugins;
+				if (shikiConfig != null) {
+					try {
+						// Use new Function to escape Vite's static import analysis.
+						// A plain `await import('@shikijs/rehype')` inside an Astro hook
+						// is intercepted by Vite's module runner, which may fail to
+						// resolve optional packages. new Function forces Node.js's native
+						// ESM loader to handle the import at runtime.
+						// eslint-disable-next-line @typescript-eslint/no-implied-eval
+						const nativeImport = new Function('s', 'return import(s)') as (s: string) => Promise<{ default: unknown }>;
+						const mod = await nativeImport('@shikijs/rehype');
+						allRehypePlugins = [...rehypePlugins, [mod.default, shikiConfig]];
+					} catch {
+						throw new Error(
+							'[notro] shikiConfig was provided but @shikijs/rehype is not installed.\n' +
+							'Run: npm install @shikijs/rehype',
+						);
+					}
+				}
+
 				// Share user-provided plugins with the runtime compileMdxCached() path
 				// via the module-level config store in notro-config.ts.
 				// Both the static .mdx path (via @astrojs/mdx below) and the runtime
@@ -130,16 +159,11 @@ export function notro(options: NotroOptions = {}): AstroIntegration {
 
 					vite: {
 						ssr: {
-							// Externalize optional rehype plugin dependencies so that
-							// dynamic import() calls in rehype transformers use Node.js's
-							// native ESM loader rather than Vite's module runner.
-							//
-							// Without this, a dynamic import inside a rehype transformer
-							// may fail with "Vite module runner has been closed" during
-							// Astro's SSG prerender phase. rehypeMermaid (from rehype-mermaid)
-							// uses new Function('return import(s)') to escape Vite's analysis,
-							// but this external setting provides belt-and-suspenders safety.
-							external: ['beautiful-mermaid'],
+							// Externalize packages that need Node.js's native ESM loader
+							// instead of Vite's module runner (e.g. packages with native
+							// binaries or those that use dynamic import at runtime).
+							// Configured via notro({ viteExternals: ['my-package'] }).
+							external: viteExternals,
 						},
 					},
 				});
