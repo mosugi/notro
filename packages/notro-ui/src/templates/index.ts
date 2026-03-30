@@ -14,7 +14,8 @@
  */
 import { makeHtmlElement } from 'notro';
 
-import Callout          from './Callout.astro';
+import Callout              from './Callout.astro';
+import ColoredParagraph     from './ColoredParagraph.astro';
 import Toggle           from './Toggle.astro';
 import ToggleTitle      from './ToggleTitle.astro';
 import Columns          from './Columns.astro';
@@ -85,7 +86,7 @@ export const notroComponents = {
 
   // ── Standard HTML elements — edit classes to customize typography ───────
   th:     makeHtmlElement('th',     'px-3 py-2 text-left text-sm font-semibold'),
-  p:      makeHtmlElement('p',      'mb-4 leading-7'),
+  p:      ColoredParagraph,
   ul:     makeHtmlElement('ul',     'mb-4 list-disc pl-6 space-y-1'),
   ol:     makeHtmlElement('ol',     'mb-4 list-decimal pl-6 space-y-1'),
   li:     makeHtmlElement('li',     'leading-7'),

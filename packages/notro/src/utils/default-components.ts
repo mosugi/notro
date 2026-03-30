@@ -16,28 +16,35 @@ import { makeHtmlElement } from "./HtmlElements.ts";
  * ```
  */
 export const defaultComponents = {
-  // ── Notion block types → semantic HTML ───────────────────────────────────
+  // ── Notion block elements (PascalCase) ────────────────────────────────────
+  // These use PascalCase keys because MDX only generates a components-map
+  // lookup (_jsx(Video, ...)) for PascalCase names. Lowercase names compile
+  // as plain HTML string literals (_jsx("video", ...)), which bypass the
+  // `components` prop entirely. rehypeBlockElementsPlugin renames the
+  // mdxJsxFlowElement nodes to these PascalCase names before MDX compiles.
+  TableOfContents:        makeHtmlElement("nav"),
+  Video:                  makeHtmlElement("figure"),
+  Audio:                  makeHtmlElement("figure"),
+  FileBlock:              makeHtmlElement("div"),
+  PdfBlock:               makeHtmlElement("figure"),
+  Columns:                makeHtmlElement("div"),
+  Column:                 makeHtmlElement("div"),
+  PageRef:                makeHtmlElement("a"),
+  DatabaseRef:            makeHtmlElement("a"),
+  Details:                makeHtmlElement("details"),
+  Summary:                makeHtmlElement("summary"),
+  EmptyBlock:             makeHtmlElement("div"),
+  // callout is created by remarkNfm (a remark-level plugin via data.hName),
+  // not from raw HTML, so MDX tracks it in _components and lowercase works.
   callout:                makeHtmlElement("aside"),
-  details:                makeHtmlElement("details"),
-  summary:                makeHtmlElement("summary"),
-  columns:                makeHtmlElement("div"),
-  column:                 makeHtmlElement("div"),
-  audio:                  makeHtmlElement("figure"),
-  video:                  makeHtmlElement("figure"),
-  file:                   makeHtmlElement("div"),
-  pdf:                    makeHtmlElement("figure"),
-  page:                   makeHtmlElement("a"),
-  database:               makeHtmlElement("a"),
-  table_of_contents:      makeHtmlElement("nav"),
-  synced_block:           makeHtmlElement("div"),
-  synced_block_reference: makeHtmlElement("div"),
-  "empty-block":          makeHtmlElement("div"),
-  "mention-user":         makeHtmlElement("span"),
-  "mention-page":         makeHtmlElement("span"),
-  "mention-database":     makeHtmlElement("span"),
-  "mention-data-source":  makeHtmlElement("span"),
-  "mention-agent":        makeHtmlElement("span"),
-  "mention-date":         makeHtmlElement("time"),
+  // ── Inline mention components (PascalCase) ────────────────────────────────
+  // Same PascalCase requirement — rehypeInlineMentionsPlugin renames these.
+  MentionUser:            makeHtmlElement("span"),
+  MentionPage:            makeHtmlElement("span"),
+  MentionDatabase:        makeHtmlElement("span"),
+  MentionDataSource:      makeHtmlElement("span"),
+  MentionAgent:           makeHtmlElement("span"),
+  MentionDate:            makeHtmlElement("time"),
 
   // ── Standard HTML element pass-throughs ──────────────────────────────────
   span:   makeHtmlElement("span"),

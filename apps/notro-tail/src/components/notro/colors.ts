@@ -16,6 +16,17 @@ export const notroColorVariants = {
   purple:            'notro-text-purple',
   pink:              'notro-text-pink',
   red:               'notro-text-red',
+  // Notion API v2026: background colors use "_bg" suffix (e.g. "gray_bg")
+  gray_bg:           'notro-bg-gray',
+  brown_bg:          'notro-bg-brown',
+  orange_bg:         'notro-bg-orange',
+  yellow_bg:         'notro-bg-yellow',
+  green_bg:          'notro-bg-green',
+  blue_bg:           'notro-bg-blue',
+  purple_bg:         'notro-bg-purple',
+  pink_bg:           'notro-bg-pink',
+  red_bg:            'notro-bg-red',
+  // Legacy aliases (kept for backward compatibility)
   gray_background:   'notro-bg-gray',
   brown_background:  'notro-bg-brown',
   orange_background: 'notro-bg-orange',
