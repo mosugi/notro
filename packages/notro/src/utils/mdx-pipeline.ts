@@ -5,7 +5,7 @@
  * (hast → HTML) plugin chains. Astro runtime binding lives in compile-mdx.ts.
  *
  * Responsibility layers:
- *   - NOTION_CORE_REMARK_PLUGINS: always active, required for Notion content
+ *   - remarkNfm: always active, required for Notion content
  *   - NOTION_CORE_REHYPE_PLUGINS (internal): always active, Notion-specific
  *   - User-provided plugins via notro({ remarkPlugins, rehypePlugins }):
  *       math (remark-math + rehype-katex), diagrams (rehype-beautiful-mermaid), etc.
@@ -465,30 +465,13 @@ export type MdxPlugins = {
 	rehypePlugins: PluggableList;
 };
 
-/**
- * Core remark plugins required for Notion content.
- * Exported so integration.ts can reference them without duplication.
- */
-export const NOTION_CORE_REMARK_PLUGINS: PluggableList = [
-	// remarkNfm bundles: preprocessNotionMarkdown (pre-parse), remarkDirective,
-	// calloutPlugin, GFM strikethrough, and GFM task list items —
-	// everything specific to Notion-flavored Markdown.
-	remarkNfm,
-];
-
-/**
- * @deprecated Use NOTION_CORE_REMARK_PLUGINS instead.
- * Kept for backwards compatibility; will be removed in a future release.
- */
-export const BASE_REMARK_PLUGINS: PluggableList = NOTION_CORE_REMARK_PLUGINS;
-
 /** Returns the remark and rehype plugin configuration for Notion MDX. */
 export function buildMdxPlugins(linkToPages: LinkToPages): MdxPlugins {
 	const { remarkPlugins: userRemarkPlugins, rehypePlugins: userRehypePlugins } = getNotroPlugins();
 
 	return {
 		remarkPlugins: [
-			...NOTION_CORE_REMARK_PLUGINS,
+			remarkNfm,
 			...userRemarkPlugins,
 		],
 		rehypePlugins: [
