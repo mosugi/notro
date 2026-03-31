@@ -316,12 +316,6 @@ function resolveNotionUrl(
 
 type ResolveOptions = { linkToPages: LinkToPages };
 
-/** Read the `url` attribute value from a hast element's properties. */
-function getUrlFromElement(node: Element): string | undefined {
-	const raw = node.properties?.url;
-	return typeof raw === 'string' ? raw : undefined;
-}
-
 /** Read the `url` attribute value from an mdxJsxFlowElement/mdxJsxTextElement. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getUrlFromMdxJsx(node: any): string | undefined {

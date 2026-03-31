@@ -46,15 +46,11 @@ import { calloutPlugin } from './callout.ts';
  */
 export type Options = Record<string, never>;
 
-/** @type {Options} */
-const emptyOptions: Options = {};
-
-export const remarkNfm: Plugin<[Options?], Root, Root> = function (options): Transformer<Root, Root> | undefined {
+export const remarkNfm: Plugin<[Options?], Root, Root> = function (_options): Transformer<Root, Root> | undefined {
 	// Follows the same pattern as remarkGfm: cast this to the concrete
 	// Processor type since TypeScript cannot infer `this` inside a plugin.
 	// @ts-expect-error: TS is wrong about `this`.
 	const self = this as Processor<Root>;
-	const _settings = options || emptyOptions;
 	const data = self.data() as Record<string, unknown>;
 
 	// Guard against double-application: if this plugin has already been attached
