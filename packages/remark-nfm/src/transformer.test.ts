@@ -249,6 +249,37 @@ describe("Fix 6: synced_block stripping", () => {
     const output = preprocessNotionMarkdown(input);
     expect(output).not.toContain("synced_block_reference");
   });
+
+  it("strips <synced_block_reference> wrapper tags (reference occurrence)", () => {
+    const input = "<synced_block_reference>\n\tcontent line\n</synced_block_reference>";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).not.toContain("<synced_block_reference>");
+    expect(output).not.toContain("</synced_block_reference>");
+    expect(output).toContain("content line");
+  });
+
+  it("dedents tab-indented content inside synced_block_reference", () => {
+    const input = "<synced_block_reference>\n\tsome content\n</synced_block_reference>";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toContain("some content");
+    expect(output).not.toMatch(/^\tsome content/m);
+  });
+
+  it("handles real-world API output: synced_block_reference with url attribute and inner closing tag", () => {
+    // Mirrors actual Notion API output: outer <synced_block_reference url="...">,
+    // tab-indented content, a tab-indented </synced_block_reference> artifact,
+    // and the unindented outer closing tag.
+    const input = [
+      '<synced_block_reference url="https://www.notion.so/abc123">',
+      "\tActual paragraph content here.",
+      "\t</synced_block_reference>",
+      "</synced_block_reference>",
+    ].join("\n");
+    const output = preprocessNotionMarkdown(input);
+    expect(output).not.toContain("<synced_block_reference");
+    expect(output).not.toContain("</synced_block_reference>");
+    expect(output).toContain("Actual paragraph content here.");
+  });
 });
 
 // ============================================================

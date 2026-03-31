@@ -305,17 +305,29 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // replacement string.
   result = result.replace(/\$`([^`]+)`\$/g, (_, content: string) => `$${content}$`);
 
-  // Fix 6: Strip <synced_block> wrapper tags and dedent content.
+  // Fix 6: Strip <synced_block> and <synced_block_reference> wrapper tags and dedent content.
   // These tags contain underscores, preventing CommonMark HTML block detection.
   // The content inside is tab-indented; strip the wrapper and dedent so it
-  // renders as normal markdown. Also strip any <synced_block_reference> tags
-  // that appear inside (they have no display-relevant semantics).
+  // renders as normal markdown.
+  //
+  // Both tag types contain the full inline content — Notion embeds the shared
+  // content in every occurrence (original and all references). They are treated
+  // identically: strip the outer wrapper and expose the content.
+  //
+  // Any tab-indented <synced_block_reference> closing tags that appear inside
+  // the content (API artifact) are also stripped.
+  const stripSyncedBlock = (_: string, content: string): string =>
+    content
+      .replace(/^\t<\/?synced_block_reference(?:\s[^>]*)?\/?>[ \t]*$/gm, "")
+      .replace(/^\t/gm, "");
+
   result = result.replace(
     /^<synced_block(?:\s[^>]*)?>$([\s\S]*?)^<\/synced_block>$/gm,
-    (_, content: string) =>
-      content
-        .replace(/^\t<\/?synced_block_reference(?:\s[^>]*)?\/?>[ \t]*$/gm, "")
-        .replace(/^\t/gm, "")
+    stripSyncedBlock,
+  );
+  result = result.replace(
+    /^<synced_block_reference(?:\s[^>]*)?>$([\s\S]*?)^<\/synced_block_reference>$/gm,
+    stripSyncedBlock,
   );
 
   // Fix 7: Ensure <empty-block/> is treated as a standalone block element.

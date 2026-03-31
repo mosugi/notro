@@ -51,8 +51,7 @@ const NOTION_CUSTOM_ELEMENTS = [
 	'page',
 	'database',
 	'table_of_contents',
-	'synced_block',
-	'synced_block_reference',
+
 	'empty-block',
 	'mention-user',
 	'mention-page',
