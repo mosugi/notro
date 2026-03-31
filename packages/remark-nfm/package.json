@@ -37,7 +37,11 @@
   },
   "dependencies": {
     "mdast-util-directive": "^3.0.0",
+    "mdast-util-gfm-strikethrough": "^2.0.0",
+    "mdast-util-gfm-task-list-item": "^2.0.0",
     "micromark-extension-directive": "^4.0.0",
+    "micromark-extension-gfm-strikethrough": "^2.0.0",
+    "micromark-extension-gfm-task-list-item": "^2.0.0",
     "unist-util-visit": "^5.0.0"
   },
   "engines": {

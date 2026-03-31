@@ -34,6 +34,10 @@ import type { Plugin, Processor, Transformer } from 'unified';
 import type { Root } from 'mdast';
 import { directive } from 'micromark-extension-directive';
 import { directiveFromMarkdown, directiveToMarkdown } from 'mdast-util-directive';
+import { gfmStrikethrough } from 'micromark-extension-gfm-strikethrough';
+import { gfmStrikethroughFromMarkdown, gfmStrikethroughToMarkdown } from 'mdast-util-gfm-strikethrough';
+import { gfmTaskListItem } from 'micromark-extension-gfm-task-list-item';
+import { gfmTaskListItemFromMarkdown, gfmTaskListItemToMarkdown } from 'mdast-util-gfm-task-list-item';
 import { preprocessNotionMarkdown } from './transformer.ts';
 import { calloutPlugin } from './callout.ts';
 
@@ -85,9 +89,9 @@ export const remarkNfm: Plugin<[Options?], Root, Root> = function (options): Tra
 	const toMarkdownExtensions =
 		data.toMarkdownExtensions || (data.toMarkdownExtensions = []);
 
-	micromarkExtensions.push(directive());
-	fromMarkdownExtensions.push(directiveFromMarkdown());
-	toMarkdownExtensions.push(directiveToMarkdown());
+	micromarkExtensions.push(directive(), gfmStrikethrough(), gfmTaskListItem());
+	fromMarkdownExtensions.push(directiveFromMarkdown(), gfmStrikethroughFromMarkdown(), gfmTaskListItemFromMarkdown());
+	toMarkdownExtensions.push(directiveToMarkdown(), gfmStrikethroughToMarkdown(), gfmTaskListItemToMarkdown());
 
 	// ── Callout conversion ──────────────────────────────────────────────────
 	// Return the callout transform so unified registers it as a post-parse

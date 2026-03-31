@@ -13,7 +13,6 @@
  *       plugins (rehypeMermaid, rehypeKatex) run before syntax highlighting
  */
 
-import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
 import { remarkNfm } from 'remark-nfm';
@@ -22,8 +21,14 @@ import { getNotroPlugins } from './notro-config.ts';
 import type { Plugin, PluggableList } from 'unified';
 import type { Root, Element } from 'hast';
 import { visit } from 'unist-util-visit';
-import { toString as hastToString } from 'hast-util-to-string';
 import type { LinkToPages } from '../types.ts';
+
+// Recursively extract text content from a hast node tree.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function hastNodeToString(node: any): string {
+	if (node.type === 'text') return node.value ?? '';
+	return (node.children ?? []).map(hastNodeToString).join('');
+}
 
 // Notion-specific custom element names that rehype-raw must pass through
 // without stripping. These are mapped to Astro components in notionComponents.
@@ -411,7 +416,7 @@ const rehypeTocPlugin: Plugin<[], Root> = () => {
 			headings.push({
 				level: parseInt(match[1], 10),
 				id,
-				text: hastToString(node),
+				text: hastNodeToString(node),
 			});
 		});
 
@@ -466,9 +471,9 @@ export type MdxPlugins = {
  */
 export const NOTION_CORE_REMARK_PLUGINS: PluggableList = [
 	// remarkNfm bundles: preprocessNotionMarkdown (pre-parse), remarkDirective,
-	// and calloutPlugin — everything specific to Notion-flavored Markdown.
+	// calloutPlugin, GFM strikethrough, and GFM task list items —
+	// everything specific to Notion-flavored Markdown.
 	remarkNfm,
-	remarkGfm,
 ];
 
 /**
