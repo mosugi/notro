@@ -13,10 +13,16 @@ export const styledSpan = tv({
 interface Props extends VariantProps<typeof styledSpan> {
   underline?: string;
   class?: string;
+  // Also accept className: hast-derived elements (e.g. from rehype-katex) use
+  // className as the prop name when compiled by hast-util-to-estree.
+  className?: string;
   style?: string | Record<string, string>;
 }
 
-const { color, underline, class: className, style: styleProp } = Astro.props;
+const { color, underline, class: classProp, className: classNameProp, style: styleProp } = Astro.props;
+// Merge both class and className to support both MDX JSX elements (use class)
+// and hast-derived elements (use className, e.g. KaTeX spans).
+const className = [classProp, classNameProp].filter(Boolean).join(' ') || undefined;
 
 // styleProp may be a React-style object from Shiki or a CSS string.
 const styleObj: Record<string, string> =

@@ -17,8 +17,13 @@ import { jsx } from 'astro/jsx-runtime';
 import { __astro_tag_component__ } from 'astro/runtime/server/index.js';
 
 export function makeHtmlElement(tag: string, cls?: string) {
-	function HtmlElement({ class: className, ...rest }: Record<string, unknown>) {
-		const combined = [cls, className].filter(Boolean).join(' ') || undefined;
+	// Accept both `class` (from MDX JSX elements / Astro convention) and
+	// `className` (from hast-derived elements compiled by hast-util-to-estree,
+	// e.g. rehype-katex output uses {className: "katex"} as the prop name).
+	function HtmlElement({ class: classProp, className: classNameProp, ...rest }: Record<string, unknown>) {
+		const userClass = [classProp as string | undefined, classNameProp as string | undefined]
+			.filter(Boolean).join(' ') || undefined;
+		const combined = [cls, userClass].filter(Boolean).join(' ') || undefined;
 		return jsx(tag, combined !== undefined ? { ...rest, class: combined } : rest);
 	}
 	__astro_tag_component__(HtmlElement, 'astro:jsx');

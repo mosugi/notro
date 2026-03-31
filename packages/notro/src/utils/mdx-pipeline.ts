@@ -222,6 +222,17 @@ const NOTION_BLOCK_RENAMES = new Map<string, string>([
 	['details',                 'Details'],
 	['summary',                 'Summary'],
 	['empty-block',             'EmptyBlock'],
+	// Table elements: Notion outputs <table header-row="..."><tr><td>…</td></tr></table>
+	// as raw HTML with custom attributes. MDX parses these as mdxJsxFlowElement nodes
+	// (lowercase), which compile as string literals unless renamed to PascalCase.
+	// Note: lowercase table/tr/td keys remain in defaultComponents/notroComponents for
+	// GFM tables (which produce hast element nodes and use _components.table lookups).
+	['table',                   'Table'],
+	['tr',                      'Tr'],
+	['td',                      'Td'],
+	['th',                      'Th'],
+	['colgroup',                'Colgroup'],
+	['col',                     'Col'],
 ]);
 
 /**

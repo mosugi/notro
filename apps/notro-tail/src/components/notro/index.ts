@@ -71,6 +71,17 @@ export const notroComponents = {
   MentionAgent:         Mention,
   MentionDate:          MentionDate,
 
+  // ── Notion table elements (PascalCase) ────────────────────────────────
+  // Notion tables are raw HTML with custom attributes → mdxJsxFlowElement.
+  // rehypeBlockElementsPlugin renames them to PascalCase for component lookup.
+  // Lowercase keys below remain for GFM tables (hast element nodes).
+  Table:    TableBlock,
+  Tr:       TableRow,
+  Td:       TableCell,
+  Th:       makeHtmlElement('th',     'px-3 py-2 text-left text-sm font-semibold'),
+  Colgroup: TableColgroup,
+  Col:      TableCol,
+
   // ── HTML element overrides ─────────────────────────────────────────────
   h1: H1,
   h2: H2,

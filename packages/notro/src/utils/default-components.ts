@@ -46,6 +46,18 @@ export const defaultComponents = {
   MentionAgent:           makeHtmlElement("span"),
   MentionDate:            makeHtmlElement("time"),
 
+  // ── Notion table elements (PascalCase) ───────────────────────────────────
+  // Notion raw HTML tables have custom attributes (header-row, header-column),
+  // so MDX parses them as mdxJsxFlowElement nodes. rehypeBlockElementsPlugin
+  // renames them to PascalCase so MDX generates a components-map lookup.
+  // Lowercase keys (table, tr, td…) remain for GFM tables (hast element nodes).
+  Table:    makeHtmlElement("table"),
+  Tr:       makeHtmlElement("tr"),
+  Td:       makeHtmlElement("td"),
+  Th:       makeHtmlElement("th"),
+  Colgroup: makeHtmlElement("colgroup"),
+  Col:      makeHtmlElement("col"),
+
   // ── Standard HTML element pass-throughs ──────────────────────────────────
   span:   makeHtmlElement("span"),
   p:      makeHtmlElement("p"),
