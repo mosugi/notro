@@ -5,7 +5,7 @@
  * (hast → HTML) plugin chains. Astro runtime binding lives in compile-mdx.ts.
  *
  * Responsibility layers:
- *   - NOTION_CORE_REMARK_PLUGINS: always active, required for Notion content
+ *   - remarkNfm: always active, required for Notion content
  *   - NOTION_CORE_REHYPE_PLUGINS (internal): always active, Notion-specific
  *   - User-provided plugins via notro({ remarkPlugins, rehypePlugins }):
  *       math (remark-math + rehype-katex), diagrams (rehype-beautiful-mermaid), etc.
@@ -13,7 +13,6 @@
  *       plugins (rehypeMermaid, rehypeKatex) run before syntax highlighting
  */
 
-import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
 import { remarkNfm } from 'remark-nfm';
@@ -22,8 +21,14 @@ import { getNotroPlugins } from './notro-config.ts';
 import type { Plugin, PluggableList } from 'unified';
 import type { Root, Element } from 'hast';
 import { visit } from 'unist-util-visit';
-import { toString as hastToString } from 'hast-util-to-string';
 import type { LinkToPages } from '../types.ts';
+
+// Recursively extract text content from a hast node tree.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function hastNodeToString(node: any): string {
+	if (node.type === 'text') return node.value ?? '';
+	return (node.children ?? []).map(hastNodeToString).join('');
+}
 
 // Notion-specific custom element names that rehype-raw must pass through
 // without stripping. These are mapped to Astro components in notionComponents.
@@ -46,8 +51,7 @@ const NOTION_CUSTOM_ELEMENTS = [
 	'page',
 	'database',
 	'table_of_contents',
-	'synced_block',
-	'synced_block_reference',
+
 	'empty-block',
 	'mention-user',
 	'mention-page',
@@ -311,12 +315,6 @@ function resolveNotionUrl(
 
 type ResolveOptions = { linkToPages: LinkToPages };
 
-/** Read the `url` attribute value from a hast element's properties. */
-function getUrlFromElement(node: Element): string | undefined {
-	const raw = node.properties?.url;
-	return typeof raw === 'string' ? raw : undefined;
-}
-
 /** Read the `url` attribute value from an mdxJsxFlowElement/mdxJsxTextElement. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getUrlFromMdxJsx(node: any): string | undefined {
@@ -411,7 +409,7 @@ const rehypeTocPlugin: Plugin<[], Root> = () => {
 			headings.push({
 				level: parseInt(match[1], 10),
 				id,
-				text: hastToString(node),
+				text: hastNodeToString(node),
 			});
 		});
 
@@ -460,30 +458,13 @@ export type MdxPlugins = {
 	rehypePlugins: PluggableList;
 };
 
-/**
- * Core remark plugins required for Notion content.
- * Exported so integration.ts can reference them without duplication.
- */
-export const NOTION_CORE_REMARK_PLUGINS: PluggableList = [
-	// remarkNfm bundles: preprocessNotionMarkdown (pre-parse), remarkDirective,
-	// and calloutPlugin — everything specific to Notion-flavored Markdown.
-	remarkNfm,
-	remarkGfm,
-];
-
-/**
- * @deprecated Use NOTION_CORE_REMARK_PLUGINS instead.
- * Kept for backwards compatibility; will be removed in a future release.
- */
-export const BASE_REMARK_PLUGINS: PluggableList = NOTION_CORE_REMARK_PLUGINS;
-
 /** Returns the remark and rehype plugin configuration for Notion MDX. */
 export function buildMdxPlugins(linkToPages: LinkToPages): MdxPlugins {
 	const { remarkPlugins: userRemarkPlugins, rehypePlugins: userRehypePlugins } = getNotroPlugins();
 
 	return {
 		remarkPlugins: [
-			...NOTION_CORE_REMARK_PLUGINS,
+			remarkNfm,
 			...userRemarkPlugins,
 		],
 		rehypePlugins: [

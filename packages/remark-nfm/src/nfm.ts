@@ -34,6 +34,10 @@ import type { Plugin, Processor, Transformer } from 'unified';
 import type { Root } from 'mdast';
 import { directive } from 'micromark-extension-directive';
 import { directiveFromMarkdown, directiveToMarkdown } from 'mdast-util-directive';
+import { gfmStrikethrough } from 'micromark-extension-gfm-strikethrough';
+import { gfmStrikethroughFromMarkdown, gfmStrikethroughToMarkdown } from 'mdast-util-gfm-strikethrough';
+import { gfmTaskListItem } from 'micromark-extension-gfm-task-list-item';
+import { gfmTaskListItemFromMarkdown, gfmTaskListItemToMarkdown } from 'mdast-util-gfm-task-list-item';
 import { preprocessNotionMarkdown } from './transformer.ts';
 import { calloutPlugin } from './callout.ts';
 
@@ -42,15 +46,11 @@ import { calloutPlugin } from './callout.ts';
  */
 export type Options = Record<string, never>;
 
-/** @type {Options} */
-const emptyOptions: Options = {};
-
-export const remarkNfm: Plugin<[Options?], Root, Root> = function (options): Transformer<Root, Root> | undefined {
+export const remarkNfm: Plugin<[Options?], Root, Root> = function (_options): Transformer<Root, Root> | undefined {
 	// Follows the same pattern as remarkGfm: cast this to the concrete
 	// Processor type since TypeScript cannot infer `this` inside a plugin.
 	// @ts-expect-error: TS is wrong about `this`.
 	const self = this as Processor<Root>;
-	const _settings = options || emptyOptions;
 	const data = self.data() as Record<string, unknown>;
 
 	// Guard against double-application: if this plugin has already been attached
@@ -85,9 +85,9 @@ export const remarkNfm: Plugin<[Options?], Root, Root> = function (options): Tra
 	const toMarkdownExtensions =
 		data.toMarkdownExtensions || (data.toMarkdownExtensions = []);
 
-	micromarkExtensions.push(directive());
-	fromMarkdownExtensions.push(directiveFromMarkdown());
-	toMarkdownExtensions.push(directiveToMarkdown());
+	micromarkExtensions.push(directive(), gfmStrikethrough(), gfmTaskListItem());
+	fromMarkdownExtensions.push(directiveFromMarkdown(), gfmStrikethroughFromMarkdown(), gfmTaskListItemFromMarkdown());
+	toMarkdownExtensions.push(directiveToMarkdown(), gfmStrikethroughToMarkdown(), gfmTaskListItemToMarkdown());
 
 	// ── Callout conversion ──────────────────────────────────────────────────
 	// Return the callout transform so unified registers it as a post-parse

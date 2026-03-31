@@ -40,7 +40,7 @@
 import type { AstroIntegration } from 'astro';
 import type { PluggableList } from 'unified';
 import mdx from '@astrojs/mdx';
-import { NOTION_CORE_REMARK_PLUGINS } from './utils/mdx-pipeline.ts';
+import { remarkNfm } from 'remark-nfm';
 import { setNotroPlugins } from './utils/notro-config.ts';
 
 /**
@@ -148,7 +148,7 @@ export function notro(options: NotroOptions = {}): AstroIntegration {
 				updateConfig({
 					integrations: [mdx({
 						// Combine notro's core Notion remark plugins with user-provided ones.
-						remarkPlugins: [...NOTION_CORE_REMARK_PLUGINS, ...remarkPlugins],
+						remarkPlugins: [remarkNfm, ...remarkPlugins],
 						// User and built-in rehype plugins (math, diagrams, shiki, etc.).
 						rehypePlugins: allRehypePlugins,
 						extendMarkdownConfig,

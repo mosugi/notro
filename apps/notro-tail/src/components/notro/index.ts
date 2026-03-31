@@ -31,7 +31,6 @@ import PdfBlock        from './PdfBlock.astro';
 import PageRef         from './PageRef.astro';
 import DatabaseRef     from './DatabaseRef.astro';
 import TableOfContents from './TableOfContents.astro';
-import SyncedBlock     from './SyncedBlock.astro';
 import EmptyBlock      from './EmptyBlock.astro';
 import Mention         from './Mention.astro';
 import MentionDate     from './MentionDate.astro';
