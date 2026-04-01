@@ -4,6 +4,7 @@
  * List items are injected by rehypeTocPlugin with `.notro-toc-item` and `.notro-toc-level-*`.
  * List and item styles are defined in notro-theme.css.
  */
+import type { HTMLAttributes } from 'astro/types';
 import { tv, type VariantProps } from 'tailwind-variants';
 import { notroColorVariants } from './colors';
 
@@ -12,14 +13,12 @@ export const tableOfContents = tv({
   variants: { color: notroColorVariants },
 });
 
-interface Props extends VariantProps<typeof tableOfContents> {
-  class?: string;
-}
+interface Props extends Omit<HTMLAttributes<'nav'>, 'color'>, VariantProps<typeof tableOfContents> {}
 
-const { color, class: className } = Astro.props;
+const { color, class: className, ...rest } = Astro.props;
 ---
 
-<nav class={tableOfContents({ color, class: className })} aria-label="目次">
+<nav class={tableOfContents({ color, class: className })} aria-label="目次" {...rest}>
   <p class="font-semibold text-sm text-[var(--notro-text-muted)] mb-2">📋 目次</p>
   <slot />
 </nav>

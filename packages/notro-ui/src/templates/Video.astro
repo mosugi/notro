@@ -2,15 +2,19 @@
 /**
  * Notion video embed block.
  */
+import type { HTMLAttributes } from 'astro/types';
 import { tv } from 'tailwind-variants';
 
 export const video = tv({ base: 'my-4' });
 
-interface Props { src: string; class?: string; }
-const { src, class: className } = Astro.props;
+interface Props extends HTMLAttributes<'figure'> {
+  src: string;
+}
+
+const { src, class: className, ...rest } = Astro.props;
 ---
 
-<figure class={video({ class: className })}>
+<figure class={video({ class: className })} {...rest}>
   <video controls src={src} class="w-full"></video>
   {Astro.slots.has('default') && (
     <figcaption class="text-sm text-[var(--notro-text-muted)] mt-1.5">

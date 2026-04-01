@@ -2,12 +2,16 @@
 /**
  * Synced block — passes children through as-is.
  */
+import type { HTMLAttributes } from 'astro/types';
 import { tv } from 'tailwind-variants';
 
 export const syncedBlock = tv({ base: '' });
 
-interface Props { url?: string; class?: string; }
-const { url, class: className } = Astro.props;
+interface Props extends HTMLAttributes<'div'> {
+  url?: string;
+}
+
+const { url, class: className, ...rest } = Astro.props;
 const hasSource = url != null && url.length > 0;
 ---
 

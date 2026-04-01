@@ -3,6 +3,7 @@
  * Notion table block.
  * `.notro-table-wrapper` and `.notro-table` selectors are styled in notro-theme.css.
  */
+import type { HTMLAttributes } from 'astro/types';
 import { tv } from 'tailwind-variants';
 
 export const tableWrapper = tv({
@@ -12,11 +13,10 @@ export const tableWrapper = tv({
 
 export const table = tv({ base: 'notro-table w-full border-collapse text-sm' });
 
-interface Props {
+interface Props extends HTMLAttributes<'table'> {
   'fit-page-width'?: string;
   'header-row'?: string;
   'header-column'?: string;
-  class?: string;
   tableWrapperClass?: string;
 }
 
@@ -26,6 +26,7 @@ const {
   'header-column': headerColumn = 'false',
   class: className,
   tableWrapperClass,
+  ...rest
 } = Astro.props;
 ---
 
@@ -34,6 +35,7 @@ const {
     class={table({ class: className })}
     data-header-row={headerRow === 'true' ? '' : undefined}
     data-header-col={headerColumn === 'true' ? '' : undefined}
+    {...rest}
   >
     <slot />
   </table>

@@ -2,19 +2,19 @@
 /**
  * Inline date mention.
  */
+import type { HTMLAttributes } from 'astro/types';
 import { tv } from 'tailwind-variants';
 
 export const mentionDate = tv({ base: 'font-mono text-sm' });
 
-interface Props {
+interface Props extends HTMLAttributes<'time'> {
   start: string;
   end?: string;
   startTime?: string;
   timeZone?: string;
-  class?: string;
 }
 
-const { start, end, startTime, timeZone, class: className } = Astro.props;
+const { start, end, startTime, timeZone, class: className, ...rest } = Astro.props;
 
 const parts: string[] = [start];
 if (startTime) parts.push(startTime);
@@ -23,4 +23,4 @@ if (timeZone) parts.push(`(${timeZone})`);
 const display = parts.join(' ');
 ---
 
-<time class={mentionDate({ class: className })} datetime={start}>{display}</time>
+<time class={mentionDate({ class: className })} datetime={start} {...rest}>{display}</time>
