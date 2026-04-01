@@ -34,12 +34,13 @@ import type { Plugin, Processor, Transformer } from 'unified';
 import type { Root } from 'mdast';
 import { directive } from 'micromark-extension-directive';
 import { directiveFromMarkdown, directiveToMarkdown } from 'mdast-util-directive';
+import type { ContainerDirective } from 'mdast-util-directive';
 import { gfmStrikethrough } from 'micromark-extension-gfm-strikethrough';
 import { gfmStrikethroughFromMarkdown, gfmStrikethroughToMarkdown } from 'mdast-util-gfm-strikethrough';
 import { gfmTaskListItem } from 'micromark-extension-gfm-task-list-item';
 import { gfmTaskListItemFromMarkdown, gfmTaskListItemToMarkdown } from 'mdast-util-gfm-task-list-item';
+import { visit } from 'unist-util-visit';
 import { preprocessNotionMarkdown } from './transformer.ts';
-import { calloutPlugin } from './callout.ts';
 
 /**
  * Configuration for remarkNfm (reserved for future options).
@@ -93,5 +94,28 @@ export const remarkNfm: Plugin<[Options?], Root, Root> = function (_options): Tr
 	// Return the callout transform so unified registers it as a post-parse
 	// transformer. Directive nodes are created at parse time (via the
 	// micromark extensions above), so no ordering dependency exists here.
-	return calloutPlugin.call(self) as Transformer<Root, Root> | undefined;
+	//
+	// Transforms :::callout{icon="💡" color="gray_bg"} container directives
+	// into <callout icon="..." color="..."> elements for the component mapping.
+	return (tree) => {
+		visit(tree, "containerDirective", (node: ContainerDirective) => {
+			if (node.name !== "callout") return;
+
+			const attrs = node.attributes ?? {};
+
+			// Output as <callout> custom element so the component mapping
+			// (notionComponents.callout = Callout.astro) can handle rendering.
+			// Pass color as-is (e.g. "gray_bg") — Callout.astro's colorToCSS()
+			// handles both _bg and _background suffix formats.
+			// Only include properties that have a value to avoid setting empty strings.
+			node.data = {
+				...node.data,
+				hName: "callout",
+				hProperties: {
+					...(attrs.color && { color: attrs.color }),
+					...(attrs.icon && { icon: attrs.icon }),
+				},
+			};
+		});
+	};
 };

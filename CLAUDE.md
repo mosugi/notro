@@ -13,7 +13,8 @@
 - スタイリングは **TailwindCSS 4 のユーティリティクラスのみ** で行うこと
 - インラインスタイル（`style="..."` 属性）は使わない
 - Astro コンポーネント内の `<style>` タグは使わない
-- Notion ブロック固有のスタイルは `global.css` の `nt-*` クラスとして定義する（既存の CSS 規約に従うこと）
+- Notion ブロックのスタイリングは **notro-ui コンポーネント + `notro-theme.css`** が担当する（`global.css` に Notion ブロック用のスタイルは書かない）
+- `global.css` の `nt-*` クラスはページレイアウト用のデザイントークン（`nt-text-*`、`nt-bg-*`、`nt-border-*`）であり、Notion ブロックスタイルとは別物
 - クライアント側 `<script>` 内でも `element.style.*` でスタイルを直接操作しないこと
 - 表示/非表示の制御は `element.classList.toggle("hidden")` など **クラス操作** で行うこと（`element.style.display` は使わない）
 
