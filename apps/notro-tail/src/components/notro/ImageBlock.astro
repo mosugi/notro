@@ -5,7 +5,13 @@
 import type { HTMLAttributes } from 'astro/types';
 import { tv } from 'tailwind-variants';
 
-export const imageBlock = tv({ base: 'my-4' });
+export const imageBlock = tv({
+  slots: {
+    root: 'my-4',
+    img: 'h-auto max-w-full',
+    caption: 'text-sm text-[var(--notro-text-muted)] mt-1.5 text-center',
+  },
+});
 
 interface Props extends HTMLAttributes<'figure'> {
   src: string;
@@ -14,12 +20,13 @@ interface Props extends HTMLAttributes<'figure'> {
 }
 
 const { src, alt, caption, class: className, ...rest } = Astro.props;
+const { root, img, caption: captionClass } = imageBlock();
 ---
 
-<figure class={imageBlock({ class: className })} {...rest}>
-  <img src={src} alt={alt ?? ''} loading="lazy" decoding="async" class="h-auto max-w-full" />
+<figure class={root({ class: className })} {...rest}>
+  <img src={src} alt={alt ?? ''} loading="lazy" decoding="async" class={img()} />
   {caption && (
-    <figcaption class="text-sm text-[var(--notro-text-muted)] mt-1.5 text-center">
+    <figcaption class={captionClass()}>
       {caption}
     </figcaption>
   )}
