@@ -8,11 +8,11 @@ import { tv } from 'tailwind-variants';
 
 export const columns = tv({ base: 'grid grid-cols-1 gap-8 my-4 md:grid-cols-2' });
 
-interface Props extends HTMLAttributes<'div'> {}
+type Props = HTMLAttributes<'div'>;
 
 const { class: className, ...rest } = Astro.props;
 ---
 
-<div class={columns({ class: className })} {...rest}>
+<div class={columns({ class: className })} data-slot="columns" {...rest}>
   <slot />
 </div>

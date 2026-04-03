@@ -15,8 +15,8 @@ export const coloredP = tv({
   variants: { color: notroColorVariants },
 });
 
-interface Props extends Omit<HTMLAttributes<'p'>, 'color'>, VariantProps<typeof coloredP> {}
+type Props = Omit<HTMLAttributes<'p'>, 'color'> & VariantProps<typeof coloredP>;
 
 const { color, class: className, ...rest } = Astro.props;
 ---
-<p class={coloredP({ color, class: className })} {...rest}><slot /></p>
+<p class={coloredP({ color, class: className })} data-slot="colored-paragraph" {...rest}><slot /></p>

@@ -11,11 +11,11 @@ export const quote = tv({
   variants: { color: notroColorVariants },
 });
 
-interface Props extends Omit<HTMLAttributes<'blockquote'>, 'color'>, VariantProps<typeof quote> {}
+type Props = Omit<HTMLAttributes<'blockquote'>, 'color'> & VariantProps<typeof quote>;
 
 const { color, class: className, ...rest } = Astro.props;
 ---
 
-<blockquote class={quote({ color, class: className })} {...rest}>
+<blockquote class={quote({ color, class: className })} data-slot="quote" {...rest}>
   <slot />
 </blockquote>

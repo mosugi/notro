@@ -8,11 +8,11 @@ import { tv } from 'tailwind-variants';
 
 export const toggleTitle = tv({ base: 'font-medium py-0.5' });
 
-interface Props extends HTMLAttributes<'summary'> {}
+type Props = HTMLAttributes<'summary'>;
 
 const { class: className, ...rest } = Astro.props;
 ---
 
-<summary class={toggleTitle({ class: className })} {...rest}>
+<summary class={toggleTitle({ class: className })} data-slot="toggle-title" {...rest}>
   <slot />
 </summary>

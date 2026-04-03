@@ -13,12 +13,12 @@ export const tableWrapper = tv({
 
 export const table = tv({ base: 'notro-table w-full border-collapse text-sm' });
 
-interface Props extends HTMLAttributes<'table'> {
+type Props = HTMLAttributes<'table'> & {
   'fit-page-width'?: string;
   'header-row'?: string;
   'header-column'?: string;
   tableWrapperClass?: string;
-}
+};
 
 const {
   'fit-page-width': fitPageWidth = 'false',
@@ -30,9 +30,10 @@ const {
 } = Astro.props;
 ---
 
-<div class={tableWrapper({ fitPageWidth: fitPageWidth === 'true', class: tableWrapperClass })}>
+<div class={tableWrapper({ fitPageWidth: fitPageWidth === 'true', class: tableWrapperClass })} data-slot="table-wrapper">
   <table
     class={table({ class: className })}
+    data-slot="table"
     data-header-row={headerRow === 'true' ? '' : undefined}
     data-header-col={headerColumn === 'true' ? '' : undefined}
     {...rest}

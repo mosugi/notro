@@ -4,8 +4,8 @@ import { tv } from 'tailwind-variants';
 
 export const tableColgroup = tv({ base: '' });
 
-interface Props extends HTMLAttributes<'colgroup'> {}
+type Props = HTMLAttributes<'colgroup'>;
 
 const { class: className, ...rest } = Astro.props;
 ---
-<colgroup class={tableColgroup({ class: className })} {...rest}><slot /></colgroup>
+<colgroup class={tableColgroup({ class: className })} data-slot="table-colgroup" {...rest}><slot /></colgroup>

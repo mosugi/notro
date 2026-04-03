@@ -12,11 +12,11 @@ export const toggle = tv({
   variants: { color: notroColorVariants },
 });
 
-interface Props extends Omit<HTMLAttributes<'details'>, 'color'>, VariantProps<typeof toggle> {}
+type Props = Omit<HTMLAttributes<'details'>, 'color'> & VariantProps<typeof toggle>;
 
 const { color, class: className, ...rest } = Astro.props;
 ---
 
-<details class={toggle({ color, class: className })} {...rest}>
+<details class={toggle({ color, class: className })} data-slot="toggle" {...rest}>
   <slot />
 </details>

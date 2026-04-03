@@ -8,8 +8,8 @@ export const tableRow = tv({
   variants: { color: notroColorVariants },
 });
 
-interface Props extends Omit<HTMLAttributes<'tr'>, 'color'>, VariantProps<typeof tableRow> {}
+type Props = Omit<HTMLAttributes<'tr'>, 'color'> & VariantProps<typeof tableRow>;
 
 const { color, class: className, ...rest } = Astro.props;
 ---
-<tr class={tableRow({ color, class: className })} {...rest}><slot /></tr>
+<tr class={tableRow({ color, class: className })} data-slot="table-row" {...rest}><slot /></tr>

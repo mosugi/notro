@@ -7,9 +7,9 @@ import { tv } from 'tailwind-variants';
 
 export const emptyBlock = tv({ base: 'my-2' });
 
-interface Props extends HTMLAttributes<'div'> {}
+type Props = HTMLAttributes<'div'>;
 
 const { class: className, ...rest } = Astro.props;
 ---
 
-<div class={emptyBlock({ class: className })} aria-hidden="true" {...rest}></div>
+<div class={emptyBlock({ class: className })} aria-hidden="true" data-slot="empty-block" {...rest}></div>

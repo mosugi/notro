@@ -8,8 +8,8 @@ export const h3 = tv({
   variants: { color: notroColorVariants },
 });
 
-interface Props extends Omit<HTMLAttributes<'h3'>, 'color'>, VariantProps<typeof h3> {}
+type Props = Omit<HTMLAttributes<'h3'>, 'color'> & VariantProps<typeof h3>;
 
 const { color, class: className, ...rest } = Astro.props;
 ---
-<h3 class={h3({ color, class: className })} {...rest}><slot /></h3>
+<h3 class={h3({ color, class: className })} data-slot="h3" {...rest}><slot /></h3>

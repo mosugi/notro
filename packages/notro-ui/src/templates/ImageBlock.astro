@@ -13,20 +13,20 @@ export const imageBlock = tv({
   },
 });
 
-interface Props extends HTMLAttributes<'figure'> {
+type Props = HTMLAttributes<'figure'> & {
   src: string;
   alt?: string;
   caption?: string;
-}
+};
 
 const { src, alt, caption, class: className, ...rest } = Astro.props;
 const { root, img, caption: captionClass } = imageBlock();
 ---
 
-<figure class={root({ class: className })} {...rest}>
-  <img src={src} alt={alt ?? ''} loading="lazy" decoding="async" class={img()} />
+<figure class={root({ class: className })} data-slot="image-block" {...rest}>
+  <img src={src} alt={alt ?? ''} loading="lazy" decoding="async" class={img()} data-slot="image-block-img" />
   {caption && (
-    <figcaption class={captionClass()}>
+    <figcaption class={captionClass()} data-slot="image-block-caption">
       {caption}
     </figcaption>
   )}

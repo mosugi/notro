@@ -11,11 +11,11 @@ export const styledSpan = tv({
   variants: { color: notroColorVariants },
 });
 
-interface Props extends Omit<HTMLAttributes<'span'>, 'style' | 'color'>, VariantProps<typeof styledSpan> {
+type Props = Omit<HTMLAttributes<'span'>, 'style' | 'color'> & VariantProps<typeof styledSpan> & {
   underline?: string;
   // Notion/Shiki passes style as a React-style object or CSS string
   style?: string | Record<string, string>;
-}
+};
 
 const { color, underline, class: className, style: styleProp, ...rest } = Astro.props;
 
@@ -35,4 +35,4 @@ if (underline === 'true') styleObj['text-decoration'] = 'underline';
 const style = Object.keys(styleObj).length > 0 ? styleObj : undefined;
 ---
 
-<span class={styledSpan({ color, class: className })} style={style} {...rest}><slot /></span>
+<span class={styledSpan({ color, class: className })} style={style} data-slot="styled-span" {...rest}><slot /></span>

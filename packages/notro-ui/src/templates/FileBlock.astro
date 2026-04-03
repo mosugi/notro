@@ -13,22 +13,23 @@ export const fileBlock = tv({
   },
 });
 
-interface Props extends HTMLAttributes<'div'> {
+type Props = HTMLAttributes<'div'> & {
   src: string;
-}
+};
 
 const { src, class: className, ...rest } = Astro.props;
 const { root, link, icon } = fileBlock();
 ---
 
-<div class={root({ class: className })} {...rest}>
+<div class={root({ class: className })} data-slot="file-block" {...rest}>
   <a
     href={src}
     target="_blank"
     rel="noopener noreferrer"
     class={link()}
+    data-slot="file-block-link"
   >
-    <span class={icon()} aria-hidden="true">📎</span>
+    <span class={icon()} aria-hidden="true" data-slot="file-block-icon">📎</span>
     <slot />
   </a>
 </div>

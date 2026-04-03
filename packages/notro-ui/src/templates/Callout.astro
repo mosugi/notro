@@ -18,16 +18,20 @@ export const callout = tv({
   defaultVariants: { color: 'default' },
 });
 
-interface Props extends Omit<HTMLAttributes<'div'>, 'color'>, VariantProps<typeof callout> {
+export const calloutIcon = tv({ base: 'text-xl leading-none shrink-0' });
+
+export const calloutContent = tv({ base: 'min-w-0 flex-1 [&>:first-child]:mt-0 [&>:last-child]:mb-0' });
+
+type Props = Omit<HTMLAttributes<'div'>, 'color'> & VariantProps<typeof callout> & {
   icon?: string;
-}
+};
 
 const { icon, color, class: className, ...rest } = Astro.props;
 ---
 
-<div class={callout({ color, class: className })} {...rest}>
-  {icon && <span class="text-xl leading-none shrink-0" aria-hidden="true">{icon}</span>}
-  <div class="min-w-0 flex-1 [&>:first-child]:mt-0 [&>:last-child]:mb-0">
+<div class={callout({ color, class: className })} data-slot="callout" {...rest}>
+  {icon && <span class={calloutIcon()} aria-hidden="true" data-slot="callout-icon">{icon}</span>}
+  <div class={calloutContent()} data-slot="callout-content">
     <slot />
   </div>
 </div>
