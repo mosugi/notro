@@ -1,6 +1,6 @@
 # notro-tail — Astro template app
 
-`apps/notro-tail` is the reference Astro 5 website that ships with the monorepo.
+`apps/notro-tail` is the reference Astro 6 website that ships with the monorepo.
 It demonstrates every feature of the `notro` library and can be used as a starting point for your own Notion-backed site.
 
 ---
@@ -13,7 +13,6 @@ It demonstrates every feature of the `notro` library and can be used as a starti
 | `/blog/` | `src/pages/blog/[...page].astro` | Paginated blog list; page 1 shows pinned posts |
 | `/blog/[slug]/` | `src/pages/blog/[slug].astro` | Individual blog post with prev/next navigation |
 | `/blog/tag/[tag]/` | `src/pages/blog/tag/[tag]/[...page].astro` | Filtered list by tag with back link |
-| `/contact/` | `src/pages/contact.astro` | Static Astro page (no Notion) — explains how the site works |
 
 ---
 
@@ -21,16 +20,7 @@ It demonstrates every feature of the `notro` library and can be used as a starti
 
 ### `src/config.ts`
 
-Registers Notion pages that appear in the header navigation and assigns per-page body classes:
-
-```ts
-export const navPages: NavPageConfig[] = [
-  { slug: "about",   bodyClass: "page-about" },
-  { slug: "privacy", bodyClass: "page-privacy" },
-];
-```
-
-Any slug listed here is treated as a **fixed page** — excluded from blog pagination and prev/next navigation.
+Site-wide configuration: site name, language, analytics, posts per page, navigation links, footer links, and social links.
 
 ### `src/layouts/Layout.astro`
 
@@ -46,37 +36,12 @@ Canonical URL and `og:url` are computed automatically from `Astro.url`.
 
 ### `src/components/Header.astro`
 
-Sticky header with active-link highlighting. Reads `Astro.url.pathname` and applies `font-medium text-gray-900` to the current page. The **Docs** button (`/contact/`) is a filled blue pill that darkens when active.
+Sticky header with active-link highlighting. Reads `Astro.url.pathname` and applies `font-medium text-gray-900` to the current page.
 
 ### `src/styles/global.css`
 
 TailwindCSS 4 stylesheet. Defines:
-- `nt-*` utility classes for all Notion block types, colors, and annotations
-- `.nt-markdown-content` prose typography (headings, code, tables, links, …)
-- Per-page body themes (see below)
-
----
-
-## Per-Page Scoped Styles (`bodyClass`)
-
-Add a unique CSS class to `<body>` to give each page a distinct visual identity without affecting other pages. All content rules must be scoped under `main` or `.nt-markdown-content` to avoid leaking into the shared header/footer.
-
-| `bodyClass` | Visual theme |
-|-------------|-------------|
-| `page-about` | Blue 3 px top border on page; `h2` has blue left border + `bg-blue-50` tint; links are bold blue |
-| `page-privacy` | Compact legal style — small `tracking-widest` uppercase `h2`s with a ruled bottom border, `text-sm` body |
-| `page-contact` | Indigo-50 gradient on `<main>`; `h2` and links in indigo; `<section>` dividers |
-
-**How to add a new per-page theme:**
-
-1. Add `{ slug: "my-page", bodyClass: "page-my-page" }` to `src/config.ts`.
-2. Write `.page-my-page main h2 { … }` (or similar) in `global.css`.
-3. The `[slug].astro` route reads the config map and injects the class automatically.
-
-For static Astro pages (not Notion-backed), pass `bodyClass` directly:
-```astro
-<Layout title="My Page" bodyClass="page-my-page">
-```
+- `nt-*` utility classes for design tokens (text/bg/border opacity scale)
 
 ---
 
@@ -84,19 +49,15 @@ For static Astro pages (not Notion-backed), pass `bodyClass` directly:
 
 ### Prev/Next Navigation
 
-Each blog post page shows a two-column card at the bottom:
-- **← 新しい記事** — newer post (by `Date` property, descending)
-- **古い記事 →** — older post
-
-Posts tagged `"page"` (fixed pages like About, Privacy) are excluded from the sorted list and show no prev/next nav.
+Each blog post page shows a two-column card at the bottom linking to the adjacent posts sorted by `Date` (descending). Posts tagged `"page"` (fixed pages) are excluded from this list and show no prev/next nav.
 
 ### Pinned Posts
 
-Posts tagged `"pinned"` appear in a separate "ピン留め" section at the top of page 1 of the blog list. On page 2+, a "← ピン留め記事は1ページ目にあります" hint links back to page 1.
+Posts tagged `"pinned"` appear in a separate pinned section at the top of page 1 of the blog list. On page 2+, a hint links back to page 1.
 
 ### Tag Filtering
 
-`/blog/tag/[tag]/` lists all posts for a given tag. A "← ブログ一覧" back link appears above the heading.
+`/blog/tag/[tag]/` lists all posts for a given tag with a back link to the full blog list.
 
 ---
 

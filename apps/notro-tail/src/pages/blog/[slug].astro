@@ -42,13 +42,9 @@ const markdown = entry.data.markdown;
 // "page" = embedded fixed page (no article header)
 const isEmbeddedPage = hasTag(entry.data.properties.Tags, "page");
 const tags = getPublicTags(entry.data.properties.Tags, internalTags);
-
-// Look up per-page bodyClass from navPages config (for fixed pages only)
-const slug = getPlainText(entry.data.properties.Slug) || entry.id;
-const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass : undefined;
 ---
 
-<Layout title={`${title} — ${config.site.name}`} description={description} type={isEmbeddedPage ? "website" : "article"} bodyClass={bodyClass} datePublished={date}>
+<Layout title={`${title} — ${config.site.name}`} description={description} type={isEmbeddedPage ? "website" : "article"} datePublished={date}>
   <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
     <article class="mx-auto max-w-[720px]">
       <header class="mb-10 pb-6 border-b nt-border dark:border-white/8">
@@ -83,12 +79,6 @@ const bodyClass = isEmbeddedPage ? config.navigation.navPages[slug]?.bodyClass :
         components={notroComponents}
         class="notro-markdown"
       />
-
-      {entry.data.truncated && (
-        <div class="mt-8 rounded-md border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm text-amber-900 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-400">
-          このページのコンテンツは Notion API の制限により一部省略されています。
-        </div>
-      )}
 
       {!isEmbeddedPage && (prevNav || nextNav) && (
         <nav class="mt-12 flex items-stretch gap-4 pt-8 text-sm border-t nt-border dark:border-white/8">
