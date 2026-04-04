@@ -6,6 +6,7 @@ import { notroColorVariants } from './colors';
 export const tableCell = tv({
   base: 'px-3 py-1.5 text-sm',
   variants: { color: notroColorVariants },
+  defaultVariants: { color: 'default' },
 });
 
 type Props = Omit<HTMLAttributes<'td'>, 'color'> & VariantProps<typeof tableCell>;

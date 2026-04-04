@@ -10,6 +10,7 @@ import { notroColorVariants } from './colors';
 export const toggle = tv({
   base: 'notro-toggle my-1.5',
   variants: { color: notroColorVariants },
+  defaultVariants: { color: 'default' },
 });
 
 type Props = Omit<HTMLAttributes<'details'>, 'color'> & VariantProps<typeof toggle>;

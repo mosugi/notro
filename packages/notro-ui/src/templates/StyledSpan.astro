@@ -9,6 +9,7 @@ import { notroColorVariants } from './colors';
 export const styledSpan = tv({
   base: '',
   variants: { color: notroColorVariants },
+  defaultVariants: { color: 'default' },
 });
 
 type Props = Omit<HTMLAttributes<'span'>, 'style' | 'color'> & VariantProps<typeof styledSpan> & {

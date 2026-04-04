@@ -6,6 +6,7 @@ import { notroColorVariants } from './colors';
 export const h2 = tv({
   base: 'mb-2 mt-8 text-2xl font-semibold tracking-tight',
   variants: { color: notroColorVariants },
+  defaultVariants: { color: 'default' },
 });
 
 type Props = Omit<HTMLAttributes<'h2'>, 'color'> & VariantProps<typeof h2>;

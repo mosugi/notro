@@ -6,6 +6,7 @@ import { notroColorVariants } from './colors';
 export const h4 = tv({
   base: 'mb-1 mt-4 text-base font-semibold',
   variants: { color: notroColorVariants },
+  defaultVariants: { color: 'default' },
 });
 
 type Props = Omit<HTMLAttributes<'h4'>, 'color'> & VariantProps<typeof h4>;
