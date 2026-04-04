@@ -10,6 +10,20 @@ const config = {
     /** og:locale — typically lang + region, e.g. "ja_JP", "en_US" */
     locale: "ja_JP",
   },
+  /**
+   * Favicon configuration.
+   * Replace the files under public/ with your own icons to customize.
+   *
+   * - svg: shown in modern desktop/Android browsers. Replace public/favicon.svg.
+   * - png: fallback for older browsers. Add public/favicon.png if needed.
+   * - appleTouchIcon: iOS/Android homescreen icon (180×180 PNG recommended).
+   *   Add public/apple-touch-icon.png to enable homescreen icon support.
+   */
+  favicon: {
+    svg: "/favicon.svg",
+    png: undefined as string | undefined,
+    appleTouchIcon: undefined as string | undefined,
+  },
   analytics: {
     /**
      * Google Analytics 4 Measurement ID (e.g. "G-XXXXXXXXXX").
