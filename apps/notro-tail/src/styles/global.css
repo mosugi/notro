@@ -3,38 +3,9 @@
 /* KaTeX CSS for math rendering (used by rehype-katex) */
 @import "katex/dist/katex.min.css";
 
-/*
- * Notion color CSS custom properties (light mode defaults).
- * These are referenced by .nt-color-* utility classes so that:
- *   1. Dark mode can override all colors in one @media block.
- *   2. Users can customise individual colors without touching components.
- *
- * Used by the headless notro components (notionComponents from "notro").
- * notro-ui components use --notro-* variables from notro-theme.css instead.
- */
 :root {
   /* Base RGB channels for Notion's default text color (#37352f). */
   --nt-text-rgb: 55 53 47;
-
-  --nt-color-gray:   #787774;
-  --nt-color-brown:  #9F6B53;
-  --nt-color-orange: #D9730D;
-  --nt-color-yellow: #CB912F;
-  --nt-color-green:  #448361;
-  --nt-color-blue:   #337EA9;
-  --nt-color-purple: #9065B0;
-  --nt-color-pink:   #C14C8A;
-  --nt-color-red:    #D44C47;
-
-  --nt-color-gray-bg:   #F1F1EF;
-  --nt-color-brown-bg:  #F4EEEE;
-  --nt-color-orange-bg: #FBECDD;
-  --nt-color-yellow-bg: #FBF3DB;
-  --nt-color-green-bg:  #EDF3EC;
-  --nt-color-blue-bg:   #E7F3F8;
-  --nt-color-purple-bg: #F6F3F9;
-  --nt-color-pink-bg:   #FAF1F5;
-  --nt-color-red-bg:    #FDEBEC;
 }
 
 @layer base {
@@ -51,27 +22,6 @@
  * Notion block styling is handled by notro-ui components + notro-theme.css.
  */
 @layer utilities {
-  /* Notion text color classes (used by headless notro components) */
-  .nt-color-gray              { @apply text-[var(--nt-color-gray)]; }
-  .nt-color-brown             { @apply text-[var(--nt-color-brown)]; }
-  .nt-color-orange            { @apply text-[var(--nt-color-orange)]; }
-  .nt-color-yellow            { @apply text-[var(--nt-color-yellow)]; }
-  .nt-color-green             { @apply text-[var(--nt-color-green)]; }
-  .nt-color-blue              { @apply text-[var(--nt-color-blue)]; }
-  .nt-color-purple            { @apply text-[var(--nt-color-purple)]; }
-  .nt-color-pink              { @apply text-[var(--nt-color-pink)]; }
-  .nt-color-red               { @apply text-[var(--nt-color-red)]; }
-
-  .nt-color-gray_background   { @apply bg-[var(--nt-color-gray-bg)]; }
-  .nt-color-brown_background  { @apply bg-[var(--nt-color-brown-bg)]; }
-  .nt-color-orange_background { @apply bg-[var(--nt-color-orange-bg)]; }
-  .nt-color-yellow_background { @apply bg-[var(--nt-color-yellow-bg)]; }
-  .nt-color-green_background  { @apply bg-[var(--nt-color-green-bg)]; }
-  .nt-color-blue_background   { @apply bg-[var(--nt-color-blue-bg)]; }
-  .nt-color-purple_background { @apply bg-[var(--nt-color-purple-bg)]; }
-  .nt-color-pink_background   { @apply bg-[var(--nt-color-pink-bg)]; }
-  .nt-color-red_background    { @apply bg-[var(--nt-color-red-bg)]; }
-
   /* Base text/bg/border scale — used in page HTML for design tokens */
   .nt-text    { color: rgb(var(--nt-text-rgb)); }
   .nt-text-80 { color: rgb(var(--nt-text-rgb) / 0.80); }
@@ -145,26 +95,6 @@
 /* ── Dark mode ───────────────────────────────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
   :root {
-    --nt-color-gray:   #9b9b97;
-    --nt-color-brown:  #c49a82;
-    --nt-color-orange: #e88c4a;
-    --nt-color-yellow: #d9a84e;
-    --nt-color-green:  #6aad8a;
-    --nt-color-blue:   #5ba5cc;
-    --nt-color-purple: #b08fd0;
-    --nt-color-pink:   #d97ab3;
-    --nt-color-red:    #e07b78;
-
     --nt-text-rgb: 226 232 240;
-
-    --nt-color-gray-bg:   #2d2d2b;
-    --nt-color-brown-bg:  #2e2320;
-    --nt-color-orange-bg: #2e2010;
-    --nt-color-yellow-bg: #2b2410;
-    --nt-color-green-bg:  #182b22;
-    --nt-color-blue-bg:   #142533;
-    --nt-color-purple-bg: #21192d;
-    --nt-color-pink-bg:   #2d1425;
-    --nt-color-red-bg:    #2d1314;
   }
 }

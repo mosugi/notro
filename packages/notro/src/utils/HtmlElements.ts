@@ -25,19 +25,3 @@ export function makeHtmlElement(tag: string, cls?: string) {
 	return HtmlElement;
 }
 
-// ── Block elements ─────────────────────────────────────────────
-export const ParagraphEl     = makeHtmlElement('p');
-export const UnorderedListEl = makeHtmlElement('ul');
-export const OrderedListEl   = makeHtmlElement('ol');
-export const ListItemEl      = makeHtmlElement('li');
-export const PreEl           = makeHtmlElement('pre');
-export const HrEl            = makeHtmlElement('hr');
-
-// ── Inline elements ────────────────────────────────────────────
-export const AnchorEl        = makeHtmlElement('a');
-export const StrongEl        = makeHtmlElement('strong');
-export const EmEl            = makeHtmlElement('em');
-export const DelEl           = makeHtmlElement('del');
-
-// ── Table header cell ──────────────────────────────────────────
-export const ThEl            = makeHtmlElement('th');

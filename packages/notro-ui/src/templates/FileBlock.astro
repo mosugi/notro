@@ -2,22 +2,34 @@
 /**
  * Notion file attachment block.
  */
+import type { HTMLAttributes } from 'astro/types';
 import { tv } from 'tailwind-variants';
 
-export const fileBlock = tv({ base: 'my-2' });
+export const fileBlock = tv({
+  slots: {
+    root: 'my-2',
+    link: 'inline-flex items-center gap-1.5 text-[var(--notro-text)] underline underline-offset-2 hover:opacity-70',
+    icon: 'text-base',
+  },
+});
 
-interface Props { src: string; class?: string; }
-const { src, class: className } = Astro.props;
+type Props = HTMLAttributes<'div'> & {
+  src: string;
+};
+
+const { src, class: className, ...rest } = Astro.props;
+const { root, link, icon } = fileBlock();
 ---
 
-<div class={fileBlock({ class: className })}>
+<div class={root({ class: className })} data-slot="file-block" {...rest}>
   <a
     href={src}
     target="_blank"
     rel="noopener noreferrer"
-    class="inline-flex items-center gap-1.5 text-[var(--notro-text)] underline underline-offset-2 hover:opacity-70"
+    class={link()}
+    data-slot="file-block-link"
   >
-    <span class="text-base" aria-hidden="true">📎</span>
+    <span class={icon()} aria-hidden="true" data-slot="file-block-icon">📎</span>
     <slot />
   </a>
 </div>
