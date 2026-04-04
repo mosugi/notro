@@ -8,6 +8,36 @@ An Astro Content Loader library that fetches Notion database content via the [Ma
 > [!TIP]
 > Sample project: [NotroTail](https://github.com/mosugi/NotroTail)
 
+## What NotroContent renders
+
+`NotroContent` compiles Notion markdown into HTML. Each Notion block type maps to a semantic HTML element by default. You can replace any element with your own styled component via the `components` prop.
+
+| Notion block | Default HTML | notro-ui component |
+|---|---|---|
+| Paragraph | `<p>` | `ColoredParagraph` |
+| Heading 1–4 | `<h1>`–`<h4>` | `H1`–`H4` |
+| Callout | `<aside>` | `Callout` |
+| Quote | `<blockquote>` | `Quote` |
+| Toggle | `<details>` + `<summary>` | `Toggle` + `ToggleTitle` |
+| Divider | `<hr>` | — |
+| Code | `<pre>` | — |
+| Image | `<img>` | `ImageBlock` |
+| Video | `<figure>` | `Video` |
+| Audio | `<figure>` | `Audio` |
+| File | `<div>` | `FileBlock` |
+| PDF | `<figure>` | `PdfBlock` |
+| Table | `<table>` | `TableBlock` |
+| Table of contents | `<nav>` | `TableOfContents` |
+| Columns / Column | `<div>` / `<div>` | `Columns` / `Column` |
+| Page link | `<a>` | `PageRef` |
+| Database link | `<a>` | `DatabaseRef` |
+| Empty block | `<div>` | `EmptyBlock` |
+| Inline text (colored/underline) | `<span>` | `StyledSpan` |
+| @mention | `<span>` | `Mention` |
+| Date mention | `<time>` | `MentionDate` |
+
+`notro-ui` is an optional style layer. See [notro-ui](https://github.com/mosugi/notro-tail/tree/main/packages/notro-ui) for details.
+
 ## Installation
 
 ```sh
@@ -16,7 +46,20 @@ npm install notro
 
 ## Setup
 
-### 1. `src/content.config.ts`
+### 1. `astro.config.mjs`
+
+Add the `notro()` integration. This registers `@astrojs/mdx` with the required plugin pipeline and the Astro JSX renderer that `NotroContent` depends on at runtime.
+
+```js
+import { defineConfig } from "astro/config";
+import { notro } from "notro/integration";
+
+export default defineConfig({
+  integrations: [notro()],
+});
+```
+
+### 2. `src/content.config.ts`
 
 Define your collection using the `loader` function. Extend `pageWithMarkdownSchema` with your database properties. Use the `notroProperties` shorthand for concise property schemas.
 
@@ -52,33 +95,46 @@ const posts = defineCollection({
 export const collections = { posts };
 ```
 
-### 2. Page component
+### 3. Page component
 
-Render Markdown with `NotroContent` and extract text from properties with `getPlainText`.
-For component styling, use [notro-ui](https://github.com/mosugi/notro-tail/tree/main/packages/notro-ui).
+#### Option A — Headless (no styling)
 
-```sh
-# Copy notro-ui components into src/components/notro/
-npx notro-ui init
-```
+`NotroContent` from `notro` renders semantic HTML with no classes.
 
 ```astro
 ---
-import { getCollection } from "astro:content";
-import { getPlainText } from "notro";
-import NotroContent from "../../components/notro/NotroContent.astro";
+import { NotroContent, getPlainText } from "notro";
 
-const posts = await getCollection("posts");
 const { entry } = Astro.props;
-
 const title = getPlainText(entry.data.properties.Name);
-const markdown = entry.data.markdown;
 ---
 
-<NotroContent markdown={markdown} />
+<h1>{title}</h1>
+<NotroContent markdown={entry.data.markdown} />
 ```
 
-Components are placed in `src/components/notro/` so you can edit them directly to customize styles.
+#### Option B — With notro-ui
+
+Install the styled components once:
+
+```sh
+npx notro-ui init
+```
+
+Then pass the component map to `NotroContent`:
+
+```astro
+---
+import { NotroContent, getPlainText } from "notro";
+import { notroComponents } from "@/components/notro";
+
+const { entry } = Astro.props;
+---
+
+<NotroContent markdown={entry.data.markdown} components={notroComponents} />
+```
+
+Components are copied into `src/components/notro/` so you can edit them directly.
 
 ## Markdown processing (remark-nfm)
 
@@ -162,7 +218,7 @@ Individual schemas (e.g. `titlePropertyPageObjectResponseSchema`) remain exporte
 
 | Component | Description |
 |---|---|
-| `NotroContent` | Renders Notion Markdown to HTML (unstyled). For styled output, see `notro-ui` |
+| `NotroContent` | Renders Notion Markdown to HTML. Unstyled by default; pass `components` to customize |
 | `DatabaseCover` | Renders a Notion cover image with optimization |
 | `DatabaseProperty` | Renders a Notion property value by type |
 | `compileMdxCached` | Low-level MDX compile API. Use when building a custom `NotroContent` |
