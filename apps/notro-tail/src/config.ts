@@ -57,13 +57,6 @@ const config = {
       github: "https://github.com/mosugi/notro-tail",
       npm: "https://www.npmjs.com/package/notro",
     },
-    // Per-page settings for Notion fixed pages (tagged "page").
-    // Key = Notion page slug. bodyClass is injected into <body> for per-page theming.
-    navPages: {
-      about:   { bodyClass: "page-about" },
-      privacy: { bodyClass: "page-privacy" },
-      contact: { bodyClass: "page-contact" },
-    } as Record<string, { bodyClass?: string }>,
   },
 };
 

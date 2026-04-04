@@ -55,43 +55,6 @@
   .nt-border-30 { border-color: rgb(var(--nt-text-rgb) / 0.30); }
 }
 
-/* ── Per-page scoped themes ──────────────────────────────────────────────── */
-/* Applied via bodyClass prop on <Layout> for Notion fixed pages. */
-
-.page-about main .nt-markdown-content h2,
-.page-about main .notro-markdown h2 {
-  @apply border-l-4 border-blue-500 pl-3 text-blue-800 dark:text-blue-300;
-}
-.page-about main .nt-markdown-content a,
-.page-about main .notro-markdown a {
-  @apply font-semibold text-blue-600 dark:text-blue-400;
-}
-
-.page-privacy main .nt-markdown-content h2,
-.page-privacy main .notro-markdown h2 {
-  @apply text-xs uppercase tracking-widest text-gray-500 dark:text-slate-400;
-}
-.page-privacy main .nt-markdown-content,
-.page-privacy main .notro-markdown {
-  @apply text-sm;
-}
-
-.page-contact main {
-  @apply bg-gradient-to-b from-indigo-50 to-white dark:from-indigo-950/20 dark:to-transparent;
-}
-.page-contact main .nt-markdown-content h2,
-.page-contact main .notro-markdown h2 {
-  @apply text-indigo-700 dark:text-indigo-300;
-}
-.page-contact main .nt-markdown-content a,
-.page-contact main .notro-markdown a {
-  @apply text-indigo-600 dark:text-indigo-400;
-}
-.page-contact main .nt-markdown-content hr,
-.page-contact main .notro-markdown hr {
-  @apply border-indigo-200 dark:border-indigo-900;
-}
-
 /* ── Dark mode ───────────────────────────────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
   :root {
