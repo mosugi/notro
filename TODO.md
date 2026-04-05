@@ -102,7 +102,7 @@
   | `NOTION_DATASOURCE_ID` | ✓ | Notion データソース ID（DB ID） |
 
 - [ ] **Vercel / Netlify デプロイガイド**
-  - Vercel: `vercel.json` が `template/dist` を自動設定
+  - Vercel: `vercel.json` が `templates/blog/dist` を自動設定
   - Netlify: `netlify.toml` が設定済みのためそのままデプロイ可
   - 環境変数の設定箇所（各ダッシュボードのスクリーンショット or リンク）
 

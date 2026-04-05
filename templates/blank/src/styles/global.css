@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@import "./notro-theme.css";
+
+:root {
+  /* Base RGB channels for Notion's default text color (#37352f). */
+  --nt-text-rgb: 55 53 47;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --nt-text-rgb: 226 232 240;
+  }
+}

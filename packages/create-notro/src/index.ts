@@ -15,6 +15,19 @@ function detectPackageManager(): "npm" | "pnpm" | "yarn" | "bun" {
   return "npm";
 }
 
+const TEMPLATES = {
+  blog: {
+    label: "Blog",
+    hint: "Full-featured blog with list, tags, pagination, RSS, and SEO",
+  },
+  blank: {
+    label: "Blank",
+    hint: "Minimal starter — just pages and Notion content rendering",
+  },
+} as const;
+
+type TemplateName = keyof typeof TEMPLATES;
+
 async function main() {
   console.log("");
   p.intro(pc.bgCyan(pc.black(" create-notro ")));
@@ -36,6 +49,19 @@ async function main() {
     process.exit(0);
   }
 
+  // Template selection
+  const template = await p.select({
+    message: "Choose a template",
+    options: (Object.entries(TEMPLATES) as [TemplateName, (typeof TEMPLATES)[TemplateName]][]).map(
+      ([value, { label, hint }]) => ({ value, label, hint }),
+    ),
+  });
+
+  if (p.isCancel(template)) {
+    p.cancel("Cancelled.");
+    process.exit(0);
+  }
+
   const installDeps = await p.confirm({
     message: "Install dependencies now?",
     initialValue: true,
@@ -53,7 +79,7 @@ async function main() {
   spin.start("Downloading template…");
 
   try {
-    await downloadTemplate("github:mosugi/notro-tail/template", {
+    await downloadTemplate(`github:mosugi/notro-tail/templates/${template as TemplateName}`, {
       dir: projectName as string,
       forceClean: false,
     });

@@ -163,7 +163,7 @@ npx notro-ui list
 
 ## Reference implementation
 
-[`template/`](../../template/) is the reference implementation. It shows what a project looks like after running `npx notro-ui init`:
+[`templates/blog/`](../../templates/blog/) is the reference implementation. It shows what a project looks like after running `npx notro-ui init`:
 
 - `src/components/notro/` — installed components
 - `src/styles/notro-theme.css` — installed theme
