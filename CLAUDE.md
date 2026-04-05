@@ -1,4 +1,4 @@
-# notro-tail
+# notro
 
 ## 言語設定
 
@@ -163,7 +163,7 @@ The repo is an **npm workspace monorepo** with three packages:
 | Package | Path | Purpose |
 |---|---|---|
 | `remark-nfm` | `packages/remark-nfm/` | Pure remark plugin for Notion-flavored Markdown — pre-parse normalization, `:::callout` directive syntax, and callout conversion. No Astro or Notion API dependencies; independently publishable to npm. |
-| `notro` | `packages/notro/` | The publishable npm library (Astro Content Loader + MDX compile pipeline + Notion block components). Uses `remark-nfm` internally. |
+| `notro-loader` | `packages/notro-loader/` | The publishable npm library (Astro Content Loader + MDX compile pipeline + Notion block components). Uses `remark-nfm` internally. |
 | `notro-tail` (blog) | `templates/blog/` | Full-featured blog template (reference app, fetched by `create-notro`) |
 | `notro-blank` (blank) | `templates/blank/` | Minimal starter template |
 
@@ -210,7 +210,7 @@ notro-tail/
 │   │       ├── nfm.ts           # remarkNfm plugin (pre-parse + directive + callout)
 │   │       ├── transformer.ts   # preprocessNotionMarkdown() — 10 fixes for Notion markdown quirks
 │   │       └── callout.ts       # calloutPlugin — converts :::callout directives to <callout> elements
-│   └── notro/               # npm library ("notro" package)
+│   └── notro-loader/        # npm library ("notro-loader" package)
 │       ├── index.ts         # Public API exports
 │       ├── src/
 │       │   ├── components/  # Astro components (NotroContent, DatabaseCover, DatabaseProperty)
@@ -236,13 +236,13 @@ notro-tail/
 
 ### `notro` Package Entry Points
 
-The `notro` package exposes three entry points, each designed for a specific import context:
+The `notro-loader` package exposes three entry points, each designed for a specific import context:
 
 | Entry point | Import | Use case |
 |---|---|---|
-| `notro` | `import { NotroContent, loader, ... } from "notro"` | Astro components and the Content Loader. **Cannot** be used in `astro.config.mjs` because Astro config is evaluated before the JSX renderer is registered. |
-| `notro/utils` | `import { getPlainText, normalizeNotionPresignedUrl, ... } from "notro/utils"` | Pure TypeScript helpers with no Astro component imports. Safe to use anywhere: config files, Node scripts, image services. |
-| `notro/integration` | `import { notro } from "notro/integration"` | The `notro()` Astro integration. Used in `astro.config.mjs` to inject `@astrojs/mdx` with the correct plugin pipeline. |
+| `notro-loader` | `import { NotroContent, loader, ... } from "notro-loader"` | Astro components and the Content Loader. **Cannot** be used in `astro.config.mjs` because Astro config is evaluated before the JSX renderer is registered. |
+| `notro-loader/utils` | `import { getPlainText, normalizeNotionPresignedUrl, ... } from "notro-loader/utils"` | Pure TypeScript helpers with no Astro component imports. Safe to use anywhere: config files, Node scripts, image services. |
+| `notro-loader/integration` | `import { notro } from "notro-loader/integration"` | The `notro()` Astro integration. Used in `astro.config.mjs` to inject `@astrojs/mdx` with the correct plugin pipeline. |
 
 ### `notro()` Astro Integration
 
@@ -253,20 +253,20 @@ The `notro` package exposes three entry points, each designed for a specific imp
 
 Usage in `astro.config.mjs`:
 ```js
-import { notro } from "notro/integration";
+import { notro } from "notro-loader/integration";
 export default defineConfig({ integrations: [notro(), sitemap()] });
 ```
 
 ### Content Loading Flow
 
 1. **Astro Content Collections** (`content.config.ts`) defines the `posts` collection (the template app; extend as needed for additional collections).
-2. Each collection uses the `loader()` from `notro`, which calls the Notion Public API (`dataSources.query` + `pages.retrieveMarkdown`).
+2. Each collection uses the `loader()` from `notro-loader`, which calls the Notion Public API (`dataSources.query` + `pages.retrieveMarkdown`).
 3. The loader caches pages by `last_edited_time` digest, and invalidates cache entries that are deleted, edited, or contain expired Notion pre-signed S3 URLs.
 4. Each page's preprocessed Markdown is stored in the Content Collection store. Pages render it via `NotroContent`, which calls `compileMdxCached()` to compile the markdown into an Astro component via `@mdx-js/mdx`'s `evaluate()`, then renders it with `<Content components={notionComponents} />`.
 
 ### MDX Compile Pipeline
 
-Defined in `packages/notro/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evaluate()`. No `astro.config.mjs` configuration is required — the pipeline runs entirely at render time inside `NotroContent`.
+Defined in `packages/notro-loader/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evaluate()`. No `astro.config.mjs` configuration is required — the pipeline runs entirely at render time inside `NotroContent`.
 
 **Remark plugins** (parse Markdown → mdast):
 - `remarkNfm` (from `remark-nfm`) — bundles pre-parse normalization (`preprocessNotionMarkdown`), directive syntax support, and callout conversion in one plugin
@@ -288,11 +288,11 @@ Defined in `packages/notro/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evalua
 
 ### Markdown Rendering
 
-Pages render Notion markdown via the `NotroContent` component from `notro`. It accepts preprocessed markdown stored by the loader, compiles it via `compileMdxCached()`, and renders it with component mapping:
+Pages render Notion markdown via the `NotroContent` component from `notro-loader`. It accepts preprocessed markdown stored by the loader, compiles it via `compileMdxCached()`, and renders it with component mapping:
 
 ```astro
 ---
-import { NotroContent } from "notro";
+import { NotroContent } from "notro-loader";
 const markdown = entry.data.markdown;
 ---
 
@@ -448,8 +448,8 @@ npm run preview --workspace=notro-tail
 ```bash
 # Format TypeScript and Astro files
 npm run format --workspace=notro-tail
-# or from packages/notro:
-npm run format --workspace=notro
+# or from packages/notro-loader:
+npm run format --workspace=notro-loader
 ```
 
 Uses Prettier with `prettier-plugin-astro`.
@@ -464,9 +464,9 @@ cd templates/blog && npx astro check
 
 ---
 
-## Package Publishing (`packages/notro`)
+## Package Publishing (`packages/notro-loader`)
 
-The `notro` package is published to npm. It uses [Changesets](https://github.com/changesets/changesets) for versioning.
+The `notro-loader` package is published to npm. It uses [Changesets](https://github.com/changesets/changesets) for versioning.
 
 ```bash
 # Create a changeset for your changes
@@ -482,7 +482,7 @@ npm run changeset-publish
 Config: `.changeset/config.json` — base branch is `main`, access is `public`.
 
 The package's `exports` map:
-- `"notro"` → `index.ts` (components, loader, schemas, utils)
+- `"notro-loader"` → `index.ts` (components, loader, schemas, utils)
 
 ---
 

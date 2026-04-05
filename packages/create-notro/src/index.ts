@@ -79,7 +79,7 @@ async function main() {
   spin.start("Downloading template…");
 
   try {
-    await downloadTemplate(`github:mosugi/notro-tail/templates/${template as TemplateName}`, {
+    await downloadTemplate(`github:mosugi/notro/templates/${template as TemplateName}`, {
       dir: projectName as string,
       forceClean: false,
     });
@@ -136,7 +136,7 @@ async function main() {
   );
 
   p.outro(
-    `Documentation: ${pc.underline("https://github.com/mosugi/notro-tail")}`,
+    `Documentation: ${pc.underline("https://github.com/mosugi/notro")}`,
   );
 }
 

@@ -1,7 +1,7 @@
 import type { CollectionEntry } from "astro:content";
-// Use notro/utils (no .astro component deps) for pure utility functions
-import { getPlainText, getMultiSelect, hasTag } from "notro/utils";
-import type { PropertyPageObjectResponseType } from "notro";
+// Use notro-loader/utils (no .astro component deps) for pure utility functions
+import { getPlainText, getMultiSelect, hasTag } from "notro-loader/utils";
+import type { PropertyPageObjectResponseType } from "notro-loader";
 
 type PostEntry = CollectionEntry<"posts">;
 

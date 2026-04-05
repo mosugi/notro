@@ -1,8 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import { NotroContent } from "notro";
-import { getPlainText } from "notro/utils";
+import { NotroContent } from "notro-loader";
+import { getPlainText } from "notro-loader/utils";
 
 export async function getStaticPaths() {
   const pages = await getCollection("pages");

@@ -1,5 +1,5 @@
 import sharpImageService from "astro/assets/services/sharp";
-import { normalizeNotionPresignedUrl } from "notro/utils";
+import { normalizeNotionPresignedUrl } from "notro-loader/utils";
 
 /**
  * Returns the Astro image service config object for astro.config.mjs.

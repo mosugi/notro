@@ -1,5 +1,5 @@
 {
-  "name": "notro",
+  "name": "notro-loader",
   "description": "A Content loader for Astro that uses the Notion Public API",
   "version": "0.0.1",
   "type": "module",
@@ -7,8 +7,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mosugi/NotroTail.git",
-    "directory": "packages/notro"
+    "url": "git+https://github.com/mosugi/notro.git",
+    "directory": "packages/notro-loader"
   },
   "keywords": [
     "astro",
@@ -19,9 +19,9 @@
     "notion"
   ],
   "bugs": {
-    "url": "https://github.com/mosugi/NotroTail/issues"
+    "url": "https://github.com/mosugi/notro/issues"
   },
-  "homepage": "https://notrotail.mosugi.com",
+  "homepage": "https://github.com/mosugi/notro",
   "exports": {
     ".": {
       "astro": "./index.ts",

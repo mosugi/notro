@@ -1,5 +1,5 @@
 import { defineCollection } from "astro:content";
-import { loader, notroProperties, pageWithMarkdownSchema } from "notro";
+import { loader, notroProperties, pageWithMarkdownSchema } from "notro-loader";
 import { z } from "zod";
 
 const pagesCollection = defineCollection({

@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import { getPlainText } from "notro/utils";
+import { getPlainText } from "notro-loader/utils";
 
 const pages = await getCollection("pages");
 const sorted = pages.slice().sort((a, b) => {

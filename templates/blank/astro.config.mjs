@@ -1,6 +1,6 @@
 import { defineConfig } from "astro/config";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
-import { notro } from "notro/integration";
+import { notro } from "notro-loader/integration";
 
 // Apply HTTPS proxy for corporate networks or CI environments.
 const httpsProxy = process.env.https_proxy || process.env.HTTPS_PROXY;

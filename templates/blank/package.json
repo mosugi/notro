@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "astro": "^6.0.4",
-    "notro": "^0.0.1"
+    "notro-loader": "^0.0.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.7",

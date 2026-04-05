@@ -2,7 +2,7 @@
  * Component registry — maps all Notion block types to installed components.
  *
  * Usage:
- *   import { NotroContent } from 'notro';
+ *   import { NotroContent } from 'notro-loader';
  *   import { notroComponents } from '@/components/notro';
  *
  *   <NotroContent markdown={md} {linkToPages} components={notroComponents} />
@@ -10,7 +10,7 @@
  * To override a component for one-off use:
  *   components={{ ...notroComponents, callout: MyCallout }}
  */
-import { makeHtmlElement } from 'notro';
+import { makeHtmlElement } from 'notro-loader';
 
 // Site-customized components (differ from notro-ui defaults)
 import Callout          from './Callout.astro';   // rounded-md (vs rounded-lg default)
