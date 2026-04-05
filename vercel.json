@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "apps/notro-tail/dist",
+  "outputDirectory": "templates/blog/dist",
   "installCommand": "npm install",
   "framework": null
 }

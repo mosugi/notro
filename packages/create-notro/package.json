@@ -7,9 +7,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mosugi/notro-tail.git"
+    "url": "git+https://github.com/mosugi/notro.git"
   },
-  "homepage": "https://github.com/mosugi/notro-tail",
+  "homepage": "https://github.com/mosugi/notro",
   "bin": {
     "create-notro": "./dist/index.js"
   },

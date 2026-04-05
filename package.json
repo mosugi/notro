@@ -5,7 +5,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mosugi/NotroTail.git"
+    "url": "git+https://github.com/mosugi/notro.git"
   },
   "scripts": {
     "dev": "npm run dev -w notro-tail",
@@ -19,7 +19,7 @@
     "changeset-publish": "npm run build && changeset publish"
   },
   "workspaces": [
-    "apps/*",
+    "templates/*",
     "packages/*",
     "docs"
   ],

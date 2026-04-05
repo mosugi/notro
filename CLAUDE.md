@@ -1,4 +1,4 @@
-# notro-tail
+# notro
 
 ## 言語設定
 
@@ -71,7 +71,7 @@ npm run preview --workspace=notro-tail
 - データ取得・変換・ビジネスロジックは `src/lib/` 配下の `.ts` ファイルに関数として切り出すこと
 - 切り出した関数には必ずユニットテストを書くこと（`vitest` を使用）
 - テスト対象の範囲：
-  - `apps/notro-tail/src/lib/` 配下の関数（追加・変更時）
+  - `templates/blog/src/lib/` 配下の関数（追加・変更時）
   - `packages/*/src/utils/` 配下の外部から呼び出される関数
   - Astro コンポーネント（`.astro`）自体はテスト不要。ロジックを `.ts` に切り出してその関数をテストすること
 
@@ -163,8 +163,9 @@ The repo is an **npm workspace monorepo** with three packages:
 | Package | Path | Purpose |
 |---|---|---|
 | `remark-nfm` | `packages/remark-nfm/` | Pure remark plugin for Notion-flavored Markdown — pre-parse normalization, `:::callout` directive syntax, and callout conversion. No Astro or Notion API dependencies; independently publishable to npm. |
-| `notro` | `packages/notro/` | The publishable npm library (Astro Content Loader + MDX compile pipeline + Notion block components). Uses `remark-nfm` internally. |
-| `notro-tail` | `apps/notro-tail/` | The deployable Astro 6 website (template / reference app) |
+| `notro-loader` | `packages/notro-loader/` | The publishable npm library (Astro Content Loader + MDX compile pipeline + Notion block components). Uses `remark-nfm` internally. |
+| `notro-tail` (blog) | `templates/blog/` | Full-featured blog template (reference app, fetched by `create-notro`) |
+| `notro-blank` (blank) | `templates/blank/` | Minimal starter template |
 
 ---
 
@@ -172,24 +173,33 @@ The repo is an **npm workspace monorepo** with three packages:
 
 ```
 notro-tail/
-├── apps/
-│   └── notro-tail/          # Astro website template
+├── templates/
+│   ├── blog/                # Full-featured blog template (reference app + create-notro source)
+│   │   ├── src/
+│   │   │   ├── components/  # Header, Footer, BlogList
+│   │   │   ├── layouts/     # Layout.astro (base HTML shell)
+│   │   │   ├── lib/         # notionImageService.ts (custom Astro image service)
+│   │   │   ├── pages/       # File-based routing
+│   │   │   │   ├── index.astro              # Top page
+│   │   │   │   └── blog/
+│   │   │   │       ├── [...page].astro      # Paginated blog list
+│   │   │   │       ├── [slug].astro         # Individual blog posts
+│   │   │   │       └── tag/[tag]/[...page].astro
+│   │   │   ├── styles/
+│   │   │   │   └── global.css  # TailwindCSS 4 imports + nt-* utility classes
+│   │   │   ├── content.config.ts  # Astro Content Collections (posts)
+│   │   │   └── env.d.ts
+│   │   ├── src/config.ts        # navPages (fixed pages map: slug → title/bodyClass)
+│   │   ├── astro.config.mjs
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   └── blank/               # Minimal starter template
 │       ├── src/
-│       │   ├── components/  # Header, Footer, BlogList
-│       │   ├── layouts/     # Layout.astro (base HTML shell)
-│       │   ├── lib/         # notionImageService.ts (custom Astro image service)
-│       │   ├── pages/       # File-based routing
-│       │   │   ├── index.astro              # Top page
-│       │   │   └── blog/
-│       │   │       ├── [...page].astro      # Paginated blog list
-│       │   │       ├── [slug].astro         # Individual blog posts
-│       │   │       └── tag/[tag]/[...page].astro
-│       │   ├── styles/
-│       │   │   └── global.css  # TailwindCSS 4 imports + nt-* utility classes
-│       │   ├── content.config.ts  # Astro Content Collections (posts)
-│       │   └── env.d.ts
-│       ├── src/
-│       │   └── config.ts            # navPages (fixed pages map: slug → title/bodyClass)
+│       │   ├── layouts/     # Layout.astro (simple HTML shell)
+│       │   ├── lib/         # notionImageService.ts
+│       │   ├── pages/       # index.astro + [slug].astro
+│       │   ├── styles/      # global.css + notro-theme.css
+│       │   └── content.config.ts
 │       ├── astro.config.mjs
 │       ├── package.json
 │       └── tsconfig.json
@@ -200,7 +210,7 @@ notro-tail/
 │   │       ├── nfm.ts           # remarkNfm plugin (pre-parse + directive + callout)
 │   │       ├── transformer.ts   # preprocessNotionMarkdown() — 10 fixes for Notion markdown quirks
 │   │       └── callout.ts       # calloutPlugin — converts :::callout directives to <callout> elements
-│   └── notro/               # npm library ("notro" package)
+│   └── notro-loader/        # npm library ("notro-loader" package)
 │       ├── index.ts         # Public API exports
 │       ├── src/
 │       │   ├── components/  # Astro components (NotroContent, DatabaseCover, DatabaseProperty)
@@ -226,13 +236,13 @@ notro-tail/
 
 ### `notro` Package Entry Points
 
-The `notro` package exposes three entry points, each designed for a specific import context:
+The `notro-loader` package exposes three entry points, each designed for a specific import context:
 
 | Entry point | Import | Use case |
 |---|---|---|
-| `notro` | `import { NotroContent, loader, ... } from "notro"` | Astro components and the Content Loader. **Cannot** be used in `astro.config.mjs` because Astro config is evaluated before the JSX renderer is registered. |
-| `notro/utils` | `import { getPlainText, normalizeNotionPresignedUrl, ... } from "notro/utils"` | Pure TypeScript helpers with no Astro component imports. Safe to use anywhere: config files, Node scripts, image services. |
-| `notro/integration` | `import { notro } from "notro/integration"` | The `notro()` Astro integration. Used in `astro.config.mjs` to inject `@astrojs/mdx` with the correct plugin pipeline. |
+| `notro-loader` | `import { NotroContent, loader, ... } from "notro-loader"` | Astro components and the Content Loader. **Cannot** be used in `astro.config.mjs` because Astro config is evaluated before the JSX renderer is registered. |
+| `notro-loader/utils` | `import { getPlainText, normalizeNotionPresignedUrl, ... } from "notro-loader/utils"` | Pure TypeScript helpers with no Astro component imports. Safe to use anywhere: config files, Node scripts, image services. |
+| `notro-loader/integration` | `import { notro } from "notro-loader/integration"` | The `notro()` Astro integration. Used in `astro.config.mjs` to inject `@astrojs/mdx` with the correct plugin pipeline. |
 
 ### `notro()` Astro Integration
 
@@ -243,20 +253,20 @@ The `notro` package exposes three entry points, each designed for a specific imp
 
 Usage in `astro.config.mjs`:
 ```js
-import { notro } from "notro/integration";
+import { notro } from "notro-loader/integration";
 export default defineConfig({ integrations: [notro(), sitemap()] });
 ```
 
 ### Content Loading Flow
 
 1. **Astro Content Collections** (`content.config.ts`) defines the `posts` collection (the template app; extend as needed for additional collections).
-2. Each collection uses the `loader()` from `notro`, which calls the Notion Public API (`dataSources.query` + `pages.retrieveMarkdown`).
+2. Each collection uses the `loader()` from `notro-loader`, which calls the Notion Public API (`dataSources.query` + `pages.retrieveMarkdown`).
 3. The loader caches pages by `last_edited_time` digest, and invalidates cache entries that are deleted, edited, or contain expired Notion pre-signed S3 URLs.
 4. Each page's preprocessed Markdown is stored in the Content Collection store. Pages render it via `NotroContent`, which calls `compileMdxCached()` to compile the markdown into an Astro component via `@mdx-js/mdx`'s `evaluate()`, then renders it with `<Content components={notionComponents} />`.
 
 ### MDX Compile Pipeline
 
-Defined in `packages/notro/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evaluate()`. No `astro.config.mjs` configuration is required — the pipeline runs entirely at render time inside `NotroContent`.
+Defined in `packages/notro-loader/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evaluate()`. No `astro.config.mjs` configuration is required — the pipeline runs entirely at render time inside `NotroContent`.
 
 **Remark plugins** (parse Markdown → mdast):
 - `remarkNfm` (from `remark-nfm`) — bundles pre-parse normalization (`preprocessNotionMarkdown`), directive syntax support, and callout conversion in one plugin
@@ -274,15 +284,15 @@ Defined in `packages/notro/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evalua
 
 ### Image Handling
 
-`apps/notro-tail/src/lib/notionImageService.ts` wraps Astro's Sharp image service to strip expiring `X-Amz-*` query parameters from Notion pre-signed S3 URLs before computing the cache key, so repeated builds reuse cached output.
+`templates/blog/src/lib/notionImageService.ts` wraps Astro's Sharp image service to strip expiring `X-Amz-*` query parameters from Notion pre-signed S3 URLs before computing the cache key, so repeated builds reuse cached output.
 
 ### Markdown Rendering
 
-Pages render Notion markdown via the `NotroContent` component from `notro`. It accepts preprocessed markdown stored by the loader, compiles it via `compileMdxCached()`, and renders it with component mapping:
+Pages render Notion markdown via the `NotroContent` component from `notro-loader`. It accepts preprocessed markdown stored by the loader, compiles it via `compileMdxCached()`, and renders it with component mapping:
 
 ```astro
 ---
-import { NotroContent } from "notro";
+import { NotroContent } from "notro-loader";
 const markdown = entry.data.markdown;
 ---
 
@@ -342,7 +352,7 @@ Current themes defined in `global.css`:
 
 All per-page rules are scoped under `main` or `.nt-markdown-content` so the shared `<header>` and `<footer>` are never affected.
 
-### Navigation Features (`apps/notro-tail`)
+### Navigation Features (`template`)
 
 - **Active nav link** — `Header.astro` reads `Astro.url.pathname` and applies `font-medium text-gray-900` to the current page's link. Blog is active for all `/blog/*` paths except fixed-page slugs. The Docs button darkens to `bg-blue-700` when on `/contact/`.
 - **Prev/next article nav** — `blog/[slug].astro` builds a date-sorted list of blog posts (excluding `"page"`-tagged fixed pages) and passes `prevNav`/`nextNav` (slug + title) as props. A two-column card nav appears below each article body: "← 新しい記事" (newer) on the left, "古い記事 →" (older) on the right.
@@ -361,7 +371,7 @@ All Notion-specific CSS classes use the `nt-` prefix (defined in `global.css`):
 
 ## Environment Variables
 
-### Required for `apps/notro-tail`
+### Required for `template`
 
 | Variable | Description |
 |---|---|
@@ -391,7 +401,7 @@ Set these in Claude Code on the Web → Settings → Environment Variables:
 
 ### ローカル環境変数の設定
 
-`apps/notro-tail/.env` ファイルを作成して環境変数を設定する（`.gitignore` 済み）:
+`templates/blog/.env` ファイルを作成して環境変数を設定する（`.gitignore` 済み）:
 
 ```bash
 NOTION_TOKEN=secret_xxxx
@@ -406,7 +416,7 @@ npm install
 
 # Run the Astro dev server (from repo root)
 npm run dev --workspace=notro-tail
-# or from apps/notro-tail:
+# or from templates/blog/:
 npm run dev
 ```
 
@@ -418,8 +428,8 @@ Dev server runs at http://localhost:4321
 # Build from repo root (runs astro check + astro build)
 npm run build
 
-# Build from the app workspace directly
-cd apps/notro-tail && npm run build
+# Build from the blog template workspace directly
+cd templates/blog && npm run build
 ```
 
 `npm run build` in the root delegates to `npm run build --workspace=notro-tail`.
@@ -438,8 +448,8 @@ npm run preview --workspace=notro-tail
 ```bash
 # Format TypeScript and Astro files
 npm run format --workspace=notro-tail
-# or from packages/notro:
-npm run format --workspace=notro
+# or from packages/notro-loader:
+npm run format --workspace=notro-loader
 ```
 
 Uses Prettier with `prettier-plugin-astro`.
@@ -449,14 +459,14 @@ Uses Prettier with `prettier-plugin-astro`.
 Type checking runs as part of `astro build` via `astro check`. Run it separately:
 
 ```bash
-cd apps/notro-tail && npx astro check
+cd templates/blog && npx astro check
 ```
 
 ---
 
-## Package Publishing (`packages/notro`)
+## Package Publishing (`packages/notro-loader`)
 
-The `notro` package is published to npm. It uses [Changesets](https://github.com/changesets/changesets) for versioning.
+The `notro-loader` package is published to npm. It uses [Changesets](https://github.com/changesets/changesets) for versioning.
 
 ```bash
 # Create a changeset for your changes
@@ -472,7 +482,7 @@ npm run changeset-publish
 Config: `.changeset/config.json` — base branch is `main`, access is `public`.
 
 The package's `exports` map:
-- `"notro"` → `index.ts` (components, loader, schemas, utils)
+- `"notro-loader"` → `index.ts` (components, loader, schemas, utils)
 
 ---
 
