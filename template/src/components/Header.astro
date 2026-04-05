@@ -1,0 +1,123 @@
+---
+import GitHubIcon from "./GitHubIcon.astro";
+import { isActive } from "../lib/nav";
+import config from "../config";
+
+const pathname = Astro.url.pathname;
+
+// Wrap isActive to bind the current pathname
+const active = (href: string) => isActive(pathname, href);
+---
+
+<!-- Skip navigation link for keyboard and screen reader users -->
+<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-2 focus:rounded">
+  コンテンツへスキップ
+</a>
+
+<header class="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b nt-border-07 dark:bg-slate-800 dark:border-white/8">
+  <div class="mx-auto flex h-14 max-w-screen-xl items-center justify-between px-4 sm:px-6 lg:px-8">
+
+    <a href="/" class="font-bold text-base tracking-[-0.02em] nt-text no-underline transition-opacity hover:opacity-70">{config.site.name}</a>
+
+    <!-- Desktop nav -->
+    <nav aria-label="メインナビゲーション">
+      <ul class="hidden sm:flex items-center gap-1">
+        {config.navigation.nav.map(({ href, label }) => (
+          <li>
+            <a
+              href={href}
+              class:list={[
+                "relative text-sm no-underline px-2.5 py-1.5 rounded-md transition-[color,background]",
+                active(href)
+                  ? "nt-text font-medium after:content-[''] after:absolute after:bottom-[-1px] after:left-2.5 after:right-2.5 after:h-0.5 after:bg-[#2383e2] after:rounded-t-sm dark:text-slate-200 dark:after:bg-blue-400"
+                  : "nt-text-60 hover:nt-text hover:nt-bg-05 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5",
+              ]}
+              aria-current={active(href) ? "page" : undefined}
+            >{label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- Desktop GitHub + mobile hamburger -->
+    <div class="flex items-center gap-2">
+      <a
+        href={config.navigation.social.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hidden sm:inline-flex items-center gap-1.5 text-[0.8125rem] font-medium nt-text-65 no-underline px-3 py-1.5 border nt-border-15 rounded-md transition-[color,border-color,background] hover:nt-text hover:nt-border-30 hover:nt-bg-03 dark:text-slate-400 dark:border-white/15 dark:hover:text-slate-200 dark:hover:border-white/30 dark:hover:bg-white/3"
+        aria-label="GitHub"
+      >
+        <GitHubIcon />
+        GitHub
+      </a>
+
+      <button
+        id="menu-toggle"
+        class="flex sm:hidden items-center justify-center w-8 h-8 nt-text-60 bg-transparent border-0 cursor-pointer p-0 rounded-[4px] transition-[color,background] hover:nt-text hover:nt-bg-05 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5"
+        aria-label="メニューを開く"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <!-- Hamburger icon (shown when closed) -->
+        <svg id="icon-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+        <!-- Close icon (shown when open) -->
+        <svg id="icon-close" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" class="hidden">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu drawer -->
+  <div
+    id="mobile-menu"
+    class="hidden border-t nt-border-07 bg-white/97 py-3 pb-4 dark:bg-slate-800 dark:border-white/8"
+    aria-hidden="true"
+  >
+    <nav aria-label="モバイルナビゲーション">
+      {config.navigation.nav.map(({ href, label }) => (
+        <a
+          href={href}
+          class:list={[
+            "flex items-center gap-2 text-[0.9375rem] no-underline px-4 py-2.5 transition-[color,background]",
+            active(href)
+              ? "nt-text font-medium dark:text-slate-200"
+              : "nt-text-65 hover:nt-text hover:nt-bg-04 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/4",
+          ]}
+          aria-current={active(href) ? "page" : undefined}
+        >{label}</a>
+      ))}
+      <a
+        href={config.navigation.social.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-2 text-[0.9375rem] nt-text-65 no-underline px-4 py-2.5 transition-colors hover:nt-text mt-1 border-t nt-border-07 dark:text-slate-400 dark:hover:text-slate-200 dark:border-white/8"
+      >
+        <GitHubIcon />
+        GitHub
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById("menu-toggle");
+  const menu = document.getElementById("mobile-menu");
+  const iconOpen = document.getElementById("icon-open");
+  const iconClose = document.getElementById("icon-close");
+
+  btn?.addEventListener("click", () => {
+    menu?.classList.toggle("hidden");
+    const isOpen = !menu?.classList.contains("hidden");
+    btn.setAttribute("aria-expanded", String(isOpen));
+    menu?.setAttribute("aria-hidden", String(!isOpen));
+    if (iconOpen) iconOpen.classList.toggle("hidden", isOpen);
+    if (iconClose) iconClose.classList.toggle("hidden", !isOpen);
+  });
+</script>

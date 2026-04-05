@@ -1,0 +1,36 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import config from "../config";
+import BlogList from "../components/blog/BlogList.astro";
+import { getSortedBlogPosts, getPinnedPosts } from "../lib/blog";
+
+const allPosts = await getCollection("posts");
+const blogPosts = getSortedBlogPosts(allPosts);
+const pinnedPosts = getPinnedPosts(blogPosts);
+const recentPosts = blogPosts
+  .filter((p) => !pinnedPosts.includes(p))
+  .slice(0, 5)
+  .map(({ data }) => data);
+const pinnedPostsData = pinnedPosts.map(({ data }) => data);
+---
+
+<Layout title={config.site.name} description={config.site.description}>
+  <main id="main-content" class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-12">
+    {pinnedPostsData.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-6">ピン留め</h2>
+        <BlogList posts={pinnedPostsData} />
+      </section>
+    )}
+    <section>
+      <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-6">最新記事</h2>
+      <BlogList posts={recentPosts} />
+      <div class="mt-8 text-center">
+        <a href="/blog/" class="text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors">
+          すべての記事を見る →
+        </a>
+      </div>
+    </section>
+  </main>
+</Layout>

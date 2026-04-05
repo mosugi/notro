@@ -33,9 +33,13 @@
 
 ## Quick Start
 
-Using [Notro Connect](https://notro.mosugi.com/) (Notion Public Integration), you can automatically set up IDs and tokens and deploy to platforms like Netlify in just a few steps. Give it a try! (And don't forget to star the repository!)
+```sh
+npm create notro@latest my-site
+```
 
-[Deploy to Netlify or Vercel with Notro Connect](https://notro.mosugi.com/)
+The CLI will download the starter template, create `.env` from `.env.example`, and optionally install dependencies. Then edit `.env` with your Notion credentials and run `npm run dev`.
+
+See the [documentation](https://github.com/mosugi/notro-tail/tree/main/docs) for detailed setup instructions.
 
 ## Features
 
@@ -168,11 +172,16 @@ This repository is an **npm workspace monorepo** containing four packages:
 | [`remark-nfm`](./packages/remark-nfm/) | `packages/remark-nfm/` | Pure remark plugin for Notion-flavored Markdown. Handles pre-parse normalization (10 fixes), `:::callout` directive syntax, and callout conversion. No Astro or Notion API dependencies — independently publishable to npm. |
 | [`notro`](./packages/notro/) | `packages/notro/` | Astro + Notion API integration library. Provides the Content Loader, MDX compile pipeline (uses `remark-nfm` internally), and headless Astro components for all Notion block types. |
 | [`notro-ui`](./packages/notro-ui/) | `packages/notro-ui/` | Copy-and-own styled components for `notro` (shadcn/StarwindUI style). Run `npx notro-ui init` to install components into your project — they become your code, editable directly. |
-| `notro-tail` | `apps/notro-tail/` | Reference implementation. A deployable Astro blog that demonstrates `notro` + `notro-ui` in action with `notro-ui` components installed in `src/components/notro/`. |
+| [`create-notro`](./packages/create-notro/) | `packages/create-notro/` | CLI scaffolding tool. Run `npm create notro@latest` to scaffold a new site from the starter template. |
+| `notro-tail` | `apps/notro-tail/` | Reference implementation. A deployable Astro blog that demonstrates `notro` + `notro-ui` in action. |
+| `template` | `template/` | Standalone Astro starter template fetched by `create-notro`. Can also be used directly with `npm create astro@latest -- --template mosugi/notro-tail/template`. |
+| `docs` | `docs/` | Documentation site built with Astro Starlight. |
 
 **Dependency graph:**
 ```
 remark-nfm  ←  notro  ←  notro-ui  ←  notro-tail
+                               ↑
+                         create-notro  →  template/
 ```
 
 ## Known Limitations
