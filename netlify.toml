@@ -1,6 +1,6 @@
 [build]
   base    = "."
-  command = "npm run build"
+  command = "pnpm run build"
   publish = "templates/blog/dist"
 
 [template.environment]

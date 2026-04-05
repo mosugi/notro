@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "pnpm run build",
   "outputDirectory": "templates/blog/dist",
-  "installCommand": "npm install",
+  "installCommand": "pnpm install",
   "framework": null
 }
