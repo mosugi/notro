@@ -11,6 +11,8 @@
     "dev": "npm run dev -w notro-tail",
     "build": "npm run build -w notro-tail",
     "preview": "npm run preview -w notro-tail",
+    "docs:dev": "npm run dev -w notro-docs",
+    "docs:build": "npm run build -w notro-docs",
     "test": "npm run test --workspaces --if-present",
     "format": "npm run format --workspaces --if-present",
     "changeset-version": "changeset version",
@@ -18,7 +20,8 @@
   },
   "workspaces": [
     "apps/*",
-    "packages/*"
+    "packages/*",
+    "docs"
   ],
   "engines": {
     "node": ">=22.0.0",

@@ -1,0 +1,113 @@
+---
+import { getCollection } from "astro:content";
+import { buildLinkToPages, getPlainText, hasTag, NotroContent } from "notro";
+import Layout from "../../layouts/Layout.astro";
+import { notroComponents } from "../../components/notro";
+import config from "../../config";
+import {
+  getSortedBlogPosts,
+  getAdjacentPosts,
+  getPublicTags,
+} from "../../lib/blog.ts";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("posts");
+
+  // Build linkToPages map so NotroContent can resolve inter-page links
+  const linkToPages = buildLinkToPages(posts, {
+    url: (e) => `blog/${getPlainText(e.data.properties.Slug) || e.id}/`,
+    title: (e) => getPlainText(e.data.properties.Name) ?? e.id,
+  });
+
+  const blogPosts = getSortedBlogPosts(posts);
+
+  return posts.map((entry) => {
+    const slug = getPlainText(entry.data.properties.Slug) || entry.id;
+    const { prevNav, nextNav } = getAdjacentPosts(blogPosts, entry.id);
+    return {
+      params: { slug },
+      props: { entry, linkToPages, prevNav, nextNav },
+    };
+  });
+}
+
+const { entry, linkToPages, prevNav, nextNav } = Astro.props;
+const { internalTags } = config.blog;
+
+const title = getPlainText(entry.data.properties.Name) ?? entry.id;
+const description = getPlainText(entry.data.properties.Description);
+const date = entry.data.properties.Date.date?.start;
+const markdown = entry.data.markdown;
+
+// "page" = embedded fixed page (no article header)
+const isEmbeddedPage = hasTag(entry.data.properties.Tags, "page");
+const tags = getPublicTags(entry.data.properties.Tags, internalTags);
+---
+
+<Layout title={`${title} — ${config.site.name}`} description={description} type={isEmbeddedPage ? "website" : "article"} datePublished={date}>
+  <main id="main-content" class="mx-auto max-w-screen-xl px-4 py-10 sm:px-6 lg:px-8">
+    <article class="mx-auto max-w-[720px]">
+      <header class="mb-10 pb-6 border-b nt-border dark:border-white/8">
+        <h1 class="mb-3 text-[2rem] font-bold tracking-tight leading-tight nt-text">{title}</h1>
+        {description && <p class="mb-4 text-base leading-relaxed nt-text-65 dark:text-slate-400">{description}</p>}
+        {!isEmbeddedPage && (
+          <div class="flex flex-wrap items-center gap-3">
+            {date && <time datetime={date} class="text-sm nt-text-45 dark:text-slate-500">{date}</time>}
+            {
+              tags.length > 0 && (
+                <ul class="flex list-none flex-wrap gap-1.5">
+                  {tags.map((tag) => (
+                    <li>
+                      <a
+                        href={`/blog/tag/${tag.name}/`}
+                        class="text-xs nt-bg-06 nt-text-65 rounded-[3px] px-2 py-0.5 no-underline transition-colors hover:nt-bg-10 dark:bg-white/6 dark:text-slate-400"
+                      >
+                        {tag.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          </div>
+        )}
+      </header>
+
+      <NotroContent
+        markdown={markdown}
+        linkToPages={linkToPages}
+        components={notroComponents}
+        class="notro-markdown"
+      />
+
+      {!isEmbeddedPage && (prevNav || nextNav) && (
+        <nav class="mt-12 flex items-stretch gap-4 pt-8 text-sm border-t nt-border dark:border-white/8">
+          {/* prevNav = newer post (lower index in desc sort) */}
+          <div class="flex-1">
+            {prevNav && (
+              <a
+                href={`/blog/${prevNav.slug}/`}
+                class="flex h-full flex-col gap-1 rounded-md p-4 border nt-border no-underline text-inherit transition-colors hover:nt-bg-03 dark:border-white/8 dark:hover:bg-white/3"
+              >
+                <span class="text-xs nt-text-45 dark:text-slate-500">← 新しい記事</span>
+                <span class="font-medium line-clamp-2 nt-text">{prevNav.title}</span>
+              </a>
+            )}
+          </div>
+          {/* nextNav = older post (higher index in desc sort) */}
+          <div class="flex-1">
+            {nextNav && (
+              <a
+                href={`/blog/${nextNav.slug}/`}
+                class="flex h-full flex-col items-end gap-1 rounded-md p-4 text-right border nt-border no-underline text-inherit transition-colors hover:nt-bg-03 dark:border-white/8 dark:hover:bg-white/3"
+              >
+                <span class="text-xs nt-text-45 dark:text-slate-500">古い記事 →</span>
+                <span class="font-medium line-clamp-2 nt-text">{nextNav.title}</span>
+              </a>
+            )}
+          </div>
+        </nav>
+      )}
+    </article>
+  </main>
+</Layout>

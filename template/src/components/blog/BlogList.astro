@@ -1,0 +1,24 @@
+---
+import type { CollectionEntry } from "astro:content";
+import PostCard from "./PostCard.astro";
+
+interface Props {
+  posts: CollectionEntry<"posts">["data"][];
+}
+
+const { posts } = Astro.props;
+---
+
+{
+  posts.length > 0 ? (
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((data) => (
+        <li>
+          <PostCard data={data} />
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="text-center text-sm text-gray-500 py-12">記事はまだありません。</p>
+  )
+}

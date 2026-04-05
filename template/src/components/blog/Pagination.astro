@@ -1,0 +1,40 @@
+---
+interface Props {
+  currentPage: number;
+  lastPage: number;
+  prevUrl: string | undefined;
+  nextUrl: string | undefined;
+}
+
+const { currentPage, lastPage, prevUrl, nextUrl } = Astro.props;
+---
+
+{
+  lastPage > 1 && (
+    <nav class="mt-10 flex items-center justify-center gap-4 text-sm">
+      {prevUrl ? (
+        <a
+          href={prevUrl}
+          class="rounded-md border border-gray-200 px-4 py-2 text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
+        >
+          ← 前へ
+        </a>
+      ) : (
+        <span class="px-4 py-2 text-gray-300">← 前へ</span>
+      )}
+      <span class="text-gray-500">
+        {currentPage} / {lastPage}
+      </span>
+      {nextUrl ? (
+        <a
+          href={nextUrl}
+          class="rounded-md border border-gray-200 px-4 py-2 text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
+        >
+          次へ →
+        </a>
+      ) : (
+        <span class="px-4 py-2 text-gray-300">次へ →</span>
+      )}
+    </nav>
+  )
+}

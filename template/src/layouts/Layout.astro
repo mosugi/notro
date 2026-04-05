@@ -1,0 +1,57 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import SeoHead from "../components/SeoHead.astro";
+import config from "../config";
+
+interface Props {
+  title: string;
+  description?: string;
+  bodyClass?: string;
+  /** og:type — defaults to "website"; use "article" for blog posts */
+  type?: "website" | "article";
+  /** Alt text for the og:image (also used for twitter:image:alt) */
+  ogImageAlt?: string;
+  /** ISO 8601 date string for article published date (used in JSON-LD and article:published_time) */
+  datePublished?: string;
+  /** Previous page URL for paginated pages (adds rel=prev link) */
+  prevUrl?: string;
+  /** Next page URL for paginated pages (adds rel=next link) */
+  nextUrl?: string;
+  /** Prevent search engines from indexing this page */
+  noindex?: boolean;
+}
+
+const { title, description, bodyClass, type = "website", ogImageAlt, datePublished, prevUrl, nextUrl, noindex } = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString();
+const gtagId = import.meta.env.PUBLIC_GTAG_ID;
+---
+
+<!doctype html>
+<html lang={config.site.lang}>
+  <head>
+    <SeoHead
+      title={title}
+      description={description}
+      canonicalUrl={canonicalUrl}
+      type={type}
+      ogImageAlt={ogImageAlt}
+      datePublished={datePublished}
+      prevUrl={prevUrl}
+      nextUrl={nextUrl}
+      noindex={noindex}
+    />
+    {gtagId && (
+      <>
+        <script is:inline async type="text/partytown" src={`https://www.googletagmanager.com/gtag/js?id=${gtagId}`}></script>
+        <script is:inline type="text/partytown" set:html={`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gtagId}');`}></script>
+      </>
+    )}
+  </head>
+  <body class={bodyClass}>
+    <Header />
+    <slot />
+    <Footer />
+  </body>
+</html>
