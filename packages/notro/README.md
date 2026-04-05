@@ -41,6 +41,14 @@ An Astro Content Loader library that fetches Notion database content via the [Ma
 ## Installation
 
 ```sh
+npx astro add notro
+```
+
+This installs the package and automatically adds the `notro()` integration to `astro.config.mjs`.
+
+Alternatively, install manually:
+
+```sh
 npm install notro
 ```
 
@@ -48,16 +56,18 @@ npm install notro
 
 ### 1. `astro.config.mjs`
 
-Add the `notro()` integration. This registers `@astrojs/mdx` with the required plugin pipeline and the Astro JSX renderer that `NotroContent` depends on at runtime.
+`astro add notro` configures this automatically. If you installed manually, add:
 
 ```js
 import { defineConfig } from "astro/config";
-import { notro } from "notro/integration";
+import notro from "notro";
 
 export default defineConfig({
   integrations: [notro()],
 });
 ```
+
+This registers `@astrojs/mdx` with the required plugin pipeline and the Astro JSX renderer that `NotroContent` depends on at runtime.
 
 ### 2. `src/content.config.ts`
 

@@ -171,3 +171,7 @@ export function notro(options: NotroOptions = {}): AstroIntegration {
 		},
 	};
 }
+
+// Default export so `astro add notro` generates `import notro from 'notro'`
+// which resolves to this file (via the "default" export condition in package.json).
+export default notro;
