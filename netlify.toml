@@ -1,7 +1,7 @@
 [build]
   base    = "."
   command = "npm run build"
-  publish = "apps/notro-tail/dist"
+  publish = "template/dist"
 
 [template.environment]
   NOTION_TOKEN = "Your Notion Integration Token"

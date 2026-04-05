@@ -155,7 +155,7 @@ NotroTail uses Astro's static output mode — no SSR adapter required. Config fi
 2. Select the repository and enter the following build settings:
    ```
    Build command:    npm run build
-   Build output dir: apps/notro-tail/dist
+   Build output dir: template/dist
    Root directory:   (leave empty)
    ```
 3. Add environment variables: `NOTION_TOKEN` and `NOTION_DATASOURCE_ID`
@@ -173,8 +173,7 @@ This repository is an **npm workspace monorepo** containing four packages:
 | [`notro`](./packages/notro/) | `packages/notro/` | Astro + Notion API integration library. Provides the Content Loader, MDX compile pipeline (uses `remark-nfm` internally), and headless Astro components for all Notion block types. |
 | [`notro-ui`](./packages/notro-ui/) | `packages/notro-ui/` | Copy-and-own styled components for `notro` (shadcn/StarwindUI style). Run `npx notro-ui init` to install components into your project — they become your code, editable directly. |
 | [`create-notro`](./packages/create-notro/) | `packages/create-notro/` | CLI scaffolding tool. Run `npm create notro@latest` to scaffold a new site from the starter template. |
-| `notro-tail` | `apps/notro-tail/` | Reference implementation. A deployable Astro blog that demonstrates `notro` + `notro-ui` in action. |
-| `template` | `template/` | Standalone Astro starter template fetched by `create-notro`. Can also be used directly with `npm create astro@latest -- --template mosugi/notro-tail/template`. |
+| `notro-tail` | `template/` | Deployable Astro starter template. Used as the reference implementation and fetched by `create-notro` (`npm create notro@latest`). Can also be used directly with `npm create astro@latest -- --template mosugi/notro-tail/template`. |
 | `docs` | `docs/` | Documentation site built with Astro Starlight. |
 
 **Dependency graph:**

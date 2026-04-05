@@ -71,7 +71,7 @@ npm run preview --workspace=notro-tail
 - データ取得・変換・ビジネスロジックは `src/lib/` 配下の `.ts` ファイルに関数として切り出すこと
 - 切り出した関数には必ずユニットテストを書くこと（`vitest` を使用）
 - テスト対象の範囲：
-  - `apps/notro-tail/src/lib/` 配下の関数（追加・変更時）
+  - `template/src/lib/` 配下の関数（追加・変更時）
   - `packages/*/src/utils/` 配下の外部から呼び出される関数
   - Astro コンポーネント（`.astro`）自体はテスト不要。ロジックを `.ts` に切り出してその関数をテストすること
 
@@ -164,7 +164,7 @@ The repo is an **npm workspace monorepo** with three packages:
 |---|---|---|
 | `remark-nfm` | `packages/remark-nfm/` | Pure remark plugin for Notion-flavored Markdown — pre-parse normalization, `:::callout` directive syntax, and callout conversion. No Astro or Notion API dependencies; independently publishable to npm. |
 | `notro` | `packages/notro/` | The publishable npm library (Astro Content Loader + MDX compile pipeline + Notion block components). Uses `remark-nfm` internally. |
-| `notro-tail` | `apps/notro-tail/` | The deployable Astro 6 website (template / reference app) |
+| `notro-tail` | `template/` | The deployable Astro 6 website (starter template / reference app) |
 
 ---
 
@@ -172,27 +172,26 @@ The repo is an **npm workspace monorepo** with three packages:
 
 ```
 notro-tail/
-├── apps/
-│   └── notro-tail/          # Astro website template
-│       ├── src/
-│       │   ├── components/  # Header, Footer, BlogList
-│       │   ├── layouts/     # Layout.astro (base HTML shell)
-│       │   ├── lib/         # notionImageService.ts (custom Astro image service)
-│       │   ├── pages/       # File-based routing
-│       │   │   ├── index.astro              # Top page
-│       │   │   └── blog/
-│       │   │       ├── [...page].astro      # Paginated blog list
-│       │   │       ├── [slug].astro         # Individual blog posts
-│       │   │       └── tag/[tag]/[...page].astro
-│       │   ├── styles/
-│       │   │   └── global.css  # TailwindCSS 4 imports + nt-* utility classes
-│       │   ├── content.config.ts  # Astro Content Collections (posts)
-│       │   └── env.d.ts
-│       ├── src/
-│       │   └── config.ts            # navPages (fixed pages map: slug → title/bodyClass)
-│       ├── astro.config.mjs
-│       ├── package.json
-│       └── tsconfig.json
+├── template/                # Astro starter template (reference app + create-notro source)
+│   ├── src/
+│   │   ├── components/  # Header, Footer, BlogList
+│   │   ├── layouts/     # Layout.astro (base HTML shell)
+│   │   ├── lib/         # notionImageService.ts (custom Astro image service)
+│   │   ├── pages/       # File-based routing
+│   │   │   ├── index.astro              # Top page
+│   │   │   └── blog/
+│   │   │       ├── [...page].astro      # Paginated blog list
+│   │   │       ├── [slug].astro         # Individual blog posts
+│   │   │       └── tag/[tag]/[...page].astro
+│   │   ├── styles/
+│   │   │   └── global.css  # TailwindCSS 4 imports + nt-* utility classes
+│   │   ├── content.config.ts  # Astro Content Collections (posts)
+│   │   └── env.d.ts
+│   ├── src/
+│   │   └── config.ts            # navPages (fixed pages map: slug → title/bodyClass)
+│   ├── astro.config.mjs
+│   ├── package.json
+│   └── tsconfig.json
 ├── packages/
 │   ├── remark-nfm/          # npm library ("remark-nfm" package)
 │   │   ├── index.ts         # Public API exports
@@ -274,7 +273,7 @@ Defined in `packages/notro/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evalua
 
 ### Image Handling
 
-`apps/notro-tail/src/lib/notionImageService.ts` wraps Astro's Sharp image service to strip expiring `X-Amz-*` query parameters from Notion pre-signed S3 URLs before computing the cache key, so repeated builds reuse cached output.
+`template/src/lib/notionImageService.ts` wraps Astro's Sharp image service to strip expiring `X-Amz-*` query parameters from Notion pre-signed S3 URLs before computing the cache key, so repeated builds reuse cached output.
 
 ### Markdown Rendering
 
@@ -342,7 +341,7 @@ Current themes defined in `global.css`:
 
 All per-page rules are scoped under `main` or `.nt-markdown-content` so the shared `<header>` and `<footer>` are never affected.
 
-### Navigation Features (`apps/notro-tail`)
+### Navigation Features (`template`)
 
 - **Active nav link** — `Header.astro` reads `Astro.url.pathname` and applies `font-medium text-gray-900` to the current page's link. Blog is active for all `/blog/*` paths except fixed-page slugs. The Docs button darkens to `bg-blue-700` when on `/contact/`.
 - **Prev/next article nav** — `blog/[slug].astro` builds a date-sorted list of blog posts (excluding `"page"`-tagged fixed pages) and passes `prevNav`/`nextNav` (slug + title) as props. A two-column card nav appears below each article body: "← 新しい記事" (newer) on the left, "古い記事 →" (older) on the right.
@@ -361,7 +360,7 @@ All Notion-specific CSS classes use the `nt-` prefix (defined in `global.css`):
 
 ## Environment Variables
 
-### Required for `apps/notro-tail`
+### Required for `template`
 
 | Variable | Description |
 |---|---|
@@ -391,7 +390,7 @@ Set these in Claude Code on the Web → Settings → Environment Variables:
 
 ### ローカル環境変数の設定
 
-`apps/notro-tail/.env` ファイルを作成して環境変数を設定する（`.gitignore` 済み）:
+`template/.env` ファイルを作成して環境変数を設定する（`.gitignore` 済み）:
 
 ```bash
 NOTION_TOKEN=secret_xxxx
@@ -406,7 +405,7 @@ npm install
 
 # Run the Astro dev server (from repo root)
 npm run dev --workspace=notro-tail
-# or from apps/notro-tail:
+# or from template/:
 npm run dev
 ```
 
@@ -418,8 +417,8 @@ Dev server runs at http://localhost:4321
 # Build from repo root (runs astro check + astro build)
 npm run build
 
-# Build from the app workspace directly
-cd apps/notro-tail && npm run build
+# Build from the template workspace directly
+cd template && npm run build
 ```
 
 `npm run build` in the root delegates to `npm run build --workspace=notro-tail`.
@@ -449,7 +448,7 @@ Uses Prettier with `prettier-plugin-astro`.
 Type checking runs as part of `astro build` via `astro check`. Run it separately:
 
 ```bash
-cd apps/notro-tail && npx astro check
+cd template && npx astro check
 ```
 
 ---

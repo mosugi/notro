@@ -19,7 +19,7 @@
     "changeset-publish": "npm run build && changeset publish"
   },
   "workspaces": [
-    "apps/*",
+    "template",
     "packages/*",
     "docs"
   ],

@@ -1,7 +1,7 @@
-# notro-tail — Astro template app
+# notro-tail — Astro starter template
 
-`apps/notro-tail` is the reference Astro 6 website that ships with the monorepo.
-It demonstrates every feature of the `notro` library and can be used as a starting point for your own Notion-backed site.
+`template/` is the Astro 6 starter template and reference implementation that ships with the monorepo.
+It demonstrates every feature of the `notro` library and is fetched by `npm create notro@latest`. It can also be used as a starting point for your own Notion-backed site.
 
 ---
 
