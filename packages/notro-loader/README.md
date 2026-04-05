@@ -1,12 +1,12 @@
-# Notro
+# notro-loader
 
-![npm](https://img.shields.io/npm/v/notro)
+![npm](https://img.shields.io/npm/v/notro-loader)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 
 An Astro Content Loader library that fetches Notion database content via the [Markdown Content API](https://developers.notion.com/) into [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/).
 
 > [!TIP]
-> Sample project: [NotroTail](https://github.com/mosugi/NotroTail)
+> Sample project: [notro](https://github.com/mosugi/notro)
 
 ## What NotroContent renders
 
@@ -36,12 +36,12 @@ An Astro Content Loader library that fetches Notion database content via the [Ma
 | @mention | `<span>` | `Mention` |
 | Date mention | `<time>` | `MentionDate` |
 
-`notro-ui` is an optional style layer. See [notro-ui](https://github.com/mosugi/notro-tail/tree/main/packages/notro-ui) for details.
+`notro-ui` is an optional style layer. See [notro-ui](https://github.com/mosugi/notro/tree/main/packages/notro-ui) for details.
 
 ## Installation
 
 ```sh
-npx astro add notro
+npx astro add notro-loader
 ```
 
 This installs the package and automatically adds the `notro()` integration to `astro.config.mjs`.
@@ -49,18 +49,18 @@ This installs the package and automatically adds the `notro()` integration to `a
 Alternatively, install manually:
 
 ```sh
-npm install notro
+npm install notro-loader
 ```
 
 ## Setup
 
 ### 1. `astro.config.mjs`
 
-`astro add notro` configures this automatically. If you installed manually, add:
+`astro add notro-loader` configures this automatically. If you installed manually, add:
 
 ```js
 import { defineConfig } from "astro/config";
-import notro from "notro";
+import { notro } from "notro-loader/integration";
 
 export default defineConfig({
   integrations: [notro()],
@@ -75,7 +75,7 @@ Define your collection using the `loader` function. Extend `pageWithMarkdownSche
 
 ```typescript
 import { defineCollection } from "astro:content";
-import { loader, pageWithMarkdownSchema, notroProperties } from "notro";
+import { loader, pageWithMarkdownSchema, notroProperties } from "notro-loader";
 import { z } from "zod";
 
 const posts = defineCollection({
@@ -109,11 +109,11 @@ export const collections = { posts };
 
 #### Option A — Headless (no styling)
 
-`NotroContent` from `notro` renders semantic HTML with no classes.
+`NotroContent` from `notro-loader` renders semantic HTML with no classes.
 
 ```astro
 ---
-import { NotroContent, getPlainText } from "notro";
+import { NotroContent, getPlainText } from "notro-loader";
 
 const { entry } = Astro.props;
 const title = getPlainText(entry.data.properties.Name);
@@ -135,7 +135,7 @@ Then pass the component map to `NotroContent`:
 
 ```astro
 ---
-import { NotroContent, getPlainText } from "notro";
+import { NotroContent, getPlainText } from "notro-loader";
 import { notroComponents } from "@/components/notro";
 
 const { entry } = Astro.props;
@@ -148,18 +148,18 @@ Components are copied into `src/components/notro/` so you can edit them directly
 
 ## Markdown processing (remark-nfm)
 
-`notro` delegates Notion Markdown preprocessing and directive syntax support to the [`remark-nfm`](https://www.npmjs.com/package/remark-nfm) package.
+`notro-loader` delegates Notion Markdown preprocessing and directive syntax support to the [`remark-nfm`](https://www.npmjs.com/package/remark-nfm) package.
 
-`remark-nfm` is used inside notro's MDX compile pipeline and is applied automatically when using `NotroContent`.
+`remark-nfm` is used inside notro-loader's MDX compile pipeline and is applied automatically when using `NotroContent`.
 
-If you want to use `remark-nfm` directly (in a custom unified pipeline or `@mdx-js/mdx`'s `evaluate()`), import it from the `remark-nfm` package directly rather than from `notro`.
+If you want to use `remark-nfm` directly (in a custom unified pipeline or `@mdx-js/mdx`'s `evaluate()`), import it from the `remark-nfm` package directly rather than from `notro-loader`.
 
 ```ts
 // ✅ Import directly from remark-nfm
 import { remarkNfm, preprocessNotionMarkdown } from "remark-nfm";
 
-// ❌ Not needed from notro (internal use only)
-// import { remarkNfm } from "notro";
+// ❌ Not needed from notro-loader (internal use only)
+// import { remarkNfm } from "notro-loader";
 ```
 
 ## Notion API limitations
@@ -238,7 +238,7 @@ Individual schemas (e.g. `titlePropertyPageObjectResponseSchema`) remain exporte
 Zod schema shorthands for defining property schemas in `content.config.ts`. Each key maps to a Notion property type.
 
 ```typescript
-import { notroProperties } from "notro";
+import { notroProperties } from "notro-loader";
 
 // notroProperties.title       → titlePropertyPageObjectResponseSchema
 // notroProperties.richText    → richTextPropertyPageObjectResponseSchema
