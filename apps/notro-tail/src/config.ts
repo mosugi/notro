@@ -1,10 +1,12 @@
 // Edit these values for your site
 const config = {
   site: {
-    name: "NotroTail",
-    description: "Notion を CMS として使う Astro 静的サイトジェネレーター。",
+    // Your site name — shown in <title> and og:title
+    name: "My Site",
+    // Your site description — shown in <meta description> and og:description
+    description: "My site powered by Notion and Astro.",
     /** Author name — used in JSON-LD structured data */
-    author: "NotroTail",
+    author: "Your Name",
     /** BCP 47 language tag — used in <html lang="..."> */
     lang: "ja",
     /** og:locale — typically lang + region, e.g. "ja_JP", "en_US" */
@@ -29,7 +31,6 @@ const config = {
     // Edit these links for your site header navigation
     nav: [
       { href: "/blog/", label: "ブログ" },
-      { href: "/docs/", label: "Docs" },
     ] as { href: string; label: string }[],
     // Edit these link groups for your site footer
     footer: [
@@ -38,13 +39,6 @@ const config = {
         links: [
           { href: "/blog/", label: "ブログ" },
           { href: "/blog/about/", label: "About" },
-        ],
-      },
-      {
-        heading: "ドキュメント",
-        links: [
-          { href: "/docs/", label: "Docs" },
-          { href: "https://www.npmjs.com/package/notro", label: "npm", external: true },
         ],
       },
       {
