@@ -25,6 +25,7 @@
   "exports": {
     ".": {
       "astro": "./index.ts",
+      "types": "./index.ts",
       "default": "./integration.ts"
     },
     "./utils": "./utils.ts",
