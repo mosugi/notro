@@ -1,5 +1,4 @@
 import { defineConfig } from "astro/config";
-import tailwindcss from "@tailwindcss/vite";
 import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
 import { notro } from "notro/integration";
 
@@ -26,8 +25,4 @@ export default defineConfig({
   },
 
   integrations: [notro()],
-
-  vite: {
-    plugins: [tailwindcss()],
-  },
 });

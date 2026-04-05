@@ -18,7 +18,7 @@ const { title, description } = Astro.props;
     {description && <meta name="description" content={description} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
-  <body class="bg-white dark:bg-slate-950 font-sans antialiased text-gray-900 dark:text-slate-200">
+  <body>
     <slot />
   </body>
 </html>

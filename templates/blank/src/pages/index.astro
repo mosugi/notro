@@ -12,20 +12,15 @@ const sorted = pages.slice().sort((a, b) => {
 ---
 
 <Layout title="My Site">
-  <main class="mx-auto max-w-2xl px-4 py-12">
-    <h1 class="text-3xl font-bold mb-8">My Site</h1>
-    <ul class="space-y-3">
+  <main class="nt-container">
+    <h1 class="nt-heading">My Site</h1>
+    <ul class="nt-page-list">
       {sorted.map((page) => {
         const slug = page.data.properties.Slug.rich_text[0]?.plain_text;
         const title = getPlainText(page.data.properties.Name.title);
         return (
           <li>
-            <a
-              href={`/${slug}/`}
-              class="text-blue-600 hover:underline dark:text-blue-400"
-            >
-              {title}
-            </a>
+            <a href={`/${slug}/`} class="nt-link">{title}</a>
           </li>
         );
       })}
