@@ -1,28 +1,35 @@
 ---
-title: Deploy to Vercel
-description: Deploy your notro site to Vercel.
+title: Vercel へのデプロイ
+description: notro サイトを Vercel にデプロイする手順。
 ---
 
-## One-click deploy
+## ワンクリックデプロイ
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/mosugi/notro-tail/tree/main/template&env=NOTION_TOKEN,NOTION_DATASOURCE_ID)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail)
 
-## Manual deploy
+## 手動セットアップ
 
-1. Push your project to GitHub
-2. Go to [vercel.com](https://vercel.com/) → **"Add New Project"** → import your repository
-3. Set the framework preset to **"Astro"**
-4. Add environment variables:
+1. [vercel.com](https://vercel.com) で「Add New Project」→ リポジトリをインポート
 
-| Variable | Value |
-|---|---|
-| `NOTION_TOKEN` | Your Notion integration token |
-| `NOTION_DATASOURCE_ID` | Your Notion database ID |
+2. フレームワークプリセットを「**Astro**」に設定
 
-5. Click **"Deploy"**
+3. Environment Variables に以下を追加:
 
-Vercel automatically re-deploys on every push to `main`.
+   | 変数 | 値 |
+   |---|---|
+   | `NOTION_TOKEN` | Notion Integration Token |
+   | `NOTION_DATASOURCE_ID` | Notion データベース ID |
 
-## Trigger rebuild on Notion changes
+4. 「Deploy」をクリック — `vercel.json` がビルド設定を自動で処理します
 
-Vercel provides a [Deploy Hook](https://vercel.com/docs/deployments/deploy-hooks) URL. Use a Notion automation or a simple cron job to POST to that URL whenever you want the site rebuilt.
+:::tip
+Vercel では「Redeploy」ボタンで手動再ビルドできます。Notion 記事を更新した後は再ビルドが必要です。
+:::
+
+## Notion 更新のトリガー
+
+Vercel の [Deploy Hook](https://vercel.com/docs/deployments/deploy-hooks) を使って、Notion 更新時に自動で再デプロイできます。
+
+1. Vercel プロジェクトの「Settings」→「Git」→「Deploy Hooks」で Hook URL を作成
+2. その URL に POST リクエストを送ると再デプロイが始まります
+3. GitHub Actions の schedule や Notion の自動化でトリガーできます

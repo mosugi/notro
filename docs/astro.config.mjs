@@ -36,11 +36,12 @@ export default defineConfig({
         {
           label: "Guides",
           items: [
-            { label: "Configuration", slug: "guides/configuration" },
-            { label: "Customizing Components", slug: "guides/customizing-components" },
+            { label: "アーキテクチャ", slug: "guides/architecture" },
+            { label: "設定", slug: "guides/configuration" },
+            { label: "コンポーネントのカスタマイズ", slug: "guides/customizing-components" },
             { label: "Content Collections", slug: "guides/content-collections" },
-            { label: "Tags & Filtering", slug: "guides/tags-and-filtering" },
-            { label: "RSS & Sitemap", slug: "guides/rss-and-sitemap" },
+            { label: "タグとフィルタリング", slug: "guides/tags-and-filtering" },
+            { label: "RSS とサイトマップ", slug: "guides/rss-and-sitemap" },
           ],
         },
         {

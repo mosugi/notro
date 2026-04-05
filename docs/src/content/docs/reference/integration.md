@@ -1,6 +1,6 @@
 ---
-title: notro() Integration
-description: API reference for the notro() Astro integration.
+title: notro() インテグレーション
+description: notro() Astro インテグレーションの API リファレンス。
 ---
 
 ## Import
@@ -9,21 +9,51 @@ description: API reference for the notro() Astro integration.
 import { notro } from "notro/integration";
 ```
 
-Used in `astro.config.mjs`. Registers `@astrojs/mdx` with the notro plugin pipeline.
+`astro.config.mjs` で使用します。`@astrojs/mdx` を notro のプラグインパイプラインで登録する Astro インテグレーションです。
 
-## Options
+## なぜ必要か
+
+`notro()` は `@astrojs/mdx` を注入し、`astro:jsx` レンダラーを登録します。これは `@mdx-js/mdx` の `evaluate()` が Astro VNode を生成するために必要です。これがないと `NotroContent` が実行時にエラーになります。
+
+## 使用例
+
+```js
+// astro.config.mjs
+import { defineConfig } from "astro/config";
+import { notro } from "notro/integration";
+import sitemap from "@astrojs/sitemap";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import { rehypeMermaid } from "rehype-beautiful-mermaid";
+
+export default defineConfig({
+  integrations: [
+    notro({
+      shikiConfig: { theme: "github-dark" },
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [
+        [rehypeMermaid, { theme: "github-dark" }],
+        rehypeKatex,
+      ],
+    }),
+    sitemap(),
+  ],
+});
+```
+
+## オプション
 
 ```ts
-notro({
-  shikiConfig?: ShikiConfig;        // Shiki code highlighting config
-  remarkPlugins?: PluggableList;    // Additional remark plugins
-  rehypePlugins?: PluggableList;    // Additional rehype plugins
+notro(options?: {
+  shikiConfig?: ShikiConfig;
+  remarkPlugins?: PluggableList;
+  rehypePlugins?: PluggableList;
 })
 ```
 
 ### shikiConfig
 
-Passed directly to Shiki. Default theme is `github-dark`.
+Shiki に渡す設定オブジェクト。デフォルトテーマは `github-dark`。
 
 ```js
 notro({ shikiConfig: { theme: "github-light" } })
@@ -31,7 +61,7 @@ notro({ shikiConfig: { theme: "github-light" } })
 
 ### remarkPlugins
 
-Additional remark plugins to inject into the MDX pipeline. These run after `remarkNfm` and `remark-gfm`.
+MDX パイプラインに追加する remark プラグイン。`remarkNfm` と `remark-gfm` の後に実行されます。
 
 ```js
 import remarkMath from "remark-math";
@@ -40,13 +70,9 @@ notro({ remarkPlugins: [remarkMath] })
 
 ### rehypePlugins
 
-Additional rehype plugins. These run before the Shiki syntax highlighter.
+追加の rehype プラグイン。Shiki シンタックスハイライターの前に実行されます。
 
 ```js
 import rehypeKatex from "rehype-katex";
 notro({ rehypePlugins: [rehypeKatex] })
 ```
-
-## Why it's required
-
-`notro()` injects `@astrojs/mdx`, which registers the `astro:jsx` renderer that `@mdx-js/mdx`'s `evaluate()` depends on. Without it, `NotroContent` fails at runtime.

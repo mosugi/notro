@@ -1,52 +1,63 @@
 ---
-title: Notion Setup
-description: Create a Notion integration and connect your database.
+title: Notion セットアップ
+description: Notion インテグレーションの作成・データベースの設定・環境変数の設定方法。
 ---
 
-## 1. Create an Internal Integration
+notro は Notion の Internal Integration Token とデータソース（データベース）ID を使ってコンテンツを取得します。
 
-1. Go to [https://www.notion.so/my-integrations](https://www.notion.so/my-integrations)
-2. Click **"New integration"**
-3. Set a name (e.g. "My notro Site") and select your workspace
-4. Copy the **Internal Integration Token** — this is your `NOTION_TOKEN`
+## 1. Notion インテグレーションの作成
 
-## 2. Create a Database
+1. [notion.so/my-integrations](https://www.notion.so/my-integrations) にアクセスし「New integration」をクリック
+2. 名前を入力し（例: **My Site**）、ワークスペースを選択して作成
+3. 「Internal Integration Token」をコピーして環境変数 `NOTION_TOKEN` に設定
 
-Create a new Notion database (full page, not inline) with these properties:
+:::caution
+Integration Token は `secret_` で始まります。外部に公開しないでください。
+:::
 
-| Property | Type | Required |
-|---|---|---|
-| `Name` | Title | ✓ |
-| `Slug` | Rich text | ✓ |
-| `Public` | Checkbox | ✓ |
-| `Date` | Date | ✓ |
-| `Description` | Rich text | — |
-| `Tags` | Multi-select | — |
-| `Category` | Select | — |
+## 2. データベースの作成と共有
 
-## 3. Connect the Integration to Your Database
-
-1. Open your database in Notion
-2. Click **⋯ (More)** → **"Add connections"**
-3. Search for your integration name and connect it
-
-## 4. Get the Database ID
-
-Copy your database URL. The ID is the UUID in the URL:
+1. Notion で Full-page database を作成
+2. データベース右上の「…」→「Connections」→ 作成したインテグレーションを選択して共有
+3. データベースの URL から ID を取得:
 
 ```
-https://www.notion.so/workspace/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx?v=...
-                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                                This is your NOTION_DATASOURCE_ID
+https://www.notion.so/your-workspace/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx?v=...
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                     これが NOTION_DATASOURCE_ID（32文字）
 ```
 
-## 5. Mark pages as Public
+## 3. データベーススキーマ
 
-Only pages with `Public = ✓` will be included in the build. Set this on each page you want to publish.
+以下のプロパティをデータベースに追加してください。`Name`（title 型）はデフォルトで存在します。
 
-## Special tags
+| プロパティ名 | 型 | 必須 | 説明 |
+|---|---|---|---|
+| `Name` | title | ✓ | 記事タイトル（デフォルト列） |
+| `Slug` | rich_text | ✓ | URL スラッグ（例: `my-first-post`） |
+| `Public` | checkbox | ✓ | チェックで公開・未チェックで非公開（下書き） |
+| `Description` | rich_text | — | 説明文・meta description・OGP 説明 |
+| `Tags` | multi_select | — | タグ（`page`・`pinned` は内部マーカー） |
+| `Date` | date | — | 公開日（ブログ一覧の並び順に使用） |
+| `Category` | select | — | カテゴリ |
 
-| Tag | Behavior |
+## 4. 内部タグの仕様
+
+| タグ | 動作 |
 |---|---|
-| `page` | Treated as a fixed page (excluded from blog listing) |
-| `pinned` | Shown at the top of the blog list on page 1 |
+| `page` | ブログ一覧・タグページから非表示。固定ページ（About、Privacy Policy 等）に使用。URL は `/blog/slug/` のまま。 |
+| `pinned` | ブログ一覧1ページ目の「ピン留め」セクションに表示。通常リストからは除外。 |
+
+## 5. 環境変数の設定
+
+`.env` ファイルを作成して以下を設定します（`.gitignore` で除外済み）:
+
+```sh
+NOTION_TOKEN=secret_xxxx
+NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+```
+
+| 変数 | 必須 | 説明 |
+|---|---|---|
+| `NOTION_TOKEN` | ✓ | Notion Internal Integration Token（`secret_` で始まる文字列） |
+| `NOTION_DATASOURCE_ID` | ✓ | Notion データソース ID（32文字の UUID） |

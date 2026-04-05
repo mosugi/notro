@@ -1,51 +1,57 @@
 ---
-title: Quick Start
-description: Scaffold a new notro site in minutes.
+title: クイックスタート
+description: npm create notro@latest で新しいサイトを数分で立ち上げる。
 ---
 
-## Prerequisites
+## 必要な環境
 
-- Node.js 22 or later
-- A Notion account with an Internal Integration token
+- Node.js 22 以上
+- npm 10 以上
+- Notion アカウント（インテグレーション作成のため）
 
-## Scaffold a new site
+## 1. プロジェクトを作成する
 
 ```sh
 npm create notro@latest my-site
 ```
 
-The CLI will:
-1. Download the starter template
-2. Copy `.env.example` to `.env`
-3. Optionally install dependencies
+CLI が以下を実行します:
 
-## Configure environment variables
+1. `github:mosugi/notro-tail/template` からテンプレートをダウンロード
+2. `.env.example` を `.env` にコピー
+3. 依存関係のインストール（任意）
 
-Edit `.env` in your new project:
+## 2. 環境変数を設定する
+
+`.env` を編集して Notion の認証情報を設定します:
 
 ```sh
-# Notion Internal Integration Token
-# https://www.notion.so/my-integrations
 NOTION_TOKEN=secret_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-# Notion Database ID
 NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 ```
 
-See [Notion Setup](/getting-started/notion-setup) for how to get these values.
+取得方法は [Notion セットアップ](/getting-started/notion-setup) を参照してください。
 
-## Start the dev server
+## 3. 開発サーバーを起動する
 
 ```sh
 cd my-site
 npm run dev
 ```
 
-Your site will be available at **http://localhost:4321**.
+[http://localhost:4321](http://localhost:4321) でプレビューできます。
 
-## Build for production
+## 4. 本番ビルド
 
 ```sh
 npm run build
 npm run preview
+```
+
+## Astro テンプレートとして使う（別の方法）
+
+`npm create astro@latest` のテンプレート機能でも使えます:
+
+```sh
+npm create astro@latest my-site -- --template mosugi/notro-tail/template
 ```

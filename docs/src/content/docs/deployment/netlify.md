@@ -1,31 +1,35 @@
 ---
-title: Deploy to Netlify
-description: Deploy your notro site to Netlify.
+title: Netlify へのデプロイ
+description: notro サイトを Netlify にデプロイする手順。
 ---
 
-## One-click deploy
+## ワンクリックデプロイ
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail)
 
-## Manual deploy
+## 手動セットアップ
 
-1. Push your project to GitHub
-2. Go to [netlify.com](https://netlify.com/) → **"Add new site"** → **"Import an existing project"**
-3. Select your repository and configure the build settings:
+1. [netlify.com](https://app.netlify.com) で「Add new site」→「Import an existing project」→ リポジトリを選択
 
-| Setting | Value |
-|---|---|
-| Build command | `npm run build` |
-| Publish directory | `dist` |
-| Node version | `22` |
+2. `netlify.toml` が設定済みのためビルド設定は自動（Base directory・Build command・Publish directory）
 
-4. Add environment variables under **"Site configuration" → "Environment variables"**:
+3. 「Site configuration」→「Environment variables」に以下を追加:
 
-| Variable | Value |
-|---|---|
-| `NOTION_TOKEN` | Your Notion integration token |
-| `NOTION_DATASOURCE_ID` | Your Notion database ID |
+   | 変数 | 値 |
+   |---|---|
+   | `NOTION_TOKEN` | Notion Integration Token |
+   | `NOTION_DATASOURCE_ID` | Notion データベース ID |
 
-5. Click **"Deploy site"**
+4. 「Trigger deploy」をクリック
 
-A `netlify.toml` is included in the template with the correct build settings.
+## Notion 更新のトリガー
+
+Netlify の Build Hooks を使って自動再デプロイを設定できます。
+
+1. 「Site configuration」→「Build & deploy」→「Build hooks」で Hook URL を作成
+2. その URL に POST リクエストを送ると再デプロイが始まります
+
+```sh
+# 手動トリガー例
+curl -X POST "https://api.netlify.com/build_hooks/YOUR_HOOK_ID"
+```

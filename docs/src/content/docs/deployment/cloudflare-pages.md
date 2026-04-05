@@ -1,41 +1,46 @@
 ---
-title: Deploy to Cloudflare Pages
-description: Deploy your notro site to Cloudflare Pages for free.
+title: Cloudflare Pages へのデプロイ
+description: notro サイトを Cloudflare Pages にデプロイする手順。
 ---
 
-notro generates a fully static site — no server required. Cloudflare Pages serves it globally for free.
+notro は Astro の静的出力モードを使用しています。アダプター不要で Cloudflare Pages にデプロイできます。
 
-## Option 1: Deploy button (fastest)
+## ワンクリックデプロイ
 
-Click the button below to import the starter template into your Cloudflare account and deploy it automatically:
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/mosugi/notro-tail)
 
-[![Deploy to Cloudflare Pages](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/mosugi/notro-tail)
+## 手動セットアップ
 
-You will be prompted to fork the template repository and set environment variables during setup.
+1. [Cloudflare ダッシュボード](https://dash.cloudflare.com) で「Workers & Pages」→「Create」→「Pages」→「Connect to Git」をクリック
 
-## Option 2: Connect your GitHub repository
+2. リポジトリを選択し、以下のビルド設定を入力:
 
-1. Push your project to GitHub
-2. Go to [Cloudflare Pages](https://pages.cloudflare.com/) → **"Create a project"** → **"Connect to Git"**
-3. Select your repository
-4. Set the build configuration:
+   | 設定 | 値 |
+   |---|---|
+   | Framework preset | None |
+   | Build command | `npm run build` |
+   | Build output directory | `apps/notro-tail/dist` |
+   | Root directory | （空欄のまま） |
+   | Node.js version | `22` |
 
-| Setting | Value |
-|---|---|
-| Build command | `npm run build` |
-| Build output directory | `dist` |
-| Root directory | `/` (or the path to your project if in a monorepo) |
-| Node.js version | `22` |
+3. 「Environment variables」に以下を追加:
 
-5. Add environment variables:
+   | 変数 | 値 |
+   |---|---|
+   | `NOTION_TOKEN` | Notion Integration Token |
+   | `NOTION_DATASOURCE_ID` | Notion データベース ID |
 
-| Variable | Value |
-|---|---|
-| `NOTION_TOKEN` | Your Notion integration token |
-| `NOTION_DATASOURCE_ID` | Your Notion database ID |
+4. 「Save and Deploy」をクリック
 
-6. Click **"Save and Deploy"**
+:::tip
+リポジトリに含まれる `wrangler.toml` は Cloudflare Pages のビルド設定を補足しますが、ダッシュボードの設定が優先されます。
+:::
 
-## Custom domain
+## カスタムドメイン
 
-After deployment, go to your Pages project → **"Custom domains"** → **"Set up a custom domain"** and follow the instructions.
+デプロイ後、プロジェクトの「Custom domains」→「Set up a custom domain」からカスタムドメインを設定できます。
+
+## Notion 更新後の再デプロイ
+
+Notion でコンテンツを更新した後は、ダッシュボードから手動再デプロイしてください。
+GitHub Actions で定期ビルドをスケジュールすることもできます。

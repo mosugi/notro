@@ -1,25 +1,22 @@
 ---
-title: Introduction
-description: What is notro and how does it work?
+title: 概要
+description: notro とは何か、どのように動作するか。
 ---
 
-**notro** is a Notion-to-Astro static site generator. It fetches content from Notion via the Notion Public API, compiles it as MDX, and maps Notion block types to Astro components. The result is a fast, SEO-optimized static site styled with TailwindCSS 4.
+**notro** は Notion をコンテンツ管理システムとして使う Astro 静的サイトジェネレーターです。
+Notion の Public API（Markdown Content API）からコンテンツを取得し、`@mdx-js/mdx` でコンパイルし、Notion ブロックタイプを Astro コンポーネントにマッピングします。TailwindCSS 4 でスタイリングされた高速・SEO 最適化済みの静的サイトを出力します。
 
-## How it works
+## パッケージ構成
 
-1. **Content Loader** — The `loader()` from `notro` is used in Astro Content Collections. It calls the Notion API, fetches page metadata and Markdown, and stores everything in the build-time content store.
-2. **MDX Pipeline** — At render time, `NotroContent` compiles the stored Markdown via `@mdx-js/mdx`'s `evaluate()` and renders it using Astro components mapped to Notion block types.
-3. **Component Mapping** — Every Notion block type (callout, toggle, table, columns, etc.) has a corresponding Astro component. You can override individual components via the `components` prop.
+| パッケージ | パス | 役割 |
+|---|---|---|
+| `remark-nfm` | `packages/remark-nfm/` | Notion Flavored Markdown 向け純粋 remark プラグイン。Astro 依存なしで独立して npm 公開可能。 |
+| `notro` | `packages/notro/` | 公開 npm ライブラリ。Astro Content Loader・MDX コンパイルパイプライン・Notion ブロックコンポーネント。 |
+| `create-notro` | `packages/create-notro/` | CLI スキャフォールドツール。`npm create notro@latest` で新しいサイトを作成。 |
+| `notro-tail` | `apps/notro-tail/` | デプロイ可能な Astro 6 ウェブサイト（テンプレート実装）。 |
 
-## Packages
+## 次のステップ
 
-| Package | Purpose |
-|---|---|
-| `notro` | Astro Content Loader + MDX compile pipeline + Notion block components |
-| `remark-nfm` | Remark plugin for Notion-flavored Markdown — pre-parse fixes and callout conversion |
-| `create-notro` | CLI scaffolding tool (`npm create notro@latest`) |
-
-## Next steps
-
-- [Quick Start](/getting-started/quick-start) — scaffold a new site in minutes
-- [Notion Setup](/getting-started/notion-setup) — create an integration and connect your database
+- [クイックスタート](/getting-started/quick-start) — 数分でサイトを立ち上げる
+- [Notion セットアップ](/getting-started/notion-setup) — インテグレーションとデータベースの接続方法
+- [アーキテクチャ](/guides/architecture) — システム全体の設計と動作の仕組み

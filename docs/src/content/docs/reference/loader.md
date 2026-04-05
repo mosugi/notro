@@ -1,6 +1,6 @@
 ---
 title: loader()
-description: API reference for the notro Content Loader.
+description: notro Content Loader の API リファレンス。
 ---
 
 ## Import
@@ -9,42 +9,69 @@ description: API reference for the notro Content Loader.
 import { loader } from "notro";
 ```
 
-Used in `src/content.config.ts` as the loader for an Astro Content Collection.
+`src/content.config.ts` で Astro Content Collection のローダーとして使用します。
 
-## Options
+## 使用例
 
 ```ts
-loader({
+// src/content.config.ts
+import { defineCollection } from "astro:content";
+import { loader } from "notro";
+
+const posts = defineCollection({
+  loader: loader({
+    dataSources: [
+      {
+        type: "notion_database",
+        databaseId: import.meta.env.NOTION_DATASOURCE_ID,
+        token: import.meta.env.NOTION_TOKEN,
+        filter: {
+          property: "Public",
+          checkbox: { equals: true },
+        },
+      },
+    ],
+  }),
+});
+
+export const collections = { posts };
+```
+
+## オプション
+
+```ts
+loader(options: {
   dataSources: DataSourceConfig[];
 })
 ```
 
 ### dataSources
 
-An array of data source configurations. Currently supports `notion_database`:
+データソース設定の配列。現在は `notion_database` タイプをサポートします:
 
 ```ts
 {
   type: "notion_database";
-  databaseId: string;    // Notion database UUID
-  token: string;         // Notion integration token
-  filter?: NotionFilter; // Notion API filter object
-  sorts?: NotionSort[];  // Notion API sort objects
+  databaseId: string;    // Notion データベース UUID
+  token: string;         // Notion インテグレーションシークレット
+  filter?: NotionFilter; // Notion API フィルターオブジェクト（任意）
+  sorts?: NotionSort[];  // Notion API ソートオブジェクト（任意）
 }
 ```
 
-## Caching
+## キャッシュの仕組み
 
-The loader caches pages by `last_edited_time`. On subsequent builds:
-- Pages with unchanged `last_edited_time` are served from cache
-- Edited pages are re-fetched from the Notion API
-- Deleted pages are removed from the store
-- Pages with expired Notion pre-signed S3 image URLs are re-fetched
+`last_edited_time` でページをキャッシュします。ビルドをまたいで同じディレクトリが使われる場合（Vercel の Build Cache など）に増分ビルドが有効です:
 
-## Error handling
+- 変更されていないページはキャッシュから返す
+- 編集・追加されたページのみ再取得
+- 削除されたページはストアから除去
+- Notion プリサイン S3 URL の有効期限切れを検出して再取得
 
-| Error | Behavior |
+## エラーハンドリング
+
+| エラーコード | 対応 |
 |---|---|
-| `429 / 500 / 503` | Retried with exponential backoff (1s / 2s / 4s, max 3 times) |
-| `401 / 403 / 404` | Page is skipped; warning logged |
-| Other errors | Page is skipped; warning logged; build continues |
+| `429 / 500 / 503` | exponential backoff でリトライ（1s / 2s / 4s、最大3回） |
+| `401 / 403 / 404` | リトライなし。警告ログを出力してそのページをスキップ |
+| その他 | 警告ログを出力してそのページをスキップ（ビルド全体は継続） |

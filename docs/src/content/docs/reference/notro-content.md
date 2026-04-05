@@ -1,6 +1,6 @@
 ---
 title: NotroContent
-description: API reference for the NotroContent Astro component.
+description: NotroContent Astro コンポーネントの API リファレンス。
 ---
 
 ## Import
@@ -9,7 +9,20 @@ description: API reference for the NotroContent Astro component.
 import { NotroContent } from "notro";
 ```
 
-Renders preprocessed Notion Markdown as an Astro component tree.
+ローダーが取得した Markdown を MDX にコンパイルし、Notion ブロックを Astro コンポーネントとしてレンダリングするコンポーネントです。
+
+## 基本的な使い方
+
+```astro
+---
+import { NotroContent } from "notro";
+const { entry } = Astro.props;
+---
+
+<div class="nt-markdown-content">
+  <NotroContent markdown={entry.data.markdown} />
+</div>
+```
 
 ## Props
 
@@ -22,57 +35,70 @@ interface Props {
 }
 ```
 
-### markdown
+### markdown（必須）
 
-**Required.** The preprocessed Markdown string from `entry.data.markdown`.
+`entry.data.markdown` から取得した前処理済み Markdown 文字列。
 
 ### linkToPages
 
-A map of Notion page IDs to URL + title pairs. Used to resolve internal `notion.so` links in the content.
+Notion ページ ID から URL とタイトルへのマップ。コンテンツ内の Notion 内部リンクを解決するために使用します。
 
 ```astro
 <NotroContent
   markdown={markdown}
   linkToPages={{
-    "page-id-1": { url: "/blog/post-1/", title: "Post 1" },
+    "page-id-1": { url: "/blog/post-1/", title: "記事1のタイトル" },
   }}
 />
 ```
 
+`buildLinkToPages()` ユーティリティでマップを生成できます:
+
+```ts
+import { buildLinkToPages } from "notro/utils";
+
+const allPosts = await getCollection("posts");
+const linkToPages = buildLinkToPages(allPosts, {
+  slugProperty: "Slug",
+  baseUrl: "/blog/",
+});
+```
+
 ### classMap
 
-Inject Tailwind classes into default components without replacing them:
+デフォルトコンポーネントを差し替えずに Tailwind クラスを追加したい場合:
 
 ```astro
 <NotroContent
   markdown={markdown}
   classMap={{
     callout: "border-l-4 border-blue-500",
-    toggle: "rounded-lg bg-gray-50",
+    toggle: "bg-gray-50 rounded-lg",
   }}
 />
 ```
 
 ### components
 
-Full component replacement:
+特定のブロックを独自コンポーネントに差し替えたい場合:
 
 ```astro
+---
+import MyCallout from "../components/MyCallout.astro";
+---
+
 <NotroContent
   markdown={markdown}
-  components={{ callout: MyCustomCallout }}
+  components={{ callout: MyCallout }}
 />
 ```
 
-## Example
+## ユーティリティ関数（notro/utils）
 
-```astro
----
-import { NotroContent } from "notro";
-const { entry } = Astro.props;
----
-
-<div class="nt-markdown-content">
-  <NotroContent markdown={entry.data.markdown} />
-</div>
-```
+| 関数 | 説明 |
+|---|---|
+| `getPlainText(richText)` | Notion Rich Text 配列からプレーンテキストを抽出 |
+| `buildLinkToPages(entries, opts)` | Content Collection エントリーから内部リンク解決マップを生成 |
+| `hasTag(tagsProperty, tagName)` | エントリーが特定のタグを持つか判定 |
+| `getMultiSelect(property)` | multi_select プロパティからタグ配列を取得 |
+| `normalizeNotionPresignedUrl(url)` | Notion S3 プリサイン URL から期限切れパラメーター（`X-Amz-*`）を除去 |
