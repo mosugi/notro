@@ -97,7 +97,7 @@ Next steps:
        @import "./notro-theme.css";
 
   2. Import in your page:
-       import { NotroContent } from 'notro';
+       import { NotroContent } from 'notro-loader';
        import { notroComponents } from '../components/notro';
 
   3. Use it:

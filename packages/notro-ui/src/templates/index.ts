@@ -3,7 +3,7 @@
  *
  * Pass this to NotroContent via the components prop:
  *
- *   import { NotroContent } from 'notro';
+ *   import { NotroContent } from 'notro-loader';
  *   import { notroComponents } from '@/components/notro';
  *
  *   <NotroContent markdown={md} {linkToPages} components={notroComponents} />
@@ -12,60 +12,64 @@
  *
  *   components={{ ...notroComponents, callout: MyCallout }}
  */
-import { makeHtmlElement } from 'notro';
+import { makeHtmlElement } from 'notro-loader';
 
-import Callout              from './Callout.astro';
-import ColoredParagraph     from './ColoredParagraph.astro';
-import Toggle           from './Toggle.astro';
-import ToggleTitle      from './ToggleTitle.astro';
-import Columns          from './Columns.astro';
-import Column           from './Column.astro';
-import Audio            from './Audio.astro';
-import Video            from './Video.astro';
-import FileBlock        from './FileBlock.astro';
-import PdfBlock         from './PdfBlock.astro';
-import PageRef          from './PageRef.astro';
-import DatabaseRef      from './DatabaseRef.astro';
-import TableOfContents  from './TableOfContents.astro';
-import EmptyBlock       from './EmptyBlock.astro';
-import Mention          from './Mention.astro';
-import MentionDate      from './MentionDate.astro';
-import H1               from './H1.astro';
-import H2               from './H2.astro';
-import H3               from './H3.astro';
-import H4               from './H4.astro';
-import Quote            from './Quote.astro';
-import StyledSpan       from './StyledSpan.astro';
-import ImageBlock       from './ImageBlock.astro';
-import TableBlock       from './TableBlock.astro';
-import TableColgroup    from './TableColgroup.astro';
-import TableCol         from './TableCol.astro';
-import TableRow         from './TableRow.astro';
-import TableCell        from './TableCell.astro';
+import Callout         from './Callout.astro';
+import ColoredParagraph from './ColoredParagraph.astro';
+import Toggle          from './Toggle.astro';
+import ToggleTitle     from './ToggleTitle.astro';
+import Columns         from './Columns.astro';
+import Column          from './Column.astro';
+import Audio           from './Audio.astro';
+import Video           from './Video.astro';
+import FileBlock       from './FileBlock.astro';
+import PdfBlock        from './PdfBlock.astro';
+import PageRef         from './PageRef.astro';
+import DatabaseRef     from './DatabaseRef.astro';
+import TableOfContents from './TableOfContents.astro';
+import EmptyBlock      from './EmptyBlock.astro';
+import Mention         from './Mention.astro';
+import MentionDate     from './MentionDate.astro';
+import H1              from './H1.astro';
+import H2              from './H2.astro';
+import H3              from './H3.astro';
+import H4              from './H4.astro';
+import Quote           from './Quote.astro';
+import StyledSpan      from './StyledSpan.astro';
+import ImageBlock      from './ImageBlock.astro';
+import TableBlock      from './TableBlock.astro';
+import TableColgroup   from './TableColgroup.astro';
+import TableCol        from './TableCol.astro';
+import TableRow        from './TableRow.astro';
+import TableCell       from './TableCell.astro';
 
 export const notroComponents = {
-  // ── Notion-specific blocks ─────────────────────────────────────────────
-  callout:              Callout,
-  details:              Toggle,
-  summary:              ToggleTitle,
-  columns:              Columns,
-  column:               Column,
-  audio:                Audio,
-  video:                Video,
-  file:                 FileBlock,
-  pdf:                  PdfBlock,
-  page:                 PageRef,
-  database:             DatabaseRef,
-  table_of_contents:    TableOfContents,
-  'empty-block':        EmptyBlock,
+  // ── Notion block elements (PascalCase) ────────────────────────────────
+  // Must use PascalCase keys — MDX treats lowercase as HTML and won't map
+  // them through the components prop. Exception: `callout` stays lowercase
+  // because it is emitted by a remark plugin as a raw HTML element, not a
+  // JSX component, so MDX never capitalises it.
+  callout:           Callout,
+  TableOfContents:   TableOfContents,
+  Video:             Video,
+  Audio:             Audio,
+  FileBlock:         FileBlock,
+  PdfBlock:          PdfBlock,
+  Columns:           Columns,
+  Column:            Column,
+  PageRef:           PageRef,
+  DatabaseRef:       DatabaseRef,
+  Details:           Toggle,
+  Summary:           ToggleTitle,
+  EmptyBlock:        EmptyBlock,
 
-  // ── Inline mentions ────────────────────────────────────────────────────
-  'mention-user':       Mention,
-  'mention-page':       Mention,
-  'mention-database':   Mention,
-  'mention-data-source': Mention,
-  'mention-agent':      Mention,
-  'mention-date':       MentionDate,
+  // ── Inline mentions (PascalCase) ───────────────────────────────────────
+  MentionUser:       Mention,
+  MentionPage:       Mention,
+  MentionDatabase:   Mention,
+  MentionDataSource: Mention,
+  MentionAgent:      Mention,
+  MentionDate:       MentionDate,
 
   // ── HTML element overrides ─────────────────────────────────────────────
   h1: H1,
