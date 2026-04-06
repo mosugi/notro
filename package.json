@@ -3,29 +3,28 @@
   "type": "module",
   "version": "0.0.0",
   "private": true,
+  "packageManager": "pnpm@10.33.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mosugi/notro.git"
   },
   "scripts": {
-    "dev": "npm run dev -w notro-tail",
-    "build": "npm run build -w notro-tail",
-    "preview": "npm run preview -w notro-tail",
-    "docs:dev": "npm run dev -w notro-docs",
-    "docs:build": "npm run build -w notro-docs",
-    "test": "npm run test --workspaces --if-present",
-    "format": "npm run format --workspaces --if-present",
+    "dev": "pnpm --filter notro-tail run dev",
+    "build": "pnpm --filter notro-tail run build",
+    "preview": "pnpm --filter notro-tail run preview",
+    "docs:dev": "pnpm --filter notro-docs run dev",
+    "docs:build": "pnpm --filter notro-docs run build",
+    "test": "pnpm -r run test",
+    "format": "pnpm -r run format",
     "changeset-version": "changeset version",
-    "changeset-publish": "npm run build && changeset publish"
+    "changeset-publish": "pnpm run build && changeset publish"
   },
-  "workspaces": [
-    "templates/*",
-    "packages/*",
-    "docs"
-  ],
   "engines": {
     "node": ">=22.0.0",
-    "npm": ">=10.0.0"
+    "pnpm": ">=9.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "sharp"]
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",

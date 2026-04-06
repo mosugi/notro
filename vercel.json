@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "pnpm run build",
   "outputDirectory": "templates/blog/dist",
-  "installCommand": "npm install",
+  "installCommand": "corepack enable && corepack prepare pnpm@10.33.0 --activate && pnpm install",
   "framework": null
 }

@@ -24,14 +24,14 @@
 
 ```bash
 # 1. 型チェック + ビルド（ルートから実行）
-npm run build
+pnpm run build
 
 # 2. ビルド結果をブラウザで確認（レイアウト崩れがないか目視確認）
-npm run preview --workspace=notro-tail
+pnpm --filter notro-tail run preview
 ```
 
-- `npm run build` が通らない状態で push しないこと
-- スタイリング変更は必ず `npm run preview` で目視確認してからコミットすること
+- `pnpm run build` が通らない状態で push しないこと
+- スタイリング変更は必ず `pnpm --filter notro-tail run preview` で目視確認してからコミットすること
 
 ### サブエージェント・ブランチ管理
 
@@ -158,7 +158,7 @@ const posts = allPosts
 
 **NotroTail** is a Notion-to-Astro static site generator. It fetches content from Notion via the Notion Public API (Markdown Content API), compiles it as MDX using `@mdx-js/mdx`'s `evaluate()`, and maps Notion block types to Astro components. Outputs a fast, SEO-optimized static site styled with TailwindCSS 4.
 
-The repo is an **npm workspace monorepo** with three packages:
+The repo is a **pnpm workspace monorepo** with three packages:
 
 | Package | Path | Purpose |
 |---|---|---|
@@ -397,7 +397,8 @@ Set these in Claude Code on the Web → Settings → Environment Variables:
 ### Prerequisites
 
 - Node.js 22+
-- Astro 6 (installed via npm)
+- pnpm 10+
+- Astro 6 (installed via pnpm)
 
 ### ローカル環境変数の設定
 
@@ -412,12 +413,12 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 
 ```bash
 # Install all workspace dependencies from repo root
-npm install
+pnpm install
 
 # Run the Astro dev server (from repo root)
-npm run dev --workspace=notro-tail
+pnpm --filter notro-tail run dev
 # or from templates/blog/:
-npm run dev
+pnpm run dev
 ```
 
 Dev server runs at http://localhost:4321
@@ -426,19 +427,19 @@ Dev server runs at http://localhost:4321
 
 ```bash
 # Build from repo root (runs astro check + astro build)
-npm run build
+pnpm run build
 
 # Build from the blog template workspace directly
-cd templates/blog && npm run build
+cd templates/blog && pnpm run build
 ```
 
-`npm run build` in the root delegates to `npm run build --workspace=notro-tail`.
+`pnpm run build` in the root delegates to `pnpm --filter notro-tail run build`.
 
 ### Preview（ビルド結果の確認）
 
 ```bash
 # ビルド後にプレビューサーバーを起動してレイアウト崩れを確認する
-npm run preview --workspace=notro-tail
+pnpm --filter notro-tail run preview
 ```
 
 プレビューサーバーは http://localhost:4321 で起動する。
@@ -447,9 +448,9 @@ npm run preview --workspace=notro-tail
 
 ```bash
 # Format TypeScript and Astro files
-npm run format --workspace=notro-tail
+pnpm --filter notro-tail run format
 # or from packages/notro-loader:
-npm run format --workspace=notro-loader
+pnpm --filter notro-loader run format
 ```
 
 Uses Prettier with `prettier-plugin-astro`.
@@ -459,7 +460,7 @@ Uses Prettier with `prettier-plugin-astro`.
 Type checking runs as part of `astro build` via `astro check`. Run it separately:
 
 ```bash
-cd templates/blog && npx astro check
+cd templates/blog && pnpm exec astro check
 ```
 
 ---
@@ -470,13 +471,13 @@ The `notro-loader` package is published to npm. It uses [Changesets](https://git
 
 ```bash
 # Create a changeset for your changes
-npx changeset
+pnpm changeset
 
 # Bump versions based on pending changesets
-npm run changeset-version
+pnpm run changeset-version
 
 # Build and publish to npm
-npm run changeset-publish
+pnpm run changeset-publish
 ```
 
 Config: `.changeset/config.json` — base branch is `main`, access is `public`.
