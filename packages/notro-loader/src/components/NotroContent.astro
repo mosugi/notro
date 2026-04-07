@@ -2,13 +2,12 @@
 /**
  * Headless Notion markdown renderer.
  *
- * Works standalone — no notro-ui required. Outputs plain semantic HTML
- * with no Tailwind classes or .astro component dependencies.
+ * Outputs plain semantic HTML with no Tailwind classes by default.
  *
  * Usage (headless, no styling):
  *   <NotroContent markdown={markdown} />
  *
- * Usage (with notro-ui styled components):
+ * Usage (with styled components):
  *   import { notroComponents } from '../components/notro';
  *   <NotroContent markdown={markdown} components={notroComponents} />
  *

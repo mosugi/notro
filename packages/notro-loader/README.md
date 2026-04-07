@@ -12,7 +12,7 @@ An Astro Content Loader library that fetches Notion database content via the [Ma
 
 `NotroContent` compiles Notion markdown into HTML. Each Notion block type maps to a semantic HTML element by default. You can replace any element with your own styled component via the `components` prop.
 
-| Notion block | Default HTML | notro-ui component |
+| Notion block | Default HTML | Styled component (in `src/components/notro/`) |
 |---|---|---|
 | Paragraph | `<p>` | `ColoredParagraph` |
 | Heading 1–4 | `<h1>`–`<h4>` | `H1`–`H4` |
@@ -36,7 +36,7 @@ An Astro Content Loader library that fetches Notion database content via the [Ma
 | @mention | `<span>` | `Mention` |
 | Date mention | `<time>` | `MentionDate` |
 
-`notro-ui` is an optional style layer. See [notro-ui](https://github.com/mosugi/notro/tree/main/packages/notro-ui) for details.
+The styled components in the table above are included in the blog template (`templates/blog/src/components/notro/`). Copy and edit them freely.
 
 ## Installation
 
@@ -123,15 +123,9 @@ const title = getPlainText(entry.data.properties.Name);
 <NotroContent markdown={entry.data.markdown} />
 ```
 
-#### Option B — With notro-ui
+#### Option B — With styled components
 
-Install the styled components once:
-
-```sh
-npx notro-ui init
-```
-
-Then pass the component map to `NotroContent`:
+Copy `src/components/notro/` from the [blog template](https://github.com/mosugi/notro-tail/tree/main/templates/blog/src/components/notro) into your project, then pass the component map to `NotroContent`:
 
 ```astro
 ---
@@ -144,7 +138,7 @@ const { entry } = Astro.props;
 <NotroContent markdown={entry.data.markdown} components={notroComponents} />
 ```
 
-Components are copied into `src/components/notro/` so you can edit them directly.
+Components live in `src/components/notro/` so you can edit them directly.
 
 ## Markdown processing (remark-nfm)
 

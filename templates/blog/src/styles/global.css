@@ -19,7 +19,7 @@
 /*
  * nt-* utility classes — used throughout the site's page layout HTML
  * (docs pages, blog headers, etc.). These are NOT Notion block styles.
- * Notion block styling is handled by notro-ui components + notro-theme.css.
+ * Notion block styling is handled by src/components/notro/ + notro-theme.css.
  */
 @layer utilities {
   /* Base text/bg/border scale — used in page HTML for design tokens */

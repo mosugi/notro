@@ -100,12 +100,6 @@ importers:
         specifier: ^4.0.0
         version: 4.0.2
 
-  packages/notro-ui:
-    dependencies:
-      tailwind-variants:
-        specifier: '>=0.3.0'
-        version: 3.2.2(tailwind-merge@3.5.0)(tailwindcss@4.2.2)
-
   packages/rehype-beautiful-mermaid:
     dependencies:
       hast-util-from-html-isomorphic:

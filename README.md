@@ -171,17 +171,16 @@ This repository is an **npm workspace monorepo** containing four packages:
 |---|---|---|
 | [`remark-nfm`](./packages/remark-nfm/) | `packages/remark-nfm/` | Pure remark plugin for Notion-flavored Markdown. Handles pre-parse normalization (10 fixes), `:::callout` directive syntax, and callout conversion. No Astro or Notion API dependencies — independently publishable to npm. |
 | [`notro`](./packages/notro/) | `packages/notro/` | Astro + Notion API integration library. Provides the Content Loader, MDX compile pipeline (uses `remark-nfm` internally), and headless Astro components for all Notion block types. |
-| [`notro-ui`](./packages/notro-ui/) | `packages/notro-ui/` | Copy-and-own styled components for `notro` (shadcn/StarwindUI style). Run `npx notro-ui init` to install components into your project — they become your code, editable directly. |
 | [`create-notro`](./packages/create-notro/) | `packages/create-notro/` | CLI scaffolding tool. Run `npm create notro@latest` to choose a template and scaffold a new site. |
-| `notro-tail` (blog) | `templates/blog/` | Full-featured blog template — reference implementation with blog list, tags, pagination, RSS, and SEO. |
+| `notro-tail` (blog) | `templates/blog/` | Full-featured blog template — reference implementation with blog list, tags, pagination, RSS, and SEO. Includes copy-and-own styled components in `src/components/notro/`. |
 | `notro-blank` (blank) | `templates/blank/` | Minimal starter — just pages and Notion content rendering. |
 | `docs` | `docs/` | Documentation site built with Astro Starlight. |
 
 **Dependency graph:**
 ```
-remark-nfm  ←  notro  ←  notro-ui  ←  templates/blog
-                               ↑               ↑
-                         create-notro  →  templates/blank
+remark-nfm  ←  notro  ←  templates/blog
+                    ↑          ↑
+              create-notro  →  templates/blank
 ```
 
 ## Known Limitations

@@ -5,8 +5,8 @@
  * an optional class string without requiring individual .astro files.
  *
  * makeHtmlElement(tag, cls?) bakes the class in at creation time.
- * The headless notro package uses this with no default classes;
- * notro-ui's NotionMarkdownRenderer passes Tailwind classes at creation time.
+ * The headless default components use no classes; styled component maps
+ * (e.g. the ones in templates/blog/src/components/notro/) pass Tailwind classes.
  *
  * Note on <code>:
  *   The `code` element is intentionally omitted here. Both inline `code` and
