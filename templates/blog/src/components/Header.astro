@@ -1,5 +1,4 @@
 ---
-import GitHubIcon from "./GitHubIcon.astro";
 import { isActive } from "../lib/nav";
 import config from "../config";
 
@@ -39,19 +38,8 @@ const active = (href: string) => isActive(pathname, href);
       </ul>
     </nav>
 
-    <!-- Desktop GitHub + mobile hamburger -->
-    <div class="flex items-center gap-2">
-      <a
-        href={config.navigation.social.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="hidden sm:inline-flex items-center gap-1.5 text-[0.8125rem] font-medium nt-text-65 no-underline px-3 py-1.5 border nt-border-15 rounded-md transition-[color,border-color,background] hover:nt-text hover:nt-border-30 hover:nt-bg-03 dark:text-slate-400 dark:border-white/15 dark:hover:text-slate-200 dark:hover:border-white/30 dark:hover:bg-white/3"
-        aria-label="GitHub"
-      >
-        <GitHubIcon />
-        GitHub
-      </a>
-
+    <!-- Mobile hamburger -->
+    <div class="flex items-center">
       <button
         id="menu-toggle"
         class="flex sm:hidden items-center justify-center w-8 h-8 nt-text-60 bg-transparent border-0 cursor-pointer p-0 rounded-[4px] transition-[color,background] hover:nt-text hover:nt-bg-05 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5"
@@ -93,15 +81,6 @@ const active = (href: string) => isActive(pathname, href);
           aria-current={active(href) ? "page" : undefined}
         >{label}</a>
       ))}
-      <a
-        href={config.navigation.social.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="flex items-center gap-2 text-[0.9375rem] nt-text-65 no-underline px-4 py-2.5 transition-colors hover:nt-text mt-1 border-t nt-border-07 dark:text-slate-400 dark:hover:text-slate-200 dark:border-white/8"
-      >
-        <GitHubIcon />
-        GitHub
-      </a>
     </nav>
   </div>
 </header>
