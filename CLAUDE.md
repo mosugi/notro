@@ -33,6 +33,38 @@ pnpm --filter notro-tail run preview
 - `pnpm run build` が通らない状態で push しないこと
 - スタイリング変更は必ず `pnpm --filter notro-tail run preview` で目視確認してからコミットすること
 
+### notro-ui コンポーネントの管理
+
+Notion ブロックコンポーネントは `notro-ui` CLI で管理する。`packages/notro-ui/src/templates/` が正（Single Source of Truth）であり、`templates/` はそのコピーを保持する。
+
+#### 基本フロー
+
+```bash
+# 新規テンプレートにコンポーネントを一括追加（既存ファイルはスキップ）
+notro-ui add --all
+
+# notro-ui 側の更新をテンプレートに反映（ローカル変更を上書き）
+notro-ui update --all --yes
+```
+
+#### コマンド一覧
+
+| コマンド | 動作 |
+|---------|------|
+| `notro-ui init` | `notro.json` を生成、`notro-theme.css` を配置 |
+| `notro-ui add [名前...] [--all]` | コンポーネントを追加（**既存ファイルはスキップ**） |
+| `notro-ui update [名前...] [--all] [--yes]` | コンポーネントを更新（**ローカル変更を上書き**） |
+| `notro-ui remove [名前...] [--all]` | コンポーネントを削除 |
+| `notro-ui list [--installed]` | 利用可能 / インストール済みコンポーネントを表示 |
+
+#### 運用ルール
+
+- **カスタマイズ済みファイルの保護**: `add` はデフォルトで既存ファイルをスキップする。テンプレート側でコンポーネントをカスタマイズした場合、`add` を再実行しても上書きされない
+- **意図的な更新**: notro-ui 本体の変更をテンプレートに取り込む場合のみ `update` を使う。`--yes` なしで実行すると確認プロンプトが出る
+- **`notro.json`**: プロジェクトルートに置かれる設定ファイル。`outDir`、`stylesDir`、インストール済みコンポーネント一覧を管理する。git に含める
+
+---
+
 ### サブエージェント・ブランチ管理
 
 - サブエージェント（Agent ツール）で作業させたブランチは、呼び出し元のブランチに **マージしてから** push すること
