@@ -24,14 +24,22 @@
     ".": "./index.ts"
   },
   "files": [
-    "index.ts",
-    "src"
+    "dist"
   ],
   "scripts": {
+    "prepack": "tsdown",
+    "build": "tsdown",
     "format": "prettier --write 'src/**/*.ts'"
   },
   "publishConfig": {
-    "provenance": true
+    "access": "public",
+    "provenance": true,
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
   },
   "dependencies": {
     "hast-util-from-html-isomorphic": "^2.0.0",
@@ -48,6 +56,7 @@
     "node": ">=22.0.0"
   },
   "devDependencies": {
+    "tsdown": "^0.12.9",
     "typescript": "^5.9.3"
   }
 }

@@ -25,15 +25,23 @@
     ".": "./index.ts"
   },
   "files": [
-    "index.ts",
-    "src"
+    "dist"
   ],
   "scripts": {
+    "prepack": "tsdown",
+    "build": "tsdown",
     "format": "prettier --write 'src/**/*.ts'",
     "test": "vitest run"
   },
   "publishConfig": {
-    "provenance": true
+    "access": "public",
+    "provenance": true,
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
   },
   "dependencies": {
     "mdast-util-directive": "^3.0.0",
@@ -51,6 +59,7 @@
     "unified": ">=11.0.0"
   },
   "devDependencies": {
+    "tsdown": "^0.12.9",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0"
   }
