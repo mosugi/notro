@@ -75,23 +75,70 @@ Posts tagged `"pinned"` appear in a separate pinned section at the top of page 1
 
 ---
 
+## Getting Started
+
+### 1. Create a project
+
+```bash
+npm create notro@latest
+```
+
+Or clone and use this directory directly.
+
+### 2. Set environment variables
+
+Copy `.env.example` to `.env` and fill in your Notion credentials:
+
+```
+NOTION_TOKEN=secret_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+```
+
+- **NOTION_TOKEN** — create an Internal Integration at https://www.notion.so/my-integrations
+- **NOTION_DATASOURCE_ID** — the ID of your Notion database (found in the database URL)
+
+### 3. Install and run
+
+```bash
+npm install
+npm run dev     # http://localhost:4321
+```
+
+---
+
+## Deploy
+
+### Vercel
+
+1. Push your project to GitHub / GitLab / Bitbucket
+2. Import the repository at https://vercel.com/new
+3. Add environment variables in **Project → Settings → Environment Variables**:
+   - `NOTION_TOKEN`
+   - `NOTION_DATASOURCE_ID`
+4. Deploy — Vercel auto-detects Astro and sets `dist/` as the output directory
+
+### Netlify
+
+1. Push your project to GitHub / GitLab / Bitbucket
+2. Create a new site at https://app.netlify.com/start
+3. Set build settings:
+   - **Build command**: `npm run build`
+   - **Publish directory**: `dist`
+4. Add environment variables in **Site → Environment variables**:
+   - `NOTION_TOKEN`
+   - `NOTION_DATASOURCE_ID`
+5. Deploy
+
+> **Node.js version**: set to **22** or later in your hosting platform's runtime settings.
+
+---
+
 ## Development
 
 ```bash
-# From repo root
-npm install
-npm run dev          # starts dev server at http://localhost:4321
-npm run build        # astro check + astro build
-
-# From this directory
-npm run dev
-npm run build
-npm run format       # Prettier + prettier-plugin-astro
-```
-
-Environment variables required:
-
-```
-NOTION_TOKEN=<Notion Internal Integration Token>
-NOTION_DATASOURCE_ID=<Notion data source (database) ID>
+npm run dev       # dev server at http://localhost:4321
+npm run build     # astro check + astro build
+npm run preview   # preview production build locally
+npm run format    # Prettier + prettier-plugin-astro
+npm run test      # vitest
 ```
