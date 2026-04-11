@@ -1,5 +1,5 @@
 {
-  "name": "remark-nfm",
+  "name": "remark-notro",
   "description": "Remark plugin for Notion-flavored Markdown (NFM)",
   "version": "0.0.1",
   "type": "module",
@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mosugi/NotroTail.git",
-    "directory": "packages/remark-nfm"
+    "directory": "packages/remark-notro"
   },
   "keywords": [
     "remark",

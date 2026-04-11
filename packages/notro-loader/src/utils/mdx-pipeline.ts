@@ -15,7 +15,7 @@
 
 import rehypeRaw from 'rehype-raw';
 import rehypeSlug from 'rehype-slug';
-import { remarkNfm } from 'remark-nfm';
+import { remarkNfm } from 'remark-notro';
 import { getNotroPlugins } from './notro-config.ts';
 
 import type { Plugin, PluggableList } from 'unified';

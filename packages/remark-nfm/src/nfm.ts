@@ -20,7 +20,7 @@
  *
  * Usage:
  * ```ts
- * import { remarkNfm } from 'remark-nfm';
+ * import { remarkNfm } from 'remark-notro';
  * remarkPlugins: [remarkNfm, remarkGfm, remarkMath]
  * ```
  */

@@ -40,7 +40,7 @@
 import type { AstroIntegration } from 'astro';
 import type { PluggableList } from 'unified';
 import mdx from '@astrojs/mdx';
-import { remarkNfm } from 'remark-nfm';
+import { remarkNfm } from 'remark-notro';
 import { setNotroPlugins } from './utils/notro-config.ts';
 
 /**
