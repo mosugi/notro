@@ -108,7 +108,12 @@ npm run dev     # http://localhost:4321
 
 ## Deploy
 
-### Vercel
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/mosugi/notro&root-directory=templates/blog&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials%20required%20to%20fetch%20content&project-name=notro-blog&repository-name=notro-blog)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro)
+
+Both buttons fork the `mosugi/notro` repository into your GitHub account and deploy the `templates/blog` directory. You will be prompted to enter `NOTION_TOKEN` and `NOTION_DATASOURCE_ID` during setup.
+
+### Vercel (manual)
 
 1. Push your project to GitHub / GitLab / Bitbucket
 2. Import the repository at https://vercel.com/new
@@ -117,7 +122,7 @@ npm run dev     # http://localhost:4321
    - `NOTION_DATASOURCE_ID`
 4. Deploy — Vercel auto-detects Astro and sets `dist/` as the output directory
 
-### Netlify
+### Netlify (manual)
 
 1. Push your project to GitHub / GitLab / Bitbucket
 2. Create a new site at https://app.netlify.com/start
