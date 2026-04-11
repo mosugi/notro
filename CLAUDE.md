@@ -476,7 +476,7 @@ Set these in Claude Code on the Web → Settings → Environment Variables:
 
 ### Prerequisites
 
-- Node.js 22+
+- Node.js 24+
 - pnpm 10+
 - Astro 6 (installed via pnpm)
 

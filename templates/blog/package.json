@@ -13,7 +13,7 @@
     "test": "vitest run"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "dependencies": {
     "@astrojs/partytown": "^2.1.5",

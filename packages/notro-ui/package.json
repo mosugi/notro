@@ -13,7 +13,7 @@
     "src/templates"
   ],
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "peerDependencies": {
     "tailwind-variants": ">=0.3.0"

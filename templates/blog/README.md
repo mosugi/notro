@@ -134,7 +134,7 @@ Both buttons fork the `mosugi/notro` repository into your GitHub account and dep
    - `NOTION_DATASOURCE_ID`
 5. Deploy
 
-> **Node.js version**: set to **22** or later in your hosting platform's runtime settings.
+> **Node.js version**: set to **24** or later in your hosting platform's runtime settings.
 
 ---
 

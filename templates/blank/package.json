@@ -12,7 +12,7 @@
     "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "dependencies": {
     "astro": "^6.0.4",
