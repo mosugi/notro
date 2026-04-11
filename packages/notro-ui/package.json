@@ -17,5 +17,9 @@
   },
   "peerDependencies": {
     "tailwind-variants": ">=0.3.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }
