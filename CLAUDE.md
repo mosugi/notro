@@ -1,116 +1,116 @@
 # notro
 
-## 言語設定
+## Language Settings
 
-- **ユーザーとのやりとり（返答・説明・質問）**: 日本語で行うこと
-- **ドキュメント（README・CHANGELOG・コメント・コミットメッセージ）**: 英語で書くこと
-- **コード**: コメントも含めて英語を使用する
+- **User interactions (responses, explanations, questions)**: Reply in Japanese
+- **Documentation (README, CHANGELOG, comments, commit messages)**: Write in English
+- **Code**: Use English including comments
 
 ---
 
-## Claude Code 作業ルール
+## Claude Code Working Rules
 
-### スタイリング規約
+### Styling Guidelines
 
-- スタイリングは **TailwindCSS 4 のユーティリティクラスのみ** で行うこと
-- インラインスタイル（`style="..."` 属性）は使わない
-- Astro コンポーネント内の `<style>` タグは使わない
-- Notion ブロックのスタイリングは **notro-ui コンポーネント + `notro-theme.css`** が担当する（`global.css` に Notion ブロック用のスタイルは書かない）
-- `global.css` の `nt-*` クラスはページレイアウト用のデザイントークン（`nt-text-*`、`nt-bg-*`、`nt-border-*`）であり、Notion ブロックスタイルとは別物
-- クライアント側 `<script>` 内でも `element.style.*` でスタイルを直接操作しないこと
-- 表示/非表示の制御は `element.classList.toggle("hidden")` など **クラス操作** で行うこと（`element.style.display` は使わない）
+- Use **TailwindCSS 4 utility classes only** for all styling
+- Do not use inline styles (`style="..."` attributes)
+- Do not use `<style>` tags inside Astro components
+- Notion block styling is handled by **notro-ui components + `notro-theme.css`** — do not add Notion block styles to `global.css`
+- `nt-*` classes in `global.css` are page layout design tokens (`nt-text-*`, `nt-bg-*`, `nt-border-*`) and are separate from Notion block styles
+- Do not manipulate styles directly via `element.style.*` in client-side `<script>` tags
+- Control visibility using **class manipulation** such as `element.classList.toggle("hidden")` — do not use `element.style.display`
 
-### ビルド確認・レイアウト確認
+### Build & Layout Verification
 
-コードを変更したら必ず以下の手順で確認すること：
+After changing code, always verify with the following steps:
 
 ```bash
-# 1. 型チェック + ビルド（ルートから実行）
+# 1. Type-check + build (run from repo root)
 pnpm run build
 
-# 2. ビルド結果をブラウザで確認（レイアウト崩れがないか目視確認）
+# 2. Visually check the build output in a browser for layout issues
 pnpm --filter notro-tail run preview
 ```
 
-- `pnpm run build` が通らない状態で push しないこと
-- スタイリング変更は必ず `pnpm --filter notro-tail run preview` で目視確認してからコミットすること
+- Do not push if `pnpm run build` fails
+- Always run `pnpm --filter notro-tail run preview` to visually verify styling changes before committing
 
-### notro-ui コンポーネントの管理
+### notro-ui Component Management
 
-Notion ブロックコンポーネントは `notro-ui` CLI で管理する。`packages/notro-ui/src/templates/` が正（Single Source of Truth）であり、`templates/` はそのコピーを保持する。
+Notion block components are managed via the `notro-ui` CLI. `packages/notro-ui/src/templates/` is the single source of truth; `templates/` holds a copy of it.
 
-#### 基本フロー
+#### Basic Flow
 
 ```bash
-# 新規テンプレートにコンポーネントを一括追加（既存ファイルはスキップ）
+# Add all components to a new template (skips existing files)
 notro-ui add --all
 
-# notro-ui 側の更新をテンプレートに反映（ローカル変更を上書き）
+# Pull updates from notro-ui into the template (overwrites local changes)
 notro-ui update --all --yes
 ```
 
-#### コマンド一覧
+#### Commands
 
-| コマンド | 動作 |
-|---------|------|
-| `notro-ui init` | `notro.json` を生成、`notro-theme.css` を配置 |
-| `notro-ui add [名前...] [--all]` | コンポーネントを追加（**既存ファイルはスキップ**） |
-| `notro-ui update [名前...] [--all] [--yes]` | コンポーネントを更新（**ローカル変更を上書き**） |
-| `notro-ui remove [名前...] [--all]` | コンポーネントを削除 |
-| `notro-ui list [--installed]` | 利用可能 / インストール済みコンポーネントを表示 |
+| Command | Behavior |
+|---------|----------|
+| `notro-ui init` | Generates `notro.json`, places `notro-theme.css` |
+| `notro-ui add [name...] [--all]` | Adds components (**skips existing files**) |
+| `notro-ui update [name...] [--all] [--yes]` | Updates components (**overwrites local changes**) |
+| `notro-ui remove [name...] [--all]` | Removes components |
+| `notro-ui list [--installed]` | Lists available / installed components |
 
-#### 運用ルール
+#### Guidelines
 
-- **カスタマイズ済みファイルの保護**: `add` はデフォルトで既存ファイルをスキップする。テンプレート側でコンポーネントをカスタマイズした場合、`add` を再実行しても上書きされない
-- **意図的な更新**: notro-ui 本体の変更をテンプレートに取り込む場合のみ `update` を使う。`--yes` なしで実行すると確認プロンプトが出る
-- **`notro.json`**: プロジェクトルートに置かれる設定ファイル。`outDir`、`stylesDir`、インストール済みコンポーネント一覧を管理する。git に含める
+- **Protecting customized files**: `add` skips existing files by default. Re-running `add` will not overwrite components you have customized in the template
+- **Intentional updates**: Use `update` only when pulling changes from notro-ui upstream. Running without `--yes` shows a confirmation prompt
+- **`notro.json`**: Configuration file placed at the project root. Tracks `outDir`, `stylesDir`, and the list of installed components. Commit to git
 
 ---
 
-### サブエージェント・ブランチ管理
+### Sub-agent & Branch Management
 
-- サブエージェント（Agent ツール）で作業させたブランチは、呼び出し元のブランチに **マージしてから** push すること
-- サブエージェントのブランチを直接 push してはならない
-- マージ後に必ずビルドが通ることを確認してから push すること
+- Branches worked on by sub-agents (Agent tool) must be **merged into the caller's branch** before pushing
+- Do not push sub-agent branches directly
+- Always verify the build passes after merging before pushing
 
-### ブランチ命名規則
+### Branch Naming
 
-- Claude が作業するブランチは必ず `claude/` プレフィックスを付けること
-- セッション ID をブランチ名末尾に含めること（`claude/feature-name-XXXXX` 形式）
-- **`claude/` プレフィックスとセッション ID がないと push が 403 エラーになる**
+- All branches Claude works on must use the `claude/` prefix
+- Include the session ID at the end of the branch name (`claude/feature-name-XXXXX` format)
+- **Pushes will fail with a 403 error without the `claude/` prefix and session ID**
 
-### 実装方針が複数ある場合
+### Multiple Implementation Options
 
-- 実装方針が複数考えられる場合、**必ず作業前に `AskUserQuestion` ツールで選択肢を提示してユーザーに確認すること**
-- 自分で方針を決めて進めてはならない
-- 選択肢は具体的なトレードオフ（パフォーマンス・保守性・実装コスト等）とともに提示すること
+- When multiple implementation approaches are possible, **always present the options to the user via `AskUserQuestion` before starting work**
+- Do not decide on an approach and proceed on your own
+- Present options with concrete trade-offs (performance, maintainability, implementation cost, etc.)
 
-### コミットメッセージ規約
+### Commit Message Guidelines
 
-- コミットメッセージは **必ず英語** で書くこと
-- フォーマット: `<type>: <summary>` （例: `feat: add tag filter to blog list`）
-- type は `feat` / `fix` / `refactor` / `docs` / `chore` / `style` / `test` のいずれか
+- Commit messages **must always be in English**
+- Format: `<type>: <summary>` (e.g. `feat: add tag filter to blog list`)
+- Type must be one of: `feat` / `fix` / `refactor` / `docs` / `chore` / `style` / `test`
 
-### UI/UX の判断基準
+### UI/UX Criteria
 
-- **多言語対応を前提** としたデザインを基本とすること（テキスト長・文字幅・RTL の考慮）
-- ユーザーにとってわかりやすいか・使いやすいかを最優先の判断基準とすること
-- 装飾よりも情報の明瞭さ・アクセシビリティを優先すること
+- Design with **internationalization in mind** as a baseline (text length, character width, RTL considerations)
+- Clarity and usability for the user is the top priority
+- Prioritize information clarity and accessibility over decoration
 
-### Astro 実装ベストプラクティス
+### Astro Implementation Best Practices
 
-#### ロジックは `.ts` ファイルに切り出す
+#### Extract Logic into `.ts` Files
 
-- Astro ファイル（`.astro`）のフロントマター（`---` ブロック）には **最小限のコードのみ** 記述すること
-- データ取得・変換・ビジネスロジックは `src/lib/` 配下の `.ts` ファイルに関数として切り出すこと
-- 切り出した関数には必ずユニットテストを書くこと（`vitest` を使用）
-- テスト対象の範囲：
-  - `templates/blog/src/lib/` 配下の関数（追加・変更時）
-  - `packages/*/src/utils/` 配下の外部から呼び出される関数
-  - Astro コンポーネント（`.astro`）自体はテスト不要。ロジックを `.ts` に切り出してその関数をテストすること
+- Keep **minimal code** in Astro file (`.astro`) frontmatter (`---` blocks)
+- Extract data fetching, transformation, and business logic into functions in `.ts` files under `src/lib/`
+- Write unit tests for all extracted functions (using `vitest`)
+- Test scope:
+  - Functions under `templates/blog/src/lib/` (when adding or changing)
+  - Publicly-called functions under `packages/*/src/utils/`
+  - Astro components (`.astro`) themselves do not need tests — extract logic to `.ts` and test those functions
 
 ```astro
-// Good: src/lib/posts.ts にロジックを切り出し、フロントマターはインポートと呼び出しのみ
+// Good: extract logic to src/lib/posts.ts; frontmatter only imports and calls
 ---
 import { getCollection } from "astro:content";
 import { getSortedPosts, excludeFixedPages } from "@/lib/posts";
@@ -122,7 +122,7 @@ const posts = getSortedPosts(excludeFixedPages(allPosts));
 ```
 
 ```astro
-// Bad: フロントマターに直接ロジックを書く
+// Bad: write logic directly in frontmatter
 ---
 import { getCollection } from "astro:content";
 
@@ -134,65 +134,65 @@ const posts = allPosts
 <ul>{posts.map(p => <li>{p.data.title}</li>)}</ul>
 ```
 
-#### コンポーネント設計
+#### Component Design
 
-- コンポーネントは **単一責任** を持つよう小さく保つこと
-- Props の型は必ず明示的に定義すること（`interface Props { ... }`）
-- デフォルト値は Props の分割代入で設定すること
+- Keep components small with a **single responsibility**
+- Always explicitly define Prop types (`interface Props { ... }`)
+- Set default values via Props destructuring
 
-#### パフォーマンス
+#### Performance
 
-- 画像は必ず Astro の `<Image />` コンポーネントを使うこと（`<img>` タグを直接使わない）
-- クライアント側 JavaScript は必要最小限にすること（`client:load` より `client:idle` / `client:visible` を優先）
-- ページ単位のデータ取得は `Astro.glob()` や Content Collections API を使うこと
+- Always use Astro's `<Image />` component for images (do not use `<img>` tags directly)
+- Minimize client-side JavaScript (prefer `client:idle` / `client:visible` over `client:load`)
+- Use `Astro.glob()` or Content Collections API for page-level data fetching
 
-#### `<script>` タグの書き方
+#### `<script>` Tag Guidelines
 
-- Astro コンポーネント内の `<script>` タグのロジックは最小限にすること
-- `<script>` 内のロジックが複雑な場合は `src/lib/` 配下の `.ts` ファイルに切り出してインポートすること
-- `is:inline` は必要な場合のみ使用すること（通常は Astro がバンドル最適化するため不要）
+- Keep logic in `<script>` tags inside Astro components to a minimum
+- If `<script>` logic is complex, extract it to a `.ts` file under `src/lib/` and import it
+- Use `is:inline` only when necessary (normally Astro handles bundle optimization)
 
 ```astro
-<!-- Good: ロジックを .ts に切り出してインポート -->
+<!-- Good: extract logic to .ts and import -->
 <button id="menu-btn" aria-expanded="false">Menu</button>
 <script>
   import { initMenu } from "@/lib/menu";
   initMenu();
 </script>
 
-<!-- Bad: <script> に直接ロジックを書く / style を直接操作する -->
+<!-- Bad: write logic directly in <script> / manipulate style directly -->
 <script>
   const btn = document.getElementById("menu-btn");
   const nav = document.getElementById("nav");
   btn?.addEventListener("click", () => {
-    nav.style.display = nav.style.display === "none" ? "block" : "none"; // ❌ style 操作
+    nav.style.display = nav.style.display === "none" ? "block" : "none"; // ❌ direct style manipulation
   });
 </script>
 
-<!-- Good: クラス操作で表示を制御 -->
+<!-- Good: control visibility with class manipulation -->
 <script>
   const btn = document.getElementById("menu-btn");
   const nav = document.getElementById("nav");
   btn?.addEventListener("click", () => {
-    nav.classList.toggle("hidden"); // ✅ classList 操作
+    nav.classList.toggle("hidden"); // ✅ classList manipulation
     btn.setAttribute("aria-expanded", String(!nav.classList.contains("hidden")));
   });
 </script>
 ```
 
-#### アクセシビリティ
+#### Accessibility
 
-- インタラクティブ要素には適切な `aria-*` 属性を付けること
-- 色のみで情報を伝えないこと（アイコンやテキストを併用する）
-- フォーム要素には必ず `<label>` を関連付けること
+- Add appropriate `aria-*` attributes to interactive elements
+- Do not convey information through color alone (use icons or text alongside)
+- Always associate `<label>` with form elements
 
-### Changeset の提案
+### Changeset Proposal
 
-`packages/` 配下の公開パッケージ（`private: true` でないもの）に変更を加えた場合、**作業完了後に changeset が必要かどうかをユーザーに提案すること**。
+When making changes to published packages (those without `private: true`) under `packages/`, **propose to the user after completing the work whether a changeset is needed**.
 
-**公開パッケージ一覧:**
+**Published packages:**
 
-| パッケージ名 | パス |
+| Package | Path |
 |---|---|
 | `remark-notro` | `packages/remark-nfm/` |
 | `notro-loader` | `packages/notro-loader/` |
@@ -200,16 +200,16 @@ const posts = allPosts
 | `rehype-beautiful-mermaid` | `packages/rehype-beautiful-mermaid/` |
 | `create-notro` | `packages/create-notro/` |
 
-**変更種別の目安:**
+**Version type guide:**
 
-| 変更内容 | バージョン種別 |
+| Change | Version type |
 |---|---|
-| API の破壊的変更（削除・引数変更・動作の変更） | `major` |
-| 後方互換な新機能・オプションの追加 | `minor` |
-| バグ修正・内部実装の改善 | `patch` |
-| ドキュメント・型定義のみの変更、テスト追加 | changeset 不要な場合が多い |
+| Breaking API changes (removal, argument changes, behavior changes) | `major` |
+| Backward-compatible new features or options | `minor` |
+| Bug fixes, internal implementation improvements | `patch` |
+| Documentation or type-only changes, added tests | Often no changeset needed |
 
-changeset を作成する場合は `pnpm changeset` を実行する（詳細は「Package Publishing」セクション参照）。
+Run `pnpm changeset` to create a changeset (see "Package Publishing" section for details).
 
 ---
 
@@ -507,9 +507,9 @@ Set these in Claude Code on the Web → Settings → Environment Variables:
 - pnpm 10+
 - Astro 6 (installed via pnpm)
 
-### ローカル環境変数の設定
+### Local Environment Variables
 
-`templates/blog/.env` ファイルを作成して環境変数を設定する（`.gitignore` 済み）:
+Create a `templates/blog/.env` file and set environment variables (already in `.gitignore`):
 
 ```bash
 NOTION_TOKEN=secret_xxxx
@@ -542,14 +542,14 @@ cd templates/blog && pnpm run build
 
 `pnpm run build` in the root delegates to `pnpm --filter notro-tail run build`.
 
-### Preview（ビルド結果の確認）
+### Preview (verifying build output)
 
 ```bash
-# ビルド後にプレビューサーバーを起動してレイアウト崩れを確認する
+# Start the preview server after building to check for layout issues
 pnpm --filter notro-tail run preview
 ```
 
-プレビューサーバーは http://localhost:4321 で起動する。
+Preview server runs at http://localhost:4321
 
 ### Format
 
@@ -574,9 +574,9 @@ cd templates/blog && pnpm exec astro check
 
 ## Package Publishing
 
-`packages/` 配下の以下のパッケージが npm に公開されている（`private: true` なし）:
+The following packages under `packages/` are published to npm (no `private: true`):
 
-| パッケージ名 | パス |
+| Package | Path |
 |---|---|
 | `remark-notro` | `packages/remark-nfm/` |
 | `notro-loader` | `packages/notro-loader/` |
@@ -584,7 +584,7 @@ cd templates/blog && pnpm exec astro check
 | `rehype-beautiful-mermaid` | `packages/rehype-beautiful-mermaid/` |
 | `create-notro` | `packages/create-notro/` |
 
-バージョン管理には [Changesets](https://github.com/changesets/changesets) を使用する。
+Version management uses [Changesets](https://github.com/changesets/changesets).
 
 ```bash
 # Create a changeset for your changes
@@ -622,11 +622,11 @@ The `notro-loader` package's `exports` map:
 
 ## Notion API Usage
 
-> **重要:** この環境では `@notionhq/client` を Node.js スクリプトとして実行すると `Error: fetch failed` が発生する（undici の fetch が動作しない）。Notion API を操作する際は **必ず `curl` を使うこと**。
+> **Important:** Running `@notionhq/client` as a Node.js script in this environment causes `Error: fetch failed` (undici's fetch does not work). Always use `curl` when interacting with the Notion API.
 
-`@notionhq/client` がルートの `node_modules` にインストール済み。`NOTION_TOKEN` と `NOTION_DATASOURCE_ID` で認証する。
+`@notionhq/client` is installed in the root `node_modules`. Authenticate with `NOTION_TOKEN` and `NOTION_DATASOURCE_ID`.
 
-### クライアント初期化
+### Client initialization
 
 ```js
 import { Client } from "@notionhq/client";
@@ -635,10 +635,10 @@ const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const DB_ID = process.env.NOTION_DATASOURCE_ID;
 ```
 
-### データソース（データベース）のクエリ
+### Query a data source (database)
 
 ```js
-// 全ページ一覧（ページネーション自動）
+// List all pages (auto-paginated)
 import { iteratePaginatedAPI } from "@notionhq/client";
 
 for await (const page of iteratePaginatedAPI(notion.dataSources.query, {
@@ -648,7 +648,7 @@ for await (const page of iteratePaginatedAPI(notion.dataSources.query, {
 }
 ```
 
-### ページの作成
+### Create a page
 
 ```js
 const page = await notion.pages.create({
@@ -662,24 +662,24 @@ const page = await notion.pages.create({
     Category:    { select: { name: "Tutorial" } },
     Date:        { date: { start: "2026-01-15" } },
   },
-  // markdown フィールドで本文を直接 Markdown で指定できる
+  // body content can be specified directly as Markdown via the markdown field
   markdown: "# 見出し\n\n本文テキスト",
 });
 console.log(page.id);
 ```
 
-### ページ内容の取得（Markdown）
+### Retrieve page content (Markdown)
 
 ```js
 const md = await notion.pages.retrieveMarkdown({ page_id: PAGE_ID });
 console.log(md.markdown);
-console.log(md.truncated); // true なら内容が切り詰められている
+console.log(md.truncated); // true if content was truncated
 ```
 
-### ページ内容の更新（Markdown）
+### Update page content (Markdown)
 
 ```js
-// 特定範囲を置換（content_range はブロックIDの範囲を指定）
+// Replace a specific range (content_range specifies the block ID range)
 await notion.pages.updateMarkdown({
   page_id: PAGE_ID,
   type: "replace_content_range",
@@ -690,18 +690,18 @@ await notion.pages.updateMarkdown({
   },
 });
 
-// 指定ブロックの後に追記（after を省略すると先頭に挿入）
+// Append after a specific block (omit `after` to insert at the beginning)
 await notion.pages.updateMarkdown({
   page_id: PAGE_ID,
   type: "insert_content",
   insert_content: {
     content: "\n追記したテキスト",
-    after: "BLOCK_ID", // 省略可
+    after: "BLOCK_ID", // optional
   },
 });
 ```
 
-### ページプロパティの更新
+### Update page properties
 
 ```js
 await notion.pages.update({
@@ -713,12 +713,12 @@ await notion.pages.update({
 });
 ```
 
-### よく使うスクリプト例
+### Common script examples
 
-> **注意:** `node -e` / `node scripts/...` による Notion API 呼び出しは fetch 失敗のため動作しない。代わりに以下の `curl` コマンドを使うこと。
+> **Note:** Notion API calls via `node -e` / `node scripts/...` fail due to fetch issues. Use the `curl` commands below instead.
 
 ```bash
-# データソースのページ一覧を確認（curl版）
+# List data source pages (curl version)
 curl -s "https://api.notion.com/v1/databases/$NOTION_DATASOURCE_ID/query" \
   -H "Authorization: Bearer $NOTION_TOKEN" \
   -H "Notion-Version: 2026-03-11" \
@@ -733,7 +733,7 @@ for p in d.get('results', []):
     print(pid, slug, name)
 "
 
-# ページを作成する（curl版）
+# Create a page (curl version)
 curl -s "https://api.notion.com/v1/pages" \
   -H "Authorization: Bearer $NOTION_TOKEN" \
   -H "Notion-Version: 2026-03-11" \
@@ -781,32 +781,32 @@ print('Error:', d.get('errorMessage', 'none'))
 
 ## Known Issues / TODOs
 
-_以下はいずれも Notion API 側の制限に起因するもので、notro では警告ログを出力して処理を継続する。_
+_All of the following are caused by Notion API limitations. notro logs a warning and continues processing._
 
-### `pages.retrieveMarkdown` API の制限事項
+### `pages.retrieveMarkdown` API Limitations
 
-> 参照: https://developers.notion.com/reference/retrieve-page-markdown
+> See: https://developers.notion.com/reference/retrieve-page-markdown
 
-#### truncated — コンテンツの切り詰め
+#### truncated — Content truncation
 
-`markdownResponse.truncated === true` の場合、ページのコンテンツが Notion API の上限（約 20,000 ブロック）を超えており、**残りのコンテンツは取得できない**。
+When `markdownResponse.truncated === true`, the page content exceeds the Notion API limit (~20,000 blocks) and **the remaining content cannot be retrieved**.
 
-- このエンドポイントにはカーソルやページネーションパラメータが存在しない（`@notionhq/client` v5.11.1 の型定義で確認済み）
-- 切り詰められたコンテンツはそのままビルドに使用される
-- **対処法**: 大きな Notion ページを複数のサブページに分割すること
+- This endpoint has no cursor or pagination parameters (confirmed in `@notionhq/client` v5.11.1 type definitions)
+- Truncated content is used in the build as-is
+- **Workaround**: split large Notion pages into multiple sub-pages
 
-#### unknown_block_ids — レンダリング不能なブロック
+#### unknown_block_ids — Unrenderable blocks
 
-`markdownResponse.unknown_block_ids` に含まれるブロック ID は、Notion API が Markdown に変換できなかったブロック（未対応ブロック型など）を示す。
+Block IDs in `markdownResponse.unknown_block_ids` indicate blocks the Notion API could not convert to Markdown (unsupported block types, etc.).
 
-- これらのブロックはレスポンスの `markdown` から**無言で除外される**
-- このエンドポイント経由でその内容を取得する方法はない
-- notro では block ID の一覧を警告ログに出力して処理を継続する
+- These blocks are **silently omitted** from the `markdown` in the response
+- There is no way to retrieve their content through this endpoint
+- notro logs the list of block IDs as a warning and continues processing
 
-#### エラーハンドリング方針
+#### Error Handling Policy
 
-| エラーコード | 対応 |
+| Error code | Action |
 |---|---|
-| `429 rate_limited` / `500 internal_server_error` / `503 service_unavailable` | exponential backoff でリトライ（1s / 2s / 4s、最大3回） |
-| `401 unauthorized` / `403 restricted_resource` / `404 object_not_found` | リトライなし。警告ログを出力してそのページをスキップ |
-| その他の予期しないエラー | 警告ログを出力してそのページをスキップ（ビルド全体は継続） |
+| `429 rate_limited` / `500 internal_server_error` / `503 service_unavailable` | Retry with exponential backoff (1s / 2s / 4s, max 3 retries) |
+| `401 unauthorized` / `403 restricted_resource` / `404 object_not_found` | No retry. Log a warning and skip the page |
+| Other unexpected errors | Log a warning and skip the page (overall build continues) |
