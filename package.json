@@ -25,7 +25,11 @@
     "pnpm": ">=9.0.0"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "sharp"]
+    "onlyBuiltDependencies": ["esbuild", "sharp"],
+    "overrides": {
+      "notro-loader": "workspace:*",
+      "rehype-beautiful-mermaid": "workspace:*"
+    }
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",
