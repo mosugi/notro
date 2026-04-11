@@ -103,23 +103,21 @@ Share the page with your integration following the steps [here](https://develope
 ### 5. Set Environment Variables
 
 ```bash
-NOTION_ID=<NOTION_ID>
-NOTION_SECRET=<NOTION_TOKEN>
+NOTION_TOKEN=<NOTION_TOKEN>
+NOTION_DATASOURCE_ID=<NOTION_ID>
 ```
 
 ### 6. Launch
 
-NotroTail needs Astro 5.0 and Node.js 22 or later
+NotroTail needs Astro 6.0 and Node.js 22 or later.
 
-```bash
-
-Install dependencies
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Run the development server
+Run the development server:
 
 ```bash
 npm run dev
@@ -165,13 +163,14 @@ NotroTail uses Astro's static output mode — no SSR adapter required. Config fi
 
 ## Repository Structure
 
-This repository is an **npm workspace monorepo** containing four packages:
+This repository is a **pnpm workspace monorepo** containing the following packages:
 
 | Package | Path | Role |
 |---|---|---|
 | [`remark-nfm`](./packages/remark-nfm/) | `packages/remark-nfm/` | Pure remark plugin for Notion-flavored Markdown. Handles pre-parse normalization (10 fixes), `:::callout` directive syntax, and callout conversion. No Astro or Notion API dependencies — independently publishable to npm. |
-| [`notro`](./packages/notro/) | `packages/notro/` | Astro + Notion API integration library. Provides the Content Loader, MDX compile pipeline (uses `remark-nfm` internally), and headless Astro components for all Notion block types. |
-| [`notro-ui`](./packages/notro-ui/) | `packages/notro-ui/` | Copy-and-own styled components for `notro` (shadcn/StarwindUI style). Run `npx notro-ui init` to install components into your project — they become your code, editable directly. |
+| [`notro-loader`](./packages/notro-loader/) | `packages/notro-loader/` | Astro + Notion API integration library. Provides the Content Loader, MDX compile pipeline (uses `remark-nfm` internally), and headless Astro components for all Notion block types. |
+| [`notro-ui`](./packages/notro-ui/) | `packages/notro-ui/` | Copy-and-own styled components for `notro-loader` (shadcn style). Run `notro-ui add --all` to install components into your project — they become your code, editable directly. |
+| [`rehype-beautiful-mermaid`](./packages/rehype-beautiful-mermaid/) | `packages/rehype-beautiful-mermaid/` | Rehype plugin that renders Mermaid code blocks to inline SVG at build time. |
 | [`create-notro`](./packages/create-notro/) | `packages/create-notro/` | CLI scaffolding tool. Run `npm create notro@latest` to choose a template and scaffold a new site. |
 | `notro-tail` (blog) | `templates/blog/` | Full-featured blog template — reference implementation with blog list, tags, pagination, RSS, and SEO. |
 | `notro-blank` (blank) | `templates/blank/` | Minimal starter — just pages and Notion content rendering. |
@@ -179,9 +178,9 @@ This repository is an **npm workspace monorepo** containing four packages:
 
 **Dependency graph:**
 ```
-remark-nfm  ←  notro  ←  notro-ui  ←  templates/blog
-                               ↑               ↑
-                         create-notro  →  templates/blank
+remark-nfm  ←  notro-loader  ←  notro-ui  ←  templates/blog
+                                     ↑               ↑
+                               create-notro  →  templates/blank
 ```
 
 ## Known Limitations
