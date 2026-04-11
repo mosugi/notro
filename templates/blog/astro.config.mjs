@@ -2,7 +2,7 @@ import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import partytown from "@astrojs/partytown";
 import tailwindcss from "@tailwindcss/vite";
-import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
+import { notionImageService } from "notro-loader/image-service";
 import { notro } from "notro-loader/integration";
 import { rehypeMermaid } from "rehype-beautiful-mermaid";
 import remarkMath from "remark-math";
@@ -32,7 +32,7 @@ export default defineConfig({
   // adapter: vercel(),  // Match your platform (vercel / netlify / cloudflare)
 
   image: {
-    service: notionImageServiceConfig(),
+    service: notionImageService,
     // Restrict to Notion-related S3 domains and notion.so origins.
     // Notion images are served from AWS S3 (various subdomains) and notion.so CDN.
     remotePatterns: [

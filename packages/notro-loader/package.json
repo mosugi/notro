@@ -29,12 +29,14 @@
       "default": "./integration.ts"
     },
     "./utils": "./utils.ts",
-    "./integration": "./integration.ts"
+    "./integration": "./integration.ts",
+    "./image-service": "./image-service.ts"
   },
   "files": [
     "index.ts",
     "integration.ts",
     "utils.ts",
+    "image-service.ts",
     "src/components",
     "src/loader",
     "src/utils"
