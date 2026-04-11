@@ -32,25 +32,6 @@ const config = {
     nav: [
       { href: "/blog/", label: "ブログ" },
     ] as { href: string; label: string }[],
-    // Edit these link groups for your site footer
-    footer: [
-      {
-        heading: "コンテンツ",
-        links: [
-          { href: "/blog/", label: "ブログ" },
-          { href: "/blog/about/", label: "About" },
-        ],
-      },
-      {
-        heading: "法的情報",
-        links: [{ href: "/blog/privacy/", label: "プライバシーポリシー" }],
-      },
-    ] as { heading: string; links: { href: string; label: string; external?: boolean }[] }[],
-    // Social links shown in the header and footer
-    social: {
-      github: "https://github.com/mosugi/notro-tail",
-      npm: "https://www.npmjs.com/package/notro",
-    },
   },
 };
 

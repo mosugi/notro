@@ -1,5 +1,5 @@
 import { defineConfig } from "astro/config";
-import { notionImageServiceConfig } from "./src/lib/notionImageService.js";
+import { notionImageService } from "notro-loader/image-service";
 import { notro } from "notro-loader/integration";
 
 // Apply HTTPS proxy for corporate networks or CI environments.
@@ -14,7 +14,7 @@ export default defineConfig({
   site: "https://example.com",
 
   image: {
-    service: notionImageServiceConfig(),
+    service: notionImageService,
     // Restrict to Notion-related S3 domains and notion.so origins.
     remotePatterns: [
       { protocol: "https", hostname: "*.amazonaws.com" },
