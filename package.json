@@ -9,9 +9,9 @@
     "url": "git+https://github.com/mosugi/notro.git"
   },
   "scripts": {
-    "dev": "pnpm --filter notro-tail run dev",
-    "build": "pnpm --filter notro-tail run build",
-    "preview": "pnpm --filter notro-tail run preview",
+    "dev": "pnpm --filter notro-blog run dev",
+    "build": "pnpm --filter notro-blog run build",
+    "preview": "pnpm --filter notro-blog run preview",
     "docs:dev": "pnpm --filter notro-docs run dev",
     "docs:build": "pnpm --filter notro-docs run build",
     "test": "pnpm -r run test",

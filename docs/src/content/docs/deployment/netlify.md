@@ -5,7 +5,7 @@ description: notro サイトを Netlify にデプロイする手順。
 
 ## ワンクリックデプロイ
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro)
 
 ## 手動セットアップ
 

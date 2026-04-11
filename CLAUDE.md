@@ -29,11 +29,11 @@ After changing code, always verify with the following steps:
 pnpm run build
 
 # 2. Visually check the build output in a browser for layout issues
-pnpm --filter notro-tail run preview
+pnpm --filter notro-blog run preview
 ```
 
 - Do not push if `pnpm run build` fails
-- Always run `pnpm --filter notro-tail run preview` to visually verify styling changes before committing
+- Always run `pnpm --filter notro-blog run preview` to visually verify styling changes before committing
 
 ### notro-ui Component Management
 
@@ -226,7 +226,7 @@ The repo is a **pnpm workspace monorepo** with the following packages:
 | `notro-ui` | `packages/notro-ui/` | Copy-and-own styled Notion block components (shadcn-style). Run `notro-ui add --all` to install components into a template — they become your code, editable directly. |
 | `rehype-beautiful-mermaid` | `packages/rehype-beautiful-mermaid/` | Rehype plugin that renders Mermaid code blocks to inline SVG at build time. Optional; included in the blog template. |
 | `create-notro` | `packages/create-notro/` | CLI scaffolding tool (`npm create notro@latest`). Downloads a starter template and sets up the project. |
-| `notro-tail` (blog) | `templates/blog/` | Full-featured blog template (reference app, fetched by `create-notro`) |
+| `notro-blog` (blog) | `templates/blog/` | Full-featured blog template (reference app, fetched by `create-notro`) |
 | `notro-blank` (blank) | `templates/blank/` | Minimal starter template |
 
 ---
@@ -234,7 +234,7 @@ The repo is a **pnpm workspace monorepo** with the following packages:
 ## Repository Structure
 
 ```
-notro-tail/
+notro/
 ├── templates/
 │   ├── blog/                # Full-featured blog template (reference app + create-notro source)
 │   │   ├── src/
@@ -523,7 +523,7 @@ NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 pnpm install
 
 # Run the Astro dev server (from repo root)
-pnpm --filter notro-tail run dev
+pnpm --filter notro-blog run dev
 # or from templates/blog/:
 pnpm run dev
 ```
@@ -540,13 +540,13 @@ pnpm run build
 cd templates/blog && pnpm run build
 ```
 
-`pnpm run build` in the root delegates to `pnpm --filter notro-tail run build`.
+`pnpm run build` in the root delegates to `pnpm --filter notro-blog run build`.
 
 ### Preview (verifying build output)
 
 ```bash
 # Start the preview server after building to check for layout issues
-pnpm --filter notro-tail run preview
+pnpm --filter notro-blog run preview
 ```
 
 Preview server runs at http://localhost:4321
@@ -555,7 +555,7 @@ Preview server runs at http://localhost:4321
 
 ```bash
 # Format TypeScript and Astro files
-pnpm --filter notro-tail run format
+pnpm --filter notro-blog run format
 # or from packages/notro-loader:
 pnpm --filter notro-loader run format
 ```
