@@ -1,6 +1,6 @@
-# remark-nfm
+# remark-notro
 
-![npm](https://img.shields.io/npm/v/remark-nfm)
+![npm](https://img.shields.io/npm/v/remark-notro)
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue)
 
 A [remark](https://github.com/remarkjs/remark) plugin for Notion-flavored Markdown (NFM). It fixes structural issues in Notion Public API Markdown output and adds callout block support so content can be processed correctly in a remark pipeline.
@@ -11,7 +11,7 @@ A [remark](https://github.com/remarkjs/remark) plugin for Notion-flavored Markdo
 ## Installation
 
 ```sh
-npm install remark-nfm
+npm install remark-notro
 ```
 
 ## Usage
@@ -20,7 +20,7 @@ npm install remark-nfm
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
-import { remarkNfm } from "remark-nfm";
+import { remarkNfm } from "remark-notro";
 
 const processor = unified()
   .use(remarkParse)
@@ -32,7 +32,7 @@ With `@mdx-js/mdx`'s `evaluate()`:
 
 ```ts
 import { evaluate } from "@mdx-js/mdx";
-import { remarkNfm } from "remark-nfm";
+import { remarkNfm } from "remark-notro";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
@@ -82,8 +82,8 @@ Transforms directive nodes (`containerDirective`) into `<callout icon="..." colo
 ### `remarkNfm`
 
 ```ts
-import { remarkNfm } from "remark-nfm";
-import type { RemarkNfmOptions } from "remark-nfm";
+import { remarkNfm } from "remark-notro";
+import type { RemarkNfmOptions } from "remark-notro";
 ```
 
 A remark plugin. Currently accepts no options (reserved for future use).
@@ -91,7 +91,7 @@ A remark plugin. Currently accepts no options (reserved for future use).
 ### `preprocessNotionMarkdown(markdown: string): string`
 
 ```ts
-import { preprocessNotionMarkdown } from "remark-nfm";
+import { preprocessNotionMarkdown } from "remark-notro";
 ```
 
 A pure function that preprocesses Notion API Markdown before passing it to remark. Applies fixes 0–9 listed above.
@@ -101,7 +101,7 @@ Normally called automatically by `remarkNfm`, but can be used standalone when pr
 ### `calloutPlugin`
 
 ```ts
-import { calloutPlugin } from "remark-nfm";
+import { calloutPlugin } from "remark-notro";
 ```
 
 A remark transformer that converts `containerDirective` nodes into `<callout>` elements. Included inside `remarkNfm`; direct use is rarely needed.
@@ -109,7 +109,7 @@ A remark transformer that converts `containerDirective` nodes into `<callout>` e
 ## Relationship to notro
 
 ```
-remark-nfm          Pure remark plugin — no Astro or Notion API dependencies
+remark-notro        Pure remark plugin — no Astro or Notion API dependencies
    ↑ used by
 notro               Astro + Notion API integration library
                     (Content Loader / MDX compiler / Astro components)
@@ -117,6 +117,6 @@ notro               Astro + Notion API integration library
 notro-tail          Deployable Astro template app
 ```
 
-- `remark-nfm` has no dependency on Astro or the Notion API and can be published independently
+- `remark-notro` has no dependency on Astro or the Notion API and can be published independently
 - `notro` uses `remarkNfm` in its internal MDX compile pipeline
-- You can use `remark-nfm` directly in any `unified` or `@mdx-js/mdx` pipeline
+- You can use `remark-notro` directly in any `unified` or `@mdx-js/mdx` pipeline
