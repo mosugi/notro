@@ -16,7 +16,7 @@
     "docs:build": "pnpm --filter notro-docs run build",
     "test": "pnpm -r run test",
     "format": "pnpm -r run format",
-    "build:packages": "pnpm --filter remark-nfm --filter rehype-beautiful-mermaid --filter create-notro run build",
+    "build:packages": "pnpm --filter remark-notro --filter rehype-beautiful-mermaid --filter create-notro run build",
     "changeset-version": "changeset version",
     "changeset-publish": "pnpm run build:packages && changeset publish"
   },
