@@ -13,7 +13,7 @@ export async function getStaticPaths() {
 }
 
 const { page } = Astro.props;
-const title = getPlainText(page.data.properties.Name.title);
+const title = getPlainText(page.data.properties.Name) ?? "";
 ---
 
 <Layout title={title}>
