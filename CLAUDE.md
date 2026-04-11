@@ -184,6 +184,31 @@ const posts = allPosts
 - 色のみで情報を伝えないこと（アイコンやテキストを併用する）
 - フォーム要素には必ず `<label>` を関連付けること
 
+### Changeset の提案
+
+`packages/` 配下の公開パッケージ（`private: true` でないもの）に変更を加えた場合、**作業完了後に changeset が必要かどうかをユーザーに提案すること**。
+
+**公開パッケージ一覧:**
+
+| パッケージ名 | パス |
+|---|---|
+| `remark-notro` | `packages/remark-nfm/` |
+| `notro-loader` | `packages/notro-loader/` |
+| `notro-ui` | `packages/notro-ui/` |
+| `rehype-beautiful-mermaid` | `packages/rehype-beautiful-mermaid/` |
+| `create-notro` | `packages/create-notro/` |
+
+**変更種別の目安:**
+
+| 変更内容 | バージョン種別 |
+|---|---|
+| API の破壊的変更（削除・引数変更・動作の変更） | `major` |
+| 後方互換な新機能・オプションの追加 | `minor` |
+| バグ修正・内部実装の改善 | `patch` |
+| ドキュメント・型定義のみの変更、テスト追加 | changeset 不要な場合が多い |
+
+changeset を作成する場合は `pnpm changeset` を実行する（詳細は「Package Publishing」セクション参照）。
+
 ---
 
 ## Project Overview
@@ -545,9 +570,19 @@ cd templates/blog && pnpm exec astro check
 
 ---
 
-## Package Publishing (`packages/notro-loader`)
+## Package Publishing
 
-The `notro-loader` package is published to npm. It uses [Changesets](https://github.com/changesets/changesets) for versioning.
+`packages/` 配下の以下のパッケージが npm に公開されている（`private: true` なし）:
+
+| パッケージ名 | パス |
+|---|---|
+| `remark-notro` | `packages/remark-nfm/` |
+| `notro-loader` | `packages/notro-loader/` |
+| `notro-ui` | `packages/notro-ui/` |
+| `rehype-beautiful-mermaid` | `packages/rehype-beautiful-mermaid/` |
+| `create-notro` | `packages/create-notro/` |
+
+バージョン管理には [Changesets](https://github.com/changesets/changesets) を使用する。
 
 ```bash
 # Create a changeset for your changes
@@ -562,7 +597,7 @@ pnpm run changeset-publish
 
 Config: `.changeset/config.json` — base branch is `main`, access is `public`.
 
-The package's `exports` map:
+The `notro-loader` package's `exports` map:
 - `"notro-loader"` → `index.ts` (components, loader, schemas, utils)
 
 ---
