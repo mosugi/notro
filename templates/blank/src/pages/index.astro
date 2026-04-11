@@ -17,7 +17,7 @@ const sorted = pages.slice().sort((a, b) => {
     <ul class="nt-page-list">
       {sorted.map((page) => {
         const slug = page.data.properties.Slug.rich_text[0]?.plain_text;
-        const title = getPlainText(page.data.properties.Name.title);
+        const title = getPlainText(page.data.properties.Name) ?? "";
         return (
           <li>
             <a href={`/${slug}/`} class="nt-link">{title}</a>
