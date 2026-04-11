@@ -1,5 +1,0 @@
-{
-  "framework": null,
-  "buildCommand": "pnpm run build",
-  "outputDirectory": "templates/blog/dist"
-}
