@@ -6,7 +6,7 @@
 An Astro Content Loader library that fetches Notion database content via the [Markdown Content API](https://developers.notion.com/) into [Astro Content Collections](https://docs.astro.build/en/guides/content-collections/).
 
 > [!TIP]
-> Sample project: [notro](https://github.com/mosugi/notro)
+> This package is part of the [mosugi/notro](https://github.com/mosugi/notro) monorepo. See the blog template at `templates/blog/` for a full working example.
 
 ## What NotroContent renders
 
@@ -146,17 +146,17 @@ const { entry } = Astro.props;
 
 Components are copied into `src/components/notro/` so you can edit them directly.
 
-## Markdown processing (remark-nfm)
+## Markdown processing (remark-notro)
 
-`notro-loader` delegates Notion Markdown preprocessing and directive syntax support to the [`remark-nfm`](https://www.npmjs.com/package/remark-nfm) package.
+`notro-loader` delegates Notion Markdown preprocessing and directive syntax support to the [`remark-notro`](https://www.npmjs.com/package/remark-notro) package.
 
-`remark-nfm` is used inside notro-loader's MDX compile pipeline and is applied automatically when using `NotroContent`.
+`remark-notro` is used inside notro-loader's MDX compile pipeline and is applied automatically when using `NotroContent`.
 
-If you want to use `remark-nfm` directly (in a custom unified pipeline or `@mdx-js/mdx`'s `evaluate()`), import it from the `remark-nfm` package directly rather than from `notro-loader`.
+If you want to use `remark-notro` directly (in a custom unified pipeline or `@mdx-js/mdx`'s `evaluate()`), import it from the `remark-notro` package directly rather than from `notro-loader`.
 
 ```ts
-// ✅ Import directly from remark-nfm
-import { remarkNfm, preprocessNotionMarkdown } from "remark-nfm";
+// ✅ Import directly from remark-notro
+import { remarkNfm, preprocessNotionMarkdown } from "remark-notro";
 
 // ❌ Not needed from notro-loader (internal use only)
 // import { remarkNfm } from "notro-loader";

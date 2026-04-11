@@ -106,17 +106,17 @@ import { calloutPlugin } from "remark-notro";
 
 A remark transformer that converts `containerDirective` nodes into `<callout>` elements. Included inside `remarkNfm`; direct use is rarely needed.
 
-## Relationship to notro
+## Relationship to notro-loader
 
 ```
 remark-notro        Pure remark plugin — no Astro or Notion API dependencies
    ↑ used by
-notro               Astro + Notion API integration library
+notro-loader        Astro + Notion API integration library
                     (Content Loader / MDX compiler / Astro components)
    ↑ used by
 notro-blog          Deployable Astro template app
 ```
 
 - `remark-notro` has no dependency on Astro or the Notion API and can be published independently
-- `notro` uses `remarkNfm` in its internal MDX compile pipeline
+- `notro-loader` uses `remarkNfm` in its internal MDX compile pipeline
 - You can use `remark-notro` directly in any `unified` or `@mdx-js/mdx` pipeline

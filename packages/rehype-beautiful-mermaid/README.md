@@ -23,7 +23,7 @@ Pass `rehypeMermaid` to `notro()` in `astro.config.mjs`. It must come **before**
 
 ```js
 // astro.config.mjs
-import { notro } from "notro/integration";
+import { notro } from "notro-loader/integration";
 import { rehypeMermaid } from "rehype-beautiful-mermaid";
 import rehypeKatex from "rehype-katex";
 import rehypeShiki from "@shikijs/rehype";
