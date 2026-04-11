@@ -1,0 +1,6 @@
+{
+  "framework": null,
+  "installCommand": "corepack enable && corepack prepare pnpm@10.33.0 --activate && pnpm install",
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist"
+}
