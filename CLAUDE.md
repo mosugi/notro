@@ -190,12 +190,15 @@ const posts = allPosts
 
 **NotroTail** is a Notion-to-Astro static site generator. It fetches content from Notion via the Notion Public API (Markdown Content API), compiles it as MDX using `@mdx-js/mdx`'s `evaluate()`, and maps Notion block types to Astro components. Outputs a fast, SEO-optimized static site styled with TailwindCSS 4.
 
-The repo is a **pnpm workspace monorepo** with three packages:
+The repo is a **pnpm workspace monorepo** with the following packages:
 
 | Package | Path | Purpose |
 |---|---|---|
 | `remark-nfm` | `packages/remark-nfm/` | Pure remark plugin for Notion-flavored Markdown — pre-parse normalization, `:::callout` directive syntax, and callout conversion. No Astro or Notion API dependencies; independently publishable to npm. |
 | `notro-loader` | `packages/notro-loader/` | The publishable npm library (Astro Content Loader + MDX compile pipeline + Notion block components). Uses `remark-nfm` internally. |
+| `notro-ui` | `packages/notro-ui/` | Copy-and-own styled Notion block components (shadcn-style). Run `notro-ui add --all` to install components into a template — they become your code, editable directly. |
+| `rehype-beautiful-mermaid` | `packages/rehype-beautiful-mermaid/` | Rehype plugin that renders Mermaid code blocks to inline SVG at build time. Optional; included in the blog template. |
+| `create-notro` | `packages/create-notro/` | CLI scaffolding tool (`npm create notro@latest`). Downloads a starter template and sets up the project. |
 | `notro-tail` (blog) | `templates/blog/` | Full-featured blog template (reference app, fetched by `create-notro`) |
 | `notro-blank` (blank) | `templates/blank/` | Minimal starter template |
 
@@ -210,7 +213,7 @@ notro-tail/
 │   │   ├── src/
 │   │   │   ├── components/  # Header, Footer, BlogList
 │   │   │   ├── layouts/     # Layout.astro (base HTML shell)
-│   │   │   ├── lib/         # notionImageService.ts (custom Astro image service)
+│   │   │   ├── lib/         # blog.ts, nav.ts, seo.ts (page logic)
 │   │   │   ├── pages/       # File-based routing
 │   │   │   │   ├── index.astro              # Top page
 │   │   │   │   └── blog/
@@ -218,17 +221,17 @@ notro-tail/
 │   │   │   │       ├── [slug].astro         # Individual blog posts
 │   │   │   │       └── tag/[tag]/[...page].astro
 │   │   │   ├── styles/
-│   │   │   │   └── global.css  # TailwindCSS 4 imports + nt-* utility classes
+│   │   │   │   ├── global.css       # TailwindCSS 4 imports + nt-* page layout utilities
+│   │   │   │   └── notro-theme.css  # Notion block colors, toggle, table, TOC styles
 │   │   │   ├── content.config.ts  # Astro Content Collections (posts)
 │   │   │   └── env.d.ts
-│   │   ├── src/config.ts        # navPages (fixed pages map: slug → title/bodyClass)
+│   │   ├── src/config.ts        # site name, navigation links
 │   │   ├── astro.config.mjs
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   └── blank/               # Minimal starter template
 │       ├── src/
 │       │   ├── layouts/     # Layout.astro (simple HTML shell)
-│       │   ├── lib/         # notionImageService.ts
 │       │   ├── pages/       # index.astro + [slug].astro
 │       │   ├── styles/      # global.css + notro-theme.css
 │       │   └── content.config.ts
@@ -239,23 +242,33 @@ notro-tail/
 │   ├── remark-nfm/          # npm library ("remark-nfm" package)
 │   │   ├── index.ts         # Public API exports
 │   │   └── src/
-│   │       ├── nfm.ts           # remarkNfm plugin (pre-parse + directive + callout)
-│   │       ├── transformer.ts   # preprocessNotionMarkdown() — 10 fixes for Notion markdown quirks
-│   │       └── callout.ts       # calloutPlugin — converts :::callout directives to <callout> elements
-│   └── notro-loader/        # npm library ("notro-loader" package)
-│       ├── index.ts         # Public API exports
-│       ├── src/
-│       │   ├── components/  # Astro components (NotroContent, DatabaseCover, DatabaseProperty)
-│       │   │   └── notion/  # Per-block-type Astro components (Callout, Toggle, H1–H4, TableBlock, etc.)
-│       │   ├── loader/
-│       │   │   ├── loader.ts    # Astro Content Loader implementation
-│       │   │   └── schema.ts    # Zod schemas for Notion API response types
-│       │   └── utils/
-│       │       ├── compile-mdx.ts         # compileMdxForAstro() — MDX evaluate + Astro component wiring
-│       │       ├── mdx-pipeline.ts        # buildMdxPlugins() — remark/rehype plugin configuration
-│       │       └── notion.ts              # getPlainText(), buildLinkToPages() helpers
-│       └── package.json
-├── docs/public/             # Documentation images
+│   │       ├── nfm.ts           # remarkNfm plugin (pre-parse + directive + callout conversion)
+│   │       └── transformer.ts   # preprocessNotionMarkdown() — 10 fixes for Notion markdown quirks
+│   ├── notro-loader/        # npm library ("notro-loader" package)
+│   │   ├── index.ts         # Main entry point (components + loader)
+│   │   ├── integration.ts   # notro() Astro integration entry point
+│   │   ├── utils.ts         # Pure TS helpers entry point (safe in astro.config.mjs)
+│   │   ├── image-service.ts # notionImageService entry point (Astro image service)
+│   │   ├── src/
+│   │   │   ├── components/  # Astro components (NotroContent, DatabaseCover, DatabaseProperty)
+│   │   │   ├── loader/
+│   │   │   │   ├── loader.ts      # Astro Content Loader implementation
+│   │   │   │   ├── live-loader.ts # Live-reload loader variant
+│   │   │   │   └── schema.ts      # Zod schemas for Notion API response types
+│   │   │   └── utils/
+│   │   │       ├── compile-mdx.ts    # compileMdxForAstro() — MDX evaluate + Astro component wiring
+│   │   │       ├── mdx-pipeline.ts   # buildMdxPlugins() — remark/rehype plugin configuration
+│   │   │       └── notion.ts         # getPlainText(), buildLinkToPages() helpers
+│   │   └── package.json
+│   ├── notro-ui/            # CLI tool + copy-and-own styled components
+│   │   ├── bin/notro-ui.js  # CLI entry point
+│   │   └── src/templates/   # Source-of-truth component templates (.astro files)
+│   ├── rehype-beautiful-mermaid/  # npm library — renders Mermaid blocks to inline SVG
+│   │   ├── index.ts         # Public API exports
+│   │   └── src/
+│   └── create-notro/        # npm library ("create-notro") — CLI scaffolding tool
+│       └── src/index.ts     # Prompts user and scaffolds template via giget
+├── docs/                    # Documentation site (Astro Starlight)
 ├── .changeset/              # Changesets config for versioning & publishing
 ├── netlify.toml             # Netlify deploy template (env var hints)
 ├── package.json             # Root workspace + changeset scripts
@@ -268,25 +281,54 @@ notro-tail/
 
 ### `notro` Package Entry Points
 
-The `notro-loader` package exposes three entry points, each designed for a specific import context:
+The `notro-loader` package exposes four entry points, each designed for a specific import context:
 
 | Entry point | Import | Use case |
 |---|---|---|
 | `notro-loader` | `import { NotroContent, loader, ... } from "notro-loader"` | Astro components and the Content Loader. **Cannot** be used in `astro.config.mjs` because Astro config is evaluated before the JSX renderer is registered. |
 | `notro-loader/utils` | `import { getPlainText, normalizeNotionPresignedUrl, ... } from "notro-loader/utils"` | Pure TypeScript helpers with no Astro component imports. Safe to use anywhere: config files, Node scripts, image services. |
 | `notro-loader/integration` | `import { notro } from "notro-loader/integration"` | The `notro()` Astro integration. Used in `astro.config.mjs` to inject `@astrojs/mdx` with the correct plugin pipeline. |
+| `notro-loader/image-service` | `import { notionImageService } from "notro-loader/image-service"` | Astro image service that strips expiring `X-Amz-*` query params from Notion S3 URLs before cache-key computation. Used in `astro.config.mjs` under `image.service`. |
 
 ### `notro()` Astro Integration
 
-`notro()` is an Astro integration that registers `@astrojs/mdx` with notro's plugin suite (remarkNfm, remarkGfm, remarkMath, rehypeKatex). It is required for two reasons:
+`notro()` is an Astro integration that registers `@astrojs/mdx` with notro's core plugin suite. It is required for two reasons:
 
 1. **`astro:jsx` renderer** — `@astrojs/mdx` registers the `astro:jsx` renderer that `@mdx-js/mdx`'s `evaluate()` depends on to produce Astro VNodes. Without it, `NotroContent` fails at runtime.
 2. **Static `.mdx` files** — if the project uses `.mdx` files alongside Notion content, `notro()` ensures they are processed with the same plugin pipeline as dynamically compiled Notion markdown.
 
+The interface mirrors `@astrojs/mdx`. Available options:
+
+| Option | Type | Purpose |
+|---|---|---|
+| `remarkPlugins` | `PluggableList` | Additional remark plugins (e.g. `[remarkMath]`) |
+| `rehypePlugins` | `PluggableList` | Additional rehype plugins (e.g. `[rehypeKatex, [rehypeMermaid, { theme: 'github-dark' }]]`) |
+| `shikiConfig` | `Record<string, unknown>` | Injects `@shikijs/rehype` as the last plugin (requires `npm i @shikijs/rehype`). Example: `{ theme: 'github-dark' }` |
+| `viteExternals` | `string[]` | Packages to add to Vite's `ssr.external` (for native binaries or dynamic imports) |
+| `extendMarkdownConfig` | `boolean` | Whether to extend Astro's base markdown config (default: `false`) |
+
 Usage in `astro.config.mjs`:
 ```js
 import { notro } from "notro-loader/integration";
-export default defineConfig({ integrations: [notro(), sitemap()] });
+import { notionImageService } from "notro-loader/image-service";
+import { rehypeMermaid } from "rehype-beautiful-mermaid";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+
+export default defineConfig({
+  image: { service: notionImageService },
+  integrations: [
+    notro({
+      shikiConfig: { theme: "github-dark" },
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [
+        [rehypeMermaid, { theme: "github-dark" }],
+        rehypeKatex,
+      ],
+    }),
+    sitemap(),
+  ],
+});
 ```
 
 ### Content Loading Flow
@@ -298,25 +340,33 @@ export default defineConfig({ integrations: [notro(), sitemap()] });
 
 ### MDX Compile Pipeline
 
-Defined in `packages/notro-loader/src/utils/compile-mdx.ts` via `@mdx-js/mdx`'s `evaluate()`. No `astro.config.mjs` configuration is required — the pipeline runs entirely at render time inside `NotroContent`.
+Defined in `packages/notro-loader/src/utils/mdx-pipeline.ts` via `@mdx-js/mdx`'s `evaluate()` (called from `compile-mdx.ts`). The pipeline is shared between the runtime Notion content path and static `.mdx` files via the `notro()` integration.
 
-**Remark plugins** (parse Markdown → mdast):
-- `remarkNfm` (from `remark-nfm`) — bundles pre-parse normalization (`preprocessNotionMarkdown`), directive syntax support, and callout conversion in one plugin
-- `remark-gfm` — GitHub Flavored Markdown (tables, strikethrough, etc.)
-- `remark-math` — enables `$...$` inline and `$$...$$` block math syntax
+**Core remark plugins** (always active):
+- `remarkNfm` (from `remark-nfm`) — bundles pre-parse normalization (`preprocessNotionMarkdown`), directive syntax + GFM strikethrough/task-list support, and callout conversion in one plugin
 
-**Rehype plugins** (transform hast → HTML):
-- `rehypeKatex` — renders math nodes as KaTeX HTML
-- `resolvePageLinksPlugin` — resolves Notion `notion.so` URLs in `<page>`, `<database>`, and `<a href>` elements using the `linkToPages` map
+**User-provided remark plugins** (opt-in via `notro({ remarkPlugins })`):
+- e.g. `remark-math` — enables `$...$` inline and `$$...$$` block math syntax
+
+**Core rehype plugins** (always active, in order):
+1. `rehypeRaw` — converts raw HTML strings from Notion markdown into hast nodes; passes through Notion custom elements (`callout`, `columns`, `video`, etc.)
+2. `rehypeNotionColorPlugin` — converts `color="gray_bg"` / `underline="true"` attributes on `<p>`, `<h1-h6>`, `<span>` elements to `notro-*` CSS classes
+3. `rehypeBlockElementsPlugin` — renames Notion block elements from lowercase to PascalCase so MDX routes them through the `components` map (e.g. `video` → `Video`, `table_of_contents` → `TableOfContents`)
+4. `rehypeInlineMentionsPlugin` — same rename for inline mention elements (`mention-user` → `MentionUser`, etc.)
+5. _(user-provided rehype plugins run here)_
+6. `rehypeShiki` — injected automatically when `shikiConfig` is set (runs last so other plugins go first)
+7. `rehypeSlug` — adds `id` attributes to h1–h4 headings
+8. `rehypeTocPlugin` — populates `<TableOfContents>` with anchor links to all headings
+9. `resolvePageLinksPlugin` — resolves Notion `notion.so` URLs in `<PageRef>`, `<DatabaseRef>`, mention elements, and `<a href>` using the `linkToPages` map
 
 **Component mapping** (HTML elements → Astro components):
-- After `evaluate()`, `<Content components={notionComponents} />` maps every Notion block type (callout, toggle, columns, images, table, TOC, etc.) and standard HTML element to an Astro component from `src/components/notion/`
+- After `evaluate()`, `<Content components={notionComponents} />` maps every Notion block type (callout, toggle, columns, images, table, TOC, etc.) and standard HTML element to an Astro component
 - Custom overrides can be passed via the `components` prop on `NotroContent`
 - CSS class overrides can be passed via the `classMap` prop without replacing the component
 
 ### Image Handling
 
-`templates/blog/src/lib/notionImageService.ts` wraps Astro's Sharp image service to strip expiring `X-Amz-*` query parameters from Notion pre-signed S3 URLs before computing the cache key, so repeated builds reuse cached output.
+`notro-loader/image-service` exports `notionImageService`, which wraps Astro's Sharp image service to strip expiring `X-Amz-*` query parameters from Notion pre-signed S3 URLs before computing the cache key, so repeated builds reuse cached output. Configure it in `astro.config.mjs` under `image.service: notionImageService`.
 
 ### Markdown Rendering
 
@@ -328,7 +378,7 @@ import { NotroContent } from "notro-loader";
 const markdown = entry.data.markdown;
 ---
 
-<div class="nt-markdown-content">
+<div class="notro-markdown">
   <NotroContent markdown={markdown} />
 </div>
 ```
@@ -371,33 +421,31 @@ Canonical URL and `og:url` are set automatically from `Astro.url`.
 
 Pages can request a unique visual theme by passing `bodyClass` to `<Layout>`:
 
-- **Notion fixed pages** — set `bodyClass` in `src/config.ts` under `navPages[].bodyClass`; the `[slug].astro` route reads this map and injects it.
 - **Static Astro pages** — pass `bodyClass` directly as a `<Layout>` prop.
 
-Current themes defined in `global.css`:
-
-| `bodyClass` | Theme |
-|-------------|-------|
-| `page-about` | Blue top border on `<body>`; `h2` has left border + blue tint; links are bold blue |
-| `page-privacy` | Compact legal document feel — small `tracking-widest` uppercase `h2`s, `text-sm` body |
-| `page-contact` | Indigo gradient on `<main>`; `h2` / links in indigo; section dividers |
-
-All per-page rules are scoped under `main` or `.nt-markdown-content` so the shared `<header>` and `<footer>` are never affected.
+All per-page rules should be scoped under `main` or `.notro-markdown` so the shared `<header>` and `<footer>` are never affected.
 
 ### Navigation Features (`template`)
 
-- **Active nav link** — `Header.astro` reads `Astro.url.pathname` and applies `font-medium text-gray-900` to the current page's link. Blog is active for all `/blog/*` paths except fixed-page slugs. The Docs button darkens to `bg-blue-700` when on `/contact/`.
-- **Prev/next article nav** — `blog/[slug].astro` builds a date-sorted list of blog posts (excluding `"page"`-tagged fixed pages) and passes `prevNav`/`nextNav` (slug + title) as props. A two-column card nav appears below each article body: "← 新しい記事" (newer) on the left, "古い記事 →" (older) on the right.
+- **Active nav link** — `Header.astro` reads `Astro.url.pathname` and applies active styles to the current page's link. Navigation links are config-driven via `src/config.ts` (`config.navigation.nav`).
+- **Prev/next article nav** — `blog/[slug].astro` builds a date-sorted list of blog posts and passes `prevNav`/`nextNav` (slug + title) as props. A two-column card nav appears below each article body: "← 新しい記事" (newer) on the left, "古い記事 →" (older) on the right.
 - **Tag page back link** — `blog/tag/[tag]/[...page].astro` shows "← ブログ一覧" above the heading.
-- **Pinned posts hint** — `blog/[...page].astro` shows a "← ピン留め記事は1ページ目にあります" notice on pages 2+.
+- **Pinned/beginner posts** — `blog/[...page].astro` shows pinned and beginner sections on page 1; on pages 2+, shows "← ピン留め記事は1ページ目にあります" / "← 入門記事は1ページ目にあります" links instead.
 
 ### CSS Conventions
 
-All Notion-specific CSS classes use the `nt-` prefix (defined in `global.css`):
-- Block types: `.nt-header-block`, `.nt-callout-block`, `.nt-toggle-block`, etc.
-- Colors: `.nt-color-gray`, `.nt-color-blue_background`, etc.
-- Annotations: `.nt-annotation-bold`, `.nt-annotation-italic`, etc.
-- Collections: `.nt-collection-item`, `.nt-collection-cover`, `.nt-collection-property`
+Two distinct class prefixes are used in this project:
+
+**`nt-*` classes** (defined in `global.css`) — page layout design tokens for the blog template:
+- Text opacity scale: `.nt-text`, `.nt-text-60`, `.nt-text-45`, etc.
+- Background opacity scale: `.nt-bg-04`, `.nt-bg-09`, etc.
+- Border opacity scale: `.nt-border`, `.nt-border-07`, etc.
+
+**`notro-*` classes** (defined in `notro-theme.css`) — Notion block styles managed by notro-ui:
+- Colors: `.notro-text-gray`, `.notro-text-blue`, `.notro-bg-gray`, `.notro-bg-blue`, etc.
+- Component classes: `.notro-toggle`, `.notro-table`, `.notro-table-wrapper`, `.notro-mermaid`, etc.
+- TOC: `.notro-toc-list`, `.notro-toc-item`, `.notro-toc-level-1` — `.notro-toc-level-4`
+- Markdown wrapper: `.notro-markdown` (applied by `NotroContent`, scopes pre/code/task-list styles)
 
 ---
 
