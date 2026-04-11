@@ -1,5 +1,5 @@
 <p>
-<a href="README.ja.md">English</a>
+<a href="README.md">English</a>
  | 
 <a href="./README.ja.md">日本語</a>
 <!-- |
@@ -189,7 +189,7 @@ Notion API はページコンテンツを約 **20,000 ブロック**で切り詰
 
 一部の Notion ブロック型は Notion API によって Markdown に変換されず、レスポンスから無言で除外されます。notro は除外されたブロックの ID を警告ログに出力するので、該当コンテンツを確認・修正できます。
 
-詳細は [Notion API ドキュメント](https://developers.notion.com/reference/retrieve-page-markdown) および `notro` パッケージの [README](./packages/notro/README.md#notion-api-の制限事項) を参照してください。
+詳細は [Notion API ドキュメント](https://developers.notion.com/reference/retrieve-page-markdown) および [`notro-loader` README](./packages/notro-loader/README.md#notion-api-limitations) を参照してください。
 
 ## Contributing
 

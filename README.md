@@ -1,5 +1,5 @@
 <p>
-<a href="README.ja.md">English</a>
+<a href="README.md">English</a>
  | 
 <a href="./README.ja.md">日本語</a>
 <!-- |
@@ -195,7 +195,7 @@ The Notion API truncates page content at approximately **20,000 blocks**. There 
 
 Some Notion block types cannot be converted to Markdown by the API. These blocks are silently omitted from the response. notro logs the affected block IDs so you can identify and update the content.
 
-For details, see the [Notion API documentation](https://developers.notion.com/reference/retrieve-page-markdown) and the `notro` package [README](./packages/notro/README.md#notion-api-の制限事項).
+For details, see the [Notion API documentation](https://developers.notion.com/reference/retrieve-page-markdown) and the [`notro-loader` README](./packages/notro-loader/README.md#notion-api-limitations).
 
 ## Contributing
 

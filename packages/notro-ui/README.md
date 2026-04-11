@@ -47,7 +47,7 @@ npx notro-ui init --out-dir src/components/blocks
 Your project needs:
 
 ```sh
-npm install notro tailwind-variants
+npm install notro-loader tailwind-variants
 ```
 
 And `notro-theme.css` imported in your global CSS (`src/styles/global.css`):
@@ -67,7 +67,7 @@ After `init`, wire up the local `NotroContent` in your page:
 ```astro
 ---
 // src/pages/blog/[slug].astro
-import { buildLinkToPages, getPlainText } from "notro";
+import { buildLinkToPages, getPlainText } from "notro-loader";
 import NotroContent from "../../components/notro/NotroContent.astro";
 
 const { entry } = Astro.props;
@@ -150,14 +150,14 @@ npx notro-ui list
 
 ---
 
-## How it relates to `notro`
+## How it relates to `notro-loader`
 
 | Package | Role |
 |---|---|
-| [`notro`](../notro/) | Headless — Content Loader, MDX pipeline, unstyled components |
-| `notro-ui` | Style layer — copy-and-own styled components that sit on top of `notro` |
+| [`notro-loader`](../notro-loader/) | Headless — Content Loader, MDX pipeline, unstyled components |
+| `notro-ui` | Style layer — copy-and-own styled components that sit on top of `notro-loader` |
 
-`notro` provides `compileMdxCached` (the MDX compiler) and the headless component set. `notro-ui`'s `NotroContent.astro` uses `compileMdxCached` directly and wires in your local styled components.
+`notro-loader` provides `compileMdxCached` (the MDX compiler) and the headless component set. `notro-ui`'s `NotroContent.astro` uses `compileMdxCached` directly and wires in your local styled components.
 
 ---
 
