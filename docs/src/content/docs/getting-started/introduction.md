@@ -13,7 +13,7 @@ Notion の Public API（Markdown Content API）からコンテンツを取得し
 | `remark-nfm` | `packages/remark-nfm/` | Notion Flavored Markdown 向け純粋 remark プラグイン。Astro 依存なしで独立して npm 公開可能。 |
 | `notro` | `packages/notro/` | 公開 npm ライブラリ。Astro Content Loader・MDX コンパイルパイプライン・Notion ブロックコンポーネント。 |
 | `create-notro` | `packages/create-notro/` | CLI スキャフォールドツール。`npm create notro@latest` で新しいサイトを作成。 |
-| `notro-tail` (blog) | `templates/blog/` | フル機能ブログテンプレート（リファレンス実装）。 |
+| `notro-blog` (blog) | `templates/blog/` | フル機能ブログテンプレート（リファレンス実装）。 |
 | `notro-blank` (blank) | `templates/blank/` | 最小構成スターター。 |
 
 ## 次のステップ

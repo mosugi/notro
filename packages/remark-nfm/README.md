@@ -114,7 +114,7 @@ remark-notro        Pure remark plugin — no Astro or Notion API dependencies
 notro               Astro + Notion API integration library
                     (Content Loader / MDX compiler / Astro components)
    ↑ used by
-notro-tail          Deployable Astro template app
+notro-blog          Deployable Astro template app
 ```
 
 - `remark-notro` has no dependency on Astro or the Notion API and can be published independently

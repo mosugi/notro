@@ -17,7 +17,7 @@ npm create notro@latest my-site
 
 CLI が以下を実行します:
 
-1. `github:mosugi/notro-tail/template` からテンプレートをダウンロード
+1. `github:mosugi/notro/templates/blog` または `github:mosugi/notro/templates/blank` からテンプレートをダウンロード
 2. `.env.example` を `.env` にコピー
 3. 依存関係のインストール（任意）
 
@@ -53,5 +53,5 @@ npm run preview
 `npm create astro@latest` のテンプレート機能でも使えます:
 
 ```sh
-npm create astro@latest my-site -- --template mosugi/notro-tail/template
+npm create astro@latest my-site -- --template mosugi/notro/templates/blog
 ```

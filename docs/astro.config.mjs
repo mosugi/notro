@@ -16,7 +16,7 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/mosugi/notro-tail",
+          href: "https://github.com/mosugi/notro",
         },
         {
           icon: "npm",
@@ -63,7 +63,7 @@ export default defineConfig({
         },
       ],
       editLink: {
-        baseUrl: "https://github.com/mosugi/notro-tail/edit/main/docs/",
+        baseUrl: "https://github.com/mosugi/notro/edit/main/docs/",
       },
     }),
   ],

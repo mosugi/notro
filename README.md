@@ -39,7 +39,7 @@ npm create notro@latest my-site
 
 The CLI will download the starter template, create `.env` from `.env.example`, and optionally install dependencies. Then edit `.env` with your Notion credentials and run `npm run dev`.
 
-See the [documentation](https://github.com/mosugi/notro-tail/tree/main/docs) for detailed setup instructions.
+See the [documentation](https://github.com/mosugi/notro/tree/main/docs) for detailed setup instructions.
 
 ## Features
 
@@ -131,15 +131,15 @@ NotroTail uses Astro's static output mode — no SSR adapter required. Config fi
 
 ### Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro-tail&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-tail&repository-name=notro-tail)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmosugi%2Fnotro&root-directory=templates%2Fblog&env=NOTION_TOKEN,NOTION_DATASOURCE_ID&envDescription=Notion%20API%20credentials&project-name=notro-blog&repository-name=notro)
 
-1. Click the button above, or import the repository at [vercel.com](https://vercel.com)
+1. Click the button above, or import the repository at [vercel.com](https://vercel.com) with root directory set to `templates/blog`
 2. Add environment variables: `NOTION_TOKEN` and `NOTION_DATASOURCE_ID`
-3. Click **Deploy** — `vercel.json` handles all build settings automatically
+3. Click **Deploy** — `vercel.json` in `templates/blog/` handles all build settings automatically
 
 ### Netlify
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro-tail)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/mosugi/notro)
 
 1. Click the button above, or import the repository at [netlify.com](https://app.netlify.com)
 2. Add environment variables: `NOTION_TOKEN` and `NOTION_DATASOURCE_ID`
@@ -147,7 +147,7 @@ NotroTail uses Astro's static output mode — no SSR adapter required. Config fi
 
 ### Cloudflare Pages
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/mosugi/notro-tail)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/mosugi/notro)
 
 1. Click the button above, or go to **Workers & Pages → Create → Pages → Connect to Git** in the [Cloudflare dashboard](https://dash.cloudflare.com)
 2. Select the repository and enter the following build settings:
@@ -172,7 +172,7 @@ This repository is a **pnpm workspace monorepo** containing the following packag
 | [`notro-ui`](./packages/notro-ui/) | `packages/notro-ui/` | Copy-and-own styled components for `notro-loader` (shadcn style). Run `notro-ui add --all` to install components into your project — they become your code, editable directly. |
 | [`rehype-beautiful-mermaid`](./packages/rehype-beautiful-mermaid/) | `packages/rehype-beautiful-mermaid/` | Rehype plugin that renders Mermaid code blocks to inline SVG at build time. |
 | [`create-notro`](./packages/create-notro/) | `packages/create-notro/` | CLI scaffolding tool. Run `npm create notro@latest` to choose a template and scaffold a new site. |
-| `notro-tail` (blog) | `templates/blog/` | Full-featured blog template — reference implementation with blog list, tags, pagination, RSS, and SEO. |
+| `notro-blog` (blog) | `templates/blog/` | Full-featured blog template — reference implementation with blog list, tags, pagination, RSS, and SEO. |
 | `notro-blank` (blank) | `templates/blank/` | Minimal starter — just pages and Notion content rendering. |
 | `docs` | `docs/` | Documentation site built with Astro Starlight. |
 
