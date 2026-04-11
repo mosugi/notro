@@ -22,10 +22,10 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Use Node.js 24.8.0
+      - name: Use Node.js 24.8.0+
         uses: actions/setup-node@v4
         with:
-          node-version: 24.8.0
+          node-version: '>=24.8.0'
           registry-url: 'https://registry.npmjs.org'
 
       - run: pnpm install --frozen-lockfile
