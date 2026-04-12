@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
+import { notro } from "notro-loader/integration";
 
 export default defineConfig({
   site: "https://notrotail.mosugi.com",
@@ -62,9 +63,10 @@ export default defineConfig({
           ],
         },
       ],
-      editLink: {
-        baseUrl: "https://github.com/mosugi/notro/edit/main/docs/",
+      components: {
+        ContentPanel: "./src/components/NotroContentPanel.astro",
       },
     }),
+    notro(),
   ],
 });
