@@ -62,14 +62,6 @@ Synced blocks share content across multiple pages. The preprocessor strips the w
 	It can contain any markdown content including **bold**, *italic*, and `code`.
 </synced_block>
 
-Synced block references contain the same content:
-
-<synced_block_reference url="https://www.notion.so/example-block-id">
-	The same shared content appears here via a reference.
-
-	Both the original and all references render identically.
-</synced_block_reference>
-
 ## Standard Markdown Features
 
 ### Text Formatting
