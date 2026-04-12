@@ -1,3 +1,8 @@
+---
+slug: notro-fixture-code
+title: "[Fixture] Code"
+---
+
 # Code Blocks
 
 ## TypeScript

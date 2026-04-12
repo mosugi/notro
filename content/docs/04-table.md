@@ -1,3 +1,8 @@
+---
+slug: notro-fixture-table
+title: "[Fixture] Table"
+---
+
 # Table Blocks
 
 ## Standard GFM table

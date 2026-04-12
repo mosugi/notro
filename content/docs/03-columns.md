@@ -1,3 +1,8 @@
+---
+slug: notro-fixture-columns
+title: "[Fixture] Columns"
+---
+
 # Column Layouts
 
 ## Two-column layout

@@ -1,3 +1,8 @@
+---
+slug: notro-fixture-math
+title: "[Fixture] Math"
+---
+
 # Math Equations
 
 ## Inline math

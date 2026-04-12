@@ -1,3 +1,8 @@
+---
+slug: notro-fixture-misc
+title: "[Fixture] Misc"
+---
+
 # Miscellaneous NFM Features
 
 ## Table of Contents

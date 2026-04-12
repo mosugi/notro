@@ -1,3 +1,8 @@
+---
+slug: notro-fixture-colors
+title: "[Fixture] Colors"
+---
+
 # Color Annotations
 
 Notion allows coloring text at the block level using `{color="..."}` syntax.

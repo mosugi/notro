@@ -1,3 +1,8 @@
+---
+slug: notro-fixture-toggle
+title: "[Fixture] Toggle"
+---
+
 # Toggle Blocks
 
 ## Basic toggle with plain text

@@ -1,3 +1,8 @@
+---
+slug: notro-fixture-callout
+title: "[Fixture] Callout"
+---
+
 # Callout Blocks
 
 ## Basic callout with icon and color

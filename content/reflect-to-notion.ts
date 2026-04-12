@@ -74,6 +74,28 @@ function makeClient(token: string): Client {
 // Load fixtures from disk
 // ---------------------------------------------------------------------------
 
+interface Frontmatter {
+  slug?: string;
+  title?: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Parses YAML frontmatter from a markdown string.
+ * Returns { frontmatter, body } where body has the frontmatter block stripped.
+ */
+function parseFrontmatter(content: string): { frontmatter: Frontmatter; body: string } {
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  if (!match) return { frontmatter: {}, body: content };
+
+  const fm: Frontmatter = {};
+  for (const line of match[1].split("\n")) {
+    const [, key, val] = line.match(/^(\w+):\s*"?(.*?)"?\s*$/) ?? [];
+    if (key) fm[key] = val;
+  }
+  return { frontmatter: fm, body: match[2] };
+}
+
 function toTitleCase(str: string): string {
   return str
     .replace(/^\d+-/, "") // strip leading "01-" numbering
@@ -83,6 +105,8 @@ function toTitleCase(str: string): string {
 
 /**
  * Reads all .md files from fixtureDir, sorted by filename.
+ * slug and title are read from frontmatter if present; otherwise derived from filename.
+ * The body sent to Notion has the frontmatter block stripped.
  */
 function loadFixtures(fixtureDir: string, filter?: string): FixtureFile[] {
   const files = readdirSync(fixtureDir)
@@ -100,10 +124,11 @@ function loadFixtures(fixtureDir: string, filter?: string): FixtureFile[] {
 
   return files.map((file) => {
     const name = basename(file, ".md");
-    const slug = `notro-fixture-${name}`;
-    const title = `[Fixture] ${toTitleCase(name)}`;
-    const markdown = readFileSync(join(fixtureDir, file), "utf-8");
-    return { slug, title, markdown, name };
+    const raw = readFileSync(join(fixtureDir, file), "utf-8");
+    const { frontmatter, body } = parseFrontmatter(raw);
+    const slug = (frontmatter.slug as string | undefined) ?? `notro-fixture-${name}`;
+    const title = (frontmatter.title as string | undefined) ?? `[Fixture] ${toTitleCase(name)}`;
+    return { slug, title, markdown: body, name };
   });
 }
 
