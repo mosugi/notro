@@ -5,8 +5,8 @@
  * Bidirectional sync between local markdown files and a Notion data source.
  *
  * Usage:
- *   notro-md-sync sync <dir> [options]   Push local .md files to Notion
- *   notro-md-sync get  <dir> [options]   Pull Notion pages to local .md files
+ *   notro-md-sync publish <dir> [options]   Push local .md files to Notion
+ *   notro-md-sync get     <dir> [options]   Pull Notion pages to local .md files
  *
  * Arguments:
  *   <dir>              Directory for .md files
@@ -15,12 +15,12 @@
  *   --token <token>    Notion API token (default: NOTION_TOKEN env var)
  *   --db <id>          Notion data source ID (default: NOTION_DATASOURCE_ID env var)
  *   --dry-run          Preview changes without making any API calls
- *   --force            sync: archive existing and recreate; get: overwrite existing files
- *   --filter <prefix>  sync: process only files whose name starts with <prefix>
- *                      get: process only pages whose slug starts with <prefix>
+ *   --force            publish: archive existing and recreate; get: overwrite existing files
+ *   --filter <prefix>  publish: process only files whose name starts with <prefix>
+ *                      get:     process only pages whose slug starts with <prefix>
  *   -h, --help         Show this help message
  *
- * sync — page properties set for each file:
+ * publish — page properties set for each file:
  *   Name     — title from frontmatter, or "[title-cased filename]"
  *   Slug     — slug from frontmatter, or filename-without-ext
  *   Public   — false (pages are not published automatically)
@@ -199,10 +199,10 @@ function getTitleFromPage(page: NotionPage): string | undefined {
 }
 
 // ---------------------------------------------------------------------------
-// sync: local .md → Notion
+// publish: local .md → Notion
 // ---------------------------------------------------------------------------
 
-interface SyncOptions {
+interface PublishOptions {
   dir: string;
   token: string;
   db: string;
@@ -211,7 +211,7 @@ interface SyncOptions {
   filter?: string;
 }
 
-export async function sync(options: SyncOptions): Promise<void> {
+export async function publish(options: PublishOptions): Promise<void> {
   const { dir, token, db, dryRun = false, force = false, filter } = options;
 
   const files = loadFiles(dir, filter);
@@ -346,7 +346,7 @@ export async function get(options: GetOptions): Promise<void> {
 // CLI
 // ---------------------------------------------------------------------------
 
-type Subcommand = "sync" | "get";
+type Subcommand = "publish" | "get";
 
 interface CliOptions {
   subcommand?: Subcommand;
@@ -375,7 +375,7 @@ function parseArgs(argv: string[]): CliOptions {
       case "--help":     opts.help    = true; break;
       default:
         if (!a.startsWith("-")) {
-          if (!opts.subcommand && (a === "sync" || a === "get")) {
+          if (!opts.subcommand && (a === "publish" || a === "get")) {
             opts.subcommand = a as Subcommand;
           } else if (!opts.dir) {
             opts.dir = a;
@@ -396,8 +396,8 @@ function printHelp(): void {
 notro-md-sync — Bidirectional sync between local markdown and a Notion data source
 
 Usage:
-  notro-md-sync sync <dir> [options]   Push local .md files to Notion
-  notro-md-sync get  <dir> [options]   Pull Notion pages to local .md files
+  notro-md-sync publish <dir> [options]   Push local .md files to Notion
+  notro-md-sync get     <dir> [options]   Pull Notion pages to local .md files
 
 Arguments:
   <dir>              Directory for .md files
@@ -406,12 +406,12 @@ Options:
   --token <token>    Notion API token          (default: NOTION_TOKEN env var)
   --db <id>          Notion data source ID     (default: NOTION_DATASOURCE_ID env var)
   --dry-run          Preview without API calls
-  --force            sync: archive existing and recreate; get: overwrite existing files
-  --filter <prefix>  sync: files whose name starts with <prefix>
-                     get:  pages whose slug starts with <prefix>
+  --force            publish: archive existing and recreate; get: overwrite existing files
+  --filter <prefix>  publish: files whose name starts with <prefix>
+                     get:     pages whose slug starts with <prefix>
   -h, --help         Show this help message
 
-Frontmatter (sync):
+Frontmatter (publish):
   Each .md file may include a YAML frontmatter block to override the slug and title:
 
     ---
@@ -435,7 +435,7 @@ if (opts.help) {
 }
 
 if (!opts.subcommand) {
-  console.error("Error: subcommand required: sync | get\n");
+  console.error("Error: subcommand required: publish | get\n");
   printHelp();
   process.exit(1);
 }
@@ -460,7 +460,7 @@ if (!db) {
 
 const commonOpts = { dir: opts.dir, token, db, dryRun: opts.dryRun, force: opts.force, filter: opts.filter };
 
-const runner = opts.subcommand === "get" ? get(commonOpts) : sync(commonOpts);
+const runner = opts.subcommand === "get" ? get(commonOpts) : publish(commonOpts);
 
 runner.catch((err) => {
   console.error("Fatal:", err instanceof Error ? err.message : String(err));
