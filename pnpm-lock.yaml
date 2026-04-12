@@ -18,18 +18,15 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.8
         version: 2.30.0(@types/node@24.12.2)
-      '@notionhq/client':
-        specifier: 5.11.1
-        version: 5.11.1
+      notro-md-sync:
+        specifier: workspace:*
+        version: link:packages/notro-md-sync
       prettier:
         specifier: ^3.8.1
         version: 3.8.1
       prettier-plugin-astro:
         specifier: ^0.14.1
         version: 0.14.1
-      undici:
-        specifier: ^7.24.5
-        version: 7.24.7
 
   packages/create-notro:
     dependencies:
@@ -93,6 +90,22 @@ importers:
       '@shikijs/rehype':
         specifier: ^4.0.0
         version: 4.0.2
+
+  packages/notro-md-sync:
+    dependencies:
+      '@notionhq/client':
+        specifier: 5.11.1
+        version: 5.11.1
+      undici:
+        specifier: ^7.24.5
+        version: 7.24.7
+    devDependencies:
+      tsdown:
+        specifier: ^0.12.9
+        version: 0.12.9(typescript@5.9.3)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
   packages/notro-ui:
     dependencies:
