@@ -37,6 +37,7 @@
     "@changesets/cli": "^2.29.8",
     "@notionhq/client": "5.11.1",
     "prettier": "^3.8.1",
-    "prettier-plugin-astro": "^0.14.1"
+    "prettier-plugin-astro": "^0.14.1",
+    "undici": "^7.24.5"
   }
 }

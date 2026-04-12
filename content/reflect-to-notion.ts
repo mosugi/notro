@@ -29,13 +29,20 @@
  *   Date     — today's date (ISO 8601)
  */
 
-import { request as httpRequest } from "node:http";
-import { request as httpsRequest, Agent } from "node:https";
-import { connect as tlsConnect } from "node:tls";
+import { Client, iteratePaginatedAPI } from "@notionhq/client";
 import { readFileSync, readdirSync } from "node:fs";
 import { join, basename, extname, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { URL } from "node:url";
+
+// Apply HTTPS proxy for corporate networks or CI environments.
+// Node.js does not honor the system https_proxy env var by default; undici
+// (the HTTP client used by @notionhq/client under the hood) requires explicit
+// dispatcher configuration.
+const httpsProxy = process.env.https_proxy || process.env.HTTPS_PROXY;
+if (httpsProxy) {
+  const { ProxyAgent, setGlobalDispatcher } = await import("undici");
+  setGlobalDispatcher(new ProxyAgent(httpsProxy));
+}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -53,112 +60,14 @@ interface FixtureFile {
 }
 
 // ---------------------------------------------------------------------------
-// Proxy-aware HTTPS agent
-// HTTPS_PROXY / https_proxy env var is respected via HTTP CONNECT tunnel.
-// (fetch/undici does not work in this environment)
+// Notion API helpers
 // ---------------------------------------------------------------------------
 
-class ProxyAgent extends Agent {
-  private proxyHost: string;
-  private proxyPort: number;
-  private proxyAuth: string;
-
-  constructor(proxyUrl: string) {
-    super();
-    const u = new URL(proxyUrl);
-    this.proxyHost = u.hostname;
-    this.proxyPort = parseInt(u.port, 10);
-    this.proxyAuth = Buffer.from(
-      `${decodeURIComponent(u.username)}:${decodeURIComponent(u.password)}`,
-    ).toString("base64");
-  }
-
-  createConnection(
-    options: { host?: string; port?: number; servername?: string },
-    callback: (err: Error | null, socket?: import("node:net").Socket) => void,
-  ): void {
-    const targetHost = options.host ?? "api.notion.com";
-    const targetPort = options.port ?? 443;
-
-    // Step 1: open TCP connection to proxy and send HTTP CONNECT
-    const connectReq = httpRequest({
-      host: this.proxyHost,
-      port: this.proxyPort,
-      method: "CONNECT",
-      path: `${targetHost}:${targetPort}`,
-      headers: {
-        Host: `${targetHost}:${targetPort}`,
-        "Proxy-Authorization": `Basic ${this.proxyAuth}`,
-      },
-    });
-
-    connectReq.on("connect", (_res, socket) => {
-      // Step 2: upgrade the raw socket to TLS
-      const tlsSocket = tlsConnect({
-        socket,
-        servername: targetHost,
-      });
-      tlsSocket.once("secureConnect", () => callback(null, tlsSocket));
-      tlsSocket.once("error", (err) => callback(err));
-    });
-
-    connectReq.on("error", (err) => callback(err));
-    connectReq.end();
-  }
-}
-
-function buildAgent(): Agent | undefined {
-  const proxyUrl = process.env.HTTPS_PROXY || process.env.https_proxy;
-  return proxyUrl ? new ProxyAgent(proxyUrl) : undefined;
-}
-
-const _agent = buildAgent();
-
-function notionRequest(
-  method: string,
-  path: string,
-  body?: unknown,
-): Promise<unknown> {
-  return new Promise((resolve, reject) => {
-    const bodyStr = body !== undefined ? JSON.stringify(body) : "";
-
-    const req = httpsRequest(
-      {
-        hostname: "api.notion.com",
-        path: `/v1${path}`,
-        method,
-        agent: _agent,
-        headers: {
-          Authorization: `Bearer ${process.env.NOTION_TOKEN}`,
-          "Notion-Version": "2026-03-11",
-          "Content-Type": "application/json",
-          ...(bodyStr ? { "Content-Length": Buffer.byteLength(bodyStr) } : {}),
-        },
-      },
-      (res) => {
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => {
-          try {
-            const parsed = JSON.parse(data);
-            if (parsed.object === "error") {
-              reject(
-                new Error(`Notion API error ${parsed.status}: ${parsed.message}`),
-              );
-            } else {
-              resolve(parsed);
-            }
-          } catch (e) {
-            reject(e);
-          }
-        });
-      },
-    );
-
-    req.on("error", reject);
-    if (bodyStr) req.write(bodyStr);
-    req.end();
-  });
+function makeClient(token: string): Client {
+  return new Client({
+    auth: token,
+    notionVersion: "2026-03-11",
+  } as ConstructorParameters<typeof Client>[0]);
 }
 
 // ---------------------------------------------------------------------------
@@ -203,49 +112,52 @@ function loadFixtures(fixtureDir: string, filter?: string): FixtureFile[] {
 // ---------------------------------------------------------------------------
 
 /**
- * Searches the database for a page whose Slug property matches the given slug.
+ * Searches the data source for a page whose Slug property matches the given slug.
  * Returns the page ID if found, or undefined.
  */
 async function findPageIdBySlug(
+  notion: Client,
   dbId: string,
   slug: string,
 ): Promise<string | undefined> {
-  let cursor: string | undefined;
-
-  do {
-    const body: Record<string, unknown> = {
-      filter: { property: "Slug", rich_text: { equals: slug } },
-      page_size: 10,
-    };
-    if (cursor) body.start_cursor = cursor;
-
-    const res = (await notionRequest("POST", `/data_sources/${dbId}/query`, body)) as {
-      results: Array<{ id: string }>;
-      has_more: boolean;
-      next_cursor: string | null;
-    };
-
-    if (res.results.length > 0) return res.results[0].id;
-    cursor = res.has_more && res.next_cursor ? res.next_cursor : undefined;
-  } while (cursor);
-
+  for await (const page of iteratePaginatedAPI(notion.dataSources.query, {
+    data_source_id: dbId,
+  })) {
+    const props = (page as { properties?: Record<string, unknown> }).properties;
+    if (!props) continue;
+    const slugProp = props["Slug"] as
+      | { rich_text?: Array<{ plain_text: string }> }
+      | undefined;
+    if (slugProp?.rich_text?.[0]?.plain_text === slug) return page.id;
+  }
   return undefined;
 }
 
 /**
  * Archives (soft-deletes) an existing Notion page.
  */
-async function archivePage(pageId: string): Promise<void> {
-  await notionRequest("PATCH", `/pages/${pageId}`, { archived: true });
+async function archivePage(notion: Client, pageId: string): Promise<void> {
+  await (notion.pages as unknown as { update: (p: unknown) => Promise<void> }).update({
+    page_id: pageId,
+    archived: true,
+  });
 }
 
 /**
- * Creates a new Notion page in the given database with markdown body content.
+ * Creates a new Notion page in the given data source with markdown body content.
  */
-async function createPage(dbId: string, fixture: FixtureFile): Promise<string> {
+async function createPage(
+  notion: Client,
+  dbId: string,
+  fixture: FixtureFile,
+): Promise<string> {
   const today = new Date().toISOString().split("T")[0];
 
-  const res = (await notionRequest("POST", "/pages", {
+  const page = await (
+    notion.pages as unknown as {
+      create: (p: unknown) => Promise<{ id: string }>;
+    }
+  ).create({
     parent: { data_source_id: dbId, type: "data_source_id" },
     properties: {
       Name: { title: [{ text: { content: fixture.title } }] },
@@ -255,9 +167,9 @@ async function createPage(dbId: string, fixture: FixtureFile): Promise<string> {
       Date: { date: { start: today } },
     },
     markdown: fixture.markdown,
-  })) as { id: string };
+  });
 
-  return res.id;
+  return page.id;
 }
 
 // ---------------------------------------------------------------------------
@@ -281,6 +193,7 @@ export async function reflectFixturesToNotion(
   if (!token) throw new Error("NOTION_TOKEN environment variable is not set.");
   if (!dbId) throw new Error("NOTION_DATASOURCE_ID environment variable is not set.");
 
+  const notion = makeClient(token);
   const scriptDir = dirname(fileURLToPath(import.meta.url));
   const fixtureDir = join(scriptDir, "docs");
 
@@ -299,7 +212,7 @@ export async function reflectFixturesToNotion(
 
   for (const fixture of fixtures) {
     try {
-      const existingId = await findPageIdBySlug(dbId, fixture.slug);
+      const existingId = await findPageIdBySlug(notion, dbId, fixture.slug);
 
       if (existingId) {
         if (!force) {
@@ -308,11 +221,11 @@ export async function reflectFixturesToNotion(
           );
           continue;
         }
-        await archivePage(existingId);
+        await archivePage(notion, existingId);
         console.log(`  archived existing  ${existingId}`);
       }
 
-      const newId = await createPage(dbId, fixture);
+      const newId = await createPage(notion, dbId, fixture);
       console.log(`  created  ${fixture.title}  →  ${newId}`);
     } catch (err) {
       console.error(
