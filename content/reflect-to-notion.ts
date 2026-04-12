@@ -1,13 +1,13 @@
 /**
  * reflect-to-notion.ts
  *
- * Batch-reflects NFM fixture files from examples/nfm/ to Notion.
+ * Batch-reflects markdown files from a content sub-directory to Notion.
  * For each .md file in the target directory, creates a new Notion page (or
  * replaces an existing one when --force is given) in the database specified by
  * NOTION_DATASOURCE_ID.
  *
  * Usage:
- *   node --experimental-strip-types examples/reflect-to-notion.ts [options]
+ *   node --experimental-strip-types content/reflect-to-notion.ts [options]
  *   # or via pnpm script:
  *   pnpm run reflect [-- --options]
  *
@@ -185,7 +185,7 @@ export async function reflectFixturesToNotion(
     throw new Error("NOTION_DATASOURCE_ID environment variable is not set.");
 
   const scriptDir = dirname(fileURLToPath(import.meta.url));
-  const fixtureDir = join(scriptDir, "nfm");
+  const fixtureDir = join(scriptDir, "docs");
 
   const fixtures = loadFixtures(fixtureDir, fixtureFilter);
   console.log(
