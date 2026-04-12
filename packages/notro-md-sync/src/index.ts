@@ -2,42 +2,44 @@
 /**
  * notro-md-sync
  *
- * Syncs local markdown files to a Notion data source.
- * Reads YAML frontmatter (slug, title) from each .md file;
- * falls back to filename-derived values if frontmatter is absent.
- * The frontmatter block is stripped before sending content to Notion.
+ * Bidirectional sync between local markdown files and a Notion data source.
  *
  * Usage:
- *   notro-md-sync <dir> [options]
+ *   notro-md-sync sync <dir> [options]   Push local .md files to Notion
+ *   notro-md-sync get  <dir> [options]   Pull Notion pages to local .md files
  *
  * Arguments:
- *   <dir>              Directory containing .md files to sync
+ *   <dir>              Directory for .md files
  *
  * Options:
  *   --token <token>    Notion API token (default: NOTION_TOKEN env var)
  *   --db <id>          Notion data source ID (default: NOTION_DATASOURCE_ID env var)
  *   --dry-run          Preview changes without making any API calls
- *   --force            Archive existing pages and recreate from source
- *   --filter <prefix>  Process only files whose name starts with <prefix>
+ *   --force            sync: archive existing and recreate; get: overwrite existing files
+ *   --filter <prefix>  sync: process only files whose name starts with <prefix>
+ *                      get: process only pages whose slug starts with <prefix>
  *   -h, --help         Show this help message
  *
- * Page properties set for each file:
+ * sync — page properties set for each file:
  *   Name     — title from frontmatter, or "[title-cased filename]"
  *   Slug     — slug from frontmatter, or filename-without-ext
  *   Public   — false (pages are not published automatically)
  *   Tags     — ["md-sync"]
  *   Date     — today's date (ISO 8601)
+ *
+ * get — writes <dir>/<slug>.md with YAML frontmatter:
+ *   ---
+ *   slug: <slug>
+ *   title: "<title>"
+ *   ---
  */
 
 import { Client, iteratePaginatedAPI } from "@notionhq/client";
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { resolve, basename, extname } from "node:path";
 
 // ---------------------------------------------------------------------------
 // HTTPS proxy support
-// Node.js does not honor the system https_proxy env var by default; undici
-// (the HTTP client used by @notionhq/client) requires explicit dispatcher
-// configuration.
 // ---------------------------------------------------------------------------
 const httpsProxy = process.env.https_proxy || process.env.HTTPS_PROXY;
 if (httpsProxy) {
@@ -50,13 +52,9 @@ if (httpsProxy) {
 // ---------------------------------------------------------------------------
 
 interface MarkdownFile {
-  /** Slug for the Notion page's Slug property */
   slug: string;
-  /** Title for the Notion page's Name property */
   title: string;
-  /** Markdown content with frontmatter stripped */
   markdown: string;
-  /** Original filename without extension */
   name: string;
 }
 
@@ -64,6 +62,11 @@ interface Frontmatter {
   slug?: string;
   title?: string;
   [key: string]: string | undefined;
+}
+
+interface NotionPage {
+  id: string;
+  properties?: Record<string, unknown>;
 }
 
 // ---------------------------------------------------------------------------
@@ -80,6 +83,13 @@ function parseFrontmatter(content: string): { frontmatter: Frontmatter; body: st
     if (m) fm[m[1]] = m[2];
   }
   return { frontmatter: fm, body: match[2] };
+}
+
+function buildFrontmatter(slug: string, title: string): string {
+  // Escape title if it contains special YAML characters
+  const needsQuotes = /[:#\[\]{}&*!|>'"%@`]/.test(title) || title.startsWith("-");
+  const titleValue = needsQuotes ? `"${title.replace(/"/g, '\\"')}"` : title;
+  return `---\nslug: ${slug}\ntitle: ${titleValue}\n---\n\n`;
 }
 
 function toTitleCase(str: string): string {
@@ -137,7 +147,7 @@ async function findPageBySlug(
   for await (const page of iteratePaginatedAPI(notion.dataSources.query, {
     data_source_id: dbId,
   })) {
-    const props = (page as { properties?: Record<string, unknown> }).properties;
+    const props = (page as NotionPage).properties;
     const slugProp = props?.["Slug"] as
       | { rich_text?: Array<{ plain_text: string }> }
       | undefined;
@@ -174,8 +184,22 @@ async function createPage(
   return page.id;
 }
 
+function getSlugFromPage(page: NotionPage): string | undefined {
+  const slugProp = page.properties?.["Slug"] as
+    | { rich_text?: Array<{ plain_text: string }> }
+    | undefined;
+  return slugProp?.rich_text?.[0]?.plain_text;
+}
+
+function getTitleFromPage(page: NotionPage): string | undefined {
+  const nameProp = page.properties?.["Name"] as
+    | { title?: Array<{ plain_text: string }> }
+    | undefined;
+  return nameProp?.title?.[0]?.plain_text;
+}
+
 // ---------------------------------------------------------------------------
-// Core sync logic
+// sync: local .md → Notion
 // ---------------------------------------------------------------------------
 
 interface SyncOptions {
@@ -231,10 +255,101 @@ export async function sync(options: SyncOptions): Promise<void> {
 }
 
 // ---------------------------------------------------------------------------
+// get: Notion → local .md files
+// ---------------------------------------------------------------------------
+
+interface GetOptions {
+  dir: string;
+  token: string;
+  db: string;
+  dryRun?: boolean;
+  force?: boolean;
+  filter?: string;
+}
+
+export async function get(options: GetOptions): Promise<void> {
+  const { dir, token, db, dryRun = false, force = false, filter } = options;
+
+  const absDir = resolve(dir);
+
+  if (!dryRun) {
+    mkdirSync(absDir, { recursive: true });
+  }
+
+  const notion = makeClient(token);
+
+  const pages: NotionPage[] = [];
+  for await (const page of iteratePaginatedAPI(notion.dataSources.query, {
+    data_source_id: db,
+  })) {
+    pages.push(page as NotionPage);
+  }
+
+  console.log(`Found ${pages.length} page(s) in data source ${db}`);
+
+  let written = 0;
+  let skipped = 0;
+  let errors = 0;
+
+  for (const page of pages) {
+    const slug = getSlugFromPage(page);
+    const title = getTitleFromPage(page) ?? "Untitled";
+
+    if (!slug) {
+      console.warn(`  warn     ${page.id}: no Slug property, skipping`);
+      continue;
+    }
+
+    if (filter && !slug.startsWith(filter)) {
+      continue;
+    }
+
+    const filePath = `${absDir}/${slug}.md`;
+
+    if (dryRun) {
+      console.log(`  [dry-run] ${slug}  →  ${filePath}  (title: ${title})`);
+      written++;
+      continue;
+    }
+
+    if (existsSync(filePath) && !force) {
+      console.log(`  skip     ${slug}  (file exists: ${filePath}; use --force to overwrite)`);
+      skipped++;
+      continue;
+    }
+
+    try {
+      const md = await (notion.pages as unknown as {
+        retrieveMarkdown: (p: { page_id: string }) => Promise<{ markdown: string; truncated?: boolean }>;
+      }).retrieveMarkdown({ page_id: page.id });
+
+      if (md.truncated) {
+        console.warn(`  warn     ${slug}: content was truncated by the Notion API`);
+      }
+
+      const content = buildFrontmatter(slug, title) + md.markdown;
+      writeFileSync(filePath, content, "utf-8");
+      console.log(`  wrote    ${slug}  →  ${filePath}`);
+      written++;
+    } catch (err) {
+      console.error(
+        `  error    ${slug}: ${err instanceof Error ? err.message : String(err)}`,
+      );
+      errors++;
+    }
+  }
+
+  console.log(`\nDone. ${written} written, ${skipped} skipped, ${errors} errors.`);
+}
+
+// ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
 
+type Subcommand = "sync" | "get";
+
 interface CliOptions {
+  subcommand?: Subcommand;
   dir?: string;
   token?: string;
   db?: string;
@@ -259,8 +374,17 @@ function parseArgs(argv: string[]): CliOptions {
       case "-h":
       case "--help":     opts.help    = true; break;
       default:
-        if (!a.startsWith("-")) opts.dir = a;
-        else console.warn(`Unknown option: ${a}`);
+        if (!a.startsWith("-")) {
+          if (!opts.subcommand && (a === "sync" || a === "get")) {
+            opts.subcommand = a as Subcommand;
+          } else if (!opts.dir) {
+            opts.dir = a;
+          } else {
+            console.warn(`Unexpected argument: ${a}`);
+          }
+        } else {
+          console.warn(`Unknown option: ${a}`);
+        }
     }
   }
 
@@ -269,23 +393,25 @@ function parseArgs(argv: string[]): CliOptions {
 
 function printHelp(): void {
   console.log(`
-notro-md-sync — Sync local markdown files to a Notion data source
+notro-md-sync — Bidirectional sync between local markdown and a Notion data source
 
 Usage:
-  notro-md-sync <dir> [options]
+  notro-md-sync sync <dir> [options]   Push local .md files to Notion
+  notro-md-sync get  <dir> [options]   Pull Notion pages to local .md files
 
 Arguments:
-  <dir>              Directory containing .md files to sync
+  <dir>              Directory for .md files
 
 Options:
   --token <token>    Notion API token          (default: NOTION_TOKEN env var)
   --db <id>          Notion data source ID     (default: NOTION_DATASOURCE_ID env var)
   --dry-run          Preview without API calls
-  --force            Archive existing pages and recreate from source
-  --filter <prefix>  Process only files whose name starts with <prefix>
+  --force            sync: archive existing and recreate; get: overwrite existing files
+  --filter <prefix>  sync: files whose name starts with <prefix>
+                     get:  pages whose slug starts with <prefix>
   -h, --help         Show this help message
 
-Frontmatter:
+Frontmatter (sync):
   Each .md file may include a YAML frontmatter block to override the slug and title:
 
     ---
@@ -295,6 +421,9 @@ Frontmatter:
 
   Without frontmatter, slug defaults to the filename (without extension)
   and title defaults to the title-cased filename.
+
+Output files (get):
+  Each Notion page is written to <dir>/<slug>.md with YAML frontmatter prepended.
 `);
 }
 
@@ -303,6 +432,12 @@ const opts = parseArgs(process.argv);
 if (opts.help) {
   printHelp();
   process.exit(0);
+}
+
+if (!opts.subcommand) {
+  console.error("Error: subcommand required: sync | get\n");
+  printHelp();
+  process.exit(1);
 }
 
 if (!opts.dir) {
@@ -323,8 +458,11 @@ if (!db) {
   process.exit(1);
 }
 
-sync({ dir: opts.dir, token, db, dryRun: opts.dryRun, force: opts.force, filter: opts.filter })
-  .catch((err) => {
-    console.error("Fatal:", err instanceof Error ? err.message : String(err));
-    process.exit(1);
-  });
+const commonOpts = { dir: opts.dir, token, db, dryRun: opts.dryRun, force: opts.force, filter: opts.filter };
+
+const runner = opts.subcommand === "get" ? get(commonOpts) : sync(commonOpts);
+
+runner.catch((err) => {
+  console.error("Fatal:", err instanceof Error ? err.message : String(err));
+  process.exit(1);
+});

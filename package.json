@@ -19,7 +19,7 @@
     "build:packages": "pnpm --filter remark-notro --filter rehype-beautiful-mermaid --filter create-notro run build",
     "changeset-version": "changeset version",
     "changeset-publish": "pnpm run build:packages && changeset publish",
-    "reflect": "notro-md-sync content/docs"
+    "reflect": "notro-md-sync sync content/docs"
   },
   "engines": {
     "node": ">=24.0.0",
