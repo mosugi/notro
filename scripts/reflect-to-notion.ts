@@ -185,7 +185,7 @@ export async function reflectFixturesToNotion(
     throw new Error("NOTION_DATASOURCE_ID environment variable is not set.");
 
   const scriptDir = dirname(fileURLToPath(import.meta.url));
-  const fixtureDir = join(scriptDir, "..", "packages", "remark-nfm", "fixtures");
+  const fixtureDir = join(scriptDir, "..", "fixtures");
 
   const fixtures = loadFixtures(fixtureDir, fixtureFilter);
   console.log(
