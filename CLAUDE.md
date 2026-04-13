@@ -626,6 +626,19 @@ The `notro-loader` package's `exports` map:
 
 `@notionhq/client` is installed in the root `node_modules`. Authenticate with `NOTION_TOKEN` and `NOTION_DATASOURCE_ID`.
 
+### Database ID vs Data Source ID
+
+A Notion database has **two different IDs** depending on the API endpoint used:
+
+| ID type | Where to find | Used by |
+|---|---|---|
+| **Database ID** | The UUID in the database page URL (e.g. `https://notion.so/workspace/7136b8b6...`) | Standard REST API (`/v1/databases/{id}/query`) |
+| **Data Source ID** | A separate UUID accessible via the Notion UI or API — **different from the database URL ID** | Notion Public API (`/v1/data_sources/{id}/query`) via `notion.dataSources.query` |
+
+`notro-loader` and `notro-md-sync` both use `notion.dataSources.query` (the Notion Public API), so `NOTION_DATASOURCE_ID` must be the **data source ID**, not the database URL ID. These are distinct values even for the same database.
+
+> **Pitfall:** The database URL ID (visible in the browser) and the data source ID look similar (both are UUIDs) but are different. Using the wrong one results in `object_not_found` errors even when the integration has been correctly connected to the database.
+
 ### Client initialization
 
 ```js
