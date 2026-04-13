@@ -1,0 +1,12 @@
+---
+import { NotroContent } from "notro-loader";
+
+// entry.data.markdown is provided by notro-loader schema (pageWithMarkdownSchema)
+// Cast needed because Starlight's built-in Props type expects docsSchema() shape
+const { entry } = Astro.props;
+const markdown = (entry.data as { markdown: string }).markdown;
+---
+
+<div class="sl-markdown-content">
+  <NotroContent markdown={markdown} />
+</div>

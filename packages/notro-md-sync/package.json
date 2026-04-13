@@ -1,0 +1,38 @@
+{
+  "name": "notro-md-sync",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Sync local markdown files to a Notion data source",
+  "author": "mosugi <mosugeek@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mosugi/notro.git"
+  },
+  "homepage": "https://github.com/mosugi/notro",
+  "bin": {
+    "notro-md-sync": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown src/index.ts --format esm --out-dir dist",
+    "dev": "tsdown src/index.ts --format esm --out-dir dist --watch"
+  },
+  "dependencies": {
+    "@notionhq/client": "5.11.1",
+    "undici": "^7.24.5"
+  },
+  "devDependencies": {
+    "tsdown": "^0.12.9",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}
