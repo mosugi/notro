@@ -243,6 +243,9 @@ export function loader({
             const rawMarkdown = markdownResponse.markdown;
 
             const entryId = getEntryId(page);
+            if (entryId !== page.id) {
+              logger.info(`Page ${page.id}: using entry ID "${entryId}"`);
+            }
             const data = await parseData<PageWithMarkdownType>({
               id: entryId,
               data: {

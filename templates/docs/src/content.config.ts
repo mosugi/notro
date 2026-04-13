@@ -30,11 +30,12 @@ export const collections = {
       // Use the Slug property as the entry ID so Starlight's sidebar slugs match.
       // e.g. Slug = "getting-started/introduction" → entry ID = "getting-started/introduction"
       generateId: (page) => {
-        const slug =
-          page.properties.Slug?.type === "rich_text"
-            ? getPlainText(page.properties.Slug)
-            : undefined;
-        return slug ?? page.id;
+        const slugProp = page.properties.Slug;
+        if (slugProp?.type === "rich_text" && slugProp.rich_text.length > 0) {
+          const text = slugProp.rich_text.map((t) => t.plain_text).join("");
+          if (text) return text;
+        }
+        return page.id;
       },
     }),
     schema: notroDocsSchema,
