@@ -63,9 +63,6 @@ export default defineConfig({
           ],
         },
       ],
-      components: {
-        ContentPanel: "./src/components/NotroContentPanel.astro",
-      },
     }),
     notro(),
   ],
