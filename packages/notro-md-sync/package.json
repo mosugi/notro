@@ -17,6 +17,7 @@
     "dist"
   ],
   "scripts": {
+    "prepare": "tsdown src/index.ts --format esm --out-dir dist",
     "build": "tsdown src/index.ts --format esm --out-dir dist",
     "dev": "tsdown src/index.ts --format esm --out-dir dist --watch"
   },
