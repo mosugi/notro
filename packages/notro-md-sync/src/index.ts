@@ -285,7 +285,7 @@ export async function get(options: GetOptions): Promise<void> {
     pages.push(page as NotionPage);
   }
 
-  console.log(`Found ${pages.length} page(s) in data source ${db}`);
+  console.log(`Found ${pages.length} page(s) in database ${db}`);
 
   let written = 0;
   let skipped = 0;
@@ -320,7 +320,7 @@ export async function get(options: GetOptions): Promise<void> {
 
     try {
       const md = await (notion.pages as unknown as {
-        retrieveMarkdown: (p: { page_id: string }) => Promise<{ markdown: string; truncated?: boolean }>;
+        retrieveMarkdown: (p: { page_id: string }) => Promise<{ markdown: string; truncated?: boolean; unknown_block_ids?: string[] }>;
       }).retrieveMarkdown({ page_id: page.id });
 
       if (md.truncated) {
