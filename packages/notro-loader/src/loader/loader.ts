@@ -243,9 +243,6 @@ export function loader({
             const rawMarkdown = markdownResponse.markdown;
 
             const entryId = getEntryId(page);
-            if (entryId !== page.id) {
-              logger.info(`Page ${page.id}: using entry ID "${entryId}"`);
-            }
             const data = await parseData<PageWithMarkdownType>({
               id: entryId,
               data: {
@@ -280,7 +277,6 @@ export function loader({
               // requires body to be a top-level field distinct from the schema data.
               body: rawMarkdown,
             });
-            logger.info(`Page ${page.id}: stored as "${entryId}"`);
           }),
         );
 

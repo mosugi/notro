@@ -17,6 +17,9 @@ const notroDocsSchema = pageWithMarkdownSchema
     // Starlight reads entry.data.title and entry.data.description
     title: getPlainText(data.properties.Name) ?? "Untitled",
     description: getPlainText(data.properties.Description) ?? undefined,
+    // Starlight filters out entries where data.draft !== false in production.
+    // Since notroDocsSchema doesn't include a draft field, explicitly set it to false.
+    draft: false,
   }));
 
 export const collections = {
