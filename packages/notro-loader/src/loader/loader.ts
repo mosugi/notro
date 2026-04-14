@@ -280,6 +280,7 @@ export function loader({
               // requires body to be a top-level field distinct from the schema data.
               body: rawMarkdown,
             });
+            logger.info(`Page ${page.id}: stored as "${entryId}"`);
           }),
         );
 
