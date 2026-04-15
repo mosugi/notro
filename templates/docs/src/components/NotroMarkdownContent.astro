@@ -1,0 +1,16 @@
+---
+import { NotroContent } from "notro-loader";
+
+// Astro.locals.starlightRoute is populated by Starlight's route middleware
+// and is available to all component overrides during rendering.
+// entry.data.markdown is provided by notro-loader schema (pageWithMarkdownSchema).
+// entry may be undefined for auto-generated pages (404, splash, etc.)
+const route = Astro.locals.starlightRoute as
+  | { entry?: { data?: { markdown?: string } } }
+  | undefined;
+const markdown = route?.entry?.data?.markdown;
+---
+
+<div class="sl-markdown-content">
+  {markdown ? <NotroContent markdown={markdown} /> : <slot />}
+</div>

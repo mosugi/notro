@@ -26,7 +26,7 @@ export default defineConfig({
         },
       ],
       components: {
-        ContentPanel: "./src/components/NotroContentPanel.astro",
+        MarkdownContent: "./src/components/NotroMarkdownContent.astro",
       },
       sidebar: [
         {
