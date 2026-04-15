@@ -11,6 +11,7 @@ const route = Astro.locals.starlightRoute as
 const markdown = route?.entry?.data?.markdown;
 ---
 
-<div class="sl-markdown-content">
-  {markdown ? <NotroContent markdown={markdown} /> : <slot />}
-</div>
+{markdown
+  ? <NotroContent markdown={markdown} class="sl-markdown-content" />
+  : <div class="sl-markdown-content"><slot /></div>
+}
