@@ -6,7 +6,7 @@ const worksCollection = defineCollection({
   loader: loader({
     queryParameters: {
       data_source_id:
-        import.meta.env.NOTION_DATASOURCE_ID_PORTFOLIO ??
+        import.meta.env.NOTION_DATASOURCE_ID_GALLERY ??
         import.meta.env.NOTION_DATASOURCE_ID,
       sorts: [
         {

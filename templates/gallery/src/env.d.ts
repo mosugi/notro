@@ -3,7 +3,7 @@
 
 interface ImportMetaEnv {
   readonly NOTION_TOKEN: string;
-  readonly NOTION_DATASOURCE_ID_PORTFOLIO?: string;
+  readonly NOTION_DATASOURCE_ID_GALLERY?: string;
   readonly NOTION_DATASOURCE_ID: string;
 }
 
