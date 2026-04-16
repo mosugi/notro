@@ -19,8 +19,8 @@
     "build:packages": "pnpm --filter remark-notro --filter rehype-beautiful-mermaid --filter create-notro run build",
     "changeset-version": "changeset version",
     "changeset-publish": "pnpm run build:packages && changeset publish",
-    "reflect": "notro-md-sync publish content/docs",
-    "reflect:blog": "notro-md-sync publish content/blog"
+    "reflect": "notro-md-sync publish content/docs --db ${NOTION_DATASOURCE_ID_DOCS:-$NOTION_DATASOURCE_ID}",
+    "reflect:blog": "notro-md-sync publish content/blog --db ${NOTION_DATASOURCE_ID_BLOG:-$NOTION_DATASOURCE_ID}"
   },
   "engines": {
     "node": ">=24.0.0",
