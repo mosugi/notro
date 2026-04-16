@@ -290,7 +290,7 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  templates/portfolio:
+  templates/gallery:
     dependencies:
       '@tailwindcss/vite':
         specifier: ^4.2.1
