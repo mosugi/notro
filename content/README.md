@@ -8,9 +8,10 @@ content/
 ├── docs/               ← templates/docs (Starlight docs site)
 │   ├── 01-callout.md
 │   └── ...
-├── blog/               ← templates/blog  (future)
-├── portfolio/          ← any future template (future)
-└── reflect-to-notion.ts
+├── blog/               ← templates/blog (blog template)
+│   ├── hello-notro.md
+│   └── ...
+└── portfolio/          ← any future template (future)
 ```
 
 ---
@@ -38,8 +39,11 @@ NOTION_TOKEN=... NOTION_DATASOURCE_ID=... pnpm run reflect -- --dry-run
 # Reflect all files in content/docs/ to Notion
 NOTION_TOKEN=... NOTION_DATASOURCE_ID=... pnpm run reflect
 
+# Reflect all files in content/blog/ to Notion
+NOTION_TOKEN=... NOTION_DATASOURCE_ID=... pnpm run reflect:blog
+
 # Reflect a single file (prefix match on filename)
-pnpm run reflect -- --fixture 01-callout
+pnpm run reflect -- --filter 01-callout
 
 # Re-create pages that already exist (archive old → create new)
 pnpm run reflect -- --force
@@ -53,7 +57,11 @@ export NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 
 pnpm run reflect
 pnpm run reflect -- --dry-run
-pnpm run reflect -- --fixture 01-callout --force
+pnpm run reflect -- --filter 01-callout --force
+
+pnpm run reflect:blog
+pnpm run reflect:blog -- --dry-run
+pnpm run reflect:blog -- --filter hello-notro --force
 ```
 
 ### Options
@@ -74,22 +82,31 @@ Each reflected page is created with these properties:
 | `Name` | `[Fixture] <title derived from filename>` |
 | `Slug` | `notro-fixture-<filename-without-ext>` |
 | `Public` | `false` (not published) |
-| `Tags` | `["fixture"]` |
+| `Tags` | `["md-sync"]` |
 | `Date` | Today's date |
 
 > The target Notion database must have these properties defined.
-> See `templates/docs/src/content.config.ts` for the schema used by
-> the Starlight site to fetch pages back from Notion.
+> See `templates/docs/src/content.config.ts` and `templates/blog/src/content.config.ts`
+> for the schemas used by each template to fetch pages back from Notion.
+
+---
+
+## Available scripts
+
+| Script | Source directory | Target template |
+|---|---|---|
+| `pnpm run reflect` | `content/docs/` | `templates/docs` |
+| `pnpm run reflect:blog` | `content/blog/` | `templates/blog` |
+
+Each script uses `NOTION_TOKEN` and `NOTION_DATASOURCE_ID` from the environment.
+Make sure `NOTION_DATASOURCE_ID` points to the correct database for each template.
 
 ---
 
 ## Adding a new content directory
 
-1. Create a sub-directory under `content/` (e.g. `content/blog/`)
-2. Add `.md` files — first `# Heading` becomes the page title
-3. Create a Notion database with the required properties
-4. Run `pnpm run reflect` with the appropriate env vars
-
-> `reflect-to-notion.ts` currently reads from `content/docs/`.
-> To target a different sub-directory, update the `fixtureDir` variable
-> in `reflect-to-notion.ts` (line ~188) or add a `--dir` option.
+1. Create a sub-directory under `content/` (e.g. `content/portfolio/`)
+2. Add `.md` files — frontmatter `slug` and `title` are optional (defaults: filename)
+3. Create a Notion database with the required properties (`Name`, `Slug`, `Public`, `Tags`, `Date`)
+4. Add a script to `package.json`: `"reflect:portfolio": "notro-md-sync publish content/portfolio"`
+5. Run `NOTION_TOKEN=... NOTION_DATASOURCE_ID=... pnpm run reflect:portfolio`
