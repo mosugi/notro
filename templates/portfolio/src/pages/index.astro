@@ -1,0 +1,61 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import { getPlainText } from "notro-loader/utils";
+
+const works = await getCollection("works");
+const sorted = works.slice().sort((a, b) => {
+  const aDate = a.data.properties.Date.date?.start ?? "";
+  const bDate = b.data.properties.Date.date?.start ?? "";
+  return bDate.localeCompare(aDate);
+});
+---
+
+<Layout title="Portfolio">
+  <main class="max-w-4xl mx-auto px-6 py-16">
+    <header class="mb-16">
+      <h1 class="text-4xl font-bold tracking-tight mb-3">Portfolio</h1>
+      <p class="nt-text-60 text-lg">Selected works</p>
+    </header>
+
+    {works.length === 0 ? (
+      <p class="nt-text-45">No works published yet.</p>
+    ) : (
+      <ul class="grid gap-6 sm:grid-cols-2">
+        {sorted.map((work) => {
+          const slug = work.data.properties.Slug.rich_text[0]?.plain_text;
+          const title = getPlainText(work.data.properties.Name) ?? "";
+          const description = getPlainText(work.data.properties.Description) ?? "";
+          const tags = work.data.properties.Tags.multi_select;
+          const date = work.data.properties.Date.date?.start;
+          return (
+            <li class="group nt-bg-04 border nt-border rounded-xl p-6 hover:shadow-md transition-shadow">
+              <a href={`/${slug}/`} class="block h-full no-underline">
+                <div class="flex flex-col gap-3 h-full">
+                  <h2 class="text-xl font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {title}
+                  </h2>
+                  {description && (
+                    <p class="nt-text-60 text-sm leading-relaxed flex-1">{description}</p>
+                  )}
+                  <div class="flex flex-wrap items-center gap-2 mt-auto pt-2">
+                    {tags.map((tag) => (
+                      <span class="text-xs px-2 py-0.5 rounded-full nt-bg-04 border nt-border nt-text-60">
+                        {tag.name}
+                      </span>
+                    ))}
+                    {date && (
+                      <time class="ml-auto text-xs nt-text-45" datetime={date}>
+                        {new Date(date).getFullYear()}
+                      </time>
+                    )}
+                  </div>
+                </div>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </main>
+</Layout>

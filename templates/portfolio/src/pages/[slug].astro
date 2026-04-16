@@ -1,0 +1,67 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import { NotroContent } from "notro-loader";
+import { getPlainText } from "notro-loader/utils";
+
+export async function getStaticPaths() {
+  const works = await getCollection("works");
+  return works.map((work) => ({
+    params: { slug: work.data.properties.Slug.rich_text[0]?.plain_text },
+    props: { work },
+  }));
+}
+
+const { work } = Astro.props;
+const title = getPlainText(work.data.properties.Name) ?? "";
+const description = getPlainText(work.data.properties.Description) ?? "";
+const tags = work.data.properties.Tags.multi_select;
+const date = work.data.properties.Date.date?.start;
+const externalUrl = work.data.properties.URL?.url;
+---
+
+<Layout title={title} description={description}>
+  <main class="max-w-3xl mx-auto px-6 py-16">
+    <a href="/" class="inline-flex items-center gap-1.5 text-sm nt-text-60 hover:nt-text no-underline mb-10 transition-colors">
+      ← Back to portfolio
+    </a>
+
+    <article>
+      <header class="mb-10">
+        <h1 class="text-4xl font-bold tracking-tight mb-4">{title}</h1>
+
+        <div class="flex flex-wrap items-center gap-3 mb-4">
+          {tags.map((tag) => (
+            <span class="text-sm px-3 py-1 rounded-full nt-bg-04 border nt-border nt-text-60">
+              {tag.name}
+            </span>
+          ))}
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4 nt-text-45 text-sm">
+          {date && (
+            <time datetime={date}>{new Date(date).toLocaleDateString("en-US", { year: "numeric", month: "long" })}</time>
+          )}
+          {externalUrl && (
+            <a
+              href={externalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              View project →
+            </a>
+          )}
+        </div>
+
+        {description && (
+          <p class="mt-6 text-lg nt-text-60 leading-relaxed">{description}</p>
+        )}
+      </header>
+
+      <div class="notro-markdown">
+        <NotroContent markdown={work.data.markdown} />
+      </div>
+    </article>
+  </main>
+</Layout>
