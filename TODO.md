@@ -233,3 +233,137 @@
 /blog/privacy/       プライバシーポリシー（Notion 管理、page タグ）
 /404                 404 ページ
 ```
+
+---
+
+# templates/blog × packages/ モノレポ利用の改善案
+
+> 調査日: 2026-04-16
+> `templates/blog` が `packages/` 配下 (notro-loader / notro-ui / rehype-beautiful-mermaid / remark-nfm / create-notro) をどう使っているかを確認し、改善ポイントを抽出。
+
+## 要約
+
+- import エントリポイントの使い分けが不徹底で、純粋 TS ヘルパーまで `notro-loader` メインから引っ張っており、Astro コンポーネント一式が不要な経路にも巻き込まれている。
+- `notro-ui` の CLI (`notro-ui init/add/update`) 前提のワークフローに対し、テンプレート側に `notro.json` が無く、上流の更新を取り込む運用経路が閉じている。
+- `notro-theme.css` と `packages/notro-ui/src/templates/theme.css` がドリフトしており、どちらが source of truth か曖昧。
+- その他、CLAUDE.md のガイドとの整合性に欠ける箇所が散見（`<script>` 内ロジックの未抽出、`@/*` エイリアス不在、ドキュメント記載と実装の乖離）。
+
+---
+
+## 1. `notro-loader` の import エントリ誤用（優先度: 🔴 高）
+
+純粋 TS ユーティリティ (`getPlainText` / `getMultiSelect` / `hasTag` / `buildLinkToPages`) は `notro-loader/utils` から import するのが正解だが、以下の箇所ではメインエントリ (`notro-loader`) から読んでいる。メインエントリは `NotroContent.astro` を含むため、利用しない経路まで Astro コンポーネントのロードパスに乗ってしまう。
+
+| ファイル | 現状 | 修正案 |
+|---|---|---|
+| `src/pages/rss.xml.ts:4` | `import { getPlainText, hasTag } from "notro-loader";` | `"notro-loader/utils"` へ変更 |
+| `src/pages/blog/[...page].astro:4` | `import { hasTag } from "notro-loader";` | `"notro-loader/utils"` へ変更 |
+| `src/pages/blog/tag/[tag]/[...page].astro:4` | `import { hasTag } from "notro-loader";` | `"notro-loader/utils"` へ変更 |
+| `src/pages/blog/[slug].astro:3` | `buildLinkToPages, getPlainText, hasTag, NotroContent` を混在 | `NotroContent` のみ `"notro-loader"`、残りは `"notro-loader/utils"` に分離 |
+| `src/components/blog/PostCard.astro:3` | `getPlainText, getMultiSelect` from `"notro-loader"` | `"notro-loader/utils"` へ変更 |
+
+- [ ] 上記 5 箇所を `notro-loader/utils` 経由に書き換え
+- [ ] `src/lib/blog.ts` は既に `notro-loader/utils` を使えている（ただし 4 行目で `PropertyPageObjectResponseType` を `notro-loader` から type-only import している。`import type` にすれば実行時影響はない。現状 `import type` 指定なしなので要確認）
+
+---
+
+## 2. `notro-ui` CLI 利用基盤の整備（優先度: 🔴 高）
+
+CLAUDE.md では notro-ui の運用は `notro-ui init` → `notro.json` 生成 → `add/update/remove` という CLI ベースとされているが、
+
+- `templates/blog/notro.json` が **存在しない**（`templates/blank/` も同様）
+- `src/components/notro/` 配下はすでに 28 個の `.astro` + `colors.ts` + `index.ts` を抱えているが、`notro-ui update --all` の流入経路が無い
+
+結果として、`packages/notro-ui/src/templates/` (source of truth) への修正がテンプレートへ自動的に反映されない。
+
+- [ ] `templates/blog/` と `templates/blank/` で `notro-ui init` 相当の `notro.json` を生成してコミット
+  - `outDir`, `stylesDir`, installed components list を定義
+- [ ] `src/components/notro/index.ts` に残っている「Site-customized components (differ from notro-ui defaults)」コメントを、`notro.json` 側の「update 除外リスト」or 各 `.astro` 先頭の `// notro-ui: customized` マーカーとして形式化する。CLI が差分を判別できるようにする。
+
+---
+
+## 3. `notro-theme.css` と `packages/notro-ui/src/templates/theme.css` のドリフト（優先度: 🟠 中）
+
+`diff` 結果:
+
+- `templates/blog/src/styles/notro-theme.css` はタスクリスト関連の CSS が `@utility` 層（111–127 行）に置かれており、コメントで「cascade precedence の説明」が追記されている。
+- `packages/notro-ui/src/templates/theme.css` (source of truth) ではタスクリストが別の位置（182–192 行）に置かれ、コメントも簡素。
+
+どちらが最新の意図かを決めずに差分が残っている。
+
+- [ ] source of truth を `packages/notro-ui/src/templates/theme.css` と定め、ブログ側の修正（タスクリストの cascade 問題の fix）を上流に取り込む
+- [ ] 取り込み後、`notro-ui update --all --yes` 相当の操作で下流を同期（`notro.json` 整備後に可能）
+- [ ] 取り込み対象の差分:
+  - タスクリスト規則の `@utility` 層配置
+  - `.notro-markdown .contains-task-list` / `.task-list-item` / `input[type=checkbox]` のセレクタ詳細度に関するコメント
+
+---
+
+## 4. `package.json` 依存関係の点検（優先度: 🟠 中）
+
+`templates/blog/package.json`:
+
+```
+"notro-loader": "^0.0.3",
+"rehype-beautiful-mermaid": "^0.0.2",
+"beautiful-mermaid": "^1.1.3",   ← ?
+...
+```
+
+- [ ] **`beautiful-mermaid` の必要性**: `rehype-beautiful-mermaid` の peerDep ではない可能性がある（未確認）。直接 import している箇所が無ければ削除。
+- [ ] **`remark-nfm` の扱い**: 現状 `remarkPlugins` に追加する形で独立利用していないので `notro-loader` 推移依存のままで OK。ただし CLAUDE.md の記載通り `preprocessNotionMarkdown` 等を直接呼ぶ場合は `packages/remark-nfm` を `dependencies` に昇格させる必要がある。要判断。
+- [ ] **ルート `pnpm.overrides` による workspace 強制**: 意図は「テンプレートは公開版指定のまま、モノレポ開発時は workspace:* に解決」で合理的。ただし `notro-ui`・`remark-nfm`・`create-notro` は overrides に入っていない。必要に応じて拡張を検討。
+
+---
+
+## 5. CLAUDE.md 記載との乖離（優先度: 🟡 低）
+
+- **`notro-loader` のコンポーネント**: CLAUDE.md は `components/ (NotroContent, DatabaseCover, DatabaseProperty)` と書いているが、実装は `packages/notro-loader/src/components/NotroContent.astro` のみ。`DatabaseCover` は `templates/blog/src/components/blog/DatabaseCover.astro` にテンプレート側で自前実装。
+- [ ] CLAUDE.md の該当記述を「`NotroContent` のみ」に訂正、または `notro-loader` 側に `DatabaseCover` / `DatabaseProperty` を復活させる（どちらを source にするかを決める）。
+- **`@/*` path alias**: `src/components/notro/index.ts:6` のコメント例に `import { notroComponents } from '@/components/notro';` とあるが、`tsconfig.json` に `paths` が未定義で、実際の import は全て相対パス。
+- [ ] `tsconfig.json` に `compilerOptions.baseUrl` + `paths: { "@/*": ["src/*"] }` を追加して統一するか、コメント側を相対パスに直す。
+
+---
+
+## 6. Astro 実装ベストプラクティス（CLAUDE.md §Astro Implementation）との整合（優先度: 🟡 低）
+
+- **`Header.astro` の `<script>` ロジック未抽出**: 89–102 行の DOM 操作 15 行。CLAUDE.md は「複雑な場合は `src/lib/` に `.ts` として抽出」と規定。
+- [ ] `src/lib/header-menu.ts` に `initHeaderMenu()` を切り出し、`Header.astro` からは `import { initHeaderMenu } from "@/lib/header-menu"; initHeaderMenu();` のみにする。併せて `vitest` で `aria-expanded`・`hidden` クラスのトグル挙動の単体テストを追加。
+- **`src/lib/nav.ts` のテスト**: `isActive` は public export だが単体テスト不在（`blog.ts` だけが `blog.test.ts` を持つ）。
+- [ ] `src/lib/nav.test.ts` を追加（trailing slash 正規化のエッジケース）。
+
+---
+
+## 7. パッケージ境界の観点でのまとめ
+
+`templates/blog` が期待する `packages/` API は以下。現状の実装と突き合わせた結果:
+
+| パッケージ | エントリ | blog での利用 | 状態 |
+|---|---|---|---|
+| `notro-loader` | `.` | `NotroContent`, `loader`, `notroProperties`, `pageWithMarkdownSchema`, `buildLinkToPages`, `makeHtmlElement`, 型 | OK（ただし §1 の誤用あり） |
+| `notro-loader` | `./utils` | `getPlainText`, `getMultiSelect`, `hasTag` | 一部のみ利用（§1） |
+| `notro-loader` | `./integration` | `notro()` | OK |
+| `notro-loader` | `./image-service` | `notionImageService` | OK |
+| `notro-ui` | CLI | `notro-ui init/add/update` | **未運用**（§2） |
+| `remark-nfm` | `.` | （`notro-loader` 経由の推移依存のみ） | OK |
+| `rehype-beautiful-mermaid` | `.` | `rehypeMermaid` を `rehypePlugins` に追加 | OK |
+| `create-notro` | CLI | （利用者向け、blog 内では未使用） | OK |
+
+---
+
+## 優先度付きアクションリスト
+
+| # | タスク | ファイル | 優先度 |
+|---|---|---|---|
+| M1 | `notro-loader` → `notro-loader/utils` への import 切替（5 ファイル） | §1 の表を参照 | 🔴 高 |
+| M2 | `templates/blog/notro.json` を生成 (`notro-ui init`) | `templates/blog/notro.json`（新規） | 🔴 高 |
+| M3 | `templates/blank/notro.json` を生成 | `templates/blank/notro.json`（新規） | 🔴 高 |
+| M4 | `notro-theme.css` のドリフトを上流に統合し下流同期 | `packages/notro-ui/src/templates/theme.css` ほか | 🟠 中 |
+| M5 | カスタマイズ済みコンポーネントのマーカー整備 | `src/components/notro/*.astro` | 🟠 中 |
+| M6 | `beautiful-mermaid` 依存の要否確認と削除検討 | `templates/blog/package.json` | 🟠 中 |
+| M7 | `blog.ts:4` の `PropertyPageObjectResponseType` を `import type` に | `src/lib/blog.ts` | 🟡 低 |
+| M8 | CLAUDE.md の components 記述を実装に合わせて訂正 | `CLAUDE.md` | 🟡 低 |
+| M9 | `tsconfig.json` に `@/*` path alias 追加（or コメント修正） | `templates/blog/tsconfig.json`, `src/components/notro/index.ts` | 🟡 低 |
+| M10 | `Header.astro` の `<script>` を `src/lib/header-menu.ts` へ抽出＋テスト | `src/components/Header.astro`, `src/lib/header-menu.ts` | 🟡 低 |
+| M11 | `src/lib/nav.ts` のテスト追加 | `src/lib/nav.test.ts`（新規） | 🟡 低 |
+
