@@ -483,7 +483,9 @@ Two distinct class prefixes are used in this project:
 | Variable | Description |
 |---|---|
 | `NOTION_TOKEN` | Notion Internal Integration Token (API key) |
-| `NOTION_DATASOURCE_ID` | Notion data source ID for the `posts` collection |
+| `NOTION_DATASOURCE_ID_BLOG` | Notion data source ID for the blog template (`templates/blog`) |
+| `NOTION_DATASOURCE_ID_DOCS` | Notion data source ID for the docs template (`templates/docs`) |
+| `NOTION_DATASOURCE_ID` | Fallback data source ID (used when the template-specific variable is not set) |
 
 ### For Vercel Deployment (Claude Code on the Web)
 
@@ -513,7 +515,8 @@ Create a `templates/blog/.env` file and set environment variables (already in `.
 
 ```bash
 NOTION_TOKEN=secret_xxxx
-NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+NOTION_DATASOURCE_ID_BLOG=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+# NOTION_DATASOURCE_ID=xxxxxxxx-...  ← fallback if NOTION_DATASOURCE_ID_BLOG is not set
 ```
 
 ### Install & Run

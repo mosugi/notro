@@ -8,52 +8,61 @@ content/
 ├── docs/               ← templates/docs (Starlight docs site)
 │   ├── 01-callout.md
 │   └── ...
-├── blog/               ← templates/blog  (future)
-├── portfolio/          ← any future template (future)
-└── reflect-to-notion.ts
+├── blog/               ← templates/blog (blog template)
+│   ├── hello-notro.md
+│   └── ...
+└── portfolio/          ← any future template (future)
 ```
 
 ---
 
 ## Reflecting pages to Notion
 
-`reflect-to-notion.ts` reads `.md` files from a sub-directory and creates
-(or replaces) Notion pages in the database set by `NOTION_DATASOURCE_ID`.
+`notro-md-sync publish` reads `.md` files from a sub-directory and creates
+(or replaces) Notion pages in the specified database.
 
-### Setup
+Each script uses a **template-specific environment variable** for the data source ID:
 
-Create a `.env` file in the target template directory (e.g. `templates/docs/.env`):
+| Script | Env var | Template |
+|---|---|---|
+| `pnpm run reflect` | `NOTION_DATASOURCE_ID_DOCS` | `templates/docs` |
+| `pnpm run reflect:blog` | `NOTION_DATASOURCE_ID_BLOG` | `templates/blog` |
 
-```
-NOTION_TOKEN=secret_xxxx
-NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-```
+Both scripts also require `NOTION_TOKEN`.
 
 ### Commands
 
 ```bash
-# Dry run — preview what would happen (no API calls)
-NOTION_TOKEN=... NOTION_DATASOURCE_ID=... pnpm run reflect -- --dry-run
-
 # Reflect all files in content/docs/ to Notion
-NOTION_TOKEN=... NOTION_DATASOURCE_ID=... pnpm run reflect
+NOTION_TOKEN=... NOTION_DATASOURCE_ID_DOCS=... pnpm run reflect
+
+# Reflect all files in content/blog/ to Notion
+NOTION_TOKEN=... NOTION_DATASOURCE_ID_BLOG=... pnpm run reflect:blog
+
+# Dry run — preview what would happen (no API calls)
+NOTION_TOKEN=... NOTION_DATASOURCE_ID_BLOG=... pnpm run reflect:blog -- --dry-run
 
 # Reflect a single file (prefix match on filename)
-pnpm run reflect -- --fixture 01-callout
+NOTION_TOKEN=... NOTION_DATASOURCE_ID_BLOG=... pnpm run reflect:blog -- --filter hello-notro
 
 # Re-create pages that already exist (archive old → create new)
-pnpm run reflect -- --force
+NOTION_TOKEN=... NOTION_DATASOURCE_ID_BLOG=... pnpm run reflect:blog -- --force
 ```
 
 Or set the env vars in your shell first:
 
 ```bash
 export NOTION_TOKEN=secret_xxxx
-export NOTION_DATASOURCE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+export NOTION_DATASOURCE_ID_DOCS=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+export NOTION_DATASOURCE_ID_BLOG=yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy
 
 pnpm run reflect
 pnpm run reflect -- --dry-run
-pnpm run reflect -- --fixture 01-callout --force
+pnpm run reflect -- --filter 01-callout --force
+
+pnpm run reflect:blog
+pnpm run reflect:blog -- --dry-run
+pnpm run reflect:blog -- --filter hello-notro --force
 ```
 
 ### Options
@@ -62,7 +71,7 @@ pnpm run reflect -- --fixture 01-callout --force
 |---|---|
 | `--dry-run` | Print what would happen without making any API calls |
 | `--force` | Archive the existing Notion page and create a fresh one |
-| `--fixture <name>` | Process only the file whose name starts with `<name>` |
+| `--filter <prefix>` | Process only the file whose name starts with `<prefix>` |
 | `--help` | Show help |
 
 ### Notion page properties
@@ -71,25 +80,23 @@ Each reflected page is created with these properties:
 
 | Property | Value |
 |---|---|
-| `Name` | `[Fixture] <title derived from filename>` |
-| `Slug` | `notro-fixture-<filename-without-ext>` |
+| `Name` | Title from frontmatter, or title-cased filename |
+| `Slug` | `slug` from frontmatter, or filename without extension |
 | `Public` | `false` (not published) |
-| `Tags` | `["fixture"]` |
+| `Tags` | `["md-sync"]` |
 | `Date` | Today's date |
 
 > The target Notion database must have these properties defined.
-> See `templates/docs/src/content.config.ts` for the schema used by
-> the Starlight site to fetch pages back from Notion.
+> See `templates/docs/src/content.config.ts` and `templates/blog/src/content.config.ts`
+> for the schemas used by each template to fetch pages back from Notion.
 
 ---
 
 ## Adding a new content directory
 
-1. Create a sub-directory under `content/` (e.g. `content/blog/`)
-2. Add `.md` files — first `# Heading` becomes the page title
-3. Create a Notion database with the required properties
-4. Run `pnpm run reflect` with the appropriate env vars
-
-> `reflect-to-notion.ts` currently reads from `content/docs/`.
-> To target a different sub-directory, update the `fixtureDir` variable
-> in `reflect-to-notion.ts` (line ~188) or add a `--dir` option.
+1. Create a sub-directory under `content/` (e.g. `content/portfolio/`)
+2. Add `.md` files — frontmatter `slug` and `title` are optional (defaults: filename)
+3. Create a Notion database with the required properties (`Name`, `Slug`, `Public`, `Tags`, `Date`)
+4. Add a script to `package.json`: `"reflect:portfolio": "notro-md-sync publish content/portfolio --db $NOTION_DATASOURCE_ID_PORTFOLIO"`
+5. Update the template's `content.config.ts` to read `import.meta.env.NOTION_DATASOURCE_ID_PORTFOLIO`
+6. Run `NOTION_TOKEN=... NOTION_DATASOURCE_ID_PORTFOLIO=... pnpm run reflect:portfolio`
