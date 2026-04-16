@@ -6,7 +6,10 @@ import {
   APIErrorCode,
   APIResponseError,
 } from "@notionhq/client";
-import type { QueryDataSourceParameters } from "@notionhq/client";
+import type {
+  QueryDataSourceParameters,
+  PageObjectResponse,
+} from "@notionhq/client";
 import {
   type PageWithMarkdownType,
   pageWithMarkdownSchema,
@@ -17,6 +20,21 @@ type LoaderOptions = {
   queryParameters: QueryDataSourceParameters;
   // Derive from Client constructor to avoid importing from internal paths
   clientOptions: ConstructorParameters<typeof Client>[0];
+  /**
+   * Optional function to generate a custom entry ID for each Notion page.
+   * Defaults to the Notion page UUID (`page.id`).
+   *
+   * Use this when the entry ID must match a specific format — for example,
+   * when using the Starlight docs integration, where sidebar slugs must
+   * equal the collection entry ID:
+   *
+   * @example
+   * generateId: (page) => {
+   *   const slug = page.properties.Slug?.rich_text?.[0]?.plain_text;
+   *   return slug ?? page.id;
+   * }
+   */
+  generateId?: (page: PageObjectResponse) => string;
 };
 
 // Notion file-type covers, icons, and inline images use pre-signed S3 URLs that expire after ~1 hour.
@@ -120,8 +138,10 @@ async function retrieveMarkdownWithRetry(
 export function loader({
   queryParameters,
   clientOptions,
+  generateId,
 }: LoaderOptions): Loader {
   const client = new Client({ notionVersion: "2026-03-11", ...clientOptions });
+  const getEntryId = generateId ?? ((page: PageObjectResponse) => page.id);
 
   // Return a loader object
   return {
@@ -137,12 +157,15 @@ export function loader({
 
       const pages = pageOrDatabases.filter((page) => isFullPage(page));
 
-      // Build a lookup map for O(1) access when checking store entries
-      const pageById = new Map(pages.map((page) => [page.id, page]));
+      // Build a lookup map for O(1) access when checking store entries.
+      // Keyed by the entry ID (custom or UUID) to match the store's key format.
+      const pageByEntryId = new Map(
+        pages.map((page) => [getEntryId(page), page]),
+      );
 
       // Delete entries that are removed, edited, or contain expired pre-signed URLs
       store.entries().forEach(([id, { digest, data }]) => {
-        const page = pageById.get(id);
+        const page = pageByEntryId.get(id);
         const isDeleted = page === undefined;
         const isEdited = page !== undefined && digest !== page.last_edited_time;
         const hasExpiredUrls = hasNotionPresignedUrl(
@@ -156,7 +179,7 @@ export function loader({
 
       // Load new or updated pages, respecting Notion's 3 requests/second rate limit.
       // Pages are processed in batches of 3 with a 1-second pause between batches.
-      const pagesToLoad = pages.filter((page) => !store.has(page.id));
+      const pagesToLoad = pages.filter((page) => !store.has(getEntryId(page)));
       const BATCH_SIZE = 3;
 
       for (let i = 0; i < pagesToLoad.length; i += BATCH_SIZE) {
@@ -219,8 +242,9 @@ export function loader({
             // does not need to happen here.
             const rawMarkdown = markdownResponse.markdown;
 
+            const entryId = getEntryId(page);
             const data = await parseData<PageWithMarkdownType>({
-              id: page.id,
+              id: entryId,
               data: {
                 parent: page.parent,
                 properties: page.properties,
@@ -242,7 +266,7 @@ export function loader({
             });
 
             store.set({
-              id: page.id,
+              id: entryId,
               // digest is used by the loader to detect edits between builds.
               // We use last_edited_time as a stable, string-comparable digest.
               digest: page.last_edited_time,

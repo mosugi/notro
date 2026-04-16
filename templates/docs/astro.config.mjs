@@ -25,6 +25,9 @@ export default defineConfig({
           href: "https://www.npmjs.com/package/notro",
         },
       ],
+      components: {
+        MarkdownContent: "./src/components/NotroMarkdownContent.astro",
+      },
       sidebar: [
         {
           label: "Start Here",
@@ -63,9 +66,6 @@ export default defineConfig({
           ],
         },
       ],
-      components: {
-        ContentPanel: "./src/components/NotroContentPanel.astro",
-      },
     }),
     notro(),
   ],
