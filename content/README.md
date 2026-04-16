@@ -11,7 +11,7 @@ content/
 ├── blog/               ← templates/blog (blog template)
 │   ├── hello-notro.md
 │   └── ...
-└── portfolio/          ← any future template (future)
+└── gallery/            ← any future template (future)
 ```
 
 ---
@@ -94,9 +94,9 @@ Each reflected page is created with these properties:
 
 ## Adding a new content directory
 
-1. Create a sub-directory under `content/` (e.g. `content/portfolio/`)
+1. Create a sub-directory under `content/` (e.g. `content/gallery/`)
 2. Add `.md` files — frontmatter `slug` and `title` are optional (defaults: filename)
 3. Create a Notion database with the required properties (`Name`, `Slug`, `Public`, `Tags`, `Date`)
-4. Add a script to `package.json`: `"reflect:portfolio": "notro-md-sync publish content/portfolio --db $NOTION_DATASOURCE_ID_PORTFOLIO"`
-5. Update the template's `content.config.ts` to read `import.meta.env.NOTION_DATASOURCE_ID_PORTFOLIO`
-6. Run `NOTION_TOKEN=... NOTION_DATASOURCE_ID_PORTFOLIO=... pnpm run reflect:portfolio`
+4. Add a script to `package.json`: `"reflect:gallery": "notro-md-sync publish content/gallery --db $NOTION_DATASOURCE_ID_GALLERY"`
+5. Update the template's `content.config.ts` to read `import.meta.env.NOTION_DATASOURCE_ID_GALLERY`
+6. Run `NOTION_TOKEN=... NOTION_DATASOURCE_ID_GALLERY=... pnpm run reflect:gallery`
