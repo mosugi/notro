@@ -277,7 +277,7 @@ notro/
 │   │   ├── utils.ts         # Pure TS helpers entry point (safe in astro.config.mjs)
 │   │   ├── image-service.ts # notionImageService entry point (Astro image service)
 │   │   ├── src/
-│   │   │   ├── components/  # Astro components (NotroContent, DatabaseCover, DatabaseProperty)
+│   │   │   ├── components/  # Astro components (NotroContent)
 │   │   │   ├── loader/
 │   │   │   │   ├── loader.ts      # Astro Content Loader implementation
 │   │   │   │   ├── live-loader.ts # Live-reload loader variant

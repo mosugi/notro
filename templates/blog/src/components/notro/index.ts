@@ -3,7 +3,7 @@
  *
  * Usage:
  *   import { NotroContent } from 'notro-loader';
- *   import { notroComponents } from '@/components/notro';
+ *   import { notroComponents } from './components/notro';
  *
  *   <NotroContent markdown={md} {linkToPages} components={notroComponents} />
  *
