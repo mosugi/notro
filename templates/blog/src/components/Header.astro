@@ -86,17 +86,6 @@ const active = (href: string) => isActive(pathname, href);
 </header>
 
 <script>
-  const btn = document.getElementById("menu-toggle");
-  const menu = document.getElementById("mobile-menu");
-  const iconOpen = document.getElementById("icon-open");
-  const iconClose = document.getElementById("icon-close");
-
-  btn?.addEventListener("click", () => {
-    menu?.classList.toggle("hidden");
-    const isOpen = !menu?.classList.contains("hidden");
-    btn.setAttribute("aria-expanded", String(isOpen));
-    menu?.setAttribute("aria-hidden", String(!isOpen));
-    if (iconOpen) iconOpen.classList.toggle("hidden", isOpen);
-    if (iconClose) iconClose.classList.toggle("hidden", !isOpen);
-  });
+  import { initHeaderMenu } from "../lib/header-menu";
+  initHeaderMenu();
 </script>
