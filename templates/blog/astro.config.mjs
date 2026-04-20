@@ -7,6 +7,29 @@ import { notro } from "notro-loader/integration";
 import { rehypeMermaid } from "rehype-beautiful-mermaid";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import siteConfig from "./src/config.ts";
+import { findPlaceholderWarnings } from "./src/lib/placeholder-check.ts";
+
+// Warns during `astro build` / `astro dev` when the template's placeholder
+// values (site name, author, description, URL) have not been customised yet.
+function warnPlaceholders() {
+  return {
+    name: "notro:warn-placeholders",
+    hooks: {
+      "astro:config:done": ({ config, logger }) => {
+        const warnings = findPlaceholderWarnings({
+          siteName: siteConfig.site.name,
+          siteAuthor: siteConfig.site.author,
+          siteDescription: siteConfig.site.description,
+          astroSiteUrl: config.site,
+        });
+        for (const message of warnings) {
+          logger.warn(message);
+        }
+      },
+    },
+  };
+}
 
 // To enable SSR, install the adapter for your platform and uncomment the relevant lines:
 // - Vercel:     npm i @astrojs/vercel     → import vercel from "@astrojs/vercel";
@@ -57,6 +80,7 @@ export default defineConfig({
     // Offloads third-party scripts (Google Analytics) to a web worker via Partytown.
     // "dataLayer.push" must be forwarded so gtag() calls reach the worker.
     partytown({ config: { forward: ["dataLayer.push"] } }),
+    warnPlaceholders(),
   ],
 
   vite: {
