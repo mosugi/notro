@@ -171,13 +171,23 @@ describe("getPinnedPosts", () => {
       makeEntry({ id: "b", tags: ["Astro"] }),
       makeEntry({ id: "c", tags: ["pinned", "Notion"] }),
     ];
-    const result = getPinnedPosts(posts);
+    const result = getPinnedPosts(posts, "pinned");
     expect(result.map((p) => p.id)).toEqual(["a", "c"]);
   });
 
   it("returns empty array when no posts are pinned", () => {
     const posts = [makeEntry({ id: "a" }), makeEntry({ id: "b", tags: ["Astro"] })];
-    expect(getPinnedPosts(posts)).toHaveLength(0);
+    expect(getPinnedPosts(posts, "pinned")).toHaveLength(0);
+  });
+
+  it("respects a custom pinned tag name", () => {
+    const posts = [
+      makeEntry({ id: "a", tags: ["featured"] }),
+      makeEntry({ id: "b", tags: ["pinned"] }),
+    ];
+    const result = getPinnedPosts(posts, "featured");
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe("a");
   });
 });
 
@@ -191,7 +201,7 @@ describe("getBeginnerPosts", () => {
       makeEntry({ id: "pinned-beginner", tags: ["入門", "pinned"] }),
       makeEntry({ id: "other", tags: ["Astro"] }),
     ];
-    const result = getBeginnerPosts(posts, "入門");
+    const result = getBeginnerPosts(posts, "入門", "pinned");
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("beginner");
   });
@@ -201,9 +211,19 @@ describe("getBeginnerPosts", () => {
       makeEntry({ id: "intro", tags: ["intro"] }),
       makeEntry({ id: "skip", tags: ["入門"] }),
     ];
-    const result = getBeginnerPosts(posts, "intro");
+    const result = getBeginnerPosts(posts, "intro", "pinned");
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("intro");
+  });
+
+  it("respects a custom pinned tag name for exclusion", () => {
+    const posts = [
+      makeEntry({ id: "beginner", tags: ["入門"] }),
+      makeEntry({ id: "featured-beginner", tags: ["入門", "featured"] }),
+    ];
+    const result = getBeginnerPosts(posts, "入門", "featured");
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe("beginner");
   });
 });
 

@@ -53,20 +53,26 @@ export function getPublicTags(
   return getMultiSelect(tagsProperty).filter((t) => !internalTags.includes(t.name));
 }
 
-/** Returns posts tagged "pinned". */
-export function getPinnedPosts(blogPosts: PostEntry[]): PostEntry[] {
-  return blogPosts.filter((entry) => hasTag(entry.data.properties.Tags, "pinned"));
+/** Returns posts carrying the given pinned tag. */
+export function getPinnedPosts(
+  blogPosts: PostEntry[],
+  pinnedTag: string,
+): PostEntry[] {
+  return blogPosts.filter((entry) =>
+    hasTag(entry.data.properties.Tags, pinnedTag),
+  );
 }
 
 /** Returns posts with the given beginner tag, excluding pinned ones. */
 export function getBeginnerPosts(
   blogPosts: PostEntry[],
   beginnerTag: string,
+  pinnedTag: string,
 ): PostEntry[] {
   return blogPosts.filter(
     (entry) =>
       hasTag(entry.data.properties.Tags, beginnerTag) &&
-      !hasTag(entry.data.properties.Tags, "pinned"),
+      !hasTag(entry.data.properties.Tags, pinnedTag),
   );
 }
 

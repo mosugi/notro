@@ -7,7 +7,7 @@ import { getSortedBlogPosts, getPinnedPosts } from "../lib/blog";
 
 const allPosts = await getCollection("posts");
 const blogPosts = getSortedBlogPosts(allPosts);
-const pinnedPosts = getPinnedPosts(blogPosts);
+const pinnedPosts = getPinnedPosts(blogPosts, config.blog.pinnedTag);
 const recentPosts = blogPosts
   .filter((p) => !pinnedPosts.includes(p))
   .slice(0, 5)

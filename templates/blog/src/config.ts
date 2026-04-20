@@ -24,6 +24,9 @@ const config = {
     postsPerPage: 10,
     // Description shown on the blog index page (<meta description>, og:description)
     description: "Notion × Astro で作られたブログ。",
+    // Tag name used to mark "pinned" posts. Pinned posts are surfaced at the
+    // top of page 1 and excluded from the main chronological list.
+    pinnedTag: "pinned",
     // Tag name for beginner posts. Articles carrying this tag are surfaced
     // in a dedicated "入門" section on page 1 of the blog index.
     beginnerTag: "入門",
