@@ -15,25 +15,25 @@ const { currentPage, lastPage, prevUrl, nextUrl } = Astro.props;
       {prevUrl ? (
         <a
           href={prevUrl}
-          class="rounded-md border border-gray-200 px-4 py-2 text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
+          class="rounded-md border nt-border px-4 py-2 nt-text-60 transition hover:nt-border-18 hover:nt-bg-04"
         >
           ← 前へ
         </a>
       ) : (
-        <span class="px-4 py-2 text-gray-300">← 前へ</span>
+        <span class="px-4 py-2 nt-text-30">← 前へ</span>
       )}
-      <span class="text-gray-500">
+      <span class="nt-text-60">
         {currentPage} / {lastPage}
       </span>
       {nextUrl ? (
         <a
           href={nextUrl}
-          class="rounded-md border border-gray-200 px-4 py-2 text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
+          class="rounded-md border nt-border px-4 py-2 nt-text-60 transition hover:nt-border-18 hover:nt-bg-04"
         >
           次へ →
         </a>
       ) : (
-        <span class="px-4 py-2 text-gray-300">次へ →</span>
+        <span class="px-4 py-2 nt-text-30">次へ →</span>
       )}
     </nav>
   )

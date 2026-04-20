@@ -185,15 +185,25 @@ describe("getPinnedPosts", () => {
 // getBeginnerPosts
 // ─────────────────────────────────────────────
 describe("getBeginnerPosts", () => {
-  it("returns posts tagged 入門 but not pinned", () => {
+  it("returns posts tagged with the beginner tag but not pinned", () => {
     const posts = [
       makeEntry({ id: "beginner", tags: ["入門"] }),
       makeEntry({ id: "pinned-beginner", tags: ["入門", "pinned"] }),
       makeEntry({ id: "other", tags: ["Astro"] }),
     ];
-    const result = getBeginnerPosts(posts);
+    const result = getBeginnerPosts(posts, "入門");
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe("beginner");
+  });
+
+  it("respects a custom beginner tag name", () => {
+    const posts = [
+      makeEntry({ id: "intro", tags: ["intro"] }),
+      makeEntry({ id: "skip", tags: ["入門"] }),
+    ];
+    const result = getBeginnerPosts(posts, "intro");
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe("intro");
   });
 });
 

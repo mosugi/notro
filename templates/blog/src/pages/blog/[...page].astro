@@ -16,7 +16,7 @@ export async function getStaticPaths({
   const allPosts = await getCollection("posts");
   const blogPosts = getSortedBlogPosts(allPosts);
   const pinnedPosts = getPinnedPosts(blogPosts);
-  const beginnerPosts = getBeginnerPosts(blogPosts);
+  const beginnerPosts = getBeginnerPosts(blogPosts, config.blog.beginnerTag);
 
   // Paginate all blogPosts so that total count includes pinned posts.
   // Pinned posts are filtered out from page.data before rendering to avoid duplication.
@@ -34,7 +34,7 @@ const { page, pinnedPostsData, beginnerPostsData } = Astro.props;
 // Exclude pinned and beginner posts from the regular list to avoid duplication with each section
 const data = page.data
   .filter((entry) => !hasTag(entry.data.properties.Tags, "pinned"))
-  .filter((entry) => !hasTag(entry.data.properties.Tags, "入門"))
+  .filter((entry) => !hasTag(entry.data.properties.Tags, config.blog.beginnerTag))
   .map(({ data }) => data);
 ---
 

@@ -58,11 +58,14 @@ export function getPinnedPosts(blogPosts: PostEntry[]): PostEntry[] {
   return blogPosts.filter((entry) => hasTag(entry.data.properties.Tags, "pinned"));
 }
 
-/** Returns posts tagged "入門" but not "pinned". */
-export function getBeginnerPosts(blogPosts: PostEntry[]): PostEntry[] {
+/** Returns posts with the given beginner tag, excluding pinned ones. */
+export function getBeginnerPosts(
+  blogPosts: PostEntry[],
+  beginnerTag: string,
+): PostEntry[] {
   return blogPosts.filter(
     (entry) =>
-      hasTag(entry.data.properties.Tags, "入門") &&
+      hasTag(entry.data.properties.Tags, beginnerTag) &&
       !hasTag(entry.data.properties.Tags, "pinned"),
   );
 }

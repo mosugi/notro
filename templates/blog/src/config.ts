@@ -24,6 +24,9 @@ const config = {
     postsPerPage: 10,
     // Description shown on the blog index page (<meta description>, og:description)
     description: "Notion × Astro で作られたブログ。",
+    // Tag name for beginner posts. Articles carrying this tag are surfaced
+    // in a dedicated "入門" section on page 1 of the blog index.
+    beginnerTag: "入門",
     // System tags — affect post filtering logic (not shown as public tags)
     // "page"   — marks a Notion post as a fixed page (excluded from blog listing)
     // "pinned" — marks a post to appear at the top of the blog list (page 1 only)
