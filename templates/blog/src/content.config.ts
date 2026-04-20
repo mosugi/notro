@@ -2,10 +2,29 @@ import { defineCollection } from "astro:content";
 import { loader, notroProperties, pageWithMarkdownSchema } from "notro-loader";
 import { z } from "zod";
 
+const NOTION_TOKEN = import.meta.env.NOTION_TOKEN;
+const NOTION_DATASOURCE_ID =
+  import.meta.env.NOTION_DATASOURCE_ID_BLOG ?? import.meta.env.NOTION_DATASOURCE_ID;
+
+if (!NOTION_TOKEN) {
+  throw new Error(
+    "NOTION_TOKEN is not set. Copy templates/blog/.env.example to .env and " +
+      "fill in your Notion Internal Integration Token " +
+      "(https://www.notion.so/my-integrations).",
+  );
+}
+if (!NOTION_DATASOURCE_ID) {
+  throw new Error(
+    "NOTION_DATASOURCE_ID_BLOG (or NOTION_DATASOURCE_ID) is not set. Set it " +
+      "to the data source ID of your Notion database — you can find it in " +
+      "the database URL. See templates/blog/.env.example for a template.",
+  );
+}
+
 const postsCollection = defineCollection({
   loader: loader({
     queryParameters: {
-      data_source_id: import.meta.env.NOTION_DATASOURCE_ID_BLOG ?? import.meta.env.NOTION_DATASOURCE_ID,
+      data_source_id: NOTION_DATASOURCE_ID,
       sorts: [
         {
           timestamp: "last_edited_time",
@@ -20,7 +39,7 @@ const postsCollection = defineCollection({
       },
     },
     clientOptions: {
-      auth: import.meta.env.NOTION_TOKEN,
+      auth: NOTION_TOKEN,
     },
   }),
   schema: pageWithMarkdownSchema.extend({
