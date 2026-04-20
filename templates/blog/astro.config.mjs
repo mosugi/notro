@@ -26,7 +26,7 @@ if (httpsProxy) {
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://example.com",
+  site: process.env.SITE_URL || "https://example.com",
 
   // output: "server",   // Uncomment to enable SSR
   // adapter: vercel(),  // Match your platform (vercel / netlify / cloudflare)
