@@ -1,0 +1,28 @@
+{
+  "outDir": "src/components/notro",
+  "stylesDir": "src/styles",
+  "components": [
+    "audio",
+    "callout",
+    "coloredparagraph",
+    "columns",
+    "databaseref",
+    "emptyblock",
+    "file",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "image",
+    "mention",
+    "pageref",
+    "pdf",
+    "quote",
+    "styledspan",
+    "syncedblock",
+    "table",
+    "tableofcontents",
+    "toggle",
+    "video"
+  ]
+}
