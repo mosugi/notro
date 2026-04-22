@@ -4,28 +4,14 @@ import { existsSync } from "node:fs";
 import { extname, join, relative, resolve, sep, posix } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
-import {
-  type PageWithMarkdownType,
-  type PropertyPageObjectResponseType,
-  pageWithMarkdownSchema,
-} from "./schema.ts";
+import { z } from "astro/zod";
 
 /**
- * Frontmatter keys with built-in mapping to Notion-like properties.
- * Any other keys are ignored by the default mapper; use `transform`
- * to project them into `properties` explicitly.
+ * Frontmatter is parsed as an arbitrary record; the loader does not
+ * interpret any specific keys. Use the collection `schema` to narrow
+ * the shape, mirroring Astro's built-in `glob` loader.
  */
-interface StandardFrontmatter {
-  title?: string;
-  slug?: string;
-  description?: string;
-  public?: boolean;
-  tags?: string[];
-  category?: string;
-  date?: string;
-}
-
-type Frontmatter = StandardFrontmatter & Record<string, unknown>;
+type Frontmatter = Record<string, unknown>;
 
 interface FileLoaderOptions {
   /**
@@ -46,29 +32,8 @@ interface FileLoaderOptions {
     filePath: string;
     relativePath: string;
     frontmatter: Frontmatter;
+    stem: string;
   }) => string;
-  /**
-   * Optional hook to customize the Notion-style `properties` record
-   * built from frontmatter. The default mapper covers title/slug/
-   * description/public/tags/category/date; return a merged record
-   * to add your own properties.
-   *
-   * @example
-   * transform: ({ frontmatter, defaultProperties }) => ({
-   *   ...defaultProperties,
-   *   Author: {
-   *     type: "rich_text",
-   *     id: "Author",
-   *     rich_text: [richText(String(frontmatter.author ?? ""))],
-   *   },
-   * })
-   */
-  transform?: (args: {
-    filePath: string;
-    relativePath: string;
-    frontmatter: Frontmatter;
-    defaultProperties: Record<string, PropertyPageObjectResponseType>;
-  }) => Record<string, PropertyPageObjectResponseType>;
 }
 
 const DEFAULT_EXTENSIONS = [".md", ".mdx"] as const;
@@ -90,157 +55,6 @@ function parseFrontmatter(contents: string): {
       ? (parsed as Frontmatter)
       : {};
   return { frontmatter, body: match[2] };
-}
-
-function toTitleCase(stem: string): string {
-  return stem
-    .replace(/^\d+[-_]/, "")
-    .replace(/[-_]/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function richTextItem(content: string): {
-  type: "text";
-  text: { content: string; link: null };
-  annotations: {
-    bold: false;
-    italic: false;
-    strikethrough: false;
-    underline: false;
-    code: false;
-    color: "default";
-  };
-  plain_text: string;
-  href: null;
-} {
-  return {
-    type: "text",
-    text: { content, link: null },
-    annotations: {
-      bold: false,
-      italic: false,
-      strikethrough: false,
-      underline: false,
-      code: false,
-      color: "default",
-    },
-    plain_text: content,
-    href: null,
-  };
-}
-
-function titleProperty(
-  value: string,
-): Extract<PropertyPageObjectResponseType, { type: "title" }> {
-  return {
-    type: "title",
-    id: "Name",
-    title: value ? [richTextItem(value)] : [],
-  };
-}
-
-function richTextProperty(
-  id: string,
-  value: string | undefined,
-): Extract<PropertyPageObjectResponseType, { type: "rich_text" }> {
-  return {
-    type: "rich_text",
-    id,
-    rich_text: value ? [richTextItem(value)] : [],
-  };
-}
-
-function checkboxProperty(
-  id: string,
-  value: boolean,
-): Extract<PropertyPageObjectResponseType, { type: "checkbox" }> {
-  return { type: "checkbox", id, checkbox: value };
-}
-
-function multiSelectProperty(
-  id: string,
-  values: readonly string[],
-): Extract<PropertyPageObjectResponseType, { type: "multi_select" }> {
-  return {
-    type: "multi_select",
-    id,
-    multi_select: values.map((name) => ({
-      id: name,
-      name,
-      color: "default",
-    })),
-  };
-}
-
-function selectProperty(
-  id: string,
-  value: string | undefined,
-): Extract<PropertyPageObjectResponseType, { type: "select" }> {
-  return {
-    type: "select",
-    id,
-    select: value ? { id: value, name: value, color: "default" } : null,
-  };
-}
-
-function dateProperty(
-  id: string,
-  value: string | undefined,
-): Extract<PropertyPageObjectResponseType, { type: "date" }> {
-  return {
-    type: "date",
-    id,
-    date: value ? { start: value, end: null, time_zone: null } : null,
-  };
-}
-
-/**
- * Builds the default `properties` record from standard frontmatter keys.
- * Only keys present in the frontmatter are materialized, except for
- * `Name` (always present so the title property is well-formed) and
- * `Public` (defaults to `true` when omitted so opt-out is explicit).
- */
-function buildDefaultProperties(
-  frontmatter: Frontmatter,
-  fallbackTitle: string,
-): Record<string, PropertyPageObjectResponseType> {
-  const properties: Record<string, PropertyPageObjectResponseType> = {};
-
-  const title =
-    typeof frontmatter.title === "string" ? frontmatter.title : fallbackTitle;
-  properties.Name = titleProperty(title);
-
-  if (typeof frontmatter.slug === "string") {
-    properties.Slug = richTextProperty("Slug", frontmatter.slug);
-  }
-
-  if (typeof frontmatter.description === "string") {
-    properties.Description = richTextProperty(
-      "Description",
-      frontmatter.description,
-    );
-  }
-
-  const publicValue =
-    typeof frontmatter.public === "boolean" ? frontmatter.public : true;
-  properties.Public = checkboxProperty("Public", publicValue);
-
-  if (Array.isArray(frontmatter.tags)) {
-    const names = frontmatter.tags.filter(
-      (t): t is string => typeof t === "string",
-    );
-    properties.Tags = multiSelectProperty("Tags", names);
-  }
-
-  if (typeof frontmatter.category === "string") {
-    properties.Category = selectProperty("Category", frontmatter.category);
-  }
-
-  if (typeof frontmatter.date === "string") {
-    properties.Date = dateProperty("Date", frontmatter.date);
-  }
-
-  return properties;
 }
 
 async function collectMarkdownFiles(
@@ -268,35 +82,31 @@ async function collectMarkdownFiles(
 }
 
 /**
- * Astro Content Loader that reads Notion-flavored markdown files from
- * the local filesystem. Each `.md` / `.mdx` file becomes one collection
- * entry; the file body is stored as the `markdown` field so that
- * `<NotroContent>` can render it through the same MDX pipeline as
- * Notion-sourced entries.
+ * Astro Content Loader that reads markdown (and MDX) files from the
+ * local filesystem. Each `.md` / `.mdx` file under the configured
+ * `base` directory becomes one collection entry.
  *
- * The loader builds a Notion-style `properties` record from standard
- * frontmatter keys (`title`, `slug`, `description`, `public`, `tags`,
- * `category`, `date`), making it schema-compatible with the Notion
- * `loader()` so the same templates and pages work for both sources.
+ * The data for each entry is the parsed YAML frontmatter spread as-is,
+ * plus a `markdown` field containing the body so that `<NotroContent>`
+ * can render it through the same MDX pipeline as Notion-sourced entries.
+ * No frontmatter keys are interpreted specially — define the shape you
+ * want via the collection's `schema`, same as Astro's built-in `glob`
+ * loader.
  *
  * @example
  * ```ts
  * // src/content.config.ts
- * import { defineCollection } from "astro:content";
- * import { fileLoader, pageWithMarkdownSchema, notroProperties } from "notro-loader";
- * import { z } from "zod";
+ * import { defineCollection, z } from "astro:content";
+ * import { fileLoader } from "notro-loader";
  *
  * export const collections = {
  *   posts: defineCollection({
  *     loader: fileLoader({ base: "src/content/posts" }),
- *     schema: pageWithMarkdownSchema.extend({
- *       properties: z.object({
- *         Name: notroProperties.title,
- *         Slug: notroProperties.richText,
- *         Public: notroProperties.checkbox,
- *         Tags: notroProperties.multiSelect,
- *         Date: notroProperties.date,
- *       }),
+ *     schema: z.object({
+ *       title: z.string(),
+ *       slug: z.string(),
+ *       date: z.coerce.date().optional(),
+ *       markdown: z.string(),
  *     }),
  *   }),
  * };
@@ -306,7 +116,6 @@ export function fileLoader({
   base,
   extensions = [...DEFAULT_EXTENSIONS],
   generateId,
-  transform,
 }: FileLoaderOptions): Loader {
   const fileToIdMap = new Map<string, string>();
 
@@ -359,25 +168,12 @@ export function fileLoader({
           .pop()!
           .replace(/\.(md|mdx)$/i, "");
 
-        const fallbackTitle = toTitleCase(stem);
-        const defaultProperties = buildDefaultProperties(
-          frontmatter,
-          fallbackTitle,
-        );
-        const properties = transform
-          ? transform({
-              filePath,
-              relativePath: relPath,
-              frontmatter,
-              defaultProperties,
-            })
-          : defaultProperties;
-
         const id = generateId
           ? generateId({
               filePath,
               relativePath: relPath,
               frontmatter,
+              stem,
             })
           : typeof frontmatter.slug === "string" && frontmatter.slug.length > 0
             ? frontmatter.slug
@@ -393,8 +189,6 @@ export function fileLoader({
           return;
         }
 
-        const createdTime = fileStat.birthtime.toISOString();
-        const lastEditedTime = fileStat.mtime.toISOString();
         const digest = generateDigest(contents);
 
         // Skip re-writing unchanged entries.
@@ -410,28 +204,20 @@ export function fileLoader({
           return;
         }
 
-        const data: PageWithMarkdownType = {
-          parent: { type: "workspace", workspace: true },
-          properties,
-          icon: null,
-          cover: null,
-          created_by: { id, object: "user" },
-          last_edited_by: { id, object: "user" },
-          object: "page",
-          id,
-          created_time: createdTime,
-          last_edited_time: lastEditedTime,
-          archived: false,
-          in_trash: false,
-          url: `file://${filePath}`,
-          public_url: null,
+        // Expose a couple of filesystem-derived timestamps so schemas
+        // that want them (e.g. for sorting) can pick them up without
+        // parsing the frontmatter themselves. These are overridable if
+        // the frontmatter already defines the same keys.
+        const data: Frontmatter = {
+          createdTime: fileStat.birthtime.toISOString(),
+          lastEditedTime: fileStat.mtime.toISOString(),
+          ...frontmatter,
           markdown: body,
-          truncated: false,
         };
 
-        let parsedData: PageWithMarkdownType;
+        let parsedData: Record<string, unknown>;
         try {
-          parsedData = await parseData<PageWithMarkdownType>({
+          parsedData = await parseData<Record<string, unknown>>({
             id,
             data,
             filePath,
@@ -505,6 +291,8 @@ export function fileLoader({
         }
       });
     },
-    schema: pageWithMarkdownSchema,
+    // Default schema: require `markdown`, allow any other frontmatter keys
+    // through. Override by setting `schema` on the collection.
+    schema: z.object({ markdown: z.string() }).passthrough(),
   };
 }

@@ -1,29 +1,22 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import { getPlainText } from "notro-loader/utils";
 
 const pages = await getCollection("pages");
-const sorted = pages.slice().sort((a, b) => {
-  const aSlug = a.data.properties.Slug.rich_text[0]?.plain_text ?? "";
-  const bSlug = b.data.properties.Slug.rich_text[0]?.plain_text ?? "";
-  return aSlug.localeCompare(bSlug);
-});
+const sorted = pages
+  .slice()
+  .sort((a, b) => a.data.slug.localeCompare(b.data.slug));
 ---
 
 <Layout title="My Site">
   <main class="nt-container">
     <h1 class="nt-heading">My Site</h1>
     <ul class="nt-page-list">
-      {sorted.map((page) => {
-        const slug = page.data.properties.Slug.rich_text[0]?.plain_text;
-        const title = getPlainText(page.data.properties.Name) ?? "";
-        return (
-          <li>
-            <a href={`/${slug}/`} class="nt-link">{title}</a>
-          </li>
-        );
-      })}
+      {sorted.map((page) => (
+        <li>
+          <a href={`/${page.data.slug}/`} class="nt-link">{page.data.title}</a>
+        </li>
+      ))}
     </ul>
   </main>
 </Layout>

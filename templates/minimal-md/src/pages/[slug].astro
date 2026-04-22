@@ -2,24 +2,22 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import { NotroContent } from "notro-loader";
-import { getPlainText } from "notro-loader/utils";
 
 export async function getStaticPaths() {
   const pages = await getCollection("pages");
   return pages.map((page) => ({
-    params: { slug: page.data.properties.Slug.rich_text[0]?.plain_text },
+    params: { slug: page.data.slug },
     props: { page },
   }));
 }
 
 const { page } = Astro.props;
-const title = getPlainText(page.data.properties.Name) ?? "";
 ---
 
-<Layout title={title}>
+<Layout title={page.data.title}>
   <main class="nt-container">
     <article>
-      <h1 class="nt-heading">{title}</h1>
+      <h1 class="nt-heading">{page.data.title}</h1>
       <div class="notro-markdown">
         <NotroContent markdown={page.data.markdown} />
       </div>

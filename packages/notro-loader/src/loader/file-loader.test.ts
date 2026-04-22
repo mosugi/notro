@@ -78,7 +78,7 @@ afterEach(async () => {
 });
 
 describe("fileLoader", () => {
-  it("loads a markdown file and maps frontmatter to Notion-style properties", async () => {
+  it("exposes parsed frontmatter verbatim plus the markdown body", async () => {
     const postsDir = join(workspace, "posts");
     await mkdir(postsDir, { recursive: true });
     await writeFile(
@@ -86,12 +86,9 @@ describe("fileLoader", () => {
       `---
 title: Hello, world
 slug: hello
-description: A friendly greeting
-public: true
 tags:
   - intro
   - demo
-category: Tutorial
 date: 2026-01-15
 ---
 
@@ -108,42 +105,27 @@ Body text.
 
     expect(mock.entries.size).toBe(1);
     const entry = mock.entries.get("hello")!;
-    expect(entry).toBeDefined();
     expect(entry.body).toContain("# Hello");
-    const data = entry.data as {
-      markdown: string;
-      properties: Record<string, { type: string } & Record<string, unknown>>;
-    };
-    expect(data.markdown).toContain("# Hello");
 
-    const props = data.properties;
-    expect(props.Name.type).toBe("title");
-    expect((props.Name as { title: { plain_text: string }[] }).title[0].plain_text).toBe(
-      "Hello, world",
-    );
-    expect(
-      (props.Slug as { rich_text: { plain_text: string }[] }).rich_text[0]
-        .plain_text,
-    ).toBe("hello");
-    expect(
-      (props.Description as { rich_text: { plain_text: string }[] }).rich_text[0]
-        .plain_text,
-    ).toBe("A friendly greeting");
-    expect((props.Public as { checkbox: boolean }).checkbox).toBe(true);
-    expect(
-      (props.Tags as { multi_select: { name: string }[] }).multi_select.map(
-        (t) => t.name,
-      ),
-    ).toEqual(["intro", "demo"]);
-    expect((props.Category as { select: { name: string } }).select.name).toBe(
-      "Tutorial",
-    );
-    expect((props.Date as { date: { start: string } }).date.start).toBe(
-      "2026-01-15",
-    );
+    const data = entry.data as {
+      title: string;
+      slug: string;
+      tags: string[];
+      date: string;
+      markdown: string;
+      createdTime: string;
+      lastEditedTime: string;
+    };
+    expect(data.title).toBe("Hello, world");
+    expect(data.slug).toBe("hello");
+    expect(data.tags).toEqual(["intro", "demo"]);
+    expect(data.date).toBe("2026-01-15");
+    expect(data.markdown).toContain("# Hello");
+    expect(typeof data.createdTime).toBe("string");
+    expect(typeof data.lastEditedTime).toBe("string");
   });
 
-  it("falls back to filename-derived title and slug when frontmatter is missing", async () => {
+  it("derives id from the filename stem when frontmatter has no slug", async () => {
     const postsDir = join(workspace, "posts");
     await mkdir(postsDir, { recursive: true });
     await writeFile(
@@ -158,41 +140,27 @@ Body text.
 
     expect(mock.entries.size).toBe(1);
     const entry = mock.entries.get("my-first-post")!;
-    expect(entry).toBeDefined();
-    const data = entry.data as {
-      properties: Record<string, { type: string } & Record<string, unknown>>;
-    };
-    expect(
-      (data.properties.Name as { title: { plain_text: string }[] }).title[0]
-        .plain_text,
-    ).toBe("My First Post");
-    // Slug is not set when frontmatter omits it, but ID falls back to filename stem.
-    expect(data.properties.Slug).toBeUndefined();
+    const data = entry.data as { markdown: string };
+    expect(data.markdown).toBe("Just body text, no frontmatter.");
   });
 
-  it("defaults public to true when frontmatter omits it", async () => {
+  it("uses generateId when provided", async () => {
     const postsDir = join(workspace, "posts");
     await mkdir(postsDir, { recursive: true });
     await writeFile(
-      join(postsDir, "draft.md"),
-      `---
-title: Draft
-slug: draft
----
-body
-`,
+      join(postsDir, "a.md"),
+      "---\ntitle: A\n---\nbody",
       "utf-8",
     );
 
-    const loader = fileLoader({ base: "posts" });
+    const loader = fileLoader({
+      base: "posts",
+      generateId: ({ stem }) => `custom-${stem}`,
+    });
     const mock = createMockContext(workspace);
     await loader.load(mock.context as never);
 
-    const entry = mock.entries.get("draft")!;
-    const data = entry.data as {
-      properties: { Public: { checkbox: boolean } };
-    };
-    expect(data.properties.Public.checkbox).toBe(true);
+    expect(mock.entries.has("custom-a")).toBe(true);
   });
 
   it("loads nested files recursively", async () => {
@@ -241,56 +209,30 @@ body
     expect(mock.entries.size).toBe(0);
   });
 
-  it("applies the transform hook to customize properties", async () => {
+  it("lets frontmatter override the filesystem-derived timestamps", async () => {
     const postsDir = join(workspace, "posts");
     await mkdir(postsDir, { recursive: true });
     await writeFile(
-      join(postsDir, "post.md"),
+      join(postsDir, "dated.md"),
       `---
-title: Custom
-slug: custom
-author: Alice
+slug: dated
+createdTime: 2020-01-01T00:00:00.000Z
+lastEditedTime: 2021-06-15T12:00:00.000Z
 ---
-body`,
+body
+`,
       "utf-8",
     );
 
-    const loader = fileLoader({
-      base: "posts",
-      transform: ({ frontmatter, defaultProperties }) => ({
-        ...defaultProperties,
-        Author: {
-          type: "rich_text",
-          id: "Author",
-          rich_text: [
-            {
-              type: "text",
-              text: { content: String(frontmatter.author), link: null },
-              annotations: {
-                bold: false,
-                italic: false,
-                strikethrough: false,
-                underline: false,
-                code: false,
-                color: "default",
-              },
-              plain_text: String(frontmatter.author),
-              href: null,
-            },
-          ],
-        },
-      }),
-    });
-
+    const loader = fileLoader({ base: "posts" });
     const mock = createMockContext(workspace);
     await loader.load(mock.context as never);
 
-    const entry = mock.entries.get("custom")!;
-    const data = entry.data as {
-      properties: {
-        Author: { rich_text: { plain_text: string }[] };
-      };
+    const data = mock.entries.get("dated")!.data as {
+      createdTime: string;
+      lastEditedTime: string;
     };
-    expect(data.properties.Author.rich_text[0].plain_text).toBe("Alice");
+    expect(data.createdTime).toBe("2020-01-01T00:00:00.000Z");
+    expect(data.lastEditedTime).toBe("2021-06-15T12:00:00.000Z");
   });
 });
