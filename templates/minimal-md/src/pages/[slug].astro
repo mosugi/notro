@@ -1,0 +1,44 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import { NotroContent } from "notro-loader";
+import { getPlainText } from "notro-loader/utils";
+
+export async function getStaticPaths() {
+  const pages = await getCollection("pages");
+  return pages.map((page) => ({
+    params: { slug: page.data.properties.Slug.rich_text[0]?.plain_text },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+const title = getPlainText(page.data.properties.Name) ?? "";
+---
+
+<Layout title={title}>
+  <main class="nt-container">
+    <article>
+      <h1 class="nt-heading">{title}</h1>
+      <div class="notro-markdown">
+        <NotroContent markdown={page.data.markdown} />
+      </div>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .nt-container {
+    max-width: 42rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 3rem 1rem;
+  }
+
+  .nt-heading {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: var(--notro-text);
+  }
+</style>

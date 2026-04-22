@@ -1,0 +1,62 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+import { getPlainText } from "notro-loader/utils";
+
+const pages = await getCollection("pages");
+const sorted = pages.slice().sort((a, b) => {
+  const aSlug = a.data.properties.Slug.rich_text[0]?.plain_text ?? "";
+  const bSlug = b.data.properties.Slug.rich_text[0]?.plain_text ?? "";
+  return aSlug.localeCompare(bSlug);
+});
+---
+
+<Layout title="My Site">
+  <main class="nt-container">
+    <h1 class="nt-heading">My Site</h1>
+    <ul class="nt-page-list">
+      {sorted.map((page) => {
+        const slug = page.data.properties.Slug.rich_text[0]?.plain_text;
+        const title = getPlainText(page.data.properties.Name) ?? "";
+        return (
+          <li>
+            <a href={`/${slug}/`} class="nt-link">{title}</a>
+          </li>
+        );
+      })}
+    </ul>
+  </main>
+</Layout>
+
+<style>
+  .nt-container {
+    max-width: 42rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 3rem 1rem;
+  }
+
+  .nt-heading {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: var(--notro-text);
+  }
+
+  .nt-link {
+    color: var(--notro-blue);
+    text-decoration: none;
+  }
+  .nt-link:hover {
+    text-decoration: underline;
+  }
+
+  .nt-page-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+</style>
