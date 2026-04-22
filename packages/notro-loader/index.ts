@@ -18,4 +18,5 @@ export type { NotroOptions } from "./src/integration.ts";
 
 export * from "./src/loader/loader";
 export * from "./src/loader/live-loader";
+export * from "./src/loader/file-loader";
 export * from "./src/loader/schema";
