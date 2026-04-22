@@ -36,10 +36,12 @@ const config = {
     internalTags: ["page", "pinned"] as string[],
   },
   navigation: {
-    // Edit these links for your site header navigation
+    // Edit these links for your site header navigation.
+    // Set `external: true` for links that should open in a new tab with
+    // `rel="noopener noreferrer"` (typical for off-site URLs).
     nav: [
       { href: "/blog/", label: "ブログ" },
-    ] as { href: string; label: string }[],
+    ] as { href: string; label: string; external?: boolean }[],
   },
 };
 

@@ -1,5 +1,5 @@
 ---
-import { isActive } from "../lib/nav";
+import { isActive, externalLinkAttrs } from "../lib/nav";
 import config from "../config";
 
 const pathname = Astro.url.pathname;
@@ -21,10 +21,11 @@ const active = (href: string) => isActive(pathname, href);
     <!-- Desktop nav -->
     <nav aria-label="メインナビゲーション">
       <ul class="hidden sm:flex items-center gap-1">
-        {config.navigation.nav.map(({ href, label }) => (
+        {config.navigation.nav.map(({ href, label, external }) => (
           <li>
             <a
               href={href}
+              {...externalLinkAttrs(external)}
               class:list={[
                 "relative text-sm no-underline px-2.5 py-1.5 rounded-md transition-[color,background]",
                 active(href)
@@ -69,9 +70,10 @@ const active = (href: string) => isActive(pathname, href);
     aria-hidden="true"
   >
     <nav aria-label="モバイルナビゲーション">
-      {config.navigation.nav.map(({ href, label }) => (
+      {config.navigation.nav.map(({ href, label, external }) => (
         <a
           href={href}
+          {...externalLinkAttrs(external)}
           class:list={[
             "flex items-center gap-2 text-[0.9375rem] no-underline px-4 py-2.5 transition-[color,background]",
             active(href)

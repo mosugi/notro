@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isActive } from "./nav";
+import { isActive, externalLinkAttrs } from "./nav";
 
 describe("isActive", () => {
   it("matches identical paths exactly", () => {
@@ -27,5 +27,19 @@ describe("isActive", () => {
 
   it("matches the root path", () => {
     expect(isActive("/", "/")).toBe(true);
+  });
+});
+
+describe("externalLinkAttrs", () => {
+  it("returns target/rel for external links", () => {
+    expect(externalLinkAttrs(true)).toEqual({
+      target: "_blank",
+      rel: "noopener noreferrer",
+    });
+  });
+
+  it("returns an empty object for internal links so attrs are omitted", () => {
+    expect(externalLinkAttrs(false)).toEqual({});
+    expect(externalLinkAttrs(undefined)).toEqual({});
   });
 });

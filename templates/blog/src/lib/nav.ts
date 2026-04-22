@@ -10,3 +10,16 @@ export function isActive(pathname: string, href: string): boolean {
   const normalizedHref = href.endsWith("/") ? href : href + "/";
   return normalizedPath === normalizedHref;
 }
+
+export interface ExternalLinkAttrs {
+  target?: "_blank";
+  rel?: "noopener noreferrer";
+}
+
+/**
+ * Returns the `target` / `rel` attribute pair for a nav link.
+ * Empty object for in-site links so Astro omits both attributes entirely.
+ */
+export function externalLinkAttrs(external: boolean | undefined): ExternalLinkAttrs {
+  return external ? { target: "_blank", rel: "noopener noreferrer" } : {};
+}
