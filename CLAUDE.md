@@ -199,6 +199,7 @@ When making changes to published packages (those without `private: true`) under 
 | `notro-ui` | `packages/notro-ui/` |
 | `rehype-beautiful-mermaid` | `packages/rehype-beautiful-mermaid/` |
 | `create-notro` | `packages/create-notro/` |
+| `notro-md-sync` | `packages/notro-md-sync/` |
 
 **Version type guide:**
 
@@ -226,6 +227,7 @@ The repo is a **pnpm workspace monorepo** with the following packages:
 | `notro-ui` | `packages/notro-ui/` | Copy-and-own styled Notion block components (shadcn-style). Run `notro-ui add --all` to install components into a template — they become your code, editable directly. |
 | `rehype-beautiful-mermaid` | `packages/rehype-beautiful-mermaid/` | Rehype plugin that renders Mermaid code blocks to inline SVG at build time. Optional; included in the blog template. |
 | `create-notro` | `packages/create-notro/` | CLI scaffolding tool (`npm create notro@latest`). Downloads a starter template and sets up the project. |
+| `notro-md-sync` | `packages/notro-md-sync/` | CLI tool for bidirectional sync between local markdown files and a Notion data source (`notro-md-sync publish / get`). |
 | `notro-blog` (blog) | `templates/blog/` | Full-featured blog template (reference app, fetched by `create-notro`) |
 | `notro-blank` (blank) | `templates/blank/` | Minimal starter template |
 
@@ -293,8 +295,10 @@ notro/
 │   ├── rehype-beautiful-mermaid/  # npm library — renders Mermaid blocks to inline SVG
 │   │   ├── index.ts         # Public API exports
 │   │   └── src/
-│   └── create-notro/        # npm library ("create-notro") — CLI scaffolding tool
-│       └── src/index.ts     # Prompts user and scaffolds template via giget
+│   ├── create-notro/        # npm library ("create-notro") — CLI scaffolding tool
+│   │   └── src/index.ts     # Prompts user and scaffolds template via giget
+│   └── notro-md-sync/       # npm CLI ("notro-md-sync") — bidirectional markdown ↔ Notion sync
+│       └── src/index.ts     # publish / get subcommands
 ├── docs/                    # Documentation site (Astro Starlight)
 ├── .changeset/              # Changesets config for versioning & publishing
 ├── netlify.toml             # Netlify deploy template (env var hints)
@@ -586,6 +590,7 @@ The following packages under `packages/` are published to npm (no `private: true
 | `notro-ui` | `packages/notro-ui/` |
 | `rehype-beautiful-mermaid` | `packages/rehype-beautiful-mermaid/` |
 | `create-notro` | `packages/create-notro/` |
+| `notro-md-sync` | `packages/notro-md-sync/` |
 
 Version management uses [Changesets](https://github.com/changesets/changesets).
 
