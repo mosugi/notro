@@ -15,6 +15,11 @@ import {
   pageWithMarkdownSchema,
 } from "./schema.ts";
 import { markdownHasPresignedUrls } from "../utils/notion-url.ts";
+import {
+  isNotionPresignedUrl,
+  cacheNotionImage,
+  rewriteMarkdownPresignedUrls,
+} from "../utils/image-cache.ts";
 
 type LoaderOptions = {
   queryParameters: QueryDataSourceParameters;
@@ -39,9 +44,10 @@ type LoaderOptions = {
 
 // Notion file-type covers, icons, and inline images use pre-signed S3 URLs that expire after ~1 hour.
 // If any are present in a cached entry, it must be re-fetched to get fresh URLs.
+// Note: after image caching, file:// URLs replace presigned URLs so we check the actual URL.
 function hasNotionPresignedUrl(data: PageWithMarkdownType): boolean {
-  if (data.cover?.type === "file") return true;
-  if (data.icon?.type === "file") return true;
+  if (data.cover?.type === "file" && isNotionPresignedUrl(data.cover.file.url)) return true;
+  if (data.icon?.type === "file" && isNotionPresignedUrl(data.icon.file.url)) return true;
   return markdownHasPresignedUrls(data.markdown);
 }
 
@@ -146,7 +152,7 @@ export function loader({
   // Return a loader object
   return {
     name: "notro-loader",
-    load: async ({ store, parseData, logger }): Promise<void> => {
+    load: async ({ store, parseData, logger, config }): Promise<void> => {
       // Load data and update the store.
       // Uses retry logic for transient API errors (rate limit, server errors).
       const pageOrDatabases = await queryDataSourceWithRetry(
@@ -242,14 +248,53 @@ export function loader({
             // does not need to happen here.
             const rawMarkdown = markdownResponse.markdown;
 
+            // Download presigned S3 URLs and replace with stable local file:// paths.
+            // This prevents build failures (403) and broken images caused by
+            // Notion's ~1-hour presigned URL expiry.
+            const cachedMarkdown = await rewriteMarkdownPresignedUrls(
+              rawMarkdown,
+              config.publicDir,
+              logger,
+            );
+
+            // Cache presigned URL in page cover (file type)
+            let cachedCover = page.cover;
+            if (cachedCover?.type === "file" && isNotionPresignedUrl(cachedCover.file.url)) {
+              const cached = await cacheNotionImage(cachedCover.file.url, config.publicDir, logger);
+              cachedCover = { type: "file", file: { url: cached, expiry_time: cachedCover.file.expiry_time } };
+            }
+
+            // Cache presigned URL in page icon (file type)
+            let cachedIcon = page.icon;
+            if (cachedIcon?.type === "file" && isNotionPresignedUrl(cachedIcon.file.url)) {
+              const cached = await cacheNotionImage(cachedIcon.file.url, config.publicDir, logger);
+              cachedIcon = { type: "file", file: { url: cached, expiry_time: cachedIcon.file.expiry_time } };
+            }
+
+            // Cache presigned URLs in `files` type properties (e.g. FeaturedImage)
+            const cachedProperties = { ...page.properties };
+            for (const [key, prop] of Object.entries(cachedProperties)) {
+              if (prop.type !== "files") continue;
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const cachedFiles = await Promise.all((prop as any).files.map(async (f: any) => {
+                if (f.type === "file" && isNotionPresignedUrl(f.file.url)) {
+                  const cached = await cacheNotionImage(f.file.url, config.publicDir, logger);
+                  return { ...f, file: { ...f.file, url: cached } };
+                }
+                return f;
+              }));
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (cachedProperties as any)[key] = { ...prop, files: cachedFiles };
+            }
+
             const entryId = getEntryId(page);
             const data = await parseData<PageWithMarkdownType>({
               id: entryId,
               data: {
                 parent: page.parent,
-                properties: page.properties,
-                icon: page.icon,
-                cover: page.cover,
+                properties: cachedProperties,
+                icon: cachedIcon,
+                cover: cachedCover,
                 created_by: page.created_by,
                 last_edited_by: page.last_edited_by,
                 object: page.object,
@@ -260,7 +305,7 @@ export function loader({
                 in_trash: page.in_trash,
                 url: page.url,
                 public_url: page.public_url,
-                markdown: rawMarkdown,
+                markdown: cachedMarkdown,
                 truncated: markdownResponse.truncated,
               } as PageWithMarkdownType,
             });
@@ -275,7 +320,7 @@ export function loader({
               // full-text search integrations. It is separate from data.markdown
               // (which is also the raw markdown) because Astro's store.set()
               // requires body to be a top-level field distinct from the schema data.
-              body: rawMarkdown,
+              body: cachedMarkdown,
             });
           }),
         );
