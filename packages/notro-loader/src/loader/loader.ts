@@ -61,12 +61,14 @@ function hasExpiredNotionPresignedUrl(data: PageWithMarkdownType): boolean {
     : false;
 }
 
-// Extract the first presigned S3 URL from markdown and check if it has expired.
-// If the markdown contains presigned URLs but none can be parsed, treat as expired.
+// Extract all presigned S3 URLs from markdown and check if any have expired.
+// Returns true if at least one URL is expired; false if all are still valid.
 function isPresignedUrlExpiredInMarkdown(markdown: string): boolean {
-  const match = markdown.match(/https?:\/\/[^\s)"']*[?&]X-Amz-[^\s)"']*/);
-  if (!match) return false;
-  return isPresignedUrlExpired(match[0]);
+  const matches = markdown.matchAll(/https?:\/\/[^\s)"']*[?&]X-Amz-[^\s)"']*/g);
+  for (const [url] of matches) {
+    if (isPresignedUrlExpired(url)) return true;
+  }
+  return false;
 }
 
 // Error codes that are safe to retry (rate limit, server errors).
