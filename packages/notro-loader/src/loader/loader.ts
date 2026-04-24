@@ -14,7 +14,7 @@ import {
   type PageWithMarkdownType,
   pageWithMarkdownSchema,
 } from "./schema.ts";
-import { markdownHasPresignedUrls } from "../utils/notion-url.ts";
+import { isPresignedUrlExpired, markdownHasPresignedUrls } from "../utils/notion-url.ts";
 
 type LoaderOptions = {
   queryParameters: QueryDataSourceParameters;
@@ -38,18 +38,35 @@ type LoaderOptions = {
 };
 
 // Notion file-type covers, icons, inline images, and file properties use
-// pre-signed S3 URLs that expire after ~1 hour. If any are present in a
-// cached entry, it must be re-fetched to get fresh URLs.
-function hasNotionPresignedUrl(data: PageWithMarkdownType): boolean {
-  if (data.cover?.type === "file") return true;
-  if (data.icon?.type === "file") return true;
+// pre-signed S3 URLs that expire after ~1 hour. If any of the stored URLs
+// have actually expired, the entry must be re-fetched to get fresh URLs.
+// We check expiry from the X-Amz-Date / X-Amz-Expires query parameters so
+// that unchanged entries are not evicted on every build.
+function hasExpiredNotionPresignedUrl(data: PageWithMarkdownType): boolean {
+  if (data.cover?.type === "file" && isPresignedUrlExpired(data.cover.file.url))
+    return true;
+  if (data.icon?.type === "file" && isPresignedUrlExpired(data.icon.file.url))
+    return true;
   // Check all `files` type properties (e.g. FeaturedImage) for file-type entries
-  for (const prop of Object.values(data.properties ?? {})) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  for (const prop of Object.values(data.properties ?? {}) as any[]) {
     if (prop?.type !== "files") continue;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if ((prop as any).files?.some((f: any) => f.type === "file")) return true;
+    const files = prop.files as any[];
+    if (files?.some((f: any) => f.type === "file" && isPresignedUrlExpired(f.file.url)))
+      return true;
   }
-  return markdownHasPresignedUrls(data.markdown);
+  return markdownHasPresignedUrls(data.markdown)
+    ? isPresignedUrlExpiredInMarkdown(data.markdown)
+    : false;
+}
+
+// Extract the first presigned S3 URL from markdown and check if it has expired.
+// If the markdown contains presigned URLs but none can be parsed, treat as expired.
+function isPresignedUrlExpiredInMarkdown(markdown: string): boolean {
+  const match = markdown.match(/https?:\/\/[^\s)"']*[?&]X-Amz-[^\s)"']*/);
+  if (!match) return false;
+  return isPresignedUrlExpired(match[0]);
 }
 
 // Error codes that are safe to retry (rate limit, server errors).
@@ -175,7 +192,7 @@ export function loader({
         const page = pageByEntryId.get(id);
         const isDeleted = page === undefined;
         const isEdited = page !== undefined && digest !== page.last_edited_time;
-        const hasExpiredUrls = hasNotionPresignedUrl(
+        const hasExpiredUrls = hasExpiredNotionPresignedUrl(
           data as PageWithMarkdownType,
         );
         if (isDeleted || isEdited || hasExpiredUrls) {
