@@ -1,5 +1,16 @@
 # remark-notro
 
+## 0.0.4
+
+### Patch Changes
+
+- [#137](https://github.com/mosugi/notro/pull/137) [`186d8c3`](https://github.com/mosugi/notro/commit/186d8c3f7ff8027f12c2e1a0074ede6ac7daaa10) Thanks [@mosugi](https://github.com/mosugi)! - fix: convert bare <br> to self-closing <br/> before MDX parsing
+
+  MDX treats `<br>` as a JSX element and requires a closing tag, causing a
+  compilation error when Notion markdown contains inline `<br>` tags. Added
+  Fix 13 to `preprocessNotionMarkdown` to replace all `<br>` with `<br/>`
+  before the MDX pipeline runs.
+
 ## 0.0.3
 
 ### Patch Changes
