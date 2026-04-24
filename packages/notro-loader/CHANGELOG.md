@@ -1,5 +1,15 @@
 # notro-loader
 
+## 0.0.4
+
+### Patch Changes
+
+- [#135](https://github.com/mosugi/notro/pull/135) [`5ca895f`](https://github.com/mosugi/notro/commit/5ca895f03f6d91c28ada4628783227f2ea9a5cae) Thanks [@mosugi](https://github.com/mosugi)! - fix: include src/ root files in published package
+
+  The `files` field listed only subdirectories (`src/components`, `src/loader`, `src/utils`), so files directly under `src/` (`integration.ts`, `types.ts`, `env.d.ts`) were missing from the published package. Changed to `"src"` to include all files under it.
+
+  This caused `notro-loader/integration` to fail resolving `./src/integration.ts` at build time.
+
 ## 0.0.3
 
 ### Patch Changes
