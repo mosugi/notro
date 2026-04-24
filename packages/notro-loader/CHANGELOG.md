@@ -1,5 +1,29 @@
 # notro-loader
 
+## 0.0.6
+
+### Patch Changes
+
+- [#140](https://github.com/mosugi/notro/pull/140) [`c2b0670`](https://github.com/mosugi/notro/commit/c2b067077c05c5b1dd2712e0bc7b4f705fc71b57) Thanks [@mosugi](https://github.com/mosugi)! - fix: include src/ root files in published package
+
+  The `files` field listed only subdirectories (`src/components`, `src/loader`, `src/utils`), so files directly under `src/` (`integration.ts`, `types.ts`, `env.d.ts`) were missing from the published package. Changed to `"src"` to include all files under it.
+
+  This caused `notro-loader/integration` to fail resolving `./src/integration.ts` at build time.
+
+- [#140](https://github.com/mosugi/notro/pull/140) [`c2b0670`](https://github.com/mosugi/notro/commit/c2b067077c05c5b1dd2712e0bc7b4f705fc71b57) Thanks [@mosugi](https://github.com/mosugi)! - fix: detect presigned URLs in `files` type properties (e.g. FeaturedImage)
+
+  `hasNotionPresignedUrl` only checked `cover` and `icon` for file-type presigned
+  URLs. Properties of type `files` (e.g. a FeaturedImage column) also contain
+  expiring S3 presigned URLs but were not detected, causing stale entries to
+  remain in the store indefinitely.
+
+  Now all `files` type properties are checked, so entries with expired presigned
+  file URLs are evicted and re-fetched on the next build — consistent with the
+  existing handling for `cover` and `icon`.
+
+- Updated dependencies [[`c2b0670`](https://github.com/mosugi/notro/commit/c2b067077c05c5b1dd2712e0bc7b4f705fc71b57)]:
+  - remark-notro@0.0.5
+
 ## 0.0.5
 
 ### Patch Changes

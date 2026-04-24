@@ -1,5 +1,12 @@
 # notro-docs
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies [[`c2b0670`](https://github.com/mosugi/notro/commit/c2b067077c05c5b1dd2712e0bc7b4f705fc71b57), [`c2b0670`](https://github.com/mosugi/notro/commit/c2b067077c05c5b1dd2712e0bc7b4f705fc71b57)]:
+  - notro-loader@0.0.6
+
 ## 0.0.3
 
 ### Patch Changes
