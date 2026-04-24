@@ -75,6 +75,11 @@
  *    following a blockquote line to be pulled into the blockquote. We insert a
  *    blank line between a blockquote line and any following non-blockquote,
  *    non-blank line.
+ *
+ * 13. Bare <br> → self-closing <br/>:
+ *    MDX treats <br> as a JSX element and requires a closing tag, causing a
+ *    compilation error. Notion markdown may contain bare <br> tags, so we
+ *    replace them with <br/> before the MDX pipeline runs.
  */
 
 // Leading emoji sequence pattern (covers most emoji including keycap sequences).
@@ -420,6 +425,12 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // We insert an empty line between a "> ..." line and any following line that
   // does not start with ">" and is not itself blank.
   result = result.replace(/(^>[ \t][^\n]*)\n(?!>|\n)/gm, "$1\n\n");
+
+  // Fix 13: Convert bare <br> to self-closing <br/>.
+  // MDX treats <br> as a JSX element and requires a closing tag, which causes
+  // a compilation error when Notion markdown contains inline <br> tags.
+  // Replacing with <br/> makes it a valid self-closing JSX element.
+  result = result.replace(/<br>/gi, "<br/>");
 
   return result;
 }
