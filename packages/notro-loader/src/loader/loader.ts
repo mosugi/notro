@@ -37,11 +37,18 @@ type LoaderOptions = {
   generateId?: (page: PageObjectResponse) => string;
 };
 
-// Notion file-type covers, icons, and inline images use pre-signed S3 URLs that expire after ~1 hour.
-// If any are present in a cached entry, it must be re-fetched to get fresh URLs.
+// Notion file-type covers, icons, inline images, and file properties use
+// pre-signed S3 URLs that expire after ~1 hour. If any are present in a
+// cached entry, it must be re-fetched to get fresh URLs.
 function hasNotionPresignedUrl(data: PageWithMarkdownType): boolean {
   if (data.cover?.type === "file") return true;
   if (data.icon?.type === "file") return true;
+  // Check all `files` type properties (e.g. FeaturedImage) for file-type entries
+  for (const prop of Object.values(data.properties ?? {})) {
+    if (prop?.type !== "files") continue;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((prop as any).files?.some((f: any) => f.type === "file")) return true;
+  }
   return markdownHasPresignedUrls(data.markdown);
 }
 
