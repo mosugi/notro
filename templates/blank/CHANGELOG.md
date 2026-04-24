@@ -1,5 +1,12 @@
 # notro-blank
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [[`c18342c`](https://github.com/mosugi/notro/commit/c18342c41dbd1b19b09d823a97430f3c669d95ca), [`c18342c`](https://github.com/mosugi/notro/commit/c18342c41dbd1b19b09d823a97430f3c669d95ca), [`c18342c`](https://github.com/mosugi/notro/commit/c18342c41dbd1b19b09d823a97430f3c669d95ca)]:
+  - notro-loader@0.0.7
+
 ## 0.0.6
 
 ### Patch Changes
