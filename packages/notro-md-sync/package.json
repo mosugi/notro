@@ -1,6 +1,6 @@
 {
   "name": "notro-md-sync",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Sync local markdown files to a Notion data source",
   "author": "mosugi <mosugeek@gmail.com>",
