@@ -1,5 +1,40 @@
 # notro-loader
 
+## 0.0.7
+
+### Patch Changes
+
+- [#143](https://github.com/mosugi/notro/pull/143) [`c18342c`](https://github.com/mosugi/notro/commit/c18342c41dbd1b19b09d823a97430f3c669d95ca) Thanks [@mosugi](https://github.com/mosugi)! - fix: include src/ root files in published package
+
+  The `files` field listed only subdirectories (`src/components`, `src/loader`, `src/utils`), so files directly under `src/` (`integration.ts`, `types.ts`, `env.d.ts`) were missing from the published package. Changed to `"src"` to include all files under it.
+
+  This caused `notro-loader/integration` to fail resolving `./src/integration.ts` at build time.
+
+- [#143](https://github.com/mosugi/notro/pull/143) [`c18342c`](https://github.com/mosugi/notro/commit/c18342c41dbd1b19b09d823a97430f3c669d95ca) Thanks [@mosugi](https://github.com/mosugi)! - fix: detect presigned URLs in `files` type properties (e.g. FeaturedImage)
+
+  `hasNotionPresignedUrl` only checked `cover` and `icon` for file-type presigned
+  URLs. Properties of type `files` (e.g. a FeaturedImage column) also contain
+  expiring S3 presigned URLs but were not detected, causing stale entries to
+  remain in the store indefinitely.
+
+  Now all `files` type properties are checked, so entries with expired presigned
+  file URLs are evicted and re-fetched on the next build — consistent with the
+  existing handling for `cover` and `icon`.
+
+- [#143](https://github.com/mosugi/notro/pull/143) [`c18342c`](https://github.com/mosugi/notro/commit/c18342c41dbd1b19b09d823a97430f3c669d95ca) Thanks [@mosugi](https://github.com/mosugi)! - fix: presigned URLの有効期限を実際に確認してから再取得するよう変更
+
+  従来の実装では `hasNotionPresignedUrl()` がファイル型のカバー・アイコン・プロパティを
+  含むページを「常に期限切れ」と判断し、毎ビルドで全ページを削除・再取得していた。
+
+  新しい実装では S3 presigned URL の `X-Amz-Date` と `X-Amz-Expires` パラメータを
+  解析して実際の有効期限を計算し、本当に期限切れのページだけを再取得する。
+
+  これにより、ビルド間でページが変更・期限切れでない限りキャッシュが有効になり、
+  2回目以降のビルドでの Notion API コール数と所要時間が大幅に削減される。
+
+- Updated dependencies [[`c18342c`](https://github.com/mosugi/notro/commit/c18342c41dbd1b19b09d823a97430f3c669d95ca)]:
+  - remark-notro@0.0.6
+
 ## 0.0.6
 
 ### Patch Changes
