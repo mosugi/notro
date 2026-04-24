@@ -37,9 +37,7 @@
     "integration.ts",
     "utils.ts",
     "image-service.ts",
-    "src/components",
-    "src/loader",
-    "src/utils"
+    "src"
   ],
   "scripts": {
     "format": "prettier --write 'src/**/*.ts' 'src/**/*.astro'",
