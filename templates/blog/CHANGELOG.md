@@ -1,5 +1,12 @@
 # notro-blog
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [[`7e00c19`](https://github.com/mosugi/notro/commit/7e00c193f7971790526729628ab9bc9d98ef44d7)]:
+  - notro-loader@0.0.8
+
 ## 0.0.6
 
 ### Patch Changes
