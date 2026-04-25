@@ -552,3 +552,49 @@ describe("Fix 4 edge case: markdown after table_of_contents", () => {
     expect(output).toContain("## Heading");
   });
 });
+
+// ============================================================
+// Fix 14: <br/> as block separator → blank line
+// ============================================================
+describe("Fix 14: <br/> converted to paragraph break", () => {
+  it("converts <br> between two text lines into a blank line", () => {
+    // Notion API uses <br> to separate what are actually distinct blocks.
+    // remark should treat them as separate paragraphs.
+    const input = "月曜日<br>10:00～18:00スタートまでの間に空きがございます。";
+    const output = preprocessNotionMarkdown(input);
+    // Should have a blank line between the two "paragraphs"
+    expect(output).toBe("月曜日\n\n10:00～18:00スタートまでの間に空きがございます。");
+  });
+
+  it("converts multiple <br> separators into blank lines", () => {
+    const input = "月曜日<br>10:00～18:00\n▫️\n火曜日<br>9:00スタート";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toContain("月曜日\n\n10:00～18:00");
+    expect(output).toContain("火曜日\n\n9:00スタート");
+  });
+
+  it("handles <BR> case-insensitively", () => {
+    const input = "月曜日<BR>10:00";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("月曜日\n\n10:00");
+  });
+});
+
+// ============================================================
+// Fix 3 (edge case): color-annotated <p> isolation
+// ============================================================
+describe("Fix 3 edge case: color-annotated p surrounded by blank lines", () => {
+  it("inserts blank line before <p color> when preceded by text", () => {
+    const input = "some text\n※日曜日は定休日です。 {color=\"red\"}\nmore text";
+    const output = preprocessNotionMarkdown(input);
+    // The color-annotated <p> must be preceded by a blank line
+    expect(output).toMatch(/some text\n\n<p color="red">/);
+  });
+
+  it("inserts blank line after </p> when followed by text", () => {
+    const input = "some text\n※日曜日は定休日です。 {color=\"red\"}\nmore text";
+    const output = preprocessNotionMarkdown(input);
+    // The color-annotated <p> must be followed by a blank line
+    expect(output).toMatch(/<\/p>\n\nmore text/);
+  });
+});

@@ -76,10 +76,13 @@
  *    blank line between a blockquote line and any following non-blockquote,
  *    non-blank line.
  *
- * 13. Bare <br> → self-closing <br/>:
- *    MDX treats <br> as a JSX element and requires a closing tag, causing a
- *    compilation error. Notion markdown may contain bare <br> tags, so we
- *    replace them with <br/> before the MDX pipeline runs.
+ * 13. <br> → paragraph break (blank line):
+ *    Notion's Markdown API uses <br> to separate what are logically distinct
+ *    blocks (e.g. "月曜日<br>10:00～18:00"). remark treats inline <br/> as a
+ *    line break inside the same paragraph, so all content collapses into one
+ *    <p> and bold markers spanning "paragraphs" fail to render.
+ *    Converting <br> to a blank line (\n\n) lets remark create separate
+ *    paragraphs, matching Notion's intended block structure.
  */
 
 // Leading emoji sequence pattern (covers most emoji including keycap sequences).
@@ -295,6 +298,11 @@ export function preprocessNotionMarkdown(markdown: string): string {
     /^([^<#\n][^\n]*?) \{color="([^"]+)"\}$/gm,
     '<p color="$2">$1</p>'
   );
+  // Ensure color-annotated <p> blocks are surrounded by blank lines so remark
+  // treats them as standalone HTML blocks (CommonMark type 6) rather than
+  // inline content inside an adjacent paragraph.
+  result = result.replace(/([^\n])\n(<p color="[^"]*">)/g, "$1\n\n$2");
+  result = result.replace(/(<\/p>)\n([^\n])/g, "$1\n\n$2");
 
   // Fix 4: Wrap table-of-contents tags in <div> so remark treats them as HTML.
   // CommonMark HTML block detection requires tag names matching [A-Za-z][A-Za-z0-9-]*.
@@ -431,11 +439,14 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // does not start with ">" and is not itself blank.
   result = result.replace(/(^>[ \t][^\n]*)\n(?!>|\n)/gm, "$1\n\n");
 
-  // Fix 13: Convert bare <br> to self-closing <br/>.
-  // MDX treats <br> as a JSX element and requires a closing tag, which causes
-  // a compilation error when Notion markdown contains inline <br> tags.
-  // Replacing with <br/> makes it a valid self-closing JSX element.
-  result = result.replace(/<br>/gi, "<br/>");
+  // Fix 13: Convert <br> to a blank line (paragraph break).
+  // Notion's Markdown API uses <br> to separate logically distinct blocks
+  // (e.g. "月曜日<br>10:00～18:00"). If left as an inline <br/>, remark
+  // groups all content into one <p>, collapsing the block structure and
+  // preventing bold markers from being resolved correctly.
+  // Replacing with \n\n lets remark produce separate paragraphs, matching
+  // the intended Notion block layout.
+  result = result.replace(/<br>/gi, "\n\n");
 
   return result;
 }
