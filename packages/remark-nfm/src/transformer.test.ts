@@ -554,29 +554,77 @@ describe("Fix 4 edge case: markdown after table_of_contents", () => {
 });
 
 // ============================================================
-// Fix 14: <br/> as block separator → blank line
+// Fix 13: Normalize <br> → <br/>
 // ============================================================
-describe("Fix 14: <br/> converted to paragraph break", () => {
-  it("converts <br> between two text lines into a blank line", () => {
-    // Notion API uses <br> to separate what are actually distinct blocks.
-    // remark should treat them as separate paragraphs.
+describe("Fix 13: <br> normalized to self-closing <br/>", () => {
+  it("converts <br> to <br/>", () => {
     const input = "月曜日<br>10:00～18:00スタートまでの間に空きがございます。";
     const output = preprocessNotionMarkdown(input);
-    // Should have a blank line between the two "paragraphs"
-    expect(output).toBe("月曜日\n\n10:00～18:00スタートまでの間に空きがございます。");
+    expect(output).toBe("月曜日<br/>10:00～18:00スタートまでの間に空きがございます。");
   });
 
-  it("converts multiple <br> separators into blank lines", () => {
+  it("converts multiple <br> tags", () => {
     const input = "月曜日<br>10:00～18:00\n▫️\n火曜日<br>9:00スタート";
     const output = preprocessNotionMarkdown(input);
-    expect(output).toContain("月曜日\n\n10:00～18:00");
-    expect(output).toContain("火曜日\n\n9:00スタート");
+    expect(output).toContain("月曜日<br/>10:00～18:00");
+    expect(output).toContain("火曜日<br/>9:00スタート");
   });
 
   it("handles <BR> case-insensitively", () => {
     const input = "月曜日<BR>10:00";
     const output = preprocessNotionMarkdown(input);
-    expect(output).toBe("月曜日\n\n10:00");
+    expect(output).toBe("月曜日<br/>10:00");
+  });
+});
+
+// ============================================================
+// Fix 15: Convert **bold** to <strong>bold</strong>
+// ============================================================
+describe("Fix 15: bold marker conversion to <strong>", () => {
+  it("converts basic **bold** to <strong>bold</strong>", () => {
+    const input = "固定の場合でも**振替**は可能となります。";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("固定の場合でも<strong>振替</strong>は可能となります。");
+  });
+
+  it("converts **text** adjacent to CJK close punctuation", () => {
+    const input = "7割くらいの方が**『曜日時間固定』**となり、";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("7割くらいの方が<strong>『曜日時間固定』</strong>となり、");
+  });
+
+  it("converts multiple bold spans on the same line", () => {
+    const input = "**週1or週2**で通われる方が多いです。固定の場合でも**振替**は可能です。";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("<strong>週1or週2</strong>で通われる方が多いです。固定の場合でも<strong>振替</strong>は可能です。");
+  });
+
+  it("does not convert ** inside inline code", () => {
+    const input = "テキスト `**bold**` テキスト **太字** です";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toContain("`**bold**`");
+    expect(output).toContain("<strong>太字</strong>");
+  });
+
+  it("does not convert ** inside fenced code blocks", () => {
+    const input = "```\n**not bold**\n```\n\n**this is bold**";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toContain("**not bold**");
+    expect(output).toContain("<strong>this is bold</strong>");
+  });
+
+  it("does not convert ** that spans multiple lines", () => {
+    const input = "**line one\nline two**";
+    const output = preprocessNotionMarkdown(input);
+    // Should remain unchanged since it spans a newline
+    expect(output).toBe("**line one\nline two**");
+  });
+
+  it("trims trailing space from Notion API bold output (**text **)", () => {
+    // Notion API sometimes produces **text ** (trailing space before closing **)
+    const input = "固定の場合でも**振替 **は可能となります。";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("固定の場合でも<strong>振替</strong>は可能となります。");
   });
 });
 
