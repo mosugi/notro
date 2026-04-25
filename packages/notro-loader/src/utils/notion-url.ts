@@ -10,6 +10,24 @@
 const AMZN_PRESIGNED_PARAM = 'X-Amz-Algorithm';
 
 /**
+ * Returns true if the given URL is a Notion S3 pre-signed URL.
+ *
+ * Detection covers two known patterns:
+ * - URLs with `X-Amz-Algorithm` query parameter (standard S3 pre-signed form)
+ * - `prod-files-secure.s3` hostname (Notion's secure file host, may omit X-Amz-* in some contexts)
+ */
+export function isNotionPresignedUrl(url: string): boolean {
+	try {
+		const parsed = new URL(url);
+		if (parsed.searchParams.has(AMZN_PRESIGNED_PARAM)) return true;
+		if (parsed.hostname.startsWith('prod-files-secure.s3')) return true;
+	} catch {
+		// Not a valid URL
+	}
+	return false;
+}
+
+/**
  * Returns true if the given Notion pre-signed S3 URL has expired (or is
  * unrecognisable and should be treated as expired).
  *
@@ -39,7 +57,7 @@ export function isPresignedUrlExpired(url: string, bufferMs = 60_000): boolean {
 		// Not a pre-signed URL with the expected parameters – if it looks like
 		// a Notion S3 URL, conservatively treat as expired; otherwise it is
 		// probably a plain external URL that never expires.
-		return parsed.hostname.includes('s3') && parsed.hostname.includes('amazonaws.com');
+		return isNotionPresignedUrl(url);
 	}
 
 	// X-Amz-Date is in compact ISO-8601: YYYYMMDDTHHmmssZ
@@ -60,13 +78,6 @@ export function isPresignedUrlExpired(url: string, bufferMs = 60_000): boolean {
 
 /**
  * Returns true if the text contains Notion pre-signed S3 URLs.
- *
- * Detection strategy:
- * - X-Amz-Algorithm: must appear as a URL query parameter
- *   (i.e. preceded by "?" or "&" within an https:// URL context) to avoid
- *   false positives when the literal string appears in body text or code blocks.
- * - prod-files-secure.s3: matched as a hostname within an https:// URL, which
- *   is an unambiguous indicator of a Notion S3 URL regardless of query params.
  */
 export function markdownHasPresignedUrls(text: string): boolean {
 	// Match X-Amz-Algorithm only when it appears as a URL query parameter

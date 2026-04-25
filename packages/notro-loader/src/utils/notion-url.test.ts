@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { isPresignedUrlExpired } from "./notion-url.ts";
+import { isNotionPresignedUrl, isPresignedUrlExpired } from "./notion-url.ts";
 
 // Build a fake S3 presigned URL with the given issued-at time and expiry.
 function makePresignedUrl(issuedAt: Date, expiresSeconds: number): string {
@@ -9,6 +9,24 @@ function makePresignedUrl(issuedAt: Date, expiresSeconds: number): string {
     .replace(/\.\d+Z$/, "Z"); // YYYYMMDDTHHmmssZ
   return `https://prod-files-secure.s3.us-west-2.amazonaws.com/file.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=${date}&X-Amz-Expires=${expiresSeconds}&X-Amz-Signature=abc`;
 }
+
+describe("isNotionPresignedUrl", () => {
+  it("returns true for a URL with X-Amz-Algorithm param", () => {
+    expect(isNotionPresignedUrl("https://example.s3.amazonaws.com/file.png?X-Amz-Algorithm=AWS4-HMAC-SHA256")).toBe(true);
+  });
+
+  it("returns true for prod-files-secure.s3 hostname", () => {
+    expect(isNotionPresignedUrl("https://prod-files-secure.s3.us-west-2.amazonaws.com/file.png")).toBe(true);
+  });
+
+  it("returns false for a plain external URL", () => {
+    expect(isNotionPresignedUrl("https://example.com/image.png")).toBe(false);
+  });
+
+  it("returns false for a non-URL string", () => {
+    expect(isNotionPresignedUrl("not-a-url")).toBe(false);
+  });
+});
 
 describe("isPresignedUrlExpired", () => {
   const NOW = new Date("2024-06-01T12:00:00Z").getTime();
