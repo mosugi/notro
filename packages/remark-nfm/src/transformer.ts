@@ -106,10 +106,14 @@ const LATEX_COMMANDS = [
   "cos", "tan", "log", "ln", "mu", "pi", "pm", "div",
 ];
 
-// Build regex: not preceded by backslash, the command as a word, word boundary after.
+// Build regex: not preceded by backslash or opening brace, the command as a word.
+// The negative lookbehind `(?<![\\{])` has two purposes:
+//   - `(?<!\\)` — skip commands that already have a backslash (e.g. \frac already present)
+//   - `(?<!\{)` — skip commands that appear as arguments inside {…} (e.g. \text{end},
+//     \begin{cases}). These are literal text or environment names, not stripped commands.
 // The 'u' flag is not needed here since all chars are ASCII.
 const LATEX_CMD_RE = new RegExp(
-  `(?<!\\\\)\\b(${[...new Set(LATEX_COMMANDS)].sort((a, b) => b.length - a.length).join("|")})\\b`,
+  `(?<![\\\\{])\\b(${[...new Set(LATEX_COMMANDS)].sort((a, b) => b.length - a.length).join("|")})\\b`,
   "g",
 );
 
@@ -150,7 +154,8 @@ function convertRawCallouts(input: string): string {
         // A <callout ...> on a (possibly indented) line increases depth.
         if (/^<callout/.test(bl.trimStart())) depth++;
         // </callout> on any line (possibly indented) decreases depth.
-        if (bl.trimStart() === "</callout>") {
+        // Use trim() (not ===) to tolerate trailing whitespace in API output.
+        if (bl.trimStart().trim() === "</callout>") {
           depth--;
           if (depth === 0) break;
         }

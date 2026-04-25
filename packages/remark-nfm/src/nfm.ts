@@ -86,7 +86,18 @@ export const remarkNfm: Plugin<[Options?], Root, Root> = function (_options): Tr
 	const toMarkdownExtensions =
 		data.toMarkdownExtensions || (data.toMarkdownExtensions = []);
 
-	micromarkExtensions.push(directive(), gfmStrikethrough(), gfmTaskListItem());
+	// Use flow-only directives (container :::callout and leaf ::callout).
+	// Excluding text-level directives prevents `:` in time formats like 10:00
+	// or 18:30 from being mis-parsed as inline directives (:00, :30), which
+	// would produce spurious <div></div> elements in the output.
+	// Notion content never uses inline text directives (:name[...]), so removing
+	// the text-level `:` trigger is safe and has no functional impact.
+	const flowOnlyDirective = () => {
+		const ext = directive();
+		delete ext.text; // remove inline directive trigger on `:` (char code 58)
+		return ext;
+	};
+	micromarkExtensions.push(flowOnlyDirective(), gfmStrikethrough(), gfmTaskListItem());
 	fromMarkdownExtensions.push(directiveFromMarkdown(), gfmStrikethroughFromMarkdown(), gfmTaskListItemFromMarkdown());
 	toMarkdownExtensions.push(directiveToMarkdown(), gfmStrikethroughToMarkdown(), gfmTaskListItemToMarkdown());
 

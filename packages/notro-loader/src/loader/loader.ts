@@ -14,7 +14,7 @@ import {
   type PageWithMarkdownType,
   pageWithMarkdownSchema,
 } from "./schema.ts";
-import { isPresignedUrlExpired, markdownHasPresignedUrls } from "../utils/notion-url.ts";
+import { isNotionPresignedUrl, isPresignedUrlExpired, markdownHasPresignedUrls } from "../utils/notion-url.ts";
 
 type LoaderOptions = {
   queryParameters: QueryDataSourceParameters;
@@ -61,12 +61,20 @@ function hasExpiredNotionPresignedUrl(data: PageWithMarkdownType): boolean {
     : false;
 }
 
-// Extract the first presigned S3 URL from markdown and check if it has expired.
-// If the markdown contains presigned URLs but none can be parsed, treat as expired.
+// Extract all presigned S3 URLs from markdown and check if any have expired.
+// Returns true as soon as any URL is found to be expired.
+// Uses the same URL pattern as markdownHasPresignedUrls for consistency.
 function isPresignedUrlExpiredInMarkdown(markdown: string): boolean {
-  const match = markdown.match(/https?:\/\/[^\s)"']*[?&]X-Amz-[^\s)"']*/);
-  if (!match) return false;
-  return isPresignedUrlExpired(match[0]);
+  const matches = markdown.matchAll(/https?:\/\/[^\s)"']*[?&]X-Amz-Algorithm=[^\s)"']*/g);
+  for (const [url] of matches) {
+    if (isPresignedUrlExpired(url)) return true;
+  }
+  // Also check prod-files-secure.s3 URLs (may not have X-Amz-Algorithm in some cases)
+  const s3Matches = markdown.matchAll(/https?:\/\/prod-files-secure\.s3[^\s)"']*/g);
+  for (const [url] of s3Matches) {
+    if (isNotionPresignedUrl(url) && isPresignedUrlExpired(url)) return true;
+  }
+  return false;
 }
 
 // Error codes that are safe to retry (rate limit, server errors).
