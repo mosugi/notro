@@ -385,3 +385,170 @@ describe("Fix 9: markdown links inside td cells", () => {
     expect(output).toContain("<td>cell2</td>");
   });
 });
+
+// ============================================================
+// Fix 11: LaTeX command restoration
+// ============================================================
+describe("Fix 11: LaTeX backslash restoration", () => {
+  it("restores missing backslash before frac in inline math", () => {
+    const input = "$frac{a}{b}$";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("$\\frac{a}{b}$");
+  });
+
+  it("leaves already-correct \\frac unchanged", () => {
+    const input = "$\\frac{a}{b}$";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("$\\frac{a}{b}$");
+  });
+
+  it("does NOT corrupt \\text{end} — 'end' inside \\text{} must not become \\end", () => {
+    // \text{end} is valid LaTeX for typesetting the word "end" in math mode.
+    // The LaTeX restoration pass must not turn it into \text{\end}.
+    const input = "$\\text{end}$";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("$\\text{end}$");
+  });
+
+  it("does NOT corrupt \\text{begin} — 'begin' inside \\text{} must not become \\begin", () => {
+    const input = "$\\text{begin}$";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("$\\text{begin}$");
+  });
+
+  it("does NOT corrupt \\text{text} — 'text' inside \\text{} must not become \\text{\\text}", () => {
+    const input = "$\\text{text}$";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("$\\text{text}$");
+  });
+
+  it("does NOT corrupt \\text{sin x} — 'sin' inside \\text{} must not become \\sin", () => {
+    const input = "$\\text{sin x}$";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("$\\text{sin x}$");
+  });
+
+  it("still restores bare 'end' (no preceding backslash) in \\begin{...}...\\end{} context", () => {
+    // Notion strips the backslash: "begin{cases}...end{cases}" → should restore
+    const input = "$begin{cases} a end{cases}$";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toBe("$\\begin{cases} a \\end{cases}$");
+  });
+});
+
+// ============================================================
+// Fix 2 (edge cases): callout closing tag robustness
+// ============================================================
+describe("Fix 2 edge cases: callout closing tag", () => {
+  it("handles </callout> with trailing space", () => {
+    // Notion API occasionally outputs trailing whitespace on closing tags.
+    // The depth counter must still recognise it as the closing tag.
+    const input = '<callout icon="💡">\n\tbody text\n</callout> ';
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toContain(":::callout");
+    expect(output).toContain("body text");
+    expect(output).not.toContain("</callout>");
+  });
+
+  it("handles </callout> with trailing tab", () => {
+    const input = '<callout icon="💡">\n\tbody text\n</callout>\t';
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toContain(":::callout");
+    expect(output).toContain("body text");
+    expect(output).not.toContain("</callout>");
+  });
+});
+
+// ============================================================
+// Fix 8/10 interaction: <summary> closing tag + <details> dedent
+// ============================================================
+describe("Fix 8/10 interaction: details/summary structure", () => {
+  it("does not insert spurious blank line between </summary> and first body line inside <details>", () => {
+    // Fix 8 adds a blank line after </summary>, but inside <details> that extra
+    // blank line should not break the CommonMark HTML block that contains the body.
+    // Notion outputs <details> with <summary> header and tab-indented body lines.
+    const input = [
+      "<details>",
+      "\t<summary>Toggle title</summary>",
+      "\tbody content",
+      "</details>",
+    ].join("\n");
+    const output = preprocessNotionMarkdown(input);
+    // The body content must remain inside <details> (not leak outside)
+    const detailsStart = output.indexOf("<details>");
+    const detailsEnd = output.indexOf("</details>");
+    const bodyPos = output.indexOf("body content");
+    expect(bodyPos).toBeGreaterThan(detailsStart);
+    expect(bodyPos).toBeLessThan(detailsEnd);
+  });
+
+  it("dedents body inside <details> after <summary>", () => {
+    const input = [
+      "<details>",
+      "\t<summary>Title</summary>",
+      "\tbody line 1",
+      "\tbody line 2",
+      "</details>",
+    ].join("\n");
+    const output = preprocessNotionMarkdown(input);
+    // Body lines should not have leading tabs after dedent
+    expect(output).toContain("body line 1");
+    expect(output).toContain("body line 2");
+    expect(output).not.toMatch(/^\tbody/m);
+  });
+});
+
+// ============================================================
+// Fix 10 edge case: <details> inside callout (double-dedent risk)
+// ============================================================
+describe("Fix 10 edge case: details inside callout", () => {
+  it("dedents <details> body inside a callout exactly once", () => {
+    // Notion outputs a <details> toggle nested inside a callout block.
+    // Fix 2 (callout dedent) removes one leading tab from all body lines.
+    // Fix 10 (details/column dedent) should then remove one more tab from
+    // the <details> body lines — but NOT from the <details>/<summary> tags
+    // themselves, which after Fix 2 have no leading tab.
+    //
+    // Raw Notion output structure:
+    //   <callout>
+    //     <details>
+    //       <summary>Title</summary>
+    //       \t\tbody text      ← two tabs: one for callout, one for details
+    //     </details>
+    //   </callout>
+    const input = [
+      "<callout>",
+      "\t<details>",
+      "\t<summary>Title</summary>",
+      "\t\tbody text",
+      "\t</details>",
+      "</callout>",
+    ].join("\n");
+    const output = preprocessNotionMarkdown(input);
+    console.log("callout+details output:", JSON.stringify(output));
+    // body text should appear without any leading tabs
+    expect(output).not.toMatch(/^\t+body text/m);
+    expect(output).toContain("body text");
+    // <details> structure must be present
+    expect(output).toContain("<details>");
+    expect(output).toContain("</details>");
+  });
+});
+
+// ============================================================
+// Fix 4 edge case: content after <div><table_of_contents/></div>
+// ============================================================
+describe("Fix 4 edge case: markdown after table_of_contents", () => {
+  it("does not absorb following markdown into the div HTML block", () => {
+    // CommonMark type 6 HTML blocks end at a blank line.
+    // Fix 4 appends \n after </div>, producing a single newline.
+    // Without a second newline (blank line), the following markdown line
+    // would be consumed as raw HTML text inside the <div> block.
+    const input = "<table_of_contents/>\n## Heading";
+    const output = preprocessNotionMarkdown(input);
+    console.log("toc+heading output:", JSON.stringify(output));
+    // There must be a blank line between </div> and the heading
+    expect(output).toMatch(/<\/div>\n\n/);
+    expect(output).toContain("## Heading");
+  });
+});
