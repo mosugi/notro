@@ -76,13 +76,17 @@
  *    blank line between a blockquote line and any following non-blockquote,
  *    non-blank line.
  *
- * 13. <br> → paragraph break (blank line):
- *    Notion's Markdown API uses <br> to separate what are logically distinct
- *    blocks (e.g. "月曜日<br>10:00～18:00"). remark treats inline <br/> as a
- *    line break inside the same paragraph, so all content collapses into one
- *    <p> and bold markers spanning "paragraphs" fail to render.
- *    Converting <br> to a blank line (\n\n) lets remark create separate
- *    paragraphs, matching Notion's intended block structure.
+ * 13. Block boundary expansion:
+ *    Notion's Markdown API outputs each block (paragraph, heading, list item, etc.)
+ *    separated by a single \n. CommonMark treats a single \n between text lines as
+ *    a soft break within one paragraph, collapsing all consecutive blocks into a
+ *    single <p>. Expanding every single \n between non-blank lines to \n\n restores
+ *    the block boundaries, producing separate <p> elements as Notion intended.
+ *    Fenced code blocks (``` ... ```) and block-level HTML structures are excluded
+ *    from this expansion to preserve their internal newlines.
+ *
+ *    Note: <br> in Notion's output represents an intra-block Shift+Enter line break,
+ *    not a block boundary. It is normalized to <br/> (self-closing) for rehype-raw.
  */
 
 // Leading emoji sequence pattern (covers most emoji including keycap sequences).
@@ -439,24 +443,35 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // does not start with ">" and is not itself blank.
   result = result.replace(/(^>[ \t][^\n]*)\n(?!>|\n)/gm, "$1\n\n");
 
-  // Fix 13a: Isolate ▫️ (U+25AB U+FE0F) separator lines as standalone paragraphs.
-  // Notion uses ▫️ as a visual block separator between day/time entries. When
-  // it appears on its own line between other content lines, CommonMark treats
-  // the surrounding \n as soft line breaks within a single paragraph rather than
-  // paragraph boundaries. Surrounding ▫️-only lines with blank lines forces
-  // remark to produce separate <p> elements, preserving the visual separation.
-  result = result.replace(/([^\n])\n(▫️[ \t]*)\n([^\n])/g, "$1\n\n$2\n\n$3");
-
-  // Fix 13: Normalize <br> to self-closing <br/>.
-  // Notion's Markdown API uses <br> (void element without slash) to indicate
-  // a line break within a block (e.g. "月曜日<br>10:00～18:00").
-  // remark-rehype / rehype-raw require the self-closing form <br/> for
-  // correct inline rendering. <br> without slash is passed through as raw
-  // text in some configurations, producing a literal "<br>" in the output.
-  // Bold markers (**...**) that previously failed to parse correctly when
-  // adjacent to <br> are now handled by Fix 14 (** → <strong>), so keeping
-  // <br/> inline no longer interferes with emphasis parsing.
-  result = result.replace(/<br>/gi, "<br/>");
+  // Fix 13: Expand single \n block boundaries to \n\n (paragraph breaks).
+  // Notion's Markdown API separates blocks (paragraphs, headings, list items, etc.)
+  // with a single \n. CommonMark treats a lone \n between text lines as a soft break,
+  // collapsing all blocks into one <p>. We expand every single \n between non-blank
+  // lines to \n\n so remark creates separate block-level elements.
+  //
+  // Protected regions (fenced code blocks ``` and directive blocks :::) are split out
+  // and passed through unchanged since their internal newlines are significant.
+  // All other segments have single \n between non-blank lines expanded to \n\n.
+  //
+  // Note: <br> in Notion's output represents an intra-block Shift+Enter line break.
+  // It is normalized to <br/> (self-closing) for correct rehype-raw handling.
+  result = result
+    .split(/((?:^|\n)```[\s\S]*?(?:```\s*(?:\n|$)|$)|(?:^|\n):::[\s\S]*?(?:\n:::[ \t]*(?:\n|$)|$))/g)
+    .map((segment, i) => {
+      if (i % 2 === 1) return segment; // protected block (fenced code / directive) — pass through
+      // Expand single \n between non-blank lines to \n\n.
+      // Use a loop to handle consecutive single-newline sequences (e.g. A\nB\nC → A\n\nB\n\nC).
+      let s = segment;
+      let prev: string;
+      do {
+        prev = s;
+        s = s.replace(/([^\n])\n([^\n])/g, "$1\n\n$2");
+      } while (s !== prev);
+      // Normalize <br> to self-closing <br/>.
+      s = s.replace(/<br>/gi, "<br/>");
+      return s;
+    })
+    .join("");
 
   // Fix 15: Convert **bold** to <strong>bold</strong> to work around CommonMark
   // delimiter run rules that break bold rendering when ** is adjacent to CJK
