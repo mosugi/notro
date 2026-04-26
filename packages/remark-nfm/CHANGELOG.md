@@ -1,5 +1,48 @@
 # remark-notro
 
+## 0.0.9
+
+### Patch Changes
+
+- [#155](https://github.com/mosugi/notro/pull/155) [`2c67a6d`](https://github.com/mosugi/notro/commit/2c67a6da5d406e42e4259a6be13baf3606eb1ef7) Thanks [@mosugi](https://github.com/mosugi)! - Fix: Notion block boundaries now render as separate paragraphs
+
+  **Fix 13 (revised): Block boundary expansion (`\n` → `\n\n`)**
+  Notion's Markdown API outputs each block (paragraph, heading, etc.) separated by a
+  single `\n`. CommonMark treats a lone `\n` between text lines as a soft break,
+  collapsing all consecutive blocks into one `<p>`. This fix expands every single `\n`
+  between non-blank lines to `\n\n` so remark produces separate block-level elements,
+  matching Notion's intended structure. Fenced code blocks and directive blocks (`:::`)
+  are excluded from the expansion. `<br>` (intra-block Shift+Enter) is normalized to
+  `<br/>` for correct rehype-raw handling.
+
+- [#153](https://github.com/mosugi/notro/pull/153) [`f26a4c4`](https://github.com/mosugi/notro/commit/f26a4c4c836c742dc2bc7e33d80c7bf39035c18d) Thanks [@mosugi](https://github.com/mosugi)! - Fix: bold markers and line breaks now render correctly in Notion content
+
+  **Fix 13: `<br>` normalized to `<br/>`**
+  Notion's Markdown API uses `<br>` (without slash) for inline line breaks
+  (e.g. `月曜日<br>10:00～18:00`). Normalized to self-closing `<br/>` for
+  correct inline rendering by rehype-raw.
+
+  **Fix 15: `**bold**`converted to`<strong>bold</strong>` in pre-processing**
+  CommonMark delimiter run rules silently break `**bold**` rendering when `**`
+  is adjacent to CJK close punctuation (e.g. `**『曜日時間固定』**` fails
+  because `』` is Unicode category Pf). The Notion API also sometimes outputs
+  trailing spaces before the closing `**` (e.g. `**text **`). Pre-converting
+  bold markers to `<strong>` tags bypasses both issues. Code spans and fenced
+  code blocks are excluded from the conversion.
+
+- [#153](https://github.com/mosugi/notro/pull/153) [`f26a4c4`](https://github.com/mosugi/notro/commit/f26a4c4c836c742dc2bc7e33d80c7bf39035c18d) Thanks [@mosugi](https://github.com/mosugi)! - Fix: colon in time formats (10:00, 18:30) no longer produces spurious `<div></div>` elements
+
+  `micromark-extension-directive` treats `:` (char code 58) as the trigger for
+  inline text directives, so time formats like `10:00` were parsed as an inline
+  directive named `00` (or `30` etc.), emitting an empty `<div>` element after the
+  digit before the colon.
+
+  The fix restricts the directive micromark extension to flow-level constructs
+  (container `:::callout` and leaf `::callout`) only, by removing the `text`
+  property from the extension object before registering it. Notion content never
+  uses inline text directives (`:name[...]`), so this change is safe and has no
+  functional impact on Notion rendering.
+
 ## 0.0.8
 
 ### Patch Changes
