@@ -1,5 +1,12 @@
 # notro-gallery
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [[`2cd9bec`](https://github.com/mosugi/notro/commit/2cd9becfe1953a096cb429f4f72a0622f709c51b)]:
+  - notro-loader@0.0.9
+
 ## 0.0.6
 
 ### Patch Changes
