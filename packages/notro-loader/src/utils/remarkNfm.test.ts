@@ -144,6 +144,24 @@ describe("remarkNfm: callout conversion", () => {
 		expect(html).toContain('color="blue_bg"');
 		expect(html).toContain("colored callout");
 	});
+
+	// Notion API outputs raw <callout> HTML (not directive syntax).
+	// Fix 2 in the preprocessor converts it to :::callout{...} before parsing.
+	it("converts raw <callout> HTML (Notion API format) to <callout> element", () => {
+		const input = '<callout icon="🎯" color="blue_bg">\n\tcallout body\n</callout>';
+		const html = process(input);
+		expect(html).toContain("<callout");
+		expect(html).toContain('icon="🎯"');
+		expect(html).toContain('color="blue_bg"');
+		expect(html).toContain("callout body");
+	});
+
+	it("extracts leading emoji as icon from raw <callout> without icon attribute", () => {
+		const input = "<callout>\n\t💡 icon extracted from content\n</callout>";
+		const html = process(input);
+		expect(html).toContain('icon="💡"');
+		expect(html).toContain("icon extracted from content");
+	});
 });
 
 // ============================================================
@@ -153,6 +171,26 @@ describe("remarkNfm: GFM strikethrough", () => {
 	it("renders ~~text~~ as <del>", () => {
 		const html = process("~~strikethrough~~");
 		expect(html).toContain("<del>strikethrough</del>");
+	});
+});
+
+// ============================================================
+// CJK bold (Fix 15)
+//
+// CommonMark's delimiter run rules fail when ** is adjacent to
+// CJK close punctuation (e.g. **『text』** or **振替** in CJK context).
+// The preprocessor converts **bold** → <strong>bold</strong> before
+// parsing; rehype-raw then converts it to a proper hast element.
+// ============================================================
+describe("remarkNfm: CJK bold rendering", () => {
+	it("renders **bold** adjacent to CJK text as <strong>", () => {
+		const html = process("固定の場合でも**振替**は可能となります。");
+		expect(html).toContain("<strong>振替</strong>");
+	});
+
+	it("renders **bold** adjacent to CJK close punctuation as <strong>", () => {
+		const html = process("7割くらいの方が**『曜日時間固定』**となり、");
+		expect(html).toContain("<strong>『曜日時間固定』</strong>");
 	});
 });
 
