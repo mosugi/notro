@@ -1,5 +1,18 @@
 # notro-loader
 
+## 0.0.9
+
+### Patch Changes
+
+- [#151](https://github.com/mosugi/notro/pull/151) [`2cd9bec`](https://github.com/mosugi/notro/commit/2cd9becfe1953a096cb429f4f72a0622f709c51b) Thanks [@mosugi](https://github.com/mosugi)! - Add `isNotionPresignedUrl()` helper and unify S3 presigned URL detection
+  - Export `isNotionPresignedUrl(url)` as a single source of truth for detecting Notion S3 presigned URLs (covers `X-Amz-Algorithm` query param and `prod-files-secure.s3` hostname)
+  - Use it in `isPresignedUrlExpired`'s fallback path, replacing the previous overly-broad hostname check
+  - Fix `isPresignedUrlExpiredInMarkdown` to check **all** presigned URLs in markdown (was only checking the first), so articles with multiple images are correctly invalidated when any URL expires
+  - Align URL extraction regex in `isPresignedUrlExpiredInMarkdown` with `markdownHasPresignedUrls` for consistency
+
+- Updated dependencies [[`2cd9bec`](https://github.com/mosugi/notro/commit/2cd9becfe1953a096cb429f4f72a0622f709c51b), [`2cd9bec`](https://github.com/mosugi/notro/commit/2cd9becfe1953a096cb429f4f72a0622f709c51b)]:
+  - remark-notro@0.0.8
+
 ## 0.0.8
 
 ### Patch Changes
