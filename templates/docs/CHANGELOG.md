@@ -1,5 +1,12 @@
 # notro-docs
 
+## 0.0.9
+
+### Patch Changes
+
+- Updated dependencies []:
+  - notro-loader@0.0.11
+
 ## 0.0.8
 
 ### Patch Changes

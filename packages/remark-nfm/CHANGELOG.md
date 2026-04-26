@@ -1,5 +1,15 @@
 # remark-notro
 
+## 0.0.10
+
+### Patch Changes
+
+- [#156](https://github.com/mosugi/notro/pull/156) [`c504849`](https://github.com/mosugi/notro/commit/c504849b2da26bc2872d24cce647ded89a2586cf) Thanks [@mosugi](https://github.com/mosugi)! - Remove `<br>` normalization from `preprocessNotionMarkdown` (Fix 13).
+
+  Previously the preprocessor converted `<br>` to `<br/>` before parsing. This is unnecessary because `rehype-raw` (via parse5, an HTML5-compliant parser) treats both forms identically as void elements. Delegating to `rehype-raw` keeps the preprocessor minimal and avoids redundant string manipulation.
+
+  No behavior change when used with the standard `notro-loader` pipeline, which always includes `rehype-raw`.
+
 ## 0.0.9
 
 ### Patch Changes
