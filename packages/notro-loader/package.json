@@ -52,6 +52,9 @@
   },
   "devDependencies": {
     "astro": "^6.0.4",
+    "rehype-stringify": "^10.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0"
   },
@@ -61,13 +64,13 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.0",
-    "zod": "^4.0.0",
     "@mdx-js/mdx": "^3.1.0",
     "@notionhq/client": "5.11.1",
     "rehype-raw": "^7.0.0",
     "rehype-slug": "^6.0.0",
     "remark-notro": "workspace:*",
-    "unist-util-visit": "^5.0.0"
+    "unist-util-visit": "^5.0.0",
+    "zod": "^4.0.0"
   },
   "optionalDependencies": {
     "@shikijs/rehype": "^4.0.0"

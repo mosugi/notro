@@ -4,7 +4,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import rehypeRaw from "rehype-raw";
 import rehypeStringify from "rehype-stringify";
-import { remarkNfm } from "./nfm.js";
+import { remarkNfm } from "remark-notro";
 
 /** Full pipeline: remarkNfm → remark-rehype → rehype-raw → HTML */
 function process(markdown: string): string {
@@ -56,7 +56,7 @@ describe("remarkNfm: <br> soft line break rendering", () => {
 	});
 
 	it("keeps <br> inline while separating adjacent blocks into separate paragraphs", () => {
-		// Two Notion blocks, each with an intra-block Shift+Enter (▫️ is a block separator)
+		// Two Notion blocks, each with an intra-block Shift+Enter
 		const html = process("月曜日<br>10:00\n火曜日<br>9:00");
 		expect(html).toMatch(/<p>月曜日<br>10:00<\/p>/);
 		expect(html).toMatch(/<p>火曜日<br>9:00<\/p>/);
