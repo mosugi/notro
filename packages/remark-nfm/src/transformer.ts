@@ -76,10 +76,13 @@
  *    blank line between a blockquote line and any following non-blockquote,
  *    non-blank line.
  *
- * 13. Bare <br> → self-closing <br/>:
- *    MDX treats <br> as a JSX element and requires a closing tag, causing a
- *    compilation error. Notion markdown may contain bare <br> tags, so we
- *    replace them with <br/> before the MDX pipeline runs.
+ * 13. <br> → paragraph break (blank line):
+ *    Notion's Markdown API uses <br> to separate what are logically distinct
+ *    blocks (e.g. "月曜日<br>10:00～18:00"). remark treats inline <br/> as a
+ *    line break inside the same paragraph, so all content collapses into one
+ *    <p> and bold markers spanning "paragraphs" fail to render.
+ *    Converting <br> to a blank line (\n\n) lets remark create separate
+ *    paragraphs, matching Notion's intended block structure.
  */
 
 // Leading emoji sequence pattern (covers most emoji including keycap sequences).
@@ -295,6 +298,11 @@ export function preprocessNotionMarkdown(markdown: string): string {
     /^([^<#\n][^\n]*?) \{color="([^"]+)"\}$/gm,
     '<p color="$2">$1</p>'
   );
+  // Ensure color-annotated <p> blocks are surrounded by blank lines so remark
+  // treats them as standalone HTML blocks (CommonMark type 6) rather than
+  // inline content inside an adjacent paragraph.
+  result = result.replace(/([^\n])\n(<p color="[^"]*">)/g, "$1\n\n$2");
+  result = result.replace(/(<\/p>)\n([^\n])/g, "$1\n\n$2");
 
   // Fix 4: Wrap table-of-contents tags in <div> so remark treats them as HTML.
   // CommonMark HTML block detection requires tag names matching [A-Za-z][A-Za-z0-9-]*.
@@ -431,11 +439,36 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // does not start with ">" and is not itself blank.
   result = result.replace(/(^>[ \t][^\n]*)\n(?!>|\n)/gm, "$1\n\n");
 
-  // Fix 13: Convert bare <br> to self-closing <br/>.
-  // MDX treats <br> as a JSX element and requires a closing tag, which causes
-  // a compilation error when Notion markdown contains inline <br> tags.
-  // Replacing with <br/> makes it a valid self-closing JSX element.
+  // Fix 13: Normalize <br> to self-closing <br/>.
+  // Notion's Markdown API uses <br> (void element without slash) to indicate
+  // a line break within a block (e.g. "月曜日<br>10:00～18:00").
+  // remark-rehype / rehype-raw require the self-closing form <br/> for
+  // correct inline rendering. <br> without slash is passed through as raw
+  // text in some configurations, producing a literal "<br>" in the output.
+  // Bold markers (**...**) that previously failed to parse correctly when
+  // adjacent to <br> are now handled by Fix 14 (** → <strong>), so keeping
+  // <br/> inline no longer interferes with emphasis parsing.
   result = result.replace(/<br>/gi, "<br/>");
+
+  // Fix 15: Convert **bold** to <strong>bold</strong> to work around CommonMark
+  // delimiter run rules that break bold rendering when ** is adjacent to CJK
+  // close punctuation (e.g. **『曜日時間固定』** fails because 』 is Unicode Pf).
+  //
+  // We split the text on code-span boundaries (backtick runs) to avoid
+  // converting ** inside inline code. Each non-code segment is processed;
+  // code-span segments are passed through unchanged.
+  //
+  // The regex matches ** ... ** on the same line (non-greedy, no newlines).
+  // Nested bold is not common in Notion output so a single-pass replacement
+  // (which would leave orphaned ** for the rare nested case) is acceptable.
+  result = result
+    .split(/((?:^|\n)```[\s\S]*?(?:```|$)|`[^`\n]+`)/g)
+    .map((segment, i) => {
+      // Odd-indexed segments are code spans / fenced blocks — pass through unchanged.
+      if (i % 2 === 1) return segment;
+      return segment.replace(/\*\*([^\n*]+?)\*\*/g, (_, content) => `<strong>${content.trimEnd()}</strong>`);
+    })
+    .join("");
 
   return result;
 }
