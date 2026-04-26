@@ -18,10 +18,12 @@ describe("Fix 0: escaped inline math migration", () => {
   });
 
   it("does not cross newlines", () => {
-    // Backslash-dollars that span lines should not be merged
+    // Backslash-dollars that span lines should not be merged.
+    // Fix 13 expands the single \n between the two lines to \n\n (block boundary expansion),
+    // so the output has a blank line between them.
     const input = "\\$foo\nbar\\$";
     const output = preprocessNotionMarkdown(input);
-    expect(output).toBe("\\$foo\nbar\\$");
+    expect(output).toBe("\\$foo\n\nbar\\$");
   });
 });
 
@@ -42,15 +44,17 @@ describe("Fix 1: setext heading prevention for ---", () => {
   });
 
   it("inserts blank line before --- followed by more content", () => {
+    // Fix 1 inserts \n\n before ---; Fix 13 also expands \n after --- to \n\n.
     const input = "paragraph\n---\nnext line";
     const output = preprocessNotionMarkdown(input);
-    expect(output).toBe("paragraph\n\n---\nnext line");
+    expect(output).toBe("paragraph\n\n---\n\nnext line");
   });
 
   it("leaves --- at the start of string unchanged", () => {
+    // Fix 13 expands the single \n after --- to \n\n (block boundary).
     const input = "---\ntext";
     const output = preprocessNotionMarkdown(input);
-    expect(output).toBe("---\ntext");
+    expect(output).toBe("---\n\ntext");
   });
 
   it("inserts blank line before --- when preceded by a spaces-only line that itself follows text", () => {
@@ -67,9 +71,10 @@ describe("Fix 1: setext heading prevention for ---", () => {
   });
 
   it("inserts blank line before --- with spaces-only line when followed by more content", () => {
+    // Fix 1 inserts \n\n before ---; Fix 13 also expands \n after --- to \n\n.
     const input = "paragraph\n   \n---\nnext line";
     const output = preprocessNotionMarkdown(input);
-    expect(output).toBe("paragraph\n\n---\nnext line");
+    expect(output).toBe("paragraph\n\n---\n\nnext line");
   });
 });
 
@@ -554,44 +559,60 @@ describe("Fix 4 edge case: markdown after table_of_contents", () => {
 });
 
 // ============================================================
-// Fix 13a: Isolate ▫️ separator lines as standalone paragraphs
+// Fix 13: Block boundary expansion (\n → \n\n) + <br> normalization
 // ============================================================
-describe("Fix 13a: ▫️ separator isolation", () => {
-  it("adds blank lines around ▫️ when between content lines", () => {
+describe("Fix 13: block boundary expansion and <br> normalization", () => {
+  it("expands single \\n between non-blank lines to \\n\\n", () => {
+    const input = "月曜日\n▫️\n火曜日";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toContain("月曜日\n\n▫️\n\n火曜日");
+  });
+
+  it("expands all consecutive block boundaries (A\\nB\\nC → A\\n\\nB\\n\\nC)", () => {
+    const input = "月曜日\n▫️\n火曜日\n▫️\n水曜日";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toContain("月曜日\n\n▫️\n\n火曜日\n\n▫️\n\n水曜日");
+  });
+
+  it("leaves existing \\n\\n unchanged", () => {
+    const input = "paragraph one\n\nparagraph two";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toContain("paragraph one\n\nparagraph two");
+  });
+
+  it("separates day/time entries from separator symbols (real-world vacancy data)", () => {
     const input = "月曜日<br>10:00～18:00スタートまでの間に空きがございます。\n▫️\n火曜日<br>9:00スタート";
     const output = preprocessNotionMarkdown(input);
+    // ▫️ must be surrounded by blank lines (paragraph boundaries)
     expect(output).toContain("ございます。\n\n▫️\n\n火曜日");
+    // <br> stays inline (intra-block Shift+Enter)
+    expect(output).toContain("月曜日<br/>10:00");
+    expect(output).toContain("火曜日<br/>9:00");
   });
 
-  it("handles multiple ▫️ separators", () => {
-    const input = "月曜日<br>10:00\n▫️\n火曜日<br>9:00\n▫️\n水曜日<br>11:00";
+  it("separates blocks that themselves contain <br> (multi-line blocks)", () => {
+    const input = "当店のお客様は\n7割くらいの方が多いです。\n▫️\n**週1or週2**で通われる方が多いです。";
     const output = preprocessNotionMarkdown(input);
-    expect(output).toContain("10:00\n\n▫️\n\n火曜日");
-    expect(output).toContain("9:00\n\n▫️\n\n水曜日");
+    expect(output).toContain("当店のお客様は\n\n7割くらいの方が多いです。\n\n▫️\n\n");
   });
-});
 
-// ============================================================
-// Fix 13: Normalize <br> → <br/>
-// ============================================================
-describe("Fix 13: <br> normalized to self-closing <br/>", () => {
-  it("converts <br> to <br/>", () => {
-    const input = "月曜日<br>10:00～18:00スタートまでの間に空きがございます。";
+  it("normalizes <br> to self-closing <br/>", () => {
+    const input = "月曜日<br>10:00";
     const output = preprocessNotionMarkdown(input);
-    expect(output).toBe("月曜日<br/>10:00～18:00スタートまでの間に空きがございます。");
+    expect(output).toContain("月曜日<br/>10:00");
   });
 
-  it("converts multiple <br> tags", () => {
-    const input = "月曜日<br>10:00～18:00\n▫️\n火曜日<br>9:00スタート";
-    const output = preprocessNotionMarkdown(input);
-    expect(output).toContain("月曜日<br/>10:00～18:00");
-    expect(output).toContain("火曜日<br/>9:00スタート");
-  });
-
-  it("handles <BR> case-insensitively", () => {
+  it("normalizes <BR> case-insensitively", () => {
     const input = "月曜日<BR>10:00";
     const output = preprocessNotionMarkdown(input);
-    expect(output).toBe("月曜日<br/>10:00");
+    expect(output).toContain("月曜日<br/>10:00");
+  });
+
+  it("does not expand \\n inside fenced code blocks", () => {
+    const input = "```\nline one\nline two\n```\nfollowing paragraph";
+    const output = preprocessNotionMarkdown(input);
+    // Lines inside the fenced block must not be doubled
+    expect(output).toContain("line one\nline two");
   });
 });
 
@@ -632,10 +653,13 @@ describe("Fix 15: bold marker conversion to <strong>", () => {
   });
 
   it("does not convert ** that spans multiple lines", () => {
+    // Fix 13 expands the single \n to \n\n (block boundary), so the lines become
+    // separate paragraphs. The ** then spans a paragraph boundary and is not
+    // matched by the single-line bold regex — both ** remain as-is.
     const input = "**line one\nline two**";
     const output = preprocessNotionMarkdown(input);
-    // Should remain unchanged since it spans a newline
-    expect(output).toBe("**line one\nline two**");
+    // After Fix 13: \n → \n\n; bold regex does not cross \n so both ** stay literal.
+    expect(output).toBe("**line one\n\nline two**");
   });
 
   it("trims trailing space from Notion API bold output (**text **)", () => {
