@@ -554,6 +554,24 @@ describe("Fix 4 edge case: markdown after table_of_contents", () => {
 });
 
 // ============================================================
+// Fix 13a: Isolate ▫️ separator lines as standalone paragraphs
+// ============================================================
+describe("Fix 13a: ▫️ separator isolation", () => {
+  it("adds blank lines around ▫️ when between content lines", () => {
+    const input = "月曜日<br>10:00～18:00スタートまでの間に空きがございます。\n▫️\n火曜日<br>9:00スタート";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toContain("ございます。\n\n▫️\n\n火曜日");
+  });
+
+  it("handles multiple ▫️ separators", () => {
+    const input = "月曜日<br>10:00\n▫️\n火曜日<br>9:00\n▫️\n水曜日<br>11:00";
+    const output = preprocessNotionMarkdown(input);
+    expect(output).toContain("10:00\n\n▫️\n\n火曜日");
+    expect(output).toContain("9:00\n\n▫️\n\n水曜日");
+  });
+});
+
+// ============================================================
 // Fix 13: Normalize <br> → <br/>
 // ============================================================
 describe("Fix 13: <br> normalized to self-closing <br/>", () => {

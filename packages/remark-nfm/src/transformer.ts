@@ -439,6 +439,14 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // does not start with ">" and is not itself blank.
   result = result.replace(/(^>[ \t][^\n]*)\n(?!>|\n)/gm, "$1\n\n");
 
+  // Fix 13a: Isolate ▫️ (U+25AB U+FE0F) separator lines as standalone paragraphs.
+  // Notion uses ▫️ as a visual block separator between day/time entries. When
+  // it appears on its own line between other content lines, CommonMark treats
+  // the surrounding \n as soft line breaks within a single paragraph rather than
+  // paragraph boundaries. Surrounding ▫️-only lines with blank lines forces
+  // remark to produce separate <p> elements, preserving the visual separation.
+  result = result.replace(/([^\n])\n(▫️[ \t]*)\n([^\n])/g, "$1\n\n$2\n\n$3");
+
   // Fix 13: Normalize <br> to self-closing <br/>.
   // Notion's Markdown API uses <br> (void element without slash) to indicate
   // a line break within a block (e.g. "月曜日<br>10:00～18:00").
