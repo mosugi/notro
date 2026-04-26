@@ -46,6 +46,16 @@ export const defaultComponents = {
   MentionAgent:           makeHtmlElement("span"),
   MentionDate:            makeHtmlElement("time"),
 
+  // ── Table elements (renamed from lowercase by rehypeBlockElementsPlugin) ───
+  // Notion outputs raw <table header-row="true">...</table> HTML blocks.
+  // rehypeBlockElementsPlugin renames these to PascalCase so the `components`
+  // prop can substitute them. Default: pass-through as plain HTML elements.
+  TableBlock:    makeHtmlElement("table"),
+  TableColgroup: makeHtmlElement("colgroup"),
+  TableCol:      makeHtmlElement("col"),
+  TableRow:      makeHtmlElement("tr"),
+  TableCell:     makeHtmlElement("td"),
+
   // ── Standard HTML element pass-throughs ──────────────────────────────────
   span:   makeHtmlElement("span"),
   p:      makeHtmlElement("p"),
