@@ -559,9 +559,9 @@ describe("Fix 4 edge case: markdown after table_of_contents", () => {
 });
 
 // ============================================================
-// Fix 13: Block boundary expansion (\n → \n\n) + <br> normalization
+// Fix 13: Block boundary expansion (\n → \n\n)
 // ============================================================
-describe("Fix 13: block boundary expansion and <br> normalization", () => {
+describe("Fix 13: block boundary expansion", () => {
   it("expands single \\n between non-blank lines to \\n\\n", () => {
     const input = "月曜日\n▫️\n火曜日";
     const output = preprocessNotionMarkdown(input);
@@ -585,9 +585,9 @@ describe("Fix 13: block boundary expansion and <br> normalization", () => {
     const output = preprocessNotionMarkdown(input);
     // ▫️ must be surrounded by blank lines (paragraph boundaries)
     expect(output).toContain("ございます。\n\n▫️\n\n火曜日");
-    // <br> stays inline (intra-block Shift+Enter)
-    expect(output).toContain("月曜日<br/>10:00");
-    expect(output).toContain("火曜日<br/>9:00");
+    // <br> stays inline (intra-block Shift+Enter) — passed through to rehype-raw as-is
+    expect(output).toContain("月曜日<br>10:00");
+    expect(output).toContain("火曜日<br>9:00");
   });
 
   it("separates blocks that themselves contain <br> (multi-line blocks)", () => {
@@ -596,16 +596,10 @@ describe("Fix 13: block boundary expansion and <br> normalization", () => {
     expect(output).toContain("当店のお客様は\n\n7割くらいの方が多いです。\n\n▫️\n\n");
   });
 
-  it("normalizes <br> to self-closing <br/>", () => {
+  it("leaves <br> unchanged (rendering delegated to rehype-raw)", () => {
     const input = "月曜日<br>10:00";
     const output = preprocessNotionMarkdown(input);
-    expect(output).toContain("月曜日<br/>10:00");
-  });
-
-  it("normalizes <BR> case-insensitively", () => {
-    const input = "月曜日<BR>10:00";
-    const output = preprocessNotionMarkdown(input);
-    expect(output).toContain("月曜日<br/>10:00");
+    expect(output).toContain("月曜日<br>10:00");
   });
 
   it("does not expand \\n inside fenced code blocks", () => {
