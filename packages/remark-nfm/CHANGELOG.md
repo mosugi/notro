@@ -1,5 +1,22 @@
 # remark-notro
 
+## 0.0.7
+
+### Patch Changes
+
+- [#149](https://github.com/mosugi/notro/pull/149) [`7e00c19`](https://github.com/mosugi/notro/commit/7e00c193f7971790526729628ab9bc9d98ef44d7) Thanks [@mosugi](https://github.com/mosugi)! - Fix: colon in time formats (10:00, 18:30) no longer produces spurious `<div></div>` elements
+
+  `micromark-extension-directive` treats `:` (char code 58) as the trigger for
+  inline text directives, so time formats like `10:00` were parsed as an inline
+  directive named `00` (or `30` etc.), emitting an empty `<div>` element after the
+  digit before the colon.
+
+  The fix restricts the directive micromark extension to flow-level constructs
+  (container `:::callout` and leaf `::callout`) only, by removing the `text`
+  property from the extension object before registering it. Notion content never
+  uses inline text directives (`:name[...]`), so this change is safe and has no
+  functional impact on Notion rendering.
+
 ## 0.0.6
 
 ### Patch Changes
