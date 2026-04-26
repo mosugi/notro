@@ -86,7 +86,8 @@
  *    from this expansion to preserve their internal newlines.
  *
  *    Note: <br> in Notion's output represents an intra-block Shift+Enter line break,
- *    not a block boundary. It is normalized to <br/> (self-closing) for rehype-raw.
+ *    not a block boundary. It is left as-is; rehype-raw (via parse5) handles both
+ *    <br> and <br/> identically as void elements.
  */
 
 // Leading emoji sequence pattern (covers most emoji including keycap sequences).
@@ -453,8 +454,7 @@ export function preprocessNotionMarkdown(markdown: string): string {
   // and passed through unchanged since their internal newlines are significant.
   // All other segments have single \n between non-blank lines expanded to \n\n.
   //
-  // Note: <br> in Notion's output represents an intra-block Shift+Enter line break.
-  // It is normalized to <br/> (self-closing) for correct rehype-raw handling.
+  // Note: <br> tags are left as-is; rehype-raw handles them downstream.
   result = result
     .split(/((?:^|\n)```[\s\S]*?(?:```\s*(?:\n|$)|$)|(?:^|\n):::[\s\S]*?(?:\n:::[ \t]*(?:\n|$)|$))/g)
     .map((segment, i) => {
@@ -467,8 +467,6 @@ export function preprocessNotionMarkdown(markdown: string): string {
         prev = s;
         s = s.replace(/([^\n])\n([^\n])/g, "$1\n\n$2");
       } while (s !== prev);
-      // Normalize <br> to self-closing <br/>.
-      s = s.replace(/<br>/gi, "<br/>");
       return s;
     })
     .join("");
